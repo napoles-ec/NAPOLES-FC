@@ -1,545 +1,820 @@
-/**
- * Panel Nápoles F.C. - Sistema de Control Integrado
- * Versión Final Unificada Estructurada (Corrección doGet & CORS)
- */
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Nápoles F.C. - Ruleta del Campeonato</title>
 
-// Función auxiliar para retornar respuestas en formato JSON seguro (CORS automático por Google)
-function responderJSON(objeto) {
-  return ContentService.createTextOutput(JSON.stringify(objeto))
-    .setMimeType(ContentService.MimeType.JSON);
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+:root{
+    --gold:#D4AF37;
+    --bg:#060912;
+    --card:rgba(255,255,255,.05);
+    --text:#fff;
+    --muted:#9ca3af;
+    --success:#2ecc71;
+    --danger:#e74c3c;
+    --warning:#f39c12;
+    --info:#3498db;
 }
 
-// Manejador de peticiones GET - Enruta todas las llamadas del sistema (Páginas HTML externas)
-function doGet(e) {
-  try {
-    if (!e || !e.parameter || !e.parameter.action) {
-      return responderJSON({ success: false, message: "Parámetros o acción ausentes en la petición GET." });
-    }
-    return responderJSON(procesarPeticion(e.parameter));
-  } catch (error) {
-    return responderJSON({ success: false, message: "Error interno en ejecución GET: " + error.toString() });
-  }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
 }
 
-// Manejador de peticiones POST - Recibe comentarios, actualizaciones o formularios JSON
-function doPost(e) {
-  try {
-    var params = {};
-    if (e && e.parameter && e.parameter.action) {
-      params = e.parameter;
-    } else if (e && e.postData && e.postData.contents) {
-      try { 
-        params = JSON.parse(e.postData.contents); 
-      } catch(err) {
-        return responderJSON({ success: false, message: "Error al parsear datos postData JSON." });
-      }
-    }
-
-    if (!params.action) {
-      return responderJSON({ success: false, message: "No se especificó ninguna acción en el POST." });
-    }
-
-    return responderJSON(procesarPeticion(params));
-  } catch (error) {
-    return responderJSON({ success: false, message: "Error interno en ejecución POST: " + error.toString() });
-  }
+body{
+    background:radial-gradient(circle at top,#111a33 0%,#060912 100%);
+    font-family:'Inter',sans-serif;
+    color:var(--text);
+    min-height:100vh;
+    padding:15px;
+    display:flex;
+    justify-content:center;
 }
 
-// ======================================================================
-// ENRUTADOR CENTRAL UNIFICADO INTERFAZ INTERNA & EXTERNA (HTML)
-// ======================================================================
-function procesarPeticion(params) {
-  var action = params.action;
+.profile-container{
+    width:100%;
+    max-width:460px;
+}
 
-  // --- PUENTES DE COMPATIBILIDAD CON TU HTML DE JUGADORES ---
-  if (action === "getJugadores") {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = ss.getSheetByName("Jugadores");
-    if (!sheet) return { success: false, jugadores: [] };
-    var data = sheet.getDataRange().getValues();
-    var listaJugadores = [];
-    for (var i = 1; i < data.length; i++) {
-      if (!data[i][4]) continue; // Salta filas sin cédula válida
-      listaJugadores.push({
-        primerNombre: data[i][1] || "",
-        segundoNombre: data[i][2] || "",
-        apellidos: data[i][3] || "",
-        cedula: data[i][4].toString(),
-        telefono: data[i][13] || "", 
-        nombreCamiseta: data[i][16] || "NÁPOLES",
-        dorsal: data[i][17] || "00",
-        estado: (data[i][23] || "PENDIENTE").toString().toUpperCase() // Columna X (Inscripción)
-      });
+.profile-header{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.profile-header h1{
+    font-family:'Outfit',sans-serif;
+    color:var(--gold);
+    font-size:1.3rem;
+    letter-spacing:2px;
+}
+
+.cards-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-bottom:15px;
+}
+
+.glass-card{
+    background:linear-gradient(145deg,rgba(10,20,40,.85),rgba(5,10,20,.95));
+    border-radius:20px;
+    border:1px solid rgba(212,175,55,.25);
+    overflow:hidden;
+    position:relative;
+}
+
+.id-card-identity{
+    padding:15px;
+    text-align:center;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+}
+
+.avatar-icon-box{
+    width:75px;
+    height:75px;
+    border-radius:50%;
+    border:3px solid var(--gold);
+    background:radial-gradient(circle, #1a2a4a 0%, #0a1428 100%);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:10px;
+    color:var(--gold);
+    font-size:2.2rem;
+    box-shadow:0 4px 15px rgba(0,0,0,0.5);
+}
+
+.id-card-jersey-wrap{
+    perspective:900px;
+    height:180px;
+}
+
+.jersey-card-inner{
+    width:100%;
+    height:100%;
+    position:relative;
+    transform-style:preserve-3d;
+    animation:rotateCard 12s linear infinite;
+}
+
+@keyframes rotateCard{
+    from{transform:rotateY(0deg);}
+    to{transform:rotateY(360deg);}
+}
+
+.face-front,
+.face-back{
+    position:absolute;
+    width:100%;
+    height:100%;
+    border-radius:20px;
+    backface-visibility:hidden;
+    background:linear-gradient(145deg,#0a1428,#000814);
+    border:2px solid rgba(212,175,55,.4);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+}
+
+.face-back{
+    transform:rotateY(180deg);
+}
+
+.jersey-name{
+    font-size:.7rem;
+    color:#f5e6a3;
+    text-transform:uppercase;
+    letter-spacing:2px;
+    font-weight:800;
+}
+
+.jersey-number{
+    font-size:4.5rem;
+    font-family:'Outfit';
+    font-weight:900;
+    line-height:1;
+    color:var(--gold);
+}
+
+.section-box,
+.stats-section,
+.performance-section,
+.ruleta-section{
+    background:var(--card);
+    border-radius:20px;
+    padding:15px;
+    margin-bottom:15px;
+    border:1px solid rgba(255,255,255,.05);
+    backdrop-filter:blur(5px);
+}
+
+.section-title{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:15px;
+    color:var(--gold);
+    font-size:.8rem;
+    font-weight:800;
+    text-transform:uppercase;
+}
+
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+}
+
+.stat-card{
+    background:rgba(0,0,0,.35);
+    border-radius:16px;
+    padding:10px 5px;
+    text-align:center;
+}
+
+.stat-icon{
+    font-size:1.3rem;
+    margin-bottom:8px;
+}
+
+.stat-value{
+    font-size:1.5rem;
+    font-family:'Outfit';
+    font-weight:900;
+}
+
+.stat-label{
+    font-size:.55rem;
+    color:var(--muted);
+}
+
+.performance-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+.metric-card{
+    background:rgba(0,0,0,.35);
+    border-radius:16px;
+    padding:14px 10px;
+    text-align:center;
+}
+
+.progress-circle{
+    position:relative;
+    width:85px;
+    height:85px;
+    margin:auto;
+}
+
+.progress-circle svg{
+    width:100%;
+    height:100%;
+    transform:rotate(-90deg);
+}
+
+.progress-bg{
+    stroke:rgba(255,255,255,.08);
+    stroke-width:8;
+    fill:none;
+}
+
+.progress-fill{
+    stroke-width:8;
+    fill:none;
+    stroke-linecap:round;
+    transition:stroke-dashoffset 0.4s ease;
+}
+
+.progress-text{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    font-size:1.2rem;
+    font-weight:900;
+    font-family:'Outfit';
+}
+
+.metric-title{
+    margin-top:10px;
+    font-size:.7rem;
+    font-weight:700;
+    letter-spacing:1px;
+}
+
+.average-box{
+    margin-top:15px;
+    background:rgba(212,175,55,.08);
+    border:1px solid rgba(212,175,55,.2);
+    border-radius:15px;
+    padding:15px;
+    text-align:center;
+}
+
+.average-score{
+    font-size:2.2rem;
+    font-weight:900;
+    color:var(--gold);
+    font-family:'Outfit';
+}
+
+.stars-container{
+    color: var(--gold);
+    font-size: 1.1rem;
+    margin-top: 5px;
+    letter-spacing: 2px;
+}
+
+.admin-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+.admin-card{
+    background:rgba(0,0,0,.35);
+    border-radius:16px;
+    padding:12px;
+    text-align:center;
+}
+
+.admin-icon{
+    font-size:1.7rem;
+    margin-bottom:8px;
+}
+
+.admin-value{
+    font-size:1.2rem;
+    font-weight:900;
+}
+
+.admin-label{
+    font-size:.65rem;
+    color:var(--muted);
+    margin-top:5px;
+}
+
+.admin-status{
+    margin-top:8px;
+    padding:4px 8px;
+    border-radius:20px;
+    display:inline-block;
+    font-size:.65rem;
+}
+
+.pending{ background:rgba(231,76,60,.15); color:var(--danger); }
+.warning{ background:rgba(243,156,18,.15); color:var(--warning); }
+.info{ background:rgba(52,152,219,.15); color:var(--info); }
+.vocalia{ background:rgba(155,89,182,.15); color:#9b59b6; }
+
+.debt-box{
+    margin-top:15px;
+    background:rgba(0,0,0,.4);
+    border-radius:14px;
+    padding:12px;
+}
+
+.debt-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.debt-label{ font-size:.75rem; color:var(--muted); }
+.debt-amount{ font-size:1.4rem; font-weight:900; }
+
+.progress-bar{
+    width:100%;
+    height:8px;
+    border-radius:10px;
+    background:rgba(255,255,255,.08);
+    overflow:hidden;
+    margin-top:10px;
+}
+
+.progress-fill-bar{ height:100%; background:linear-gradient(90deg,#e74c3c,#f39c12); }
+.debt-message{ margin-top:10px; font-size:.7rem; padding:8px; border-radius:10px; text-align:center; }
+
+.btn-sync, .btn-logout, .btn-spin{
+    width:100%;
+    border:none;
+    border-radius:14px;
+    padding:14px;
+    font-weight:800;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    font-size:0.9rem;
+    transition:all 0.2s;
+}
+
+.btn-sync{
+    background:rgba(212,175,55,.12); color:var(--gold);
+    border:1px solid rgba(212,175,55,.3); margin-bottom:15px;
+}
+.btn-logout{ background:rgba(231,76,60,.12); color:#e74c3c; border:1px solid rgba(231,76,60,.2); margin-top:10px;}
+
+.btn-spin{
+    background:linear-gradient(95deg,#D4AF37,#b8860b);
+    color:#060912;
+    font-weight:900;
+    margin-top:8px;
+    box-shadow:0 6px 14px rgba(0,0,0,0.3);
+}
+.btn-spin:active{ transform:scale(0.98); }
+
+.ruleta-wrapper{
+    background:rgba(0,0,0,0.4);
+    border-radius:40px;
+    padding:20px 10px;
+    margin:15px 0;
+    text-align:center;
+}
+.ruleta-canvas{
+    position:relative;
+    width:100%;
+    max-width:280px;
+    margin:0 auto;
+    cursor:pointer;
+}
+.ruleta-img{
+    width:100%;
+    transition:transform 0.3s ease;
+}
+.ruleta-btn{
+    margin-top:20px;
+    display:flex;
+    justify-content:center;
+}
+.vs-card{
+    background:rgba(0,0,0,0.6);
+    border-radius:60px;
+    padding:10px 20px;
+    margin-top:20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    border-left:5px solid var(--gold);
+}
+.equipo-local, .equipo-visita{
+    text-align:center;
+    flex:1;
+}
+.equipo-local h4, .equipo-visita h4{
+    font-size:1.2rem;
+    font-weight:900;
+    letter-spacing:1px;
+}
+.equipo-local span, .equipo-visita span{
+    font-size:0.7rem;
+    color:var(--gold);
+}
+.vs-medio{
+    background:var(--gold);
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+    color:#000;
+    font-size:1.2rem;
+}
+.rival-result{
+    margin-top:12px;
+    font-size:0.8rem;
+    background:rgba(212,175,55,0.2);
+    border-radius:30px;
+    padding:6px;
+    text-align:center;
+}
+
+/* Modal inauguración (preexistente) */
+.terms-backdrop{
+    position: fixed;
+    top:0; left:0; width:100vw; height:100vh;
+    background: rgba(3,5,10,0.97);
+    backdrop-filter: blur(20px);
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+}
+.terms-box{
+    background: linear-gradient(145deg, #091022, #040812);
+    border: 2px solid var(--gold);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 430px;
+    padding: 24px;
+    box-shadow: 0 0 35px rgba(212,175,55,0.25);
+    max-height: 92vh;
+    overflow-y: auto;
+}
+.terms-announcement{
+    background: linear-gradient(135deg, rgba(212,175,55,0.04) 0%, rgba(255,255,255,0.01) 100%);
+    border: 1px solid rgba(212,175,55,0.25);
+    border-left: 5px solid var(--gold);
+    padding: 18px;
+    border-radius: 14px;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    margin-bottom: 22px;
+    white-space: pre-line;
+}
+.terms-option-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+}
+.terms-option-card input[type="radio"] { accent-color: var(--gold); transform: scale(1.3);}
+.terms-option-card.selected { border-color: var(--gold); background: rgba(212,175,55,0.08);}
+.btn-modal-send {
+    background: linear-gradient(90deg, #D4AF37 0%, #F3E5AB 100%);
+    color: #000;
+    margin-top: 18px;
+    font-weight:800;
+    border:none;
+    padding:14px;
+    border-radius:40px;
+    width:100%;
+}
+.soccer-loading-container {
+    text-align: center;
+    margin-top: 140px;
+}
+.soccer-spinner {
+    font-size: 3.5rem;
+    color: var(--gold);
+    display: inline-block;
+    animation: spinSoccer 1.2s linear infinite;
+}
+@keyframes spinSoccer { 100%{transform:rotate(360deg);} }
+.error-message{ text-align:center; padding:60px 20px; color:#e74c3c;}
+</style>
+</head>
+<body>
+
+<div class="terms-backdrop" id="modalTerms">
+    <div class="terms-box">
+        <h2 style="text-align:center; color:var(--gold);">GRAN INAUGURACIÓN</h2>
+        <div class="terms-announcement" id="anuncioTexto">⚽ ATENCIÓN JUGADORES ⚽<br>📅 17 de mayo - 9:30 a.m.<br>✅ Seleccione opción de asistencia</div>
+        <div class="terms-option-card" onclick="selectRadio(1)"><input type="radio" name="termOption" id="opt1" value="1"><label>1️⃣ Asistiré, ahí estaré puntual</label></div>
+        <div class="terms-option-card" onclick="selectRadio(2)"><input type="radio" name="termOption" id="opt2" value="2"><label>2️⃣ Enviaré a mi representante</label></div>
+        <button class="btn-modal-send" id="btnFirmar" disabled onclick="enviarFirmaTerminos()">CONFIRMAR ASISTENCIA</button>
+    </div>
+</div>
+
+<div class="profile-container" id="perfilContent">
+    <div class="soccer-loading-container"><div class="soccer-spinner"><i class="fa-solid fa-futbol"></i></div><div class="soccer-loading-text">Cargando perfil...</div></div>
+</div>
+
+<script src="config.js"></script>
+<script>
+// -------------------- DATA JUGADOR Y CONSTANTES --------------------
+let jugadorSesion = null;
+// Lista de rivales (todos los equipos posibles, incluido Leones)
+const EQUIPOS_RIVALES = [
+    "LEONES", "IDEAL", "BARZA", "SAN MARTIN", "INDEPENDIENTE", 
+    "VODKILA", "CHELSEA", "JUVENTUD DE AMERICA", "JUVENTUS", "FRANCO CANADIENSE"
+];
+
+// -------------------- FUNCIONES AUXILIARES EXISTENTES --------------------
+function escapeHtml(str){
+    if(!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function calcularEdad(fechaNacimiento){
+    if(!fechaNacimiento) return '--';
+    let fecha = new Date(fechaNacimiento);
+    if(isNaN(fecha.getTime())){ let partes = fechaNacimiento.split(/[\/\-]/); if(partes.length===3) fecha = new Date(partes[2], partes[1]-1, partes[0]);}
+    if(isNaN(fecha.getTime())) return '--';
+    let hoy = new Date(); let edad = hoy.getFullYear() - fecha.getFullYear();
+    let mes = hoy.getMonth() - fecha.getMonth();
+    if(mes < 0 || (mes === 0 && hoy.getDate() < fecha.getDate())) edad--;
+    return edad;
+}
+function generarEstrellas(nota){
+    let puntuacion = Math.min(10, Math.max(0, parseFloat(nota) || 0))/2;
+    let html='';
+    for(let i=1;i<=5;i++){
+        if(puntuacion>=i) html+='<i class="fa-solid fa-star"></i>';
+        else if(puntuacion>=i-0.5) html+='<i class="fa-solid fa-star-half-stroke"></i>';
+        else html+='<i class="fa-regular fa-star" style="opacity:0.2;"></i>';
     }
-    return { success: true, jugadores: listaJugadores };
-  }
+    return html;
+}
+function renderProgressCircle(valor, color){
+    let value = Math.min(10, Math.max(0, parseFloat(valor) || 0));
+    let radius=40, circum=2*Math.PI*radius;
+    let dash=circum - ((value/10)*circum);
+    return `<div class="progress-circle"><svg viewBox="0 0 100 100"><circle class="progress-bg" cx="50" cy="50" r="40"></circle><circle class="progress-fill" cx="50" cy="50" r="40" stroke="${color}" stroke-dasharray="${circum}" stroke-dashoffset="${dash}"></circle></svg><div class="progress-text">${value}</div></div>`;
+}
 
-  if (action === "aprobarJugador") {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = ss.getSheetByName("Jugadores");
-    if (sheet) {
-      var data = sheet.getDataRange().getValues();
-      for (var i = 1; i < data.length; i++) {
-        if (data[i][4].toString().trim() === params.cedula.toString().trim()) {
-          sheet.getRange(i + 1, 24).setValue("APROBADO"); // Actualiza Columna X a APROBADO
-          return { ok: true, telefono: data[i][13] || "" };
+// Variables ruleta
+let ruletaGirando = false;
+let anguloActual = 0;
+let rivalSeleccionado = null;
+
+// DOM elementos ruleta (se inyectarán)
+let canvasRuleta, ctxRuleta, ruletaImgRef;
+
+function initRuletaGrafica() {
+    const canvas = document.getElementById('ruletaCanvas');
+    if(!canvas) return;
+    canvasRuleta = canvas;
+    ctxRuleta = canvas.getContext('2d');
+    const container = canvas.parentElement;
+    const size = Math.min(280, container.clientWidth);
+    canvas.width = size;
+    canvas.height = size;
+    dibujarRuleta();
+}
+
+function dibujarRuleta() {
+    if(!ctxRuleta) return;
+    const w = canvasRuleta.width, h = canvasRuleta.height;
+    const centroX = w/2, centroY = h/2;
+    const radio = w*0.42;
+    ctxRuleta.clearRect(0,0,w,h);
+    
+    const colores = ['#D4AF37','#C0A030','#B4941A','#9C7E18','#856C14','#6E5910','#57480C','#3A3008','#D4AF37','#C0A030','#B4941A','#9C7E18'];
+    const numRivales = EQUIPOS_RIVALES.length;
+    const anguloPorcion = (Math.PI * 2) / numRivales;
+    
+    for(let i=0;i<numRivales;i++){
+        let inicio = anguloActual + i * anguloPorcion;
+        let fin = inicio + anguloPorcion;
+        ctxRuleta.beginPath();
+        ctxRuleta.moveTo(centroX, centroY);
+        ctxRuleta.arc(centroX, centroY, radio, inicio, fin);
+        ctxRuleta.fillStyle = colores[i % colores.length];
+        ctxRuleta.fill();
+        ctxRuleta.strokeStyle = '#000000';
+        ctxRuleta.lineWidth = 1.5;
+        ctxRuleta.stroke();
+        ctxRuleta.save();
+        ctxRuleta.translate(centroX, centroY);
+        ctxRuleta.rotate(inicio + anguloPorcion/2);
+        ctxRuleta.textAlign = "center";
+        ctxRuleta.textBaseline = "middle";
+        ctxRuleta.font = `bold ${Math.max(10, radio*0.1)}px "Outfit"`;
+        ctxRuleta.fillStyle = "#03060f";
+        let nombreCorto = EQUIPOS_RIVALES[i].length > 8 ? EQUIPOS_RIVALES[i].substring(0,7)+".." : EQUIPOS_RIVALES[i];
+        ctxRuleta.fillText(nombreCorto, radio*0.72, 6);
+        ctxRuleta.restore();
+    }
+    ctxRuleta.beginPath();
+    ctxRuleta.arc(centroX, centroY, radio*0.2, 0, 2*Math.PI);
+    ctxRuleta.fillStyle = "#D4AF37";
+    ctxRuleta.fill();
+    ctxRuleta.fillStyle = "#000";
+    ctxRuleta.font = "bold 18px Outfit";
+    ctxRuleta.fillText("VS", centroX-8, centroY+5);
+    // marcador triangular
+    ctxRuleta.beginPath();
+    let puntaX = centroX, puntaY = centroY - radio - 8;
+    ctxRuleta.moveTo(puntaX-8, puntaY+12);
+    ctxRuleta.lineTo(puntaX, puntaY);
+    ctxRuleta.lineTo(puntaX+8, puntaY+12);
+    ctxRuleta.fillStyle = "#FFD966";
+    ctxRuleta.fill();
+}
+
+function girarRuleta() {
+    if(ruletaGirando) return;
+    ruletaGirando = true;
+    const vueltas = 6 * Math.PI * 2; // vueltas aleatorias
+    const duracion = 1200;
+    const inicio = performance.now();
+    const inicioAngulo = anguloActual;
+    const objetivoDelta = vueltas + (Math.random() * Math.PI * 2);
+    
+    function animate(now) {
+        const elapsed = now - inicio;
+        let t = Math.min(1, elapsed / duracion);
+        const easeOut = 1 - Math.pow(1-t,3);
+        const deltaAngulo = objetivoDelta * easeOut;
+        anguloActual = (inicioAngulo + deltaAngulo) % (Math.PI*2);
+        dibujarRuleta();
+        if(t < 1) requestAnimationFrame(animate);
+        else {
+            ruletaGirando = false;
+            // determinar índice del rival según el marcador fijo (arriba centro)
+            const num = EQUIPOS_RIVALES.length;
+            const anguloPorcion = (Math.PI*2)/num;
+            // dirección del marcador es -PI/2 (hacia arriba)
+            let dirMarcador = -Math.PI/2;
+            let anguloRelativo = (dirMarcador - anguloActual + 2*Math.PI) % (2*Math.PI);
+            let indice = Math.floor(anguloRelativo / anguloPorcion) % num;
+            rivalSeleccionado = EQUIPOS_RIVALES[indice];
+            // Actualizar vista previa en tarjeta VS
+            const vsCard = document.getElementById('vsPreview');
+            if(vsCard){
+                vsCard.innerHTML = `
+                    <div class="equipo-local"><h4>⚜️ NÁPOLES F.C.</h4><span>Local</span></div>
+                    <div class="vs-medio">VS</div>
+                    <div class="equipo-visita"><h4>🏆 ${rivalSeleccionado}</h4><span>Visitante</span></div>
+                `;
+                const rivalResult = document.getElementById('rivalResultado');
+                if(rivalResult) rivalResult.innerHTML = `🔁 ¡CAMPEONATO! Partido inaugural: Nápoles F.C. vs ${rivalSeleccionado} ⚽`;
+            }
         }
-      }
     }
-    return { ok: false, message: "Jugador no encontrado" };
-  }
+    requestAnimationFrame(animate);
+}
 
-  if (action === "rechazarJugador") {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = ss.getSheetByName("Jugadores");
-    if (sheet) {
-      var data = sheet.getDataRange().getValues();
-      for (var i = 1; i < data.length; i++) {
-        if (data[i][4].toString().trim() === params.cedula.toString().trim()) {
-          sheet.getRange(i + 1, 24).setValue("RECHAZADO"); // Actualiza Columna X a RECHAZADO
-          return { ok: true };
+// Modal terminos existente
+function selectRadio(num){
+    document.getElementById('opt'+num).checked=true;
+    document.querySelectorAll('.terms-option-card').forEach(c=>c.classList.remove('selected'));
+    document.getElementById(`opt${num}`).parentElement.classList.add('selected');
+    document.getElementById('btnFirmar').disabled=false;
+}
+async function enviarFirmaTerminos(){
+    const opcion=document.querySelector('input[name="termOption"]:checked').value;
+    const btn=document.getElementById('btnFirmar');
+    btn.disabled=true; btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> ENVIANDO...';
+    try{
+        const url=`${CONFIG.URL_GAS}?action=guardarTerminos&cedula=${encodeURIComponent(jugadorSesion.cedula)}&categoria=${encodeURIComponent(jugadorSesion.categoria)}&opcion=${opcion}`;
+        const resp=await fetch(url);
+        const r=await resp.json();
+        if(r.success){
+            document.getElementById('modalTerms').style.display='none';
+            recargarPerfil();
+        } else alert('Error: '+r.message);
+    }catch(e){ alert('Error de red');}
+    finally{ btn.disabled=false; btn.innerHTML='CONFIRMAR ASISTENCIA';}
+}
+
+// RENDER PERFIL COMPLETO CON RULETA
+async function cargarPerfil(cedula, categoria){
+    const container = document.getElementById('perfilContent');
+    try{
+        const url = `${CONFIG.URL_GAS}?action=getPerfil&cedula=${encodeURIComponent(cedula)}&categoria=${encodeURIComponent(categoria)}&t=${Date.now()}`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+        if(data.success && data.jugador){
+            const j = data.jugador;
+            if (!j.terminos_aceptados) document.getElementById('modalTerms').style.display = 'flex';
+            else document.getElementById('modalTerms').style.display = 'none';
+
+            const sanitized = {
+                primerNombre: escapeHtml(j['primer nombre'] || ''),
+                apellidos: escapeHtml(j['apellidos'] || ''),
+                fechaNacimiento: j['fecha de nacimiento'] || '',
+                nombreCamiseta: escapeHtml(j['nombre en camiseta'] || 'NÁPOLES'),
+                dorsal: escapeHtml(j['número de dorsal'] || '00'),
+                tallaUni: escapeHtml(j['talla uni.'] || 'M'),
+                partidosJugados: Number(j['partidos jugados']) || 0,
+                goles: Number(j['goles']) || 0,
+                amarillas: Number(j['amarillas']) || 0,
+                rojas: Number(j['rojas']) || 0,
+                puntualidad: parseFloat(j['puntualidad']) || 0,
+                companerismo: parseFloat(j['compañerismo']) || 0,
+                respeto: parseFloat(j['respeto']) || 0,
+                humildad: parseFloat(j['humildad']) || 0,
+                deudaVocalia: Number(j['deuda vocalia']) || 0,
+                inscripEstado: escapeHtml(j['inscrip_estado'] || 'PENDIENTE'),
+                unifEstado: escapeHtml(j['unif_estado'] || 'PENDIENTE'),
+                mediasEstado: escapeHtml(j['medias_estado'] || 'PENDIENTE')
+            };
+            let edad=calcularEdad(sanitized.fechaNacimiento);
+            let suma=sanitized.puntualidad+sanitized.companerismo+sanitized.respeto+sanitized.humildad;
+            let promedio=suma>0?parseFloat((suma/4).toFixed(1)):0;
+            let deudaInscripcion=sanitized.inscripEstado.toUpperCase().includes('PENDIENTE')?5:0;
+            let deudaUniforme=sanitized.unifEstado.toUpperCase().includes('PENDIENTE')?17:0;
+            let deudaMedias=sanitized.mediasEstado.toUpperCase().includes('PENDIENTE')?2:0;
+            let totalAdmin=deudaInscripcion+deudaUniforme+deudaMedias+sanitized.deudaVocalia;
+
+            container.innerHTML = `
+            <div class="profile-header"><h1>⚜️ PANEL NÁPOLES ⚜️</h1><div style="font-size:0.75rem;color:var(--gold);">Categoría: ${categoria === 'mujeres' ? 'Femenina ♀' : 'Masculina ♂'}</div></div>
+            <div class="cards-row">
+                <div class="id-card-identity glass-card"><div class="avatar-icon-box"><i class="fa-solid fa-user-ninja"></i></div><div style="font-weight:900;">${sanitized.primerNombre}<br>${sanitized.apellidos}</div><div style="font-size:.65rem;"><i class="fa-solid fa-id-card"></i> ${cedula}</div><div style="margin-top:8px;background:rgba(212,175,55,.2);padding:4px 10px;border-radius:20px;">${edad} años</div></div>
+                <div class="id-card-jersey-wrap"><div class="jersey-card-inner"><div class="face-front"><div class="jersey-name">${sanitized.nombreCamiseta}</div><div class="jersey-number">${sanitized.dorsal}</div><div>Talla ${sanitized.tallaUni}</div></div><div class="face-back"><div class="jersey-name">NÁPOLES FC</div><div class="jersey-number">${sanitized.dorsal}</div></div></div></div>
+            </div>
+            <button class="btn-sync" onclick="recargarPerfil()"><i class="fa-solid fa-rotate"></i> ACTUALIZAR</button>
+            
+            <!-- SECCIÓN RULETA - NUEVA INAGURACIÓN CAMPEONATO -->
+            <div class="ruleta-section">
+                <div class="section-title"><i class="fa-solid fa-trophy"></i> GRAN INAUGURACIÓN - RULETA DE RIVALES</div>
+                <div class="ruleta-wrapper">
+                    <div class="ruleta-canvas">
+                        <canvas id="ruletaCanvas" width="280" height="280" style="width:100%; height:auto; cursor:pointer;"></canvas>
+                    </div>
+                    <div class="ruleta-btn">
+                        <button class="btn-spin" id="btnGirarRuleta"><i class="fa-solid fa-futbol"></i> GIRAR RULETA · SORTEAR RIVAL</button>
+                    </div>
+                    <div id="vsPreview" class="vs-card">
+                        <div class="equipo-local"><h4>⚜️ NÁPOLES F.C.</h4><span>Local</span></div>
+                        <div class="vs-medio">VS</div>
+                        <div class="equipo-visita"><h4>🏆 ¿¿??</h4><span>Gira la ruleta</span></div>
+                    </div>
+                    <div id="rivalResultado" class="rival-result">🎲 Presiona el botón para definir el rival del primer partido</div>
+                </div>
+            </div>
+            
+            <div class="stats-section"><div class="stats-grid"><div class="stat-card"><div class="stat-icon" style="color:#3498db"><i class="fa-solid fa-shirt"></i></div><div class="stat-value">${sanitized.partidosJugados}</div><div class="stat-label">PARTIDOS</div></div><div class="stat-card"><div class="stat-icon" style="color:#2ecc71"><i class="fa-solid fa-futbol"></i></div><div class="stat-value">${sanitized.goles}</div><div class="stat-label">GOLES</div></div><div class="stat-card"><div class="stat-icon" style="color:#f39c12"><i class="fa-solid fa-square"></i></div><div class="stat-value">${sanitized.amarillas}</div><div class="stat-label">AMARILLAS</div></div><div class="stat-card"><div class="stat-icon" style="color:#e74c3c"><i class="fa-solid fa-square"></i></div><div class="stat-value">${sanitized.rojas}</div><div class="stat-label">ROJAS</div></div></div></div>
+
+            <div class="performance-section"><div class="section-title"><i class="fa-solid fa-heart"></i> Rendimiento Humano</div><div class="performance-grid">${['puntualidad','companerismo','respeto','humildad'].map((m,i)=> `<div class="metric-card">${renderProgressCircle(sanitized[m],['#3498db','#2ecc71','#f39c12','#9b59b6'][i])}<div class="metric-title">${m.toUpperCase()}</div></div>`).join('')}</div><div class="average-box"><div class="average-score">${promedio}/10</div><div class="stars-container">${generarEstrellas(promedio)}</div></div></div>
+
+            <div class="section-box"><div class="section-title"><i class="fa-solid fa-chart-line"></i> Estado Administrativo</div><div class="admin-grid">${deudaInscripcion?`<div class="admin-card"><div class="admin-icon"><i class="fa-solid fa-file-signature"></i></div><div class="admin-value">$5</div><div class="admin-label">INSCRIPCIÓN</div><div class="admin-status pending">PENDIENTE</div></div>`:''}${deudaUniforme?`<div class="admin-card"><div class="admin-icon"><i class="fa-solid fa-tshirt"></i></div><div class="admin-value">$17</div><div class="admin-label">UNIFORME</div><div class="admin-status warning">PENDIENTE</div></div>`:''}${deudaMedias?`<div class="admin-card"><div class="admin-icon"><i class="fa-solid fa-socks"></i></div><div class="admin-value">$2</div><div class="admin-label">MEDIAS</div><div class="admin-status info">PENDIENTE</div></div>`:''}${sanitized.deudaVocalia>0?`<div class="admin-card"><div class="admin-icon"><i class="fa-solid fa-money-bill-wave"></i></div><div class="admin-value">$${sanitized.deudaVocalia.toFixed(2)}</div><div class="admin-label">VOCALÍA</div><div class="admin-status vocalia">PENDIENTE</div></div>`:''}</div><div class="debt-box"><div class="debt-header"><span>VALORES PENDIENTES</span><span style="color:${totalAdmin>0?'#e74c3c':'#2ecc71'}">$${totalAdmin.toFixed(2)}</span></div><div class="progress-bar"><div class="progress-fill-bar" style="width:${Math.min(totalAdmin/30*100,100)}%"></div></div><div class="debt-message">${totalAdmin===0?'✅ ¡Estás al día!':'⚠️ Regulariza tus pagos'}</div></div></div>
+            <button class="btn-logout" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> CERRAR SESIÓN</button>
+            `;
+            // Inicializar ruleta después de inyectar el HTML
+            setTimeout(()=>{
+                initRuletaGrafica();
+                const btnGirar = document.getElementById('btnGirarRuleta');
+                if(btnGirar) btnGirar.addEventListener('click', (e) => { e.preventDefault(); girarRuleta(); });
+            }, 50);
+        } else {
+            container.innerHTML = `<div class="error-message">${data.message || 'Jugador no encontrado'}</div>`;
         }
-      }
+    } catch(e){
+        container.innerHTML = `<div class="error-message">❌ Error crítico de conexión</div>`;
     }
-    return { ok: false, message: "Jugador no encontrado" };
-  }
-  // --- FIN DE LOS PUENTES DE COMPATIBILIDAD ---
-
-  // 1. Conexiones Módulo de Accesos e Información Base
-  if (action === "validarRegistro") return verificarLoginJugador(params);
-  if (action === "loginAdmin") return verificarLoginAdmin(params);
-  if (action === "getPerfil") return getPerfil(params);
-  if (action === "guardarTerminos") return guardarTerminos(params);
-  if (action === "getInformativos") return getInformativos(); 
-
-  // 2. Conexiones Módulo de Uniformes
-  if (action === "getUniformesData") return getUniformesData();
-  if (action === "updateEstados") return updateEstados(params);
-
-  // 3. Conexiones Módulo Financiero
-  if (action === "getFinanzasData") return getFinanzasData();
-  if (action === "registrarGasto") return registrarGasto(params);
-  if (action === "registrarOtrosIngresos") return registrarOtrosIngresos(params);
-
-  // 4. Conexiones Módulo Asistencia / Inauguración Dinámica
-  if (action === "getJugadoresRaw" || action === "getConfirmadosInauguracion") return getConfirmadosInauguracion();
-
-  return { success: false, message: "Acción o endpoint no reconocido en el sistema: " + action };
 }
 
-// =====================================================
-// SECCIÓN 1: CONTROL DE ACCESO (LOGIN JUGADOR Y ADMIN)
-// =====================================================
-function verificarLoginJugador(params) {
-  var inputCedula = params.cedula;
-  if (!inputCedula) return { success: false, message: "Cédula no proporcionada." };
-
-  var cedulaBuscar = inputCedula.toString().trim();
-  var libro = SpreadsheetApp.getActiveSpreadsheet();
-  var hojas = ["Jugadores", "Jugadoras"];
-  
-  for (var h = 0; h < hojas.length; h++) {
-    var hoja = libro.getSheetByName(hojas[h]);
-    if (!hoja) continue;
-    
-    var matriz = hoja.getDataRange().getValues();
-    var cabecera = matriz[0].map(function(c) { return c.toString().toUpperCase().trim(); });
-    
-    var idxCedula = cabecera.indexOf("CEDULA");
-    if (idxCedula === -1) idxCedula = cabecera.indexOf("CÉDULA");
-    var idxEstado = cabecera.indexOf("ESTADO"); 
-
-    if (idxCedula === -1) idxCedula = 4;  
-    if (idxEstado === -1) idxEstado = 10; 
-
-    for (var i = 1; i < matriz.length; i++) {
-      var filaActual = matriz[i];
-      if (filaActual[idxCedula].toString().trim() === cedulaBuscar) {
-        var estadoActual = filaActual[idxEstado] ? filaActual[idxEstado].toString().trim().toUpperCase() : "PENDIENTE";
-        var datosJugador = {
-          cedula: filaActual[idxCedula],
-          primerNombre: filaActual[1] || "",
-          apellidos: filaActual[3] || "",
-          categoria: hojas[h] === "Jugadoras" ? "mujeres" : "hombres"
-        };
-        return { success: true, cedulaExiste: true, estado: estadoActual, datosJugador: datosJugador };
-      }
-    }
-  }
-  return { success: true, cedulaExiste: false, message: "Cédula no encontrada." };
+function recargarPerfil(){
+    if(!jugadorSesion){ window.location.href='login.html'; return; }
+    document.getElementById('perfilContent').innerHTML = `<div class="soccer-loading-container"><div class="soccer-spinner"><i class="fa-solid fa-futbol"></i></div><div class="soccer-loading-text">Cargando perfil...</div></div>`;
+    cargarPerfil(jugadorSesion.cedula, jugadorSesion.categoria || 'hombres');
 }
 
-function verificarLoginAdmin(params) {
-  return (params.clave === "GataFiera54321") ? { success: true, acceso: true } : { success: true, acceso: false, error: "Incorrecta." };
+function cerrarSesion(){
+    if(confirm('¿Cerrar sesión?')){ localStorage.removeItem('jugador_actual'); window.location.href='login.html'; }
 }
 
-// =====================================================
-// SECCIÓN 2: CARGA DE PERFIL Y ESTADÍSTICAS DEL JUGADOR
-// =====================================================
-function getPerfil(params) {
-  var inputCedula = params.cedula;
-  var inputCategoria = params.categoria || "hombres";
-
-  if (!inputCedula) return { success: false, message: "Cédula requerida." };
-  var cedulaBuscar = inputCedula.toString().trim();
-
-  var libro = SpreadsheetApp.getActiveSpreadsheet();
-  var nombreHoja = (inputCategoria.toLowerCase() === "mujeres") ? "Jugadoras" : "Jugadores";
-  var hojaMaestra = libro.getSheetByName(nombreHoja);
-
-  if (!hojaMaestra) return { success: false, message: "Hoja no encontrada." };
-
-  var matriz = hojaMaestra.getDataRange().getValues();
-  var filaIndex = -1;
-  for (var i = 1; i < matriz.length; i++) {
-    if (matriz[i][4].toString().trim() === cedulaBuscar) { filaIndex = i; break; }
-  }
-
-  if (filaIndex === -1) return { success: false, message: "Jugador no localizado." };
-  var fila = matriz[filaIndex];
-
-  var hojaPartidos = libro.getSheetByName("Partidos Hombres");
-  var totalPartidos = 0, totalGoles = 0, totalAmarillas = 0, totalRojas = 0;
-  var sumPunt = 0, sumComp = 0, sumResp = 0, sumHum = 0;
-
-  if (hojaPartidos) {
-    var matrizPartidos = hojaPartidos.getDataRange().getValues();
-    for (var p = 1; p < matrizPartidos.length; p++) {
-      if (matrizPartidos[p][2].toString().trim() === cedulaBuscar) { 
-        totalPartidos++;
-        totalAmarillas += parseInt(matrizPartidos[p][4]) || 0; 
-        totalRojas += parseInt(matrizPartidos[p][5]) || 0;     
-        totalGoles += parseInt(matrizPartidos[p][6]) || 0;     
-        sumPunt += parseFloat(matrizPartidos[p][10]) || 0;     
-        sumComp += parseFloat(matrizPartidos[p][11]) || 0;     
-        sumResp += parseFloat(matrizPartidos[p][12]) || 0;     
-        sumHum += parseFloat(matrizPartidos[p][13]) || 0;      
-      }
-    }
-  }
-
-  var respondioTerminos = fila[28] ? fila[28].toString().trim().toLowerCase() : "";
-
-  var payload = {
-    "primer nombre": fila[1] || "",
-    "apellidos": fila[3] || "",
-    "fecha de nacimiento": fila[5] || "",
-    "nombre en camiseta": fila[16] || "NÁPOLES", 
-    "número de dorsal": fila[17] || "00",      
-    "talla uni.": fila[26] || "M",              
-    "partidos jugados": totalPartidos,
-    "goles": totalGoles,
-    "amarillas": totalAmarillas,
-    "rojas": totalRojas,
-    "puntualidad": totalPartidos > 0 ? Math.round((sumPunt / totalPartidos) * 10) / 10 : 0,
-    "compañerismo": totalPartidos > 0 ? Math.round((sumComp / totalPartidos) * 10) / 10 : 0,
-    "respeto": totalPartidos > 0 ? Math.round((sumResp / totalPartidos) * 10) / 10 : 0,
-    "humildad": totalPartidos > 0 ? Math.round((sumHum / totalPartidos) * 10) / 10 : 0,
-    "deuda vocalia": parseFloat(fila[14]) || 0, 
-    "inscrip_estado": (fila[23] || "PENDIENTE").toString().toUpperCase(),  
-    "unif_estado": (fila[24] || "PENDIENTE").toString().toUpperCase(),     
-    "medias_estado": (fila[25] || "PENDIENTE").toString().toUpperCase(),   
-    "terminos_aceptados": (respondioTerminos === "aceptó" || respondioTerminos === "acepto")
-  };
-
-  return { success: true, jugador: payload };
-}
-
-function guardarTerminos(params) {
-  var inputCedula = params.cedula;
-  var inputCategoria = params.categoria || "hombres";
-  var opcionSeleccionada = params.opcion;
-
-  if (!inputCedula || !opcionSeleccionada) return { success: false, message: "Faltan parámetros." };
-
-  var libro = SpreadsheetApp.getActiveSpreadsheet();
-  var nombreHoja = (inputCategoria.toLowerCase() === "mujeres") ? "Jugadoras" : "Jugadores";
-  var hoja = libro.getSheetByName(nombreHoja);
-  if (!hoja) return { success: false, message: "Hoja destino no encontrada." };
-
-  var matriz = hoja.getDataRange().getValues();
-  var filaEditar = -1;
-  for (var i = 1; i < matriz.length; i++) {
-    if (matriz[i][4].toString().trim() === inputCedula.toString().trim()) { filaEditar = i + 1; break; }
-  }
-
-  if (filaEditar === -1) return { success: false, message: "Registro no encontrado." };
-
-  hoja.getRange(filaEditar, 29).setValue("Aceptó");
-  var respuestaTexto = (opcionSeleccionada === "1") ? "1️⃣ Asistiré, ahí estaré puntual" : "2️⃣ No podré asistir, enviaré a mi representante";
-  hoja.getRange(filaEditar, 30).setValue(respuestaTexto);
-
-  return { success: true, message: "Términos firmados con éxito." };
-}
-
-function getInformativos() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var totalMultasAcumuladas = 0;
-  
-  var hojas = ["Jugadores", "Jugadoras"];
-  for (var h = 0; h < hojas.length; h++) {
-    var sheet = ss.getSheetByName(hojas[h]);
-    if (sheet) {
-      var data = sheet.getDataRange().getValues();
-      for (var i = 1; i < data.length; i++) {
-        totalMultasAcumuladas += parseFloat(data[i][14]) || 0; 
-      }
-    }
-  }
-
-  return {
-    success: true,
-    multaCorporativa: "Deuda acumulada por Vocalías / Sanciones de la comisión: $" + totalMultasAcumuladas.toFixed(2),
-    mensajeClub: "⚽ 'El compromiso individual con un esfuerzo colectivo es lo que hace que un equipo funcione.' ¡Fuerza Nápoles!"
-  };
-}
-
-// =====================================================
-// SECCIÓN 3: PANEL DE CONTROL DE UNIFORMES (ADMIN)
-// =====================================================
-function getUniformesData() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName("Jugadores");
-  if (!sheet) return { success: false, message: "Hoja 'Jugadores' no encontrada." };
-
-  var data = sheet.getDataRange().getValues();
-  var jugadores = [];
-  
-  for (var i = 1; i < data.length; i++) {
-    if (!data[i][4]) continue;
-    jugadores.push({
-      nombre: (data[i][1] || "") + " " + (data[i][3] || ""),
-      cedula: data[i][4],
-      inscrip_estado: (data[i][23] || "PENDIENTE").toString().toUpperCase(),
-      unif_estado: (data[i][24] || "PENDIENTE").toString().toUpperCase(),
-      talla: data[i][26] || "M"
-    });
-  }
-  return { success: true, jugadores: jugadores };
-}
-
-function updateEstados(params) {
-  var cedula = params.cedula;
-  if (!cedula) return { success: false, message: "Cédula no proporcionada." };
-
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName("Jugadores");
-  if (!sheet) return { success: false, message: "No existe la hoja Jugadores." };
-
-  var data = sheet.getDataRange().getValues();
-  for (var i = 1; i < data.length; i++) {
-    if (data[i][4].toString().trim() === cedula.toString().trim()) {
-      sheet.getRange(i + 1, 24).setValue(params.inscrip.toUpperCase()); 
-      sheet.getRange(i + 1, 25).setValue(params.unif.toUpperCase());    
-      return { success: true };
-    }
-  }
-  return { success: false, message: "Jugador no encontrado." };
-}
-
-// =====================================================
-// SECCIÓN 4: MÓDULO FINANCIERO INTEGRAL (CONTABILIDAD)
-// =====================================================
-function getFinanzasData() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  
-  var sheetJugadores = ss.getSheetByName("Jugadores");
-  if (!sheetJugadores) return { success: false, message: "Error crítico: La hoja 'Jugadores' es obligatoria." };
-  
-  var sheetGastos = ss.getSheetByName("Gastos");
-  if (!sheetGastos) {
-    sheetGastos = ss.insertSheet("Gastos");
-    sheetGastos.appendRow(["Fecha", "Concepto", "Categoría", "Monto"]);
-  }
-  
-  var sheetOtrosIngresos = ss.getSheetByName("Otros_Ingresos");
-  if (!sheetOtrosIngresos) {
-    sheetOtrosIngresos = ss.insertSheet("Otros_Ingresos");
-    sheetOtrosIngresos.appendRow(["Fecha", "Concepto", "Categoría", "Monto", "Estado"]);
-  }
-
-  var dataJugadores = sheetJugadores.getDataRange().getValues();
-  var dataGastos = sheetGastos.getDataRange().getValues();
-  var dataOtrosIngresos = sheetOtrosIngresos.getDataRange().getValues();
-  
-  var ingresosReales = 0;
-  var totalPorCobrar = 0;
-  var totalDeudaVocalia = 0;
-  var totalGastos = 0;
-  var historialGlobal = [];
-
-  for (var i = 1; i < dataJugadores.length; i++) {
-    if (!dataJugadores[i][4]) continue; 
-
-    var nombreCompleto = (dataJugadores[i][1] || "") + " " + (dataJugadores[i][3] || "");
-    var fechaFila = dataJugadores[i][0] ? Utilities.formatDate(new Date(dataJugadores[i][0]), "GMT-5", "dd/MM/yyyy") : "Previo";
-    
-    var estadoInscrip = (dataJugadores[i][23] || "PENDIENTE").toString().trim().toUpperCase(); 
-    var estadoUnif = (dataJugadores[i][24] || "PENDIENTE").toString().trim().toUpperCase();    
-    var vVocalia = parseFloat(dataJugadores[i][14]) || 0;                                     
-
-    if (estadoInscrip === "PAGADO") {
-      ingresosReales += 5;
-      historialGlobal.push({ tipo: "ingreso", concepto: "Inscripción - " + nombreCompleto, fecha: fechaFila, monto: 5, estado: "PAGADO" });
-    } else {
-      totalPorCobrar += 5;
-    }
-
-    if (estadoUnif === "PAGADO") {
-      ingresosReales += 17;
-      historialGlobal.push({ tipo: "ingreso", concepto: "Uniforme - " + nombreCompleto, fecha: fechaFila, monto: 17, estado: "PAGADO" });
-    } else {
-      totalPorCobrar += 17;
-    }
-
-    if (vVocalia > 0) {
-      totalDeudaVocalia += vVocalia;
-    }
-  }
-
-  for (var k = 1; k < dataOtrosIngresos.length; k++) {
-    var conceptoExtra = dataOtrosIngresos[k][1];
-    if (!conceptoExtra) continue;
-    
-    var catExtra = dataOtrosIngresos[k][2] || "Otros";
-    var montoIncExtra = parseFloat(dataOtrosIngresos[k][3]) || 0;
-    var estadoExtra = (dataOtrosIngresos[k][4] || "PAGADO").toString().toUpperCase();
-    var fInc = dataOtrosIngresos[k][0] instanceof Date ? Utilities.formatDate(dataOtrosIngresos[k][0], "GMT-5", "dd/MM/yyyy") : dataOtrosIngresos[k][0];
-    
-    if (montoIncExtra > 0) {
-      if (estadoExtra === "PAGADO") {
-        ingresosReales += montoIncExtra;
-        historialGlobal.push({ tipo: "ingreso", concepto: "[" + catExtra + "] " + conceptoExtra, fecha: fInc, monto: montoIncExtra, estado: "PAGADO" });
-      } else {
-        totalPorCobrar += montoIncExtra; 
-        historialGlobal.push({ tipo: "ingreso", concepto: "[" + catExtra + "] " + conceptoExtra, fecha: fInc, monto: montoIncExtra, estado: "PENDIENTE" });
-      }
-    }
-  }
-
-  for (var g = 1; g < dataGastos.length; g++) {
-    var conceptoGasto = dataGastos[g][1];
-    if (!conceptoGasto) continue;
-    
-    var montoGasto = parseFloat(dataGastos[g][3]) || 0;
-    if (montoGasto > 0) {
-      totalGastos += montoGasto;
-      var fGas = dataGastos[g][0] instanceof Date ? Utilities.formatDate(dataGastos[g][0], "GMT-5", "dd/MM/yyyy") : dataGastos[g][0];
-      historialGlobal.push({ tipo: "egreso", concepto: "[" + dataGastos[g][2] + "] " + conceptoGasto, fecha: fGas, monto: montoGasto, estado: "PAGADO" });
-    }
-  }
-
-  historialGlobal.reverse();
-  var balanceRealEnCaja = ingresosReales - totalGastos;
-
-  return {
-    success: true,
-    resumen: {
-      balanceReal: balanceRealEnCaja,
-      ingresosTotales: ingresosReales,
-      gastosTotales: totalGastos,
-      porCobrar: totalPorCobrar,
-      deudaVocalia: totalDeudaVocalia
-    },
-    movements: historialGlobal.slice(0, 50)
-  };
-}
-
-function registrarGasto(params) {
-  var concepto = params.concepto;
-  var categoria = params.categoria || "Otros";
-  var monto = parseFloat(params.monto);
-
-  if (!concepto || isNaN(monto) || monto <= 0) {
-    return { success: false, message: "Datos del gasto inválidos o incompletos." };
-  }
-
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName("Gastos");
-  if (!sheet) {
-    sheet = ss.insertSheet("Gastos");
-    sheet.appendRow(["Fecha", "Concepto", "Categoría", "Monto"]);
-  }
-
-  var fechaHoy = Utilities.formatDate(new Date(), "GMT-5", "dd/MM/yyyy HH:mm");
-  sheet.appendRow([fechaHoy, concepto, categoria, monto]);
-  return { success: true, message: "Gasto descargado de la caja con éxito." };
-}
-
-function registrarOtrosIngresos(params) {
-  var concepto = params.concepto;
-  var categoria = params.categoria || "Otros";
-  var monto = parseFloat(params.monto);
-
-  if (!concepto || isNaN(monto) || monto <= 0) {
-    return { success: false, message: "Datos del ingreso extraordinario inválidos." };
-  }
-
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName("Otros_Ingresos");
-  if (!sheet) {
-    sheet = ss.insertSheet("Otros_Ingresos");
-    sheet.appendRow(["Fecha", "Concepto", "Categoría", "Monto", "Estado"]);
-  }
-
-  var fechaHoy = Utilities.formatDate(new Date(), "GMT-5", "dd/MM/yyyy HH:mm");
-  var estadoDefecto = params.estado ? params.estado.toUpperCase() : "PAGADO";
-  sheet.appendRow([fechaHoy, concepto, categoria, monto, estadoDefecto]);
-  return { success: true, message: "Ingreso extraordinario asentado correctamente." };
-}
-
-// ======================================================================
-// SECCIÓN 5: MÓDULO DE ASISTENCIA E INAUGURACIÓN CON MULTA DINÁMICA LIVE
-// ======================================================================
-function getConfirmadosInauguracion() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName("Jugadores"); 
-  
-  if (!sheet) return { success: false, message: "Hoja 'Jugadores' no encontrada." };
-
-  var data = sheet.getDataRange().getValues();
-  
-  var totalAsistiran = 0;
-  var totalRepresentante = 0;
-  var totalNoLlegaron = 0;
-  var totalJugadoresValidos = 0;
-
-  for (var i = 1; i < data.length; i++) {
-    var cedula = data[i][4]; 
-    if (!cedula || data[i][1].toString().trim() === "") continue;   
-
-    totalJugadoresValidos++;
-    var respuestaInauguracion = data[i][29] ? data[i][29].toString().trim() : ""; 
-
-    if (respuestaInauguracion.includes("1️⃣") || respuestaInauguracion.toLowerCase().includes("asistiré") || respuestaInauguracion.toLowerCase().includes("puntual") || respuestaInauguracion.toLowerCase().includes("sí") || respuestaInauguracion.toLowerCase().includes("si")) {
-      totalAsistiran++;
-    } else if (respuestaInauguracion.includes("2️⃣") || respuestaInauguracion.toLowerCase().includes("representante") || respuestaInauguracion.toLowerCase().includes("delegado")) {
-      totalRepresentante++;
-    } else {
-      totalNoLlegaron++;
-    }
-  }
-
-  var multaBaseInicial = 110.00;
-  var multaPorPersonaFaltante = 0;
-
-  if (totalNoLlegaron > 0) {
-    multaPorPersonaFaltante = multaBaseInicial / totalNoLlegaron;
-  }
-
-  return {
-    success: true,
-    resumen: {
-      totalJugadores: totalJugadoresValidos,
-      asistiran: totalAsistiran,
-      representante: totalRepresentante,
-      sinResponder: totalNoLlegaron,
-      totalAsistentesGlobal: totalAsistiran + totalRepresentante,
-      saldoPendienteClub: Number(multaPorPersonaFaltante.toFixed(2)) 
-    },
-    finanzas: {
-      cuotaPorInfractor: multaPorPersonaFaltante.toFixed(2)
-    },
-    datos: data 
-  };
-}
+// Inicio
+(function(){
+    jugadorSesion = JSON.parse(localStorage.getItem('jugador_actual'));
+    if(!jugadorSesion || !jugadorSesion.cedula){ window.location.href='login.html'; return; }
+    cargarPerfil(jugadorSesion.cedula, jugadorSesion.categoria || 'hombres');
+})();
+</script>
+</body>
+</html>
