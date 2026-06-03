@@ -1,235 +1,843 @@
 <!DOCTYPE html>
-<html class="dark" lang="es">
+<html lang="es">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Nápoles F.C. - Sorteo de Rivales</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Nápoles F.C. - Sorteo y Perfil</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
 <style>
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        .glass-card { background: rgba(17, 20, 21, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(233, 195, 73, 0.2); }
-        .premium-glow { box-shadow: 0 0 30px rgba(233, 195, 73, 0.2); }
-        .roulette-track { display: flex; gap: 24px; width: fit-content; transform: translateX(0); }
-        .spinning { animation: scroll-fast 0.2s linear infinite; filter: blur(4px); }
-        @keyframes scroll-fast { from { transform: translateX(0); } to { transform: translateX(-1000px); } }
-        .slowing { animation: scroll-slow 3s cubic-bezier(0.1, 0.7, 0.1, 1) forwards; filter: blur(0px); transition: filter 2s ease-out; }
-        @keyframes scroll-slow { from { transform: translateX(0); } to { transform: translateX(-4000px); } }
-        .winner-glow { animation: winner-pulse 2s infinite alternate; }
-        @keyframes winner-pulse { 0% { box-shadow: 0 0 20px rgba(233, 195, 73, 0.2); border-color: rgba(233, 195, 73, 0.4); } 100% { box-shadow: 0 0 60px rgba(233, 195, 73, 0.6); border-color: #e9c349; transform: scale(1.05); } }
-        .particle { position: absolute; pointer-events: none; z-index: 100; }
-        .cinematic-text { text-shadow: 0 0 20px rgba(233, 195, 73, 0.5); }
-        .reveal-element { opacity: 0; transform: translateY(20px); transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        .revealed { opacity: 1; transform: translateY(0); }
-        body { min-height: max(884px, 100dvh); overflow: hidden; }
-        .match-detail { background: rgba(0,0,0,0.6); border-radius: 40px; padding: 16px 20px; margin-top: 20px; border-left: 4px solid #e9c349; }
-    </style>
+:root{
+    --gold:#D4AF37;
+    --bg:#060912;
+    --card:rgba(255,255,255,.05);
+    --text:#fff;
+    --muted:#9ca3af;
+    --success:#2ecc71;
+    --danger:#e74c3c;
+    --warning:#f39c12;
+    --info:#3498db;
+}
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+body{
+    background:radial-gradient(circle at top,#111a33 0%,#060912 100%);
+    font-family:'Inter',sans-serif;
+    color:var(--text);
+    min-height:100vh;
+    padding:15px;
+    display:flex;
+    justify-content:center;
+}
+.profile-container{
+    width:100%;
+    max-width:460px;
+}
+.profile-header{
+    text-align:center;
+    margin-bottom:20px;
+}
+.profile-header h1{
+    font-family:'Outfit',sans-serif;
+    color:var(--gold);
+    font-size:1.3rem;
+    letter-spacing:2px;
+}
+.cards-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-bottom:15px;
+}
+.glass-card{
+    background:linear-gradient(145deg,rgba(10,20,40,.85),rgba(5,10,20,.95));
+    border-radius:20px;
+    border:1px solid rgba(212,175,55,.25);
+    overflow:hidden;
+    position:relative;
+}
+.id-card-identity{
+    padding:15px;
+    text-align:center;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+}
+.avatar-icon-box{
+    width:75px;
+    height:75px;
+    border-radius:50%;
+    border:3px solid var(--gold);
+    background:radial-gradient(circle, #1a2a4a 0%, #0a1428 100%);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:10px;
+    color:var(--gold);
+    font-size:2.2rem;
+    box-shadow:0 4px 15px rgba(0,0,0,0.5);
+}
+.id-card-jersey-wrap{
+    perspective:900px;
+    height:180px;
+}
+.jersey-card-inner{
+    width:100%;
+    height:100%;
+    position:relative;
+    transform-style:preserve-3d;
+    animation:rotateCard 12s linear infinite;
+}
+@keyframes rotateCard{
+    from{transform:rotateY(0deg);}
+    to{transform:rotateY(360deg);}
+}
+.face-front,
+.face-back{
+    position:absolute;
+    width:100%;
+    height:100%;
+    border-radius:20px;
+    backface-visibility:hidden;
+    background:linear-gradient(145deg,#0a1428,#000814);
+    border:2px solid rgba(212,175,55,.4);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+}
+.face-back{
+    transform:rotateY(180deg);
+}
+.jersey-name{
+    font-size:.7rem;
+    color:#f5e6a3;
+    text-transform:uppercase;
+    letter-spacing:2px;
+    font-weight:800;
+}
+.jersey-number{
+    font-size:4.5rem;
+    font-family:'Outfit';
+    font-weight:900;
+    line-height:1;
+    color:var(--gold);
+}
+.section-box,
+.stats-section,
+.performance-section{
+    background:var(--card);
+    border-radius:20px;
+    padding:15px;
+    margin-bottom:15px;
+    border:1px solid rgba(255,255,255,.05);
+    backdrop-filter:blur(5px);
+}
+.section-title{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:15px;
+    color:var(--gold);
+    font-size:.8rem;
+    font-weight:800;
+    text-transform:uppercase;
+}
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+}
+.stat-card{
+    background:rgba(0,0,0,.35);
+    border-radius:16px;
+    padding:10px 5px;
+    text-align:center;
+}
+.stat-icon{
+    font-size:1.3rem;
+    margin-bottom:8px;
+}
+.stat-value{
+    font-size:1.5rem;
+    font-family:'Outfit';
+    font-weight:900;
+}
+.stat-label{
+    font-size:.55rem;
+    color:var(--muted);
+}
+.performance-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+.metric-card{
+    background:rgba(0,0,0,.35);
+    border-radius:16px;
+    padding:14px 10px;
+    text-align:center;
+}
+.progress-circle{
+    position:relative;
+    width:85px;
+    height:85px;
+    margin:auto;
+}
+.progress-circle svg{
+    width:100%;
+    height:100%;
+    transform:rotate(-90deg);
+}
+.progress-bg{
+    stroke:rgba(255,255,255,.08);
+    stroke-width:8;
+    fill:none;
+}
+.progress-fill{
+    stroke-width:8;
+    fill:none;
+    stroke-linecap:round;
+    transition:stroke-dashoffset 0.4s ease;
+}
+.progress-text{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    font-size:1.2rem;
+    font-weight:900;
+    font-family:'Outfit';
+}
+.metric-title{
+    margin-top:10px;
+    font-size:.7rem;
+    font-weight:700;
+    letter-spacing:1px;
+}
+.average-box{
+    margin-top:15px;
+    background:rgba(212,175,55,.08);
+    border:1px solid rgba(212,175,55,.2);
+    border-radius:15px;
+    padding:15px;
+    text-align:center;
+}
+.average-score{
+    font-size:2.2rem;
+    font-weight:900;
+    color:var(--gold);
+    font-family:'Outfit';
+}
+.stars-container{
+    color: var(--gold);
+    font-size: 1.1rem;
+    margin-top: 5px;
+    letter-spacing: 2px;
+}
+.admin-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+.admin-card{
+    background:rgba(0,0,0,.35);
+    border-radius:16px;
+    padding:12px;
+    text-align:center;
+}
+.admin-icon{
+    font-size:1.7rem;
+    margin-bottom:8px;
+}
+.admin-value{
+    font-size:1.2rem;
+    font-weight:900;
+}
+.admin-label{
+    font-size:.65rem;
+    color:var(--muted);
+    margin-top:5px;
+}
+.admin-status{
+    margin-top:8px;
+    padding:4px 8px;
+    border-radius:20px;
+    display:inline-block;
+    font-size:.65rem;
+}
+.pending{ background:rgba(231,76,60,.15); color:var(--danger); }
+.warning{ background:rgba(243,156,18,.15); color:var(--warning); }
+.info{ background:rgba(52,152,219,.15); color:var(--info); }
+.vocalia{ background:rgba(155,89,182,.15); color:#9b59b6; }
+.debt-box{
+    margin-top:15px;
+    background:rgba(0,0,0,.4);
+    border-radius:14px;
+    padding:12px;
+}
+.debt-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+.debt-label{ font-size:.75rem; color:var(--muted); }
+.debt-amount{ font-size:1.4rem; font-weight:900; }
+.progress-bar{
+    width:100%;
+    height:8px;
+    border-radius:10px;
+    background:rgba(255,255,255,.08);
+    overflow:hidden;
+    margin-top:10px;
+}
+.progress-fill-bar{ height:100%; background:linear-gradient(90deg,#e74c3c,#f39c12); }
+.debt-message{ margin-top:10px; font-size:.7rem; padding:8px; border-radius:10px; text-align:center; }
+.btn-sync, .btn-logout, .btn-spin{
+    width:100%;
+    border:none;
+    border-radius:14px;
+    padding:14px;
+    font-weight:800;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    font-size:0.9rem;
+    transition:all 0.2s;
+}
+.btn-sync{
+    background:rgba(212,175,55,.12); color:var(--gold);
+    border:1px solid rgba(212,175,55,.3); margin-bottom:15px;
+}
+.btn-logout{ background:rgba(231,76,60,.12); color:#e74c3c; border:1px solid rgba(231,76,60,.2); margin-top:10px;}
+.btn-spin{
+    background:linear-gradient(95deg,#D4AF37,#b8860b);
+    color:#060912;
+    font-weight:900;
+    margin-top:8px;
+    box-shadow:0 6px 14px rgba(0,0,0,0.3);
+}
+.btn-spin:active{ transform:scale(0.98); }
+.ruleta-wrapper{
+    background:rgba(0,0,0,0.4);
+    border-radius:40px;
+    padding:20px 10px;
+    margin:15px 0;
+    text-align:center;
+}
+.ruleta-canvas{
+    position:relative;
+    width:100%;
+    max-width:280px;
+    margin:0 auto;
+    cursor:pointer;
+}
+.vs-card{
+    background:rgba(0,0,0,0.6);
+    border-radius:60px;
+    padding:10px 20px;
+    margin-top:20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    border-left:5px solid var(--gold);
+}
+.equipo-local, .equipo-visita{
+    text-align:center;
+    flex:1;
+}
+.equipo-local h4, .equipo-visita h4{
+    font-size:1.2rem;
+    font-weight:900;
+    letter-spacing:1px;
+}
+.equipo-local span, .equipo-visita span{
+    font-size:0.7rem;
+    color:var(--gold);
+}
+.vs-medio{
+    background:var(--gold);
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+    color:#000;
+    font-size:1.2rem;
+}
+.terms-backdrop{
+    position: fixed;
+    top:0; left:0; width:100vw; height:100vh;
+    background: rgba(3,5,10,0.97);
+    backdrop-filter: blur(20px);
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+}
+.terms-box{
+    background: linear-gradient(145deg, #091022, #040812);
+    border: 2px solid var(--gold);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 430px;
+    padding: 24px;
+    box-shadow: 0 0 35px rgba(212,175,55,0.25);
+    max-height: 92vh;
+    overflow-y: auto;
+}
+.terms-announcement{
+    background: linear-gradient(135deg, rgba(212,175,55,0.04) 0%, rgba(255,255,255,0.01) 100%);
+    border: 1px solid rgba(212,175,55,0.25);
+    border-left: 5px solid var(--gold);
+    padding: 18px;
+    border-radius: 14px;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    margin-bottom: 22px;
+    white-space: pre-line;
+}
+.terms-option-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+}
+.terms-option-card input[type="radio"] { accent-color: var(--gold); transform: scale(1.3);}
+.terms-option-card.selected { border-color: var(--gold); background: rgba(212,175,55,0.08);}
+.btn-modal-send {
+    background: linear-gradient(90deg, #D4AF37 0%, #F3E5AB 100%);
+    color: #000;
+    margin-top: 18px;
+    font-weight:800;
+    border:none;
+    padding:14px;
+    border-radius:40px;
+    width:100%;
+}
+.soccer-loading-container {
+    text-align: center;
+    margin-top: 140px;
+}
+.soccer-spinner {
+    font-size: 3.5rem;
+    color: var(--gold);
+    display: inline-block;
+    animation: spinSoccer 1.2s linear infinite;
+}
+@keyframes spinSoccer { 100%{transform:rotate(360deg);} }
+.error-message{ text-align:center; padding:60px 20px; color:#e74c3c;}
+.hidden { display: none; }
+</style>
 </head>
-<body class="bg-surface text-on-surface font-body-md">
+<body>
 
-<nav class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-white/10">
-    <div class="flex justify-between items-center h-16 px-4 w-full max-w-container-max mx-auto">
-        <div class="flex items-center gap-3">
-            <span class="text-secondary text-2xl">⚜️</span>
-            <h1 class="font-display-lg text-headline-sm tracking-widest text-secondary">NÁPOLES F.C.</h1>
-        </div>
+<div class="terms-backdrop" id="modalTerms">
+    <div class="terms-box">
+        <h2 style="text-align:center; color:var(--gold);">GRAN INAUGURACIÓN</h2>
+        <div class="terms-announcement">⚽ ATENCIÓN JUGADORES ⚽<br>📅 17 de mayo - 9:30 a.m.<br>✅ Seleccione opción de asistencia</div>
+        <div class="terms-option-card" onclick="selectRadio(1)"><input type="radio" name="termOption" id="opt1" value="1"><label>1️⃣ Asistiré, ahí estaré puntual</label></div>
+        <div class="terms-option-card" onclick="selectRadio(2)"><input type="radio" name="termOption" id="opt2" value="2"><label>2️⃣ Enviaré a mi representante</label></div>
+        <button class="btn-modal-send" id="btnFirmar" disabled onclick="enviarFirmaTerminos()">CONFIRMAR ASISTENCIA</button>
     </div>
-</nav>
+</div>
 
-<main class="h-screen flex flex-col items-center justify-center pt-16 relative">
-    <div class="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-secondary/10 rounded-full blur-[120px]"></div>
-    </div>
-    <div class="text-center px-4 mb-12" id="intro-header">
-        <h2 class="font-display-lg text-[32px] text-secondary tracking-widest mb-2 uppercase">Sorteo de Rivales</h2>
-        <p class="font-label-caps text-on-surface-variant text-[10px] tracking-[0.3em] uppercase">Buscando el próximo desafío...</p>
-    </div>
-    <div class="relative w-full overflow-hidden py-12 flex items-center" id="roulette-window">
-        <div class="absolute left-1/2 top-0 -translate-x-1/2 z-20 flex flex-col items-center h-full justify-between py-4">
-            <div class="w-1 h-8 bg-secondary/50 rounded-full blur-[2px]"></div>
-            <div class="w-1 h-8 bg-secondary/50 rounded-full blur-[2px]"></div>
-        </div>
-        <div class="roulette-track px-[50vw]" id="roulette-track"></div>
-    </div>
-    <div class="hidden absolute inset-0 flex flex-col items-center justify-center z-40 bg-surface/90 backdrop-blur-md" id="reveal-screen">
-        <div class="reveal-element text-center mb-8">
-            <p class="font-label-caps text-secondary tracking-[0.4em] mb-4">PRÓXIMO ENCUENTRO</p>
-            <div class="flex items-center justify-center gap-6 md:gap-12">
-                <div class="flex flex-col items-center gap-4">
-                    <div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-white/20"><span class="text-5xl">⚜️</span></div>
-                    <span class="font-display-lg text-xl tracking-wider">NÁPOLES</span>
-                </div>
-                <div class="font-display-lg text-5xl text-secondary cinematic-text italic">VS</div>
-                <div class="flex flex-col items-center gap-4">
-                    <div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-secondary winner-glow"><span class="text-5xl">🦁</span></div>
-                    <span class="font-display-lg text-xl tracking-wider">LEONES</span>
-                </div>
-            </div>
-        </div>
-        <div class="reveal-element match-detail text-center w-full max-w-md mx-4">
-            <div class="flex justify-center gap-6 flex-wrap">
-                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">event</span><span class="text-sm font-bold">SÁBADO 6 DE JULIO, 2026</span></div>
-                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">schedule</span><span class="text-sm font-bold">12:00 PM</span></div>
-                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">stadium</span><span class="text-sm font-bold">CANCHA 1 · LIGA SANTA RITA</span></div>
-            </div>
-        </div>
-        <div class="reveal-element space-y-6 w-full max-w-xs px-6 mt-6">
-            <button id="confirmButton" class="w-full bg-secondary text-on-secondary py-4 rounded-lg font-display-lg tracking-widest text-sm premium-glow uppercase">Confirmar Desafío</button>
-        </div>
-    </div>
-    <div class="fixed inset-0 pointer-events-none z-50" id="particles"></div>
-</main>
+<div class="profile-container" id="mainContainer">
+    <div class="soccer-loading-container"><div class="soccer-spinner"><i class="fa-solid fa-futbol"></i></div><div class="soccer-loading-text">Cargando datos...</div></div>
+</div>
 
 <script>
-    const CONFIG = { URL_GAS: "https://script.google.com/macros/s/AKfycbxTY9c7MLxaMbzCNr6WCC6TjYFCBcWXekhD7nhPSLIoGS2ZNUuBEMkJDSfvzW97cr4K/exec" };
-    const rivals = [
-        { name: "LEONES", icon: "🦁", power: "ALTO" }, { name: "IDEAL", icon: "⚡", power: "MEDIO" },
-        { name: "BARZA", icon: "🔵🔴", power: "EXTREMO" }, { name: "SAN MARTIN", icon: "🏰", power: "MEDIO" },
-        { name: "INDEPENDIENTE", icon: "🔥", power: "ALTO" }, { name: "VODKILA", icon: "🍺", power: "MEDIO" },
-        { name: "CHELSEA", icon: "💙", power: "ALTO" }, { name: "JUVENTUD DE AMERICA", icon: "🟡🔴", power: "EXTREMO" },
-        { name: "JUVENTUS", icon: "⚪⚫", power: "ALTO" }, { name: "FRANCO CANADIENSE", icon: "🍁", power: "MEDIO" }
-    ];
+// Configuración (puedes cambiar la URL si usas config.js externo)
+const CONFIG = {
+    URL_GAS: "https://script.google.com/macros/s/AKfycbytEmBoAG_N8APbuYMM4F4miBS8ugYmRFbER41WgGb9n8__z4QmOFor612a5DI_zhr2/exec"
+};
 
-    let jugadorSesion = null;
-    try { jugadorSesion = JSON.parse(localStorage.getItem('jugador_actual')); } catch(e) { console.warn(e); }
-    if (!jugadorSesion || !jugadorSesion.cedula) { window.location.href = 'login.html'; }
+// Datos del jugador desde localStorage (login previo)
+let jugadorSesion = null;
+try {
+    jugadorSesion = JSON.parse(localStorage.getItem('jugador_actual'));
+} catch(e) { console.warn(e); }
+if (!jugadorSesion || !jugadorSesion.cedula) {
+    window.location.href = 'login.html';
+}
 
-    const cedula = jugadorSesion.cedula;
-    const categoria = jugadorSesion.categoria || 'hombres';
+const cedula = jugadorSesion.cedula;
+const categoria = jugadorSesion.categoria || 'hombres';
+const nombreCompleto = (jugadorSesion.primerNombre || '') + ' ' + (jugadorSesion.apellidos || '');
 
-    // Verificar si ya confirmó el partido antes de mostrar la ruleta
-    async function verificarConfirmacionPrevia() {
-        try {
-            const url = `${CONFIG.URL_GAS}?action=verificarConfirmacionPartido&cedula=${encodeURIComponent(cedula)}`;
-            const resp = await fetch(url);
-            const data = await resp.json();
-            if (data.confirmed) {
-                // Ya confirmó, ir directamente al perfil
-                window.location.href = 'perfil.html';
-                return true;
-            }
-            return false;
-        } catch(e) {
-            console.error(e);
-            return false;
+// Variables globales
+let ruletaGirando = false;
+let anguloActual = 0;
+let canvasRuleta, ctxRuleta;
+let rivalSeleccionado = null;
+let terminosPendientes = false;
+
+// Lista de rivales para la ruleta
+const EQUIPOS_RIVALES = [
+    "LEONES", "IDEAL", "BARZA", "SAN MARTIN", "INDEPENDIENTE", 
+    "VODKILA", "CHELSEA", "JUVENTUD DE AMERICA", "JUVENTUS", "FRANCO CANADIENSE"
+];
+
+// Funciones auxiliares (escapeHtml, calcularEdad, etc.)
+function escapeHtml(str){
+    if(!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function calcularEdad(fechaNacimiento){
+    if(!fechaNacimiento) return '--';
+    let fecha = new Date(fechaNacimiento);
+    if(isNaN(fecha.getTime())){ 
+        let partes = fechaNacimiento.split(/[\/\-]/); 
+        if(partes.length===3) fecha = new Date(partes[2], partes[1]-1, partes[0]);
+    }
+    if(isNaN(fecha.getTime())) return '--';
+    let hoy = new Date(); 
+    let edad = hoy.getFullYear() - fecha.getFullYear();
+    let mes = hoy.getMonth() - fecha.getMonth();
+    if(mes < 0 || (mes === 0 && hoy.getDate() < fecha.getDate())) edad--;
+    return edad;
+}
+function generarEstrellas(nota){
+    let puntuacion = Math.min(10, Math.max(0, parseFloat(nota) || 0))/2;
+    let html='';
+    for(let i=1;i<=5;i++){
+        if(puntuacion>=i) html+='<i class="fa-solid fa-star"></i>';
+        else if(puntuacion>=i-0.5) html+='<i class="fa-solid fa-star-half-stroke"></i>';
+        else html+='<i class="fa-regular fa-star" style="opacity:0.2;"></i>';
+    }
+    return html;
+}
+function renderProgressCircle(valor, color){
+    let value = Math.min(10, Math.max(0, parseFloat(valor) || 0));
+    let radius=40, circum=2*Math.PI*radius;
+    let dash=circum - ((value/10)*circum);
+    return `<div class="progress-circle"><svg viewBox="0 0 100 100"><circle class="progress-bg" cx="50" cy="50" r="40"></circle><circle class="progress-fill" cx="50" cy="50" r="40" stroke="${color}" stroke-dasharray="${circum}" stroke-dashoffset="${dash}"></circle></svg><div class="progress-text">${value}</div></div>`;
+}
+
+// ==================== MODAL DE TÉRMINOS (inauguración) ====================
+function selectRadio(num){
+    document.getElementById('opt'+num).checked=true;
+    document.querySelectorAll('.terms-option-card').forEach(c=>c.classList.remove('selected'));
+    document.getElementById(`opt${num}`).parentElement.classList.add('selected');
+    document.getElementById('btnFirmar').disabled=false;
+}
+async function enviarFirmaTerminos(){
+    const opcion=document.querySelector('input[name="termOption"]:checked').value;
+    const btn=document.getElementById('btnFirmar');
+    btn.disabled=true; btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> ENVIANDO...';
+    try{
+        const url=`${CONFIG.URL_GAS}?action=guardarTerminos&cedula=${cedula}&categoria=${categoria}&opcion=${opcion}`;
+        const resp=await fetch(url);
+        const r=await resp.json();
+        if(r.success){
+            document.getElementById('modalTerms').style.display='none';
+            // Después de aceptar términos, continuar con el flujo (verificar partido y mostrar ruleta o perfil)
+            verificarYMostrar();
+        } else alert('Error: '+r.message);
+    }catch(e){ alert('Error de red');}
+    finally{ btn.disabled=false; btn.innerHTML='CONFIRMAR ASISTENCIA';}
+}
+
+// ==================== PANTALLA DE RULETA (canvas) ====================
+function mostrarRuleta() {
+    const container = document.getElementById('mainContainer');
+    container.innerHTML = `
+        <div class="ruleta-wrapper">
+            <div class="section-title"><i class="fa-solid fa-trophy"></i> SORTEO DE RIVAL INAUGURAL</div>
+            <div class="ruleta-canvas">
+                <canvas id="ruletaCanvas" width="280" height="280" style="width:100%; height:auto; cursor:pointer;"></canvas>
+            </div>
+            <div id="vsPreview" class="vs-card">
+                <div class="equipo-local"><h4>⚜️ NÁPOLES F.C.</h4><span>Local</span></div>
+                <div class="vs-medio">VS</div>
+                <div class="equipo-visita"><h4 id="rivalNombre">???</h4><span>Gira la ruleta</span></div>
+            </div>
+            <button id="btnGirar" class="btn-spin"><i class="fa-solid fa-futbol"></i> GIRAR RULETA</button>
+            <button id="btnConfirmar" class="btn-spin hidden"><i class="fa-regular fa-clock"></i> CONFIRMAR DESAFÍO · ESTARÉ PUNTUAL</button>
+        </div>
+    `;
+    initRuletaGrafica();
+    document.getElementById('btnGirar').addEventListener('click', girarRuleta);
+}
+
+function initRuletaGrafica() {
+    const canvas = document.getElementById('ruletaCanvas');
+    if(!canvas) return;
+    canvasRuleta = canvas;
+    ctxRuleta = canvas.getContext('2d');
+    const container = canvas.parentElement;
+    const size = Math.min(280, container.clientWidth);
+    canvas.width = size;
+    canvas.height = size;
+    dibujarRuleta();
+}
+
+function dibujarRuleta() {
+    if(!ctxRuleta) return;
+    const w = canvasRuleta.width, h = canvasRuleta.height;
+    const centroX = w/2, centroY = h/2;
+    const radio = w*0.42;
+    ctxRuleta.clearRect(0,0,w,h);
+    
+    const colores = ['#D4AF37','#C0A030','#B4941A','#9C7E18','#856C14','#6E5910','#57480C','#3A3008','#D4AF37','#C0A030','#B4941A','#9C7E18'];
+    const numRivales = EQUIPOS_RIVALES.length;
+    const anguloPorcion = (Math.PI * 2) / numRivales;
+    
+    for(let i=0;i<numRivales;i++){
+        let inicio = anguloActual + i * anguloPorcion;
+        let fin = inicio + anguloPorcion;
+        ctxRuleta.beginPath();
+        ctxRuleta.moveTo(centroX, centroY);
+        ctxRuleta.arc(centroX, centroY, radio, inicio, fin);
+        ctxRuleta.fillStyle = colores[i % colores.length];
+        ctxRuleta.fill();
+        ctxRuleta.strokeStyle = '#000000';
+        ctxRuleta.lineWidth = 1.5;
+        ctxRuleta.stroke();
+        ctxRuleta.save();
+        ctxRuleta.translate(centroX, centroY);
+        ctxRuleta.rotate(inicio + anguloPorcion/2);
+        ctxRuleta.textAlign = "center";
+        ctxRuleta.textBaseline = "middle";
+        ctxRuleta.font = `bold ${Math.max(10, radio*0.1)}px "Outfit"`;
+        ctxRuleta.fillStyle = "#03060f";
+        let nombreCorto = EQUIPOS_RIVALES[i].length > 8 ? EQUIPOS_RIVALES[i].substring(0,7)+".." : EQUIPOS_RIVALES[i];
+        ctxRuleta.fillText(nombreCorto, radio*0.72, 6);
+        ctxRuleta.restore();
+    }
+    ctxRuleta.beginPath();
+    ctxRuleta.arc(centroX, centroY, radio*0.2, 0, 2*Math.PI);
+    ctxRuleta.fillStyle = "#D4AF37";
+    ctxRuleta.fill();
+    ctxRuleta.fillStyle = "#000";
+    ctxRuleta.font = "bold 18px Outfit";
+    ctxRuleta.fillText("VS", centroX-8, centroY+5);
+    // marcador triangular
+    ctxRuleta.beginPath();
+    let puntaX = centroX, puntaY = centroY - radio - 8;
+    ctxRuleta.moveTo(puntaX-8, puntaY+12);
+    ctxRuleta.lineTo(puntaX, puntaY);
+    ctxRuleta.lineTo(puntaX+8, puntaY+12);
+    ctxRuleta.fillStyle = "#FFD966";
+    ctxRuleta.fill();
+}
+
+function girarRuleta() {
+    if(ruletaGirando) return;
+    ruletaGirando = true;
+    const btnGirar = document.getElementById('btnGirar');
+    btnGirar.disabled = true;
+    btnGirar.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> GIRANDO...';
+    const vueltas = 6 * Math.PI * 2;
+    const duracion = 1200;
+    const inicio = performance.now();
+    const inicioAngulo = anguloActual;
+    const objetivoDelta = vueltas + (Math.random() * Math.PI * 2);
+    
+    function animate(now) {
+        const elapsed = now - inicio;
+        let t = Math.min(1, elapsed / duracion);
+        const easeOut = 1 - Math.pow(1-t,3);
+        const deltaAngulo = objetivoDelta * easeOut;
+        anguloActual = (inicioAngulo + deltaAngulo) % (Math.PI*2);
+        dibujarRuleta();
+        if(t < 1) requestAnimationFrame(animate);
+        else {
+            ruletaGirando = false;
+            // Forzar que el resultado sea LEONES
+            const num = EQUIPOS_RIVALES.length;
+            const anguloPorcion = (Math.PI*2)/num;
+            let dirMarcador = -Math.PI/2;
+            let indiceObjetivo = EQUIPOS_RIVALES.indexOf("LEONES");
+            let anguloObjetivo = (dirMarcador - (indiceObjetivo * anguloPorcion) + 2*Math.PI) % (2*Math.PI);
+            anguloActual = anguloObjetivo;
+            dibujarRuleta();
+            rivalSeleccionado = "LEONES";
+            document.getElementById('rivalNombre').innerHTML = "🦁 LEONES";
+            document.getElementById('vsPreview').querySelector('.equipo-visita h4').innerHTML = "🦁 LEONES";
+            // Ocultar botón girar y mostrar botón confirmar
+            btnGirar.classList.add('hidden');
+            const btnConfirmar = document.getElementById('btnConfirmar');
+            btnConfirmar.classList.remove('hidden');
+            btnConfirmar.addEventListener('click', guardarPartido);
         }
     }
+    requestAnimationFrame(animate);
+}
 
-    (async function() {
-        const yaConfirmo = await verificarConfirmacionPrevia();
-        if (yaConfirmo) return;
-
-        // Si no ha confirmado, mostrar ruleta y continuar
-        iniciarRuleta();
-    })();
-
-    function iniciarRuleta() {
-        const track = document.getElementById('roulette-track');
-        const revealScreen = document.getElementById('reveal-screen');
-        const revealElements = document.querySelectorAll('.reveal-element');
-        const introHeader = document.getElementById('intro-header');
-        const rouletteWindow = document.getElementById('roulette-window');
-
-        for (let i = 0; i < 50; i++) {
-            const rival = rivals[i % rivals.length];
-            const div = document.createElement('div');
-            div.className = 'flex-shrink-0 w-48 h-64 glass-card rounded-xl p-6 flex flex-col items-center justify-center border border-white/10';
-            div.innerHTML = `<div class="w-20 h-20 bg-surface-container rounded-full flex items-center justify-center mb-4 border border-white/5"><span class="text-5xl">${rival.icon}</span></div><h3 class="font-display-lg text-lg text-on-surface">${rival.name}</h3><p class="font-label-caps text-[10px] text-on-surface-variant uppercase mt-1">Poder: ${rival.power}</p>`;
-            track.appendChild(div);
-        }
-
-        setTimeout(() => {
-            track.classList.add('spinning');
-            setTimeout(() => {
-                track.classList.remove('spinning');
-                track.classList.add('slowing');
-                setTimeout(() => {
-                    rouletteWindow.style.opacity = '0';
-                    rouletteWindow.style.transition = 'opacity 1s';
-                    introHeader.style.opacity = '0';
-                    introHeader.style.transition = 'opacity 1s';
-                    setTimeout(() => {
-                        revealScreen.classList.remove('hidden');
-                        setTimeout(() => {
-                            revealElements.forEach((el, index) => setTimeout(() => el.classList.add('revealed'), index * 200));
-                            crearParticulas();
-                        }, 100);
-                    }, 800);
-                }, 3000);
-            }, 3000);
-        }, 500);
-    }
-
-    function crearParticulas() {
-        const container = document.getElementById('particles');
-        const colores = ['#e9c349', '#ffffff', '#af8d11'];
-        for (let i = 0; i < 70; i++) {
-            const p = document.createElement('div');
-            p.className = 'particle';
-            const size = Math.random() * 5 + 2;
-            p.style.width = `${size}px`;
-            p.style.height = `${size}px`;
-            p.style.background = colores[Math.floor(Math.random() * colores.length)];
-            p.style.left = '50%';
-            p.style.top = '50%';
-            p.style.borderRadius = '50%';
-            const angulo = Math.random() * Math.PI * 2;
-            const velocidad = Math.random() * 400 + 150;
-            const tx = Math.cos(angulo) * velocidad;
-            const ty = Math.sin(angulo) * velocidad;
-            container.appendChild(p);
-            p.animate([
-                { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
-                { transform: `translate(${tx}px, ${ty}px) scale(0)`, opacity: 0 }
-            ], { duration: Math.random() * 1500 + 1000, easing: 'cubic-bezier(0, .9, .57, 1)', fill: 'forwards' });
-        }
-    }
-
-    async function guardarPartido() {
-        const btn = document.getElementById('confirmButton');
-        if (!btn || btn.disabled) return;
-        btn.disabled = true;
-        btn.innerText = 'GUARDANDO...';
-
-        const fecha = "2026-07-06";
-        const rival = "LEONES";
-        const hora = "12:00";
-        const lugar = "CANCHA 1 - LIGA SANTA RITA";
-        const params = new URLSearchParams({
-            action: 'guardarPartido',
-            cedula: cedula,
-            categoria: categoria,
-            rival: rival,
-            fecha: fecha,
-            hora: hora,
-            lugar: lugar,
-            amarillas: '0', rojas: '0', goles: '0', valor_vocalia: '0',
-            estado: 'CONFIRMADO', vocalias_pendientes: '0',
-            puntualidad: '0', companerismo: '0', respeto: '0', humildad: '0'
-        });
-        const url = `${CONFIG.URL_GAS}?${params.toString()}`;
-        try {
-            const response = await fetch(url);
-            const result = await response.json();
-            if (result.success) {
-                alert('¡Partido confirmado! Redirigiendo a tu perfil...');
-                window.location.href = 'perfil.html';
-            } else {
-                alert('Error: ' + (result.message || 'Intenta de nuevo.'));
-                btn.disabled = false;
-                btn.innerText = 'Confirmar Desafío';
-            }
-        } catch (error) {
-            alert('Error de conexión. Revisa tu red.');
+// ==================== GUARDAR PARTIDO (confirmación) ====================
+async function guardarPartido() {
+    const btn = document.getElementById('btnConfirmar');
+    if (!btn || btn.disabled) return;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> GUARDANDO...';
+    const params = new URLSearchParams({
+        action: 'guardarPartido',
+        cedula: cedula,
+        categoria: categoria,
+        nombre: nombreCompleto,
+        rival: 'LEONES',
+        fecha: '2026-07-06',
+        hora: '12:00',
+        lugar: 'CANCHA 1 - LIGA SANTA RITA',
+        amarillas: '0', rojas: '0', goles: '0', valor_vocalia: '0',
+        estado: 'CONFIRMADO', vocalias_pendientes: '0',
+        puntualidad: '0', companerismo: '0', respeto: '0', humildad: '0'
+    });
+    const url = `${CONFIG.URL_GAS}?${params.toString()}`;
+    try {
+        const response = await fetch(url);
+        const result = await response.json();
+        if (result.success) {
+            // Después de guardar, mostrar el perfil
+            mostrarPerfil();
+        } else {
+            alert('Error: ' + (result.message || 'Intenta de nuevo.'));
             btn.disabled = false;
-            btn.innerText = 'Confirmar Desafío';
+            btn.innerHTML = '<i class="fa-regular fa-clock"></i> CONFIRMAR DESAFÍO';
         }
+    } catch(error) {
+        alert('Error de conexión.');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-regular fa-clock"></i> CONFIRMAR DESAFÍO';
     }
+}
 
-    setTimeout(() => {
-        const confirmBtn = document.getElementById('confirmButton');
-        if (confirmBtn) confirmBtn.addEventListener('click', guardarPartido);
-    }, 2000);
+// ==================== PERFIL DEL JUGADOR ====================
+async function mostrarPerfil() {
+    const container = document.getElementById('mainContainer');
+    container.innerHTML = `<div class="soccer-loading-container"><div class="soccer-spinner"><i class="fa-solid fa-futbol"></i></div><div class="soccer-loading-text">Cargando perfil...</div></div>`;
+    try {
+        const url = `${CONFIG.URL_GAS}?action=getPerfil&cedula=${encodeURIComponent(cedula)}&categoria=${encodeURIComponent(categoria)}&t=${Date.now()}`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+        if(data.success && data.jugador){
+            const j = data.jugador;
+            const sanitized = {
+                primerNombre: escapeHtml(j['primer nombre'] || ''),
+                apellidos: escapeHtml(j['apellidos'] || ''),
+                fechaNacimiento: j['fecha de nacimiento'] || '',
+                nombreCamiseta: escapeHtml(j['nombre en camiseta'] || 'NÁPOLES'),
+                dorsal: escapeHtml(j['número de dorsal'] || '00'),
+                tallaUni: escapeHtml(j['talla uni.'] || 'M'),
+                partidosJugados: Number(j['partidos jugados']) || 0,
+                goles: Number(j['goles']) || 0,
+                amarillas: Number(j['amarillas']) || 0,
+                rojas: Number(j['rojas']) || 0,
+                puntualidad: parseFloat(j['puntualidad']) || 0,
+                companerismo: parseFloat(j['compañerismo']) || 0,
+                respeto: parseFloat(j['respeto']) || 0,
+                humildad: parseFloat(j['humildad']) || 0,
+                deudaVocalia: Number(j['deuda vocalia']) || 0,
+                inscripEstado: escapeHtml(j['inscrip_estado'] || 'PENDIENTE'),
+                unifEstado: escapeHtml(j['unif_estado'] || 'PENDIENTE'),
+                mediasEstado: escapeHtml(j['medias_estado'] || 'PENDIENTE')
+            };
+            let edad=calcularEdad(sanitized.fechaNacimiento);
+            let suma=sanitized.puntualidad+sanitized.companerismo+sanitized.respeto+sanitized.humildad;
+            let promedio=suma>0?parseFloat((suma/4).toFixed(1)):0;
+            let deudaInscripcion=sanitized.inscripEstado.toUpperCase().includes('PENDIENTE')?5:0;
+            let deudaUniforme=sanitized.unifEstado.toUpperCase().includes('PENDIENTE')?17:0;
+            let deudaMedias=sanitized.mediasEstado.toUpperCase().includes('PENDIENTE')?2:0;
+            let totalAdmin=deudaInscripcion+deudaUniforme+deudaMedias+sanitized.deudaVocalia;
+
+            container.innerHTML = `
+            <div class="profile-header"><h1>⚜️ PANEL NÁPOLES ⚜️</h1><div style="font-size:0.75rem;color:var(--gold);">Categoría: ${categoria === 'mujeres' ? 'Femenina ♀' : 'Masculina ♂'}</div></div>
+            <div class="cards-row">
+                <div class="id-card-identity glass-card"><div class="avatar-icon-box"><i class="fa-solid fa-user-ninja"></i></div><div style="font-weight:900;">${sanitized.primerNombre}<br>${sanitized.apellidos}</div><div style="font-size:.65rem;"><i class="fa-solid fa-id-card"></i> ${cedula}</div><div style="margin-top:8px;background:rgba(212,175,55,.2);padding:4px 10px;border-radius:20px;">${edad} años</div></div>
+                <div class="id-card-jersey-wrap"><div class="jersey-card-inner"><div class="face-front"><div class="jersey-name">${sanitized.nombreCamiseta}</div><div class="jersey-number">${sanitized.dorsal}</div><div>Talla ${sanitized.tallaUni}</div></div><div class="face-back"><div class="jersey-name">NÁPOLES FC</div><div class="jersey-number">${sanitized.dorsal}</div></div></div></div>
+            </div>
+            <button class="btn-sync" onclick="location.reload()"><i class="fa-solid fa-rotate"></i> ACTUALIZAR</button>
+            <div class="stats-section"><div class="stats-grid"><div class="stat-card"><div class="stat-icon" style="color:#3498db"><i class="fa-solid fa-shirt"></i></div><div class="stat-value">${sanitized.partidosJugados}</div><div class="stat-label">PARTIDOS</div></div><div class="stat-card"><div class="stat-icon" style="color:#2ecc71"><i class="fa-solid fa-futbol"></i></div><div class="stat-value">${sanitized.goles}</div><div class="stat-label">GOLES</div></div><div class="stat-card"><div class="stat-icon" style="color:#f39c12"><i class="fa-solid fa-square"></i></div><div class="stat-value">${sanitized.amarillas}</div><div class="stat-label">AMARILLAS</div></div><div class="stat-card"><div class="stat-icon" style="color:#e74c3c"><i class="fa-solid fa-square"></i></div><div class="stat-value">${sanitized.rojas}</div><div class="stat-label">ROJAS</div></div></div></div>
+            <div class="performance-section"><div class="section-title"><i class="fa-solid fa-heart"></i> Rendimiento Humano</div><div class="performance-grid">${['puntualidad','companerismo','respeto','humildad'].map((m,i)=> `<div class="metric-card">${renderProgressCircle(sanitized[m],['#3498db','#2ecc71','#f39c12','#9b59b6'][i])}<div class="metric-title">${m.toUpperCase()}</div></div>`).join('')}</div><div class="average-box"><div class="average-score">${promedio}/10</div><div class="stars-container">${generarEstrellas(promedio)}</div></div></div>
+            <div class="section-box"><div class="section-title"><i class="fa-solid fa-chart-line"></i> Estado Administrativo</div><div class="admin-grid">${deudaInscripcion?`<div class="admin-card"><div class="admin-icon"><i class="fa-solid fa-file-signature"></i></div><div class="admin-value">$5</div><div class="admin-label">INSCRIPCIÓN</div><div class="admin-status pending">PENDIENTE</div></div>`:''}${deudaUniforme?`<div class="admin-card"><div class="admin-icon"><i class="fa-solid fa-tshirt"></i></div><div class="admin-value">$17</div><div class="admin-label">UNIFORME</div><div class="admin-status warning">PENDIENTE</div></div>`:''}${deudaMedias?`<div class="admin-card"><div class="admin-icon"><i class="fa-solid fa-socks"></i></div><div class="admin-value">$2</div><div class="admin-label">MEDIAS</div><div class="admin-status info">PENDIENTE</div></div>`:''}${sanitized.deudaVocalia>0?`<div class="admin-card"><div class="admin-icon"><i class="fa-solid fa-money-bill-wave"></i></div><div class="admin-value">$${sanitized.deudaVocalia.toFixed(2)}</div><div class="admin-label">VOCALÍA</div><div class="admin-status vocalia">PENDIENTE</div></div>`:''}</div><div class="debt-box"><div class="debt-header"><span>VALORES PENDIENTES</span><span style="color:${totalAdmin>0?'#e74c3c':'#2ecc71'}">$${totalAdmin.toFixed(2)}</span></div><div class="progress-bar"><div class="progress-fill-bar" style="width:${Math.min(totalAdmin/30*100,100)}%"></div></div><div class="debt-message">${totalAdmin===0?'✅ ¡Estás al día!':'⚠️ Regulariza tus pagos'}</div></div></div>
+            <button class="btn-logout" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> CERRAR SESIÓN</button>
+            `;
+        } else {
+            container.innerHTML = `<div class="error-message">${data.message || 'Jugador no encontrado'}</div>`;
+        }
+    } catch(e) {
+        container.innerHTML = `<div class="error-message">❌ Error de conexión</div>`;
+    }
+}
+
+function cerrarSesion(){
+    if(confirm('¿Cerrar sesión?')){ localStorage.removeItem('jugador_actual'); window.location.href='login.html'; }
+}
+
+// ==================== VERIFICACIÓN DE CONFIRMACIÓN PREVIA ====================
+async function verificarConfirmacionPrevia() {
+    try {
+        const url = `${CONFIG.URL_GAS}?action=verificarConfirmacionPartido&cedula=${encodeURIComponent(cedula)}`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+        return data.confirmed === true;
+    } catch(e) {
+        console.error(e);
+        return false;
+    }
+}
+
+// ==================== VERIFICAR TÉRMINOS DEL JUGADOR ====================
+async function verificarTerminos() {
+    try {
+        const url = `${CONFIG.URL_GAS}?action=getPerfil&cedula=${encodeURIComponent(cedula)}&categoria=${encodeURIComponent(categoria)}&t=${Date.now()}`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+        if(data.success && data.jugador) {
+            const aceptado = data.jugador.terminos_aceptados;
+            if (!aceptado) {
+                document.getElementById('modalTerms').style.display = 'flex';
+                return false;
+            }
+            return true;
+        }
+        return false;
+    } catch(e) {
+        console.error(e);
+        return false;
+    }
+}
+
+// ==================== FLUJO PRINCIPAL ====================
+async function verificarYMostrar() {
+    const yaConfirmo = await verificarConfirmacionPrevia();
+    if (yaConfirmo) {
+        mostrarPerfil();
+    } else {
+        mostrarRuleta();
+    }
+}
+
+// Inicio
+(async function() {
+    // Primero verificar si aceptó términos
+    const terminosOk = await verificarTerminos();
+    if (!terminosOk) {
+        // El modal ya se abrió, y cuando se confirme llamará a verificarYMostrar()
+        return;
+    }
+    // Si ya aceptó términos, continuar
+    verificarYMostrar();
+})();
 </script>
 </body>
 </html>
