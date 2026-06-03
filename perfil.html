@@ -417,7 +417,7 @@
 <script>
 // ==================== CONFIGURACIÓN ====================
 const CONFIG = {
-    URL_GAS: "https://script.google.com/macros/s/AKfycbytEmBoAG_N8APbuYMM4F4miBS8ugYmRFbER41WgGb9n8__z4QmOFor612a5DI_zhr2/exec"
+    URL_GAS: "https://script.google.com/macros/s/AKfycbxd7BCEGky65jwxneI8uYgJnTQXMA1Ddg7ov5MjRcxB5Cx4AovHEAiaAUoHjcuvZgEw/exec"
 };
 
 // Obtener sesión del jugador
@@ -598,7 +598,7 @@ function cerrarSesion() {
     }
 }
 
-// ==================== RULETA (diseño mejorado, colores legibles) ====================
+// ==================== RULETA (sin footer y con botón modificado) ====================
 function mostrarRuleta() {
     document.body.className = 'ruleta-mode';
     document.body.style.background = '#0a0c10';
@@ -649,12 +649,11 @@ function mostrarRuleta() {
                         </div>
                         <div class="w-full bg-white/20 h-1.5 rounded-full overflow-hidden"><div class="bg-secondary h-full rounded-full" style="width: 95%; background:#e9c349;"></div></div>
                     </div>
-                    <button id="confirmButton" class="w-full bg-secondary text-black py-4 rounded-lg font-display-lg tracking-widest text-sm premium-glow uppercase font-bold" style="background:#e9c349; color:#000;">Estoy Listo..., Ahi estare Puntual</button>
+                    <button id="confirmButton" class="w-full bg-secondary text-black py-4 rounded-lg font-display-lg tracking-widest text-sm premium-glow uppercase font-bold" style="background:#e9c349; color:#000;">Ahí estaré puntual</button>
                 </div>
             </div>
             <div class="fixed inset-0 pointer-events-none z-50" id="particles"></div>
         </main>
-        
     `;
 
     const rivals = [
@@ -763,13 +762,13 @@ async function guardarPartido() {
         if (result.success) {
             mostrarPerfil();
         } else {
-            alert('⚠️ ' + (result.message || 'Ya confirmaste anteriormente. Cargando perfil...'));
+            alert('✅ Ya confirmaste tu asistencia. Redirigiendo a tu perfil...');
             mostrarPerfil();
         }
     } catch(error) {
-        alert('Error de conexión. Intenta de nuevo.');
+        alert('❌ Error de conexión. Intenta de nuevo.');
         btn.disabled = false;
-        btn.innerText = 'Confirmar Desafío';
+        btn.innerText = 'Ahí estaré puntual';
     }
 }
 
