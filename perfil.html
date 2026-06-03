@@ -558,21 +558,24 @@ body{
     <div class="soccer-loading-container"><div class="soccer-spinner"><i class="fa-solid fa-futbol"></i></div><div class="soccer-loading-text">Cargando perfil...</div></div>
 </div>
 
-<script src="config.js"></script>
 <script>
-// -------------------- JUGADOR Y DATOS DE PARTIDO FIJO --------------------
+// ==================== CONFIGURACIÓN EMBEBIDA ====================
+// URL directa de tu Apps Script (sin depender de config.js)
+const CONFIG = {
+    URL_GAS: "https://script.google.com/macros/s/AKfycbybGi_p22bkyO-CHnSjlZEQSmWETPjqA0zZv-m2Ox9E2Jvec1b-XnPySv6259wfI48/exec"
+};
+
+// ==================== DATOS DEL PARTIDO FIJO ====================
 let jugadorSesion = null;
 
-// RIVALES EN ORDEN HORIZONTAL (lista definitiva)
+// LISTA DE RIVALES (HORIZONTAL)
 const LISTA_RIVALES = [
     "LEONES", "IDEAL", "BARZA", "SAN MARTIN", "INDEPENDIENTE", 
     "VODKILA", "CHELSEA", "JUVENTUD DE AMERICA", "JUVENTUS", "FRANCO CANADIENSE"
 ];
 
-// RIVAL PREDETERMINADO: LEONES (se muestra automáticamente)
+// RIVAL DESTACADO Y DATOS DEL PARTIDO
 const RIVAL_FIJO = "LEONES";
-
-// DATOS DEL PARTIDO AUTOMÁTICO
 const PARTIDO_DATA = {
     rival: "LEONES",
     fecha: "SÁBADO 24 DE MAYO",
@@ -581,7 +584,7 @@ const PARTIDO_DATA = {
     jornada: "FECHA 1 - CAMPEONATO OFICIAL"
 };
 
-// -------------------- FUNCIONES AUXILIARES --------------------
+// ==================== FUNCIONES AUXILIARES ====================
 function escapeHtml(str){
     if(!str) return '';
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -620,7 +623,7 @@ function renderProgressCircle(valor, color){
     return `<div class="progress-circle"><svg viewBox="0 0 100 100"><circle class="progress-bg" cx="50" cy="50" r="40"></circle><circle class="progress-fill" cx="50" cy="50" r="40" stroke="${color}" stroke-dasharray="${circum}" stroke-dashoffset="${dash}"></circle></svg><div class="progress-text">${value}</div></div>`;
 }
 
-// Modal términos (compatibilidad)
+// Modal términos
 function selectRadio(num){
     document.getElementById('opt'+num).checked=true;
     document.querySelectorAll('.terms-option-card').forEach(c=>c.classList.remove('selected'));
@@ -684,7 +687,7 @@ async function cargarPerfil(cedula, categoria){
             let deudaMedias=sanitized.mediasEstado.toUpperCase().includes('PENDIENTE')?2:0;
             let totalAdmin=deudaInscripcion+deudaUniforme+deudaMedias+sanitized.deudaVocalia;
 
-            // Generar chips horizontales de rivales (todos, resaltando LEONES)
+            // Chips horizontales de rivales (LEONES resaltado)
             let chipsRivales = LISTA_RIVALES.map(rival => {
                 let activeClass = (rival === RIVAL_FIJO) ? 'active' : '';
                 return `<span class="rival-chip ${activeClass}">${rival}</span>`;
@@ -700,7 +703,7 @@ async function cargarPerfil(cedula, categoria){
             
             <button class="btn-sync" onclick="recargarPerfil()"><i class="fa-solid fa-rotate"></i> ACTUALIZAR DATOS</button>
             
-            <!-- SECCIÓN DEL PARTIDO AUTOMÁTICO: NÁPOLES F.C. VS LEONES SÁBADO 12:00 CANCHA 1 -->
+            <!-- SECCIÓN DEL PARTIDO AUTOMÁTICO: NÁPOLES F.C. VS LEONES -->
             <div class="match-section">
                 <div class="section-title"><i class="fa-solid fa-calendar-check"></i> PRÓXIMO ENCUENTRO OFICIAL</div>
                 <div class="match-card-gold">
@@ -719,7 +722,7 @@ async function cargarPerfil(cedula, categoria){
                     </div>
                 </div>
                 
-                <!-- LISTA HORIZONTAL DE TODOS LOS RIVALES DEL CAMPEONATO -->
+                <!-- LISTA HORIZONTAL DE RIVALES -->
                 <div class="section-title" style="margin-top: 6px;"><i class="fa-solid fa-people-group"></i> OTROS RIVALES DEL TORNEO</div>
                 <div class="rivales-scroll">
                     ${chipsRivales}
@@ -755,7 +758,7 @@ function cerrarSesion(){
     if(confirm('¿Cerrar sesión?')){ localStorage.removeItem('jugador_actual'); window.location.href='login.html'; }
 }
 
-// INICIO AUTOMÁTICO
+// INICIO
 (function(){
     jugadorSesion = JSON.parse(localStorage.getItem('jugador_actual'));
     if(!jugadorSesion || !jugadorSesion.cedula){ window.location.href='login.html'; return; }
