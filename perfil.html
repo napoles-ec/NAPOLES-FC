@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-    /* ========== ESTILOS EXCLUSIVOS DE LA RULETA (con contraste mejorado) ========== */
+    /* ========== ESTILOS EXCLUSIVOS DE LA RULETA (contraste mejorado) ========== */
     .material-symbols-outlined {
         font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
@@ -77,18 +77,14 @@
         overflow: hidden;
         min-height: 100dvh;
     }
-    /* Estilos para la tarjeta de información del partido */
+    /* Tarjeta de información del partido */
     .match-info-card {
-        background: rgba(0,0,0,0.7);
+        background: #1a1c22;
         border-radius: 40px;
-        padding: 12px 20px;
+        padding: 16px 20px;
         margin: 15px 0;
-        border-left: 4px solid #e9c349;
+        border-left: 5px solid #e9c349;
         text-align: center;
-    }
-    .match-info-card span {
-        color: #e9c349;
-        font-weight: bold;
     }
 
     /* ========== ESTILOS EXCLUSIVOS DEL PERFIL (sin cambios, funcionan correctamente) ========== */
@@ -496,8 +492,7 @@ function mostrarRuleta() {
                         </div>
                     </div>
                 </div>
-                <!-- Tarjeta con información del partido (visible y legible) -->
-                <div class="reveal-element match-info-card w-full max-w-md mx-4" style="background:#1a1c22; border-radius:40px; padding:16px 20px; margin:15px 0; border-left:5px solid #e9c349; text-align:center;">
+                <div class="reveal-element match-info-card w-full max-w-md mx-4">
                     <div class="flex justify-center gap-6 flex-wrap text-white">
                         <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary" style="color:#e9c349;">event</span><span class="text-sm font-bold">SÁBADO 6 DE JUNIO, 2026</span></div>
                         <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary" style="color:#e9c349;">schedule</span><span class="text-sm font-bold">12:00 HORAS</span></div>
@@ -529,12 +524,15 @@ function mostrarRuleta() {
 
     const rivals = [
         { name: "LEONES", icon: "🦁", power: "ALTO" },
-        { name: "TITANES", icon: "⚔️", power: "MEDIO" },
-        { name: "LOBOS", icon: "🐺", power: "ALTO" },
-        { name: "RAYO", icon: "⚡", power: "EXTREMO" },
-        { name: "HALCONES", icon: "🦅", power: "MEDIO" },
-        { name: "PIRATAS", icon: "🏴‍☠️", power: "ALTO" },
-        { name: "DRAGONES", icon: "🐉", power: "EXTREMO" }
+        { name: "IDEAL", icon: "⚡", power: "MEDIO" },
+        { name: "BARZA", icon: "🔵🔴", power: "EXTREMO" },
+        { name: "SAN MARTIN", icon: "🏰", power: "MEDIO" },
+        { name: "INDEPENDIENTE", icon: "🔥", power: "ALTO" },
+        { name: "VODKILA", icon: "🍺", power: "MEDIO" },
+        { name: "CHELSEA", icon: "💙", power: "ALTO" },
+        { name: "JUVENTUD DE AMERICA", icon: "🟡🔴", power: "EXTREMO" },
+        { name: "JUVENTUS", icon: "⚪⚫", power: "ALTO" },
+        { name: "FRANCO CANADIENSE", icon: "🍁", power: "MEDIO" }
     ];
     const track = document.getElementById('roulette-track');
     const revealScreen = document.getElementById('reveal-screen');
@@ -603,6 +601,7 @@ async function guardarPartido() {
     if (!btn || btn.disabled) return;
     btn.disabled = true;
     btn.innerText = 'GUARDANDO...';
+    // Parámetros corregidos: amarillas=0, puntualidad=10, etc., valor_vocalia=2.5, estado=CONFIRMADO
     const params = new URLSearchParams({
         action: 'guardarPartido',
         cedula: cedula,
@@ -615,7 +614,7 @@ async function guardarPartido() {
         amarillas: '0',
         rojas: '0',
         goles: '0',
-        valor_vocalia: '0',
+        valor_vocalia: '2.5',
         estado: 'CONFIRMADO',
         vocalias_pendientes: '0',
         puntualidad: '10',
