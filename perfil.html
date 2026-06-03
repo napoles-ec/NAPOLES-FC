@@ -82,6 +82,7 @@
         body {
             min-height: max(884px, 100dvh);
             overflow: hidden;
+            background-color: #111415;
         }
 
         /* Estilos del perfil (para cuando se muestre después) */
@@ -222,6 +223,17 @@
         @keyframes spinSoccer { 100% { transform: rotate(360deg); } }
         .error-message { text-align: center; padding: 60px 20px; color: #e74c3c; }
         .hidden { display: none; }
+        .metric-card { text-align: center; }
+        .metric-title { margin-top: 10px; font-size: 0.7rem; font-weight: 700; }
+        .average-box { background: rgba(233,195,73,0.08); border-radius: 15px; padding: 15px; text-align: center; margin-top: 15px; }
+        .average-score { font-size: 2rem; font-weight: 900; }
+        .admin-card { background: rgba(0,0,0,0.35); border-radius: 16px; padding: 12px; text-align: center; }
+        .admin-value { font-size: 1.2rem; font-weight: 900; }
+        .admin-label { font-size: 0.65rem; color: #9ca3af; margin-top: 5px; }
+        .debt-box { background: rgba(0,0,0,0.4); border-radius: 14px; padding: 12px; margin-top: 15px; }
+        .debt-header { display: flex; justify-content: space-between; align-items: center; }
+        .progress-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.08); border-radius: 10px; overflow: hidden; margin-top: 10px; }
+        .progress-fill-bar { height: 100%; background: linear-gradient(90deg, #e74c3c, #f39c12); }
     </style>
 </head>
 <body class="bg-surface text-on-surface font-body-md">
@@ -248,7 +260,7 @@
     const categoria = jugadorSesion.categoria || 'hombres';
     const nombreCompleto = (jugadorSesion.primerNombre || '') + ' ' + (jugadorSesion.apellidos || '');
 
-    // Lista de rivales (para la ruleta)
+    // Lista de rivales para la ruleta
     const rivals = [
         { name: "LEONES", icon: "🦁", power: "ALTO" },
         { name: "TITANES", icon: "⚔️", power: "MEDIO" },
@@ -348,24 +360,24 @@
                         <div class="glass-card p-4 mb-4">
                             <div class="section-title" style="color:#e9c349; margin-bottom:15px;"><i class="fa-solid fa-heart"></i> Rendimiento Humano</div>
                             <div class="grid grid-cols-2 gap-4">
-                                ${['puntualidad','companerismo','respeto','humildad'].map((m,i) => `<div class="metric-card text-center">${renderProgressCircle(s[m], ['#3498db','#2ecc71','#f39c12','#9b59b6'][i])}<div class="metric-title" style="margin-top:10px; font-size:0.7rem;">${m.toUpperCase()}</div></div>`).join('')}
+                                ${['puntualidad','companerismo','respeto','humildad'].map((m,i) => `<div class="metric-card">${renderProgressCircle(s[m], ['#3498db','#2ecc71','#f39c12','#9b59b6'][i])}<div class="metric-title">${m.toUpperCase()}</div></div>`).join('')}
                             </div>
-                            <div class="average-box mt-4 p-4 text-center" style="background:rgba(233,195,73,.08); border-radius:15px;">
-                                <div class="average-score" style="font-size:2rem; font-weight:900;">${promedio}/10</div>
+                            <div class="average-box">
+                                <div class="average-score">${promedio}/10</div>
                                 <div class="stars-container">${generarEstrellas(promedio)}</div>
                             </div>
                         </div>
                         <div class="glass-card p-4 mb-4">
                             <div class="section-title" style="color:#e9c349;"><i class="fa-solid fa-chart-line"></i> Estado Administrativo</div>
                             <div class="grid grid-cols-2 gap-4 mt-4">
-                                ${deudaInscripcion ? `<div class="admin-card text-center"><div class="admin-icon"><i class="fa-solid fa-file-signature"></i></div><div class="admin-value">$5</div><div class="admin-label">INSCRIPCIÓN</div><div class="admin-status pending" style="background:rgba(231,76,60,.15); color:#e74c3c;">PENDIENTE</div></div>` : ''}
-                                ${deudaUniforme ? `<div class="admin-card text-center"><div class="admin-icon"><i class="fa-solid fa-tshirt"></i></div><div class="admin-value">$17</div><div class="admin-label">UNIFORME</div><div class="admin-status warning" style="background:rgba(243,156,18,.15); color:#f39c12;">PENDIENTE</div></div>` : ''}
-                                ${deudaMedias ? `<div class="admin-card text-center"><div class="admin-icon"><i class="fa-solid fa-socks"></i></div><div class="admin-value">$2</div><div class="admin-label">MEDIAS</div><div class="admin-status info" style="background:rgba(52,152,219,.15); color:#3498db;">PENDIENTE</div></div>` : ''}
-                                ${s.deudaVocalia > 0 ? `<div class="admin-card text-center"><div class="admin-icon"><i class="fa-solid fa-money-bill-wave"></i></div><div class="admin-value">$${s.deudaVocalia.toFixed(2)}</div><div class="admin-label">VOCALÍA</div><div class="admin-status vocalia" style="background:rgba(155,89,182,.15); color:#9b59b6;">PENDIENTE</div></div>` : ''}
+                                ${deudaInscripcion ? `<div class="admin-card"><div class="admin-icon"><i class="fa-solid fa-file-signature"></i></div><div class="admin-value">$5</div><div class="admin-label">INSCRIPCIÓN</div><div class="admin-status pending" style="background:rgba(231,76,60,.15); color:#e74c3c;">PENDIENTE</div></div>` : ''}
+                                ${deudaUniforme ? `<div class="admin-card"><div class="admin-icon"><i class="fa-solid fa-tshirt"></i></div><div class="admin-value">$17</div><div class="admin-label">UNIFORME</div><div class="admin-status warning" style="background:rgba(243,156,18,.15); color:#f39c12;">PENDIENTE</div></div>` : ''}
+                                ${deudaMedias ? `<div class="admin-card"><div class="admin-icon"><i class="fa-solid fa-socks"></i></div><div class="admin-value">$2</div><div class="admin-label">MEDIAS</div><div class="admin-status info" style="background:rgba(52,152,219,.15); color:#3498db;">PENDIENTE</div></div>` : ''}
+                                ${s.deudaVocalia > 0 ? `<div class="admin-card"><div class="admin-icon"><i class="fa-solid fa-money-bill-wave"></i></div><div class="admin-value">$${s.deudaVocalia.toFixed(2)}</div><div class="admin-label">VOCALÍA</div><div class="admin-status vocalia" style="background:rgba(155,89,182,.15); color:#9b59b6;">PENDIENTE</div></div>` : ''}
                             </div>
-                            <div class="debt-box mt-4 p-4" style="background:rgba(0,0,0,.4); border-radius:14px;">
-                                <div class="debt-header flex justify-between"><span>VALORES PENDIENTES</span><span style="color:${totalAdmin > 0 ? '#e74c3c' : '#2ecc71'}">$${totalAdmin.toFixed(2)}</span></div>
-                                <div class="progress-bar mt-2 h-2 bg-white/10 rounded-full overflow-hidden"><div class="progress-fill-bar h-full" style="width:${Math.min(totalAdmin / 30 * 100, 100)}%; background:linear-gradient(90deg,#e74c3c,#f39c12);"></div></div>
+                            <div class="debt-box">
+                                <div class="debt-header"><span>VALORES PENDIENTES</span><span style="color:${totalAdmin > 0 ? '#e74c3c' : '#2ecc71'}">$${totalAdmin.toFixed(2)}</span></div>
+                                <div class="progress-bar"><div class="progress-fill-bar" style="width:${Math.min(totalAdmin / 30 * 100, 100)}%;"></div></div>
                                 <div class="debt-message mt-2 text-center text-sm">${totalAdmin === 0 ? '✅ ¡Estás al día!' : '⚠️ Regulariza tus pagos'}</div>
                             </div>
                         </div>
@@ -387,11 +399,11 @@
         }
     }
 
-    // ==================== RULETA HORIZONTAL (solo si no ha confirmado) ====================
+    // ==================== RULETA HORIZONTAL ====================
     function mostrarRuleta() {
         const container = document.getElementById('mainContainer');
         container.innerHTML = `
-            <div class="text-center px-margin-mobile mb-12" id="intro-header">
+            <div class="text-center px-4 mb-12" id="intro-header">
                 <h2 class="font-display-lg text-[32px] text-secondary tracking-widest mb-2 uppercase">Sorteo de Rivales</h2>
                 <p class="font-label-caps text-on-surface-variant text-[10px] tracking-[0.3em] uppercase">Buscando el próximo desafío...</p>
             </div>
@@ -437,7 +449,6 @@
             <div class="fixed inset-0 pointer-events-none z-50" id="particles"></div>
         `;
 
-        // Generar tarjetas de la ruleta
         const track = document.getElementById('roulette-track');
         const revealScreen = document.getElementById('reveal-screen');
         const revealElements = document.querySelectorAll('.reveal-element');
@@ -461,7 +472,6 @@
             track.appendChild(createCard(rivals[i % rivals.length]));
         }
 
-        // Iniciar animación
         setTimeout(() => {
             track.classList.add('spinning');
             setTimeout(() => {
@@ -515,7 +525,6 @@
             }
         }
 
-        // Evento del botón Confirmar
         document.getElementById('confirmButton').addEventListener('click', guardarPartido);
     }
 
@@ -524,6 +533,8 @@
         if (!btn || btn.disabled) return;
         btn.disabled = true;
         btn.innerText = 'GUARDANDO...';
+        
+        // Valores por defecto: puntualidad, compañerismo, respeto, humildad = 10
         const params = new URLSearchParams({
             action: 'guardarPartido',
             cedula: cedula,
@@ -533,9 +544,16 @@
             fecha: '2026-07-06',
             hora: '12:00',
             lugar: 'CANCHA 1 - LIGA SANTA RITA',
-            amarillas: '0', rojas: '0', goles: '0', valor_vocalia: '0',
-            estado: 'CONFIRMADO', vocalias_pendientes: '0',
-            puntualidad: '0', companerismo: '0', respeto: '0', humildad: '0'
+            amarillas: '0',
+            rojas: '0',
+            goles: '0',
+            valor_vocalia: '0',
+            estado: 'CONFIRMADO',
+            vocalias_pendientes: '0',
+            puntualidad: '10',
+            companerismo: '10',
+            respeto: '10',
+            humildad: '10'
         });
         const url = `${CONFIG.URL_GAS}?${params.toString()}`;
         try {
