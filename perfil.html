@@ -7,119 +7,26 @@
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .glass-card {
-            background: rgba(17, 20, 21, 0.8);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(233, 195, 73, 0.2);
-        }
-        .premium-glow {
-            box-shadow: 0 0 30px rgba(233, 195, 73, 0.2);
-        }
-        
-        /* Roulette Animation Styles */
-        .roulette-track {
-            display: flex;
-            gap: 24px;
-            width: fit-content;
-            transform: translateX(0);
-        }
-        
-        .spinning {
-            animation: scroll-fast 0.2s linear infinite;
-            filter: blur(4px);
-        }
-        
-        @keyframes scroll-fast {
-            from { transform: translateX(0); }
-            to { transform: translateX(-1000px); }
-        }
-
-        .slowing {
-            animation: scroll-slow 3s cubic-bezier(0.1, 0.7, 0.1, 1) forwards;
-            filter: blur(0px);
-            transition: filter 2s ease-out;
-        }
-
-        @keyframes scroll-slow {
-            from { transform: translateX(0); }
-            to { transform: translateX(-4000px); }
-        }
-
-        /* Final Reveal Animations */
-        .winner-glow {
-            animation: winner-pulse 2s infinite alternate;
-        }
-
-        @keyframes winner-pulse {
-            0% { box-shadow: 0 0 20px rgba(233, 195, 73, 0.2); border-color: rgba(233, 195, 73, 0.4); }
-            100% { box-shadow: 0 0 60px rgba(233, 195, 73, 0.6); border-color: #e9c349; transform: scale(1.05); }
-        }
-
-        .particle {
-            position: absolute;
-            pointer-events: none;
-            z-index: 100;
-        }
-
-        .cinematic-text {
-            text-shadow: 0 0 20px rgba(233, 195, 73, 0.5);
-        }
-
-        .reveal-element {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .revealed {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        body {
-            min-height: max(884px, 100dvh);
-            overflow: hidden;
-        }
-        .match-detail {
-            background: rgba(0,0,0,0.6);
-            border-radius: 40px;
-            padding: 16px 20px;
-            margin-top: 20px;
-            border-left: 4px solid #e9c349;
-        }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-card { background: rgba(17, 20, 21, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(233, 195, 73, 0.2); }
+        .premium-glow { box-shadow: 0 0 30px rgba(233, 195, 73, 0.2); }
+        .roulette-track { display: flex; gap: 24px; width: fit-content; transform: translateX(0); }
+        .spinning { animation: scroll-fast 0.2s linear infinite; filter: blur(4px); }
+        @keyframes scroll-fast { from { transform: translateX(0); } to { transform: translateX(-1000px); } }
+        .slowing { animation: scroll-slow 3s cubic-bezier(0.1, 0.7, 0.1, 1) forwards; filter: blur(0px); transition: filter 2s ease-out; }
+        @keyframes scroll-slow { from { transform: translateX(0); } to { transform: translateX(-4000px); } }
+        .winner-glow { animation: winner-pulse 2s infinite alternate; }
+        @keyframes winner-pulse { 0% { box-shadow: 0 0 20px rgba(233, 195, 73, 0.2); border-color: rgba(233, 195, 73, 0.4); } 100% { box-shadow: 0 0 60px rgba(233, 195, 73, 0.6); border-color: #e9c349; transform: scale(1.05); } }
+        .particle { position: absolute; pointer-events: none; z-index: 100; }
+        .cinematic-text { text-shadow: 0 0 20px rgba(233, 195, 73, 0.5); }
+        .reveal-element { opacity: 0; transform: translateY(20px); transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .revealed { opacity: 1; transform: translateY(0); }
+        body { min-height: max(884px, 100dvh); overflow: hidden; }
+        .match-detail { background: rgba(0,0,0,0.6); border-radius: 40px; padding: 16px 20px; margin-top: 20px; border-left: 4px solid #e9c349; }
     </style>
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "primary": "#c4c6d3",
-                        "secondary": "#e9c349",
-                        "surface": "#111415",
-                        "on-surface": "#e1e3e4",
-                        "on-surface-variant": "#c7c6cc",
-                        "surface-container": "#1d2021",
-                        "secondary-container": "#af8d11",
-                        "on-secondary": "#3c2f00"
-                    },
-                    "fontFamily": {
-                        "display-lg": ["Outfit"],
-                        "label-caps": ["Outfit"],
-                        "headline-sm": ["Outfit"],
-                        "body-md": ["Inter"]
-                    }
-                }
-            }
-        }
-    </script>
 </head>
 <body class="bg-surface text-on-surface font-body-md">
 
-<!-- Top App Bar (simplificada, sin acciones complejas) -->
 <nav class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-white/10">
     <div class="flex justify-between items-center h-16 px-4 w-full max-w-container-max mx-auto">
         <div class="flex items-center gap-3">
@@ -129,19 +36,14 @@
     </div>
 </nav>
 
-<!-- Main Content Canvas -->
 <main class="h-screen flex flex-col items-center justify-center pt-16 relative">
-    <!-- Background Decor -->
     <div class="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-secondary/10 rounded-full blur-[120px]"></div>
     </div>
-
     <div class="text-center px-4 mb-12" id="intro-header">
         <h2 class="font-display-lg text-[32px] text-secondary tracking-widest mb-2 uppercase">Sorteo de Rivales</h2>
         <p class="font-label-caps text-on-surface-variant text-[10px] tracking-[0.3em] uppercase">Buscando el próximo desafío...</p>
     </div>
-
-    <!-- Roulette Window -->
     <div class="relative w-full overflow-hidden py-12 flex items-center" id="roulette-window">
         <div class="absolute left-1/2 top-0 -translate-x-1/2 z-20 flex flex-col items-center h-full justify-between py-4">
             <div class="w-1 h-8 bg-secondary/50 rounded-full blur-[2px]"></div>
@@ -149,29 +51,21 @@
         </div>
         <div class="roulette-track px-[50vw]" id="roulette-track"></div>
     </div>
-
-    <!-- VS Reveal Screen (Initially Hidden) -->
     <div class="hidden absolute inset-0 flex flex-col items-center justify-center z-40 bg-surface/90 backdrop-blur-md" id="reveal-screen">
         <div class="reveal-element text-center mb-8">
             <p class="font-label-caps text-secondary tracking-[0.4em] mb-4">PRÓXIMO ENCUENTRO</p>
             <div class="flex items-center justify-center gap-6 md:gap-12">
                 <div class="flex flex-col items-center gap-4">
-                    <div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-white/20">
-                        <span class="text-5xl">⚜️</span>
-                    </div>
+                    <div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-white/20"><span class="text-5xl">⚜️</span></div>
                     <span class="font-display-lg text-xl tracking-wider">NÁPOLES</span>
                 </div>
                 <div class="font-display-lg text-5xl text-secondary cinematic-text italic">VS</div>
                 <div class="flex flex-col items-center gap-4">
-                    <div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-secondary winner-glow">
-                        <span class="text-5xl">🦁</span>
-                    </div>
+                    <div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-secondary winner-glow"><span class="text-5xl">🦁</span></div>
                     <span class="font-display-lg text-xl tracking-wider">LEONES</span>
                 </div>
             </div>
         </div>
-
-        <!-- Detalles del partido (fecha, hora, lugar) -->
         <div class="reveal-element match-detail text-center w-full max-w-md mx-4">
             <div class="flex justify-center gap-6 flex-wrap">
                 <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">event</span><span class="text-sm font-bold">SÁBADO 6 DE JULIO, 2026</span></div>
@@ -179,214 +73,159 @@
                 <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">stadium</span><span class="text-sm font-bold">CANCHA 1 · LIGA SANTA RITA</span></div>
             </div>
         </div>
-
         <div class="reveal-element space-y-6 w-full max-w-xs px-6 mt-6">
             <button id="confirmButton" class="w-full bg-secondary text-on-secondary py-4 rounded-lg font-display-lg tracking-widest text-sm premium-glow uppercase">Confirmar Desafío</button>
         </div>
     </div>
-
-    <!-- Particle Container -->
     <div class="fixed inset-0 pointer-events-none z-50" id="particles"></div>
 </main>
 
 <script>
-    // Configuración del backend
-    const CONFIG = {
-        URL_GAS: "https://script.google.com/macros/s/AKfycbxTY9c7MLxaMbzCNr6WCC6TjYFCBcWXekhD7nhPSLIoGS2ZNUuBEMkJDSfvzW97cr4K/exec"
-    };
-
-    // Lista completa de rivales (para la ruleta)
+    const CONFIG = { URL_GAS: "https://script.google.com/macros/s/AKfycbxTY9c7MLxaMbzCNr6WCC6TjYFCBcWXekhD7nhPSLIoGS2ZNUuBEMkJDSfvzW97cr4K/exec" };
     const rivals = [
-        { name: "LEONES", icon: "🦁", power: "ALTO" },
-        { name: "IDEAL", icon: "⚡", power: "MEDIO" },
-        { name: "BARZA", icon: "🔵🔴", power: "EXTREMO" },
-        { name: "SAN MARTIN", icon: "🏰", power: "MEDIO" },
-        { name: "INDEPENDIENTE", icon: "🔥", power: "ALTO" },
-        { name: "VODKILA", icon: "🍺", power: "MEDIO" },
-        { name: "CHELSEA", icon: "💙", power: "ALTO" },
-        { name: "JUVENTUD DE AMERICA", icon: "🟡🔴", power: "EXTREMO" },
-        { name: "JUVENTUS", icon: "⚪⚫", power: "ALTO" },
-        { name: "FRANCO CANADIENSE", icon: "🍁", power: "MEDIO" }
+        { name: "LEONES", icon: "🦁", power: "ALTO" }, { name: "IDEAL", icon: "⚡", power: "MEDIO" },
+        { name: "BARZA", icon: "🔵🔴", power: "EXTREMO" }, { name: "SAN MARTIN", icon: "🏰", power: "MEDIO" },
+        { name: "INDEPENDIENTE", icon: "🔥", power: "ALTO" }, { name: "VODKILA", icon: "🍺", power: "MEDIO" },
+        { name: "CHELSEA", icon: "💙", power: "ALTO" }, { name: "JUVENTUD DE AMERICA", icon: "🟡🔴", power: "EXTREMO" },
+        { name: "JUVENTUS", icon: "⚪⚫", power: "ALTO" }, { name: "FRANCO CANADIENSE", icon: "🍁", power: "MEDIO" }
     ];
 
-    // Obtener datos del jugador desde localStorage (debe venir del login)
     let jugadorSesion = null;
-    try {
-        jugadorSesion = JSON.parse(localStorage.getItem('jugador_actual'));
-    } catch(e) { console.warn(e); }
+    try { jugadorSesion = JSON.parse(localStorage.getItem('jugador_actual')); } catch(e) { console.warn(e); }
+    if (!jugadorSesion || !jugadorSesion.cedula) { window.location.href = 'login.html'; }
 
-    if (!jugadorSesion || !jugadorSesion.cedula) {
-        // Si no hay sesión, redirigir al login (puedes ajustar la ruta)
-        window.location.href = 'login.html';
+    const cedula = jugadorSesion.cedula;
+    const categoria = jugadorSesion.categoria || 'hombres';
+
+    // Verificar si ya confirmó el partido antes de mostrar la ruleta
+    async function verificarConfirmacionPrevia() {
+        try {
+            const url = `${CONFIG.URL_GAS}?action=verificarConfirmacionPartido&cedula=${encodeURIComponent(cedula)}`;
+            const resp = await fetch(url);
+            const data = await resp.json();
+            if (data.confirmed) {
+                // Ya confirmó, ir directamente al perfil
+                window.location.href = 'perfil.html';
+                return true;
+            }
+            return false;
+        } catch(e) {
+            console.error(e);
+            return false;
+        }
     }
 
-    const cedulaJugador = jugadorSesion.cedula;
-    const nombreJugador = (jugadorSesion.primerNombre || '') + ' ' + (jugadorSesion.apellidos || '');
-    const categoriaJugador = jugadorSesion.categoria || 'hombres';
+    (async function() {
+        const yaConfirmo = await verificarConfirmacionPrevia();
+        if (yaConfirmo) return;
 
-    // Construir datos del partido
-    const fechaPartido = "2026-07-06";  // Formato YYYY-MM-DD para la hoja
-    const rivalFijo = "LEONES";
-    const horaPartido = "12:00";
-    const lugar = "CANCHA 1 - LIGA SANTA RITA";
+        // Si no ha confirmado, mostrar ruleta y continuar
+        iniciarRuleta();
+    })();
 
-    // Elementos del DOM
-    const track = document.getElementById('roulette-track');
-    const revealScreen = document.getElementById('reveal-screen');
-    const revealElements = document.querySelectorAll('.reveal-element');
-    const introHeader = document.getElementById('intro-header');
-    const rouletteWindow = document.getElementById('roulette-window');
+    function iniciarRuleta() {
+        const track = document.getElementById('roulette-track');
+        const revealScreen = document.getElementById('reveal-screen');
+        const revealElements = document.querySelectorAll('.reveal-element');
+        const introHeader = document.getElementById('intro-header');
+        const rouletteWindow = document.getElementById('roulette-window');
 
-    // Poblar la ruleta con muchas tarjetas para efecto infinito
-    function createCard(rival) {
-        const div = document.createElement('div');
-        div.className = 'flex-shrink-0 w-48 h-64 glass-card rounded-xl p-6 flex flex-col items-center justify-center border border-white/10';
-        div.innerHTML = `
-            <div class="w-20 h-20 bg-surface-container rounded-full flex items-center justify-center mb-4 border border-white/5">
-                <span class="text-5xl">${rival.icon}</span>
-            </div>
-            <h3 class="font-display-lg text-lg text-on-surface">${rival.name}</h3>
-            <p class="font-label-caps text-[10px] text-on-surface-variant uppercase mt-1">Poder: ${rival.power}</p>
-        `;
-        return div;
-    }
-
-    for (let i = 0; i < 50; i++) {
-        track.appendChild(createCard(rivals[i % rivals.length]));
-    }
-
-    // Iniciar animación de la ruleta
-    setTimeout(() => {
-        track.classList.add('spinning');
+        for (let i = 0; i < 50; i++) {
+            const rival = rivals[i % rivals.length];
+            const div = document.createElement('div');
+            div.className = 'flex-shrink-0 w-48 h-64 glass-card rounded-xl p-6 flex flex-col items-center justify-center border border-white/10';
+            div.innerHTML = `<div class="w-20 h-20 bg-surface-container rounded-full flex items-center justify-center mb-4 border border-white/5"><span class="text-5xl">${rival.icon}</span></div><h3 class="font-display-lg text-lg text-on-surface">${rival.name}</h3><p class="font-label-caps text-[10px] text-on-surface-variant uppercase mt-1">Poder: ${rival.power}</p>`;
+            track.appendChild(div);
+        }
 
         setTimeout(() => {
-            track.classList.remove('spinning');
-            track.classList.add('slowing');
-
+            track.classList.add('spinning');
             setTimeout(() => {
-                rouletteWindow.style.opacity = '0';
-                rouletteWindow.style.transition = 'opacity 1s';
-                introHeader.style.opacity = '0';
-                introHeader.style.transition = 'opacity 1s';
-
+                track.classList.remove('spinning');
+                track.classList.add('slowing');
                 setTimeout(() => {
-                    revealScreen.classList.remove('hidden');
+                    rouletteWindow.style.opacity = '0';
+                    rouletteWindow.style.transition = 'opacity 1s';
+                    introHeader.style.opacity = '0';
+                    introHeader.style.transition = 'opacity 1s';
                     setTimeout(() => {
-                        revealElements.forEach((el, index) => {
-                            setTimeout(() => el.classList.add('revealed'), index * 200);
-                        });
-                        createParticles();
-                    }, 100);
-                }, 800);
+                        revealScreen.classList.remove('hidden');
+                        setTimeout(() => {
+                            revealElements.forEach((el, index) => setTimeout(() => el.classList.add('revealed'), index * 200));
+                            crearParticulas();
+                        }, 100);
+                    }, 800);
+                }, 3000);
             }, 3000);
-        }, 3000);
-    }, 500);
+        }, 500);
+    }
 
-    function createParticles() {
+    function crearParticulas() {
         const container = document.getElementById('particles');
-        const particleCount = 70;
-        const colors = ['#e9c349', '#ffffff', '#af8d11'];
-
-        for (let i = 0; i < particleCount; i++) {
+        const colores = ['#e9c349', '#ffffff', '#af8d11'];
+        for (let i = 0; i < 70; i++) {
             const p = document.createElement('div');
-            const size = Math.random() * 5 + 2;
             p.className = 'particle';
+            const size = Math.random() * 5 + 2;
             p.style.width = `${size}px`;
             p.style.height = `${size}px`;
-            p.style.background = colors[Math.floor(Math.random() * colors.length)];
+            p.style.background = colores[Math.floor(Math.random() * colores.length)];
             p.style.left = '50%';
             p.style.top = '50%';
             p.style.borderRadius = '50%';
-            const angle = Math.random() * Math.PI * 2;
-            const velocity = Math.random() * 400 + 150;
-            const tx = Math.cos(angle) * velocity;
-            const ty = Math.sin(angle) * velocity;
+            const angulo = Math.random() * Math.PI * 2;
+            const velocidad = Math.random() * 400 + 150;
+            const tx = Math.cos(angulo) * velocidad;
+            const ty = Math.sin(angulo) * velocidad;
             container.appendChild(p);
             p.animate([
                 { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
                 { transform: `translate(${tx}px, ${ty}px) scale(0)`, opacity: 0 }
-            ], {
-                duration: Math.random() * 1500 + 1000,
-                easing: 'cubic-bezier(0, .9, .57, 1)',
-                fill: 'forwards'
-            });
+            ], { duration: Math.random() * 1500 + 1000, easing: 'cubic-bezier(0, .9, .57, 1)', fill: 'forwards' });
         }
     }
 
-    // Función para guardar la confirmación del partido en la hoja "Partidos Hombres"
     async function guardarPartido() {
         const btn = document.getElementById('confirmButton');
-        if (!btn) return;
+        if (!btn || btn.disabled) return;
         btn.disabled = true;
         btn.innerText = 'GUARDANDO...';
 
-        const payload = {
+        const fecha = "2026-07-06";
+        const rival = "LEONES";
+        const hora = "12:00";
+        const lugar = "CANCHA 1 - LIGA SANTA RITA";
+        const params = new URLSearchParams({
             action: 'guardarPartido',
-            cedula: cedulaJugador,
-            nombre: nombreJugador,
-            categoria: categoriaJugador,
-            rival: rivalFijo,
-            fecha: fechaPartido,
-            hora: horaPartido,
+            cedula: cedula,
+            categoria: categoria,
+            rival: rival,
+            fecha: fecha,
+            hora: hora,
             lugar: lugar,
-            // Campos solicitados para la hoja "Partidos Hombres"
-            amarillas: 0,
-            rojas: 0,
-            goles: 0,
-            valor_vocalia: 0,
-            estado: 'CONFIRMADO',
-            vocalias_pendientes: 0,
-            puntualidad: 0,
-            companerismo: 0,
-            respeto: 0,
-            humildad: 0
-        };
-
-        try {
-            const response = await fetch(CONFIG.URL_GAS, {
-                method: 'POST',
-                mode: 'no-cors', // Para simplificar, pero puedes usar GET si el backend lo soporta
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            // Como usamos no-cors no podemos leer la respuesta fácilmente.
-            // Se recomienda usar GET con parámetros en la URL.
-            // Alternativa: usar GET para mayor compatibilidad.
-            // Realmente, para garantizar el guardado, usaremos un GET con parámetros.
-        } catch(e) { console.error(e); }
-
-        // Método alternativo GET (más fiable con Apps Script)
-        const urlParams = new URLSearchParams({
-            action: 'guardarPartido',
-            cedula: cedulaJugador,
-            nombre: nombreJugador,
-            categoria: categoriaJugador,
-            rival: rivalFijo,
-            fecha: fechaPartido,
-            amarillas: 0,
-            rojas: 0,
-            goles: 0,
-            valor_vocalia: 0,
-            estado: 'CONFIRMADO',
-            vocalias_pendientes: 0,
-            puntualidad: 0,
-            companerismo: 0,
-            respeto: 0,
-            humildad: 0
+            amarillas: '0', rojas: '0', goles: '0', valor_vocalia: '0',
+            estado: 'CONFIRMADO', vocalias_pendientes: '0',
+            puntualidad: '0', companerismo: '0', respeto: '0', humildad: '0'
         });
-        const urlGet = `${CONFIG.URL_GAS}?${urlParams.toString()}`;
+        const url = `${CONFIG.URL_GAS}?${params.toString()}`;
         try {
-            await fetch(urlGet);
-            alert('¡Confirmación guardada! Serás redirigido a tu perfil.');
-            window.location.href = 'perfil.html'; // Redirige al perfil del jugador
-        } catch (err) {
-            alert('Error al guardar. Intenta de nuevo.');
+            const response = await fetch(url);
+            const result = await response.json();
+            if (result.success) {
+                alert('¡Partido confirmado! Redirigiendo a tu perfil...');
+                window.location.href = 'perfil.html';
+            } else {
+                alert('Error: ' + (result.message || 'Intenta de nuevo.'));
+                btn.disabled = false;
+                btn.innerText = 'Confirmar Desafío';
+            }
+        } catch (error) {
+            alert('Error de conexión. Revisa tu red.');
             btn.disabled = false;
             btn.innerText = 'Confirmar Desafío';
         }
     }
 
-    // Asignar evento al botón cuando aparezca
     setTimeout(() => {
         const confirmBtn = document.getElementById('confirmButton');
         if (confirmBtn) confirmBtn.addEventListener('click', guardarPartido);
