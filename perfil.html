@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-    /* ========== ESTILOS EXCLUSIVOS DE LA RULETA (Tailwind + complementos) ========== */
+    /* ========== ESTILOS EXCLUSIVOS DE LA RULETA ========== */
     .material-symbols-outlined {
         font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
@@ -72,9 +72,33 @@
         transform: translateY(0);
     }
     body.ruleta-mode {
-        background-color: #111415;
+        background: #111415;
         overflow: hidden;
         min-height: 100dvh;
+    }
+    /* Tarjeta de información del partido dentro de la ruleta */
+    .match-info-card {
+        background: rgba(0,0,0,0.6);
+        border-radius: 60px;
+        padding: 12px 20px;
+        margin-top: 15px;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        border-left: 4px solid #e9c349;
+    }
+    .match-info-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #e1e3e4;
+    }
+    .match-info-item i {
+        color: #e9c349;
+        font-size: 1rem;
     }
 
     /* ========== ESTILOS EXCLUSIVOS DEL PERFIL ========== */
@@ -355,8 +379,8 @@ function renderProgressCircle(valor, color) {
 }
 
 async function mostrarPerfil() {
-    document.body.className = ''; // Quita modo ruleta
-    document.body.style.background = ''; // se aplicará el radial desde .perfil-root
+    document.body.className = '';
+    document.body.style.background = '';
     const container = document.getElementById('dynamicContent');
     container.innerHTML = `<div class="perfil-root"><div class="perfil-container"><div class="soccer-loading-container"><div class="soccer-spinner"><i class="fa-solid fa-futbol"></i></div><div class="soccer-loading-text">Cargando perfil...</div></div></div></div>`;
     try {
@@ -446,7 +470,7 @@ function cerrarSesion() {
     }
 }
 
-// ==================== RULETA (diseño exacto del primer HTML) ====================
+// ==================== RULETA (diseño original con datos del partido) ====================
 function mostrarRuleta() {
     document.body.className = 'ruleta-mode';
     document.body.style.background = '#111415';
@@ -482,7 +506,13 @@ function mostrarRuleta() {
                         </div>
                     </div>
                 </div>
-                <div class="reveal-element space-y-6 w-full max-w-xs px-6">
+                <!-- Información del partido -->
+                <div class="reveal-element match-info-card" style="margin-top: 20px;">
+                    <div class="match-info-item"><i class="fa-regular fa-calendar-alt"></i> SÁBADO 6 DE JUNIO, 2026</div>
+                    <div class="match-info-item"><i class="fa-regular fa-clock"></i> 12:00 HORAS</div>
+                    <div class="match-info-item"><i class="fa-solid fa-location-dot"></i> CANCHA 1 - LIGA SANTA RITA</div>
+                </div>
+                <div class="reveal-element space-y-6 w-full max-w-xs px-6 mt-6">
                     <div class="glass-card p-6 rounded-2xl border border-secondary/30">
                         <div class="flex justify-between items-center mb-4">
                             <span class="font-label-caps text-[10px] text-on-surface-variant uppercase">Nivel de Riesgo</span>
@@ -585,7 +615,7 @@ async function guardarPartido() {
         categoria: categoria,
         nombre: nombreCompleto,
         rival: 'LEONES',
-        fecha: '2026-07-06',
+        fecha: '2026-06-06',
         hora: '12:00',
         lugar: 'CANCHA 1 - LIGA SANTA RITA',
         amarillas: '0',
@@ -647,7 +677,6 @@ async function enviarFirmaTerminos() {
         const r = await resp.json();
         if (r.success) {
             document.getElementById('modalTerms').style.display = 'none';
-            // Después de aceptar términos, continuar flujo
             const yaConfirmo = await verificarConfirmacionPrevia();
             if (yaConfirmo) mostrarPerfil();
             else mostrarRuleta();
@@ -675,7 +704,7 @@ async function verificarTerminos() {
 // ==================== FLUJO PRINCIPAL ====================
 (async function() {
     const terminosOk = await verificarTerminos();
-    if (!terminosOk) return; // modal abierto, espera respuesta
+    if (!terminosOk) return;
     const yaConfirmo = await verificarConfirmacionPrevia();
     if (yaConfirmo) mostrarPerfil();
     else mostrarRuleta();
