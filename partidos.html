@@ -144,6 +144,8 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .match-date {
@@ -491,11 +493,6 @@ body {
   gap: 8px;
 }
 
-.toast::before {
-  content: "✓";
-  font-weight: bold;
-}
-
 .empty-state {
   text-align: center;
   padding: 60px 20px;
@@ -510,6 +507,16 @@ body {
 .empty-state p {
   color: #94a3b8;
   font-size: 1rem;
+}
+
+.vocalia-badge {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin-left: 8px;
 }
 
 @media(min-width: 700px) {
@@ -595,7 +602,7 @@ body {
     </select>
     
     <label>📝 Vocalía</label>
-    <input type="text" id="inputVocalia" placeholder="Vocalía asignada">
+    <input type="text" id="inputVocalia" placeholder="Ej: 17, 18, o nombre">
     
     <div class="modal-actions">
       <button class="btn-cancel" id="btnCancelar">Cancelar</button>
@@ -633,7 +640,7 @@ async function cargarDatosGET(accion) {
 
 async function enviarDatosPOST(accion, datos) {
   try {
-    const response = await fetch(WEBAPP_URL, {
+    await fetch(WEBAPP_URL, {
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
@@ -694,20 +701,50 @@ async function cargarPartidos() {
   }
 }
 
+// =========================================
+// FUNCIÓN CORREGIDA PARA FORMATEAR HORA
+// =========================================
 function formatearHora(horaStr) {
   if (!horaStr) return '--:--';
-  // Si ya viene en formato HH:MM, devolverlo igual
-  if (horaStr.match(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/)) {
+  
+  // Si ya viene en formato HH:MM (ej: "12:00", "20:30")
+  if (typeof horaStr === 'string' && horaStr.match(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/)) {
     return horaStr;
   }
-  // Si viene en formato ISO o raro, extraer la hora
-  try {
-    const fecha = new Date(`1970-01-01T${horaStr}`);
-    if (!isNaN(fecha.getTime())) {
-      return fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false });
+  
+  // Si es un número (fecha de Excel/Google Sheets)
+  if (typeof horaStr === 'number') {
+    // Excel/Sheet guarda horas como fracción de día
+    // 0.5 = 12:00, 0.25 = 06:00, etc.
+    const totalSegundos = Math.round(horaStr * 86400);
+    const horas = Math.floor(totalSegundos / 3600);
+    const minutos = Math.floor((totalSegundos % 3600) / 60);
+    return `${horas.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}`;
+  }
+  
+  // Si es string con formato ISO (ej: "1899-12-30T12:00:00.000Z")
+  if (typeof horaStr === 'string' && horaStr.includes('T')) {
+    try {
+      const fecha = new Date(horaStr);
+      if (!isNaN(fecha.getTime())) {
+        return fecha.toLocaleTimeString('es-ES', { 
+          hour: '2-digit', 
+          minute: '2-digit', 
+          hour12: false 
+        });
+      }
+    } catch(e) {}
+  }
+  
+  // Si es string con formato "HH:MM:SS"
+  if (typeof horaStr === 'string' && horaStr.includes(':')) {
+    const partes = horaStr.split(':');
+    if (partes.length >= 2) {
+      return `${partes[0].padStart(2, '0')}:${partes[1].padStart(2, '0')}`;
     }
-  } catch(e) {}
-  return horaStr.substring(0, 5) || '--:--';
+  }
+  
+  return horaStr.toString().substring(0, 5) || '--:--';
 }
 
 function formatearFecha(fechaStr) {
@@ -768,7 +805,7 @@ function renderPartidos() {
           <span class="material-symbols-outlined">location_on</span>
           <span>${partido.lugar || 'LIGA SANTA RITA'}</span>
         </div>
-        ${partido.vocalia ? `<div class="info-item"><span class="material-symbols-outlined">assignment</span><span>${partido.vocalia}</span></div>` : ''}
+        ${partido.vocalia ? `<div class="info-item"><span class="material-symbols-outlined">assignment</span><span>Vocalía: ${partido.vocalia}</span></div>` : ''}
       </div>
       <div class="card-actions">
         <button class="btn-edit" data-id="${partido.id}" data-fila="${partido.fila}">
