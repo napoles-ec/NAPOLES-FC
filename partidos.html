@@ -1,624 +1,596 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Partidos - Nápoles F.C.</title>
-
-<link
-href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-rel="stylesheet">
-
-<link
-href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
-rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
 <style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
-body{
-
-    font-family:'Inter',sans-serif;
-
-    background:#f3f6fb;
-
-    color:#111827;
-
-    min-height:100vh;
-
-    overflow-x:hidden;
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f3f6fb;
+  color: #111827;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-/* =========================================
-HEADER
-========================================= */
-
-.topbar{
-
-    position:sticky;
-
-    top:0;
-
-    z-index:100;
-
-    background:rgba(255,255,255,.92);
-
-    backdrop-filter:blur(14px);
-
-    border-bottom:1px solid #e5e7eb;
-
-    padding:16px 18px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:space-between;
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid #e5e7eb;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.top-left{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:14px;
+.top-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
-.admin-info h1{
-
-    font-size:1.1rem;
-
-    font-weight:800;
+.admin-info h1 {
+  font-size: 1.1rem;
+  font-weight: 800;
 }
 
-.admin-info p{
-
-    font-size:.85rem;
-
-    color:#6b7280;
-
-    margin-top:2px;
+.admin-info p {
+  font-size: .85rem;
+  color: #6b7280;
+  margin-top: 2px;
 }
 
-.avatar{
-
-    width:46px;
-    height:46px;
-
-    border-radius:16px;
-
-    background:linear-gradient(
-    135deg,
-    #16a34a,
-    #4ade80
-    );
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    color:#fff;
-
-    font-weight:800;
-
-    font-size:1rem;
+.avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #16a34a, #4ade80);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 800;
+  font-size: 1rem;
 }
 
-/* =========================================
-MATCHES
-========================================= */
-
-.matches{
-
-    padding:20px 18px 40px;
+.matches {
+  padding: 20px 18px 40px;
 }
 
-.match-card{
-
-    background:#fff;
-
-    border-radius:26px;
-
-    padding:20px;
-
-    margin-bottom:18px;
-
-    box-shadow:
-    0 10px 30px rgba(15,23,42,.05);
+.match-card {
+  background: #fff;
+  border-radius: 26px;
+  padding: 20px;
+  margin-bottom: 18px;
+  box-shadow: 0 10px 30px rgba(15,23,42,.05);
+  transition: all 0.2s ease;
 }
 
-.match-top{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    margin-bottom:20px;
+.match-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
-.match-date{
-
-    background:#ecfdf5;
-
-    color:#16a34a;
-
-    padding:8px 14px;
-
-    border-radius:999px;
-
-    font-size:.82rem;
-
-    font-weight:700;
+.match-date {
+  background: #ecfdf5;
+  color: #16a34a;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: .82rem;
+  font-weight: 700;
 }
 
-.status{
-
-    background:#111827;
-
-    color:#fff;
-
-    padding:8px 14px;
-
-    border-radius:999px;
-
-    font-size:.78rem;
-
-    font-weight:700;
+.status {
+  background: #111827;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: .78rem;
+  font-weight: 700;
 }
 
-.teams{
+.status.FINALIZADO { background: #16a34a; }
+.status.PRÓXIMO { background: #2563eb; }
+.status.PENDIENTE { background: #ea580c; }
 
-    display:flex;
-
-    align-items:center;
-
-    justify-content:space-between;
-
-    margin-bottom:22px;
+.teams {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
 }
 
-.team{
-
-    display:flex;
-
-    flex-direction:column;
-
-    align-items:center;
-
-    gap:10px;
-
-    width:40%;
+.team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 40%;
 }
 
-.team-logo{
-
-    width:70px;
-    height:70px;
-
-    border-radius:22px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    color:#fff;
-
-    font-size:1.1rem;
-
-    font-weight:800;
+.team-logo {
+  width: 70px;
+  height: 70px;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 800;
 }
 
-.home{
-    background:linear-gradient(
-    135deg,
-    #2563eb,
-    #60a5fa
-    );
+.home {
+  background: linear-gradient(135deg, #2563eb, #60a5fa);
 }
 
-.away{
-    background:linear-gradient(
-    135deg,
-    #ea580c,
-    #fb923c
-    );
+.away {
+  background: linear-gradient(135deg, #ea580c, #fb923c);
 }
 
-.team h3{
-
-    font-size:1rem;
-
-    font-weight:800;
-
-    text-align:center;
+.team h3 {
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-align: center;
 }
 
-.score{
-
-    font-size:2rem;
-
-    font-weight:900;
-
-    color:#111827;
+.score {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #111827;
 }
 
-.match-info{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    margin-top:10px;
-
-    padding-top:16px;
-
-    border-top:1px solid #e5e7eb;
+.match-info {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
 }
 
-.info-item{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:8px;
-
-    color:#6b7280;
-
-    font-size:.85rem;
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+  font-size: .85rem;
 }
 
-.info-item .material-symbols-outlined{
-    font-size:20px;
+.info-item .material-symbols-outlined {
+  font-size: 20px;
 }
 
-/* =========================================
-ADD BUTTON
-========================================= */
-
-.fab{
-
-    position:fixed;
-
-    right:20px;
-    bottom:20px;
-
-    width:64px;
-    height:64px;
-
-    border:none;
-
-    border-radius:22px;
-
-    background:linear-gradient(
-    135deg,
-    #16a34a,
-    #4ade80
-    );
-
-    color:#fff;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    cursor:pointer;
-
-    box-shadow:
-    0 15px 35px rgba(22,163,74,.35);
+.card-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  justify-content: flex-end;
 }
 
-.fab .material-symbols-outlined{
-    font-size:34px;
+.btn-edit, .btn-delete {
+  padding: 8px 16px;
+  border-radius: 30px;
+  border: none;
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
 }
 
-/* =========================================
-RESPONSIVE
-========================================= */
-
-@media(min-width:700px){
-
-    .matches{
-        max-width:700px;
-        margin:auto;
-    }
+.btn-edit {
+  background: #e0e7ff;
+  color: #2563eb;
 }
 
+.btn-edit:hover {
+  background: #c7d2fe;
+}
+
+.btn-delete {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.btn-delete:hover {
+  background: #fecaca;
+}
+
+.fab {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 64px;
+  height: 64px;
+  border: none;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #16a34a, #4ade80);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 15px 35px rgba(22,163,74,.35);
+  z-index: 200;
+}
+
+.fab .material-symbols-outlined {
+  font-size: 34px;
+}
+
+/* MODAL */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 32px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.modal-content h2 {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+.modal-content input,
+.modal-content select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.modal-actions button {
+  padding: 12px 24px;
+  border-radius: 30px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-save {
+  background: #16a34a;
+  color: white;
+}
+
+.btn-cancel {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #6b7280;
+}
+
+@media(min-width: 700px) {
+  .matches {
+    max-width: 700px;
+    margin: auto;
+  }
+}
 </style>
-
 </head>
-
 <body>
 
-<!-- ======================================
-TOPBAR
-====================================== -->
-
 <header class="topbar">
-
-    <div class="top-left">
-
-        <div class="admin-info">
-
-            <h1>Partidos</h1>
-
-            <p>Nápoles F.C.</p>
-
-        </div>
-
+  <div class="top-left">
+    <div class="admin-info">
+      <h1>Partidos</h1>
+      <p>Nápoles F.C.</p>
     </div>
-
-    <div class="avatar">
-        P
-    </div>
-
+  </div>
+  <div class="avatar">P</div>
 </header>
 
-<!-- ======================================
-MATCHES
-====================================== -->
-
-<section class="matches">
-
-    <!-- MATCH -->
-
-    <div class="match-card">
-
-        <div class="match-top">
-
-            <div class="match-date">
-                12 Mayo 2026
-            </div>
-
-            <div class="status">
-                FINALIZADO
-            </div>
-
-        </div>
-
-        <div class="teams">
-
-            <div class="team">
-
-                <div class="team-logo home">
-                    NFC
-                </div>
-
-                <h3>Nápoles F.C.</h3>
-
-            </div>
-
-            <div class="score">
-                3 - 1
-            </div>
-
-            <div class="team">
-
-                <div class="team-logo away">
-                    RIV
-                </div>
-
-                <h3>River Club</h3>
-
-            </div>
-
-        </div>
-
-        <div class="match-info">
-
-            <div class="info-item">
-
-                <span class="material-symbols-outlined">
-                    schedule
-                </span>
-
-                <span>18:00</span>
-
-            </div>
-
-            <div class="info-item">
-
-                <span class="material-symbols-outlined">
-                    location_on
-                </span>
-
-                <span>Cancha Norte</span>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- MATCH -->
-
-    <div class="match-card">
-
-        <div class="match-top">
-
-            <div class="match-date">
-                18 Mayo 2026
-            </div>
-
-            <div class="status">
-                PRÓXIMO
-            </div>
-
-        </div>
-
-        <div class="teams">
-
-            <div class="team">
-
-                <div class="team-logo home">
-                    NFC
-                </div>
-
-                <h3>Nápoles F.C.</h3>
-
-            </div>
-
-            <div class="score">
-                VS
-            </div>
-
-            <div class="team">
-
-                <div class="team-logo away">
-                    ATL
-                </div>
-
-                <h3>Atléticos</h3>
-
-            </div>
-
-        </div>
-
-        <div class="match-info">
-
-            <div class="info-item">
-
-                <span class="material-symbols-outlined">
-                    schedule
-                </span>
-
-                <span>20:00</span>
-
-            </div>
-
-            <div class="info-item">
-
-                <span class="material-symbols-outlined">
-                    location_on
-                </span>
-
-                <span>Estadio Central</span>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- MATCH -->
-
-    <div class="match-card">
-
-        <div class="match-top">
-
-            <div class="match-date">
-                25 Mayo 2026
-            </div>
-
-            <div class="status">
-                PENDIENTE
-            </div>
-
-        </div>
-
-        <div class="teams">
-
-            <div class="team">
-
-                <div class="team-logo home">
-                    NFC
-                </div>
-
-                <h3>Nápoles F.C.</h3>
-
-            </div>
-
-            <div class="score">
-                VS
-            </div>
-
-            <div class="team">
-
-                <div class="team-logo away">
-                    LEO
-                </div>
-
-                <h3>Leones FC</h3>
-
-            </div>
-
-        </div>
-
-        <div class="match-info">
-
-            <div class="info-item">
-
-                <span class="material-symbols-outlined">
-                    schedule
-                </span>
-
-                <span>17:30</span>
-
-            </div>
-
-            <div class="info-item">
-
-                <span class="material-symbols-outlined">
-                    location_on
-                </span>
-
-                <span>Cancha Sur</span>
-
-            </div>
-
-        </div>
-
-    </div>
-
+<section class="matches" id="matchesContainer">
+  <div class="loading">Cargando partidos...</div>
 </section>
 
-<!-- ======================================
-ADD MATCH BUTTON
-====================================== -->
-
-<button class="fab">
-
-    <span class="material-symbols-outlined">
-        add
-    </span>
-
+<button class="fab" id="btnAgregar">
+  <span class="material-symbols-outlined">add</span>
 </button>
 
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h2 id="modalTitle">Nuevo Partido</h2>
+    <input type="date" id="inputFecha" placeholder="Fecha">
+    <input type="time" id="inputHora" placeholder="Hora">
+    <select id="selectRival">
+      <option value="">Selecciona un rival...</option>
+    </select>
+    <input type="text" id="inputLugar" placeholder="Lugar">
+    <input type="text" id="inputResultado" placeholder="Resultado (ej: 3-1 o VS)">
+    <select id="selectEstado">
+      <option value="PENDIENTE">PENDIENTE</option>
+      <option value="PRÓXIMO">PRÓXIMO</option>
+      <option value="FINALIZADO">FINALIZADO</option>
+    </select>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="btnCancelar">Cancelar</button>
+      <button class="btn-save" id="btnGuardar">Guardar</button>
+    </div>
+  </div>
+</div>
+
 <script>
+// =========================================
+// CONFIGURACIÓN
+// =========================================
+const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbyokyO8V9qw7jduav76WvQtSWjRXkNMtd4dcq2KBeUFP2FPLr90GvQj3ss9G8CsU50t/exec'; // ⚠️ CAMBIAR POR TU URL
+
+let rivalesList = [];
+let partidosList = [];
+let editandoId = null;
+let editandoFila = null;
+
+// =========================================
+// FUNCIONES DE API
+// =========================================
+async function apiCall(accion, data = {}) {
+  const response = await fetch(WEBAPP_URL, {
+    method: 'POST',
+    mode: 'no-cors', // Cambiar a 'cors' si tu Web App lo permite
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ accion, ...data })
+  });
+  const text = await response.text();
+  try {
+    return JSON.parse(text);
+  } catch(e) {
+    console.error('Error parseando respuesta:', text);
+    return { success: false, error: 'Error de comunicación' };
+  }
+}
+
+async function cargarRivales() {
+  const res = await apiCall('getRivales');
+  if (res.success && res.data) {
+    rivalesList = res.data;
+    const select = document.getElementById('selectRival');
+    select.innerHTML = '<option value="">Selecciona un rival...</option>';
+    rivalesList.forEach(r => {
+      const option = document.createElement('option');
+      option.value = r.nombre;
+      option.textContent = r.nombre;
+      select.appendChild(option);
+    });
+  }
+}
+
+async function cargarPartidos() {
+  const container = document.getElementById('matchesContainer');
+  container.innerHTML = '<div class="loading">Cargando partidos...</div>';
+  
+  const res = await apiCall('getPartidos');
+  if (res.success && res.data) {
+    partidosList = res.data;
+    renderPartidos();
+  } else {
+    container.innerHTML = '<div class="loading">Error al cargar partidos</div>';
+  }
+}
+
+function renderPartidos() {
+  const container = document.getElementById('matchesContainer');
+  if (!partidosList.length) {
+    container.innerHTML = '<div class="loading">No hay partidos programados</div>';
+    return;
+  }
+  
+  container.innerHTML = '';
+  partidosList.forEach(partido => {
+    const fechaFormateada = formatearFecha(partido.fecha);
+    const resultado = partido.resultado || 'VS';
+    const estado = partido.estado || 'PENDIENTE';
+    
+    const card = document.createElement('div');
+    card.className = 'match-card';
+    card.innerHTML = `
+      <div class="match-top">
+        <div class="match-date">${fechaFormateada}</div>
+        <div class="status ${estado}">${estado}</div>
+      </div>
+      <div class="teams">
+        <div class="team">
+          <div class="team-logo home">NFC</div>
+          <h3>${partido.local || 'Nápoles F.C.'}</h3>
+        </div>
+        <div class="score">${resultado}</div>
+        <div class="team">
+          <div class="team-logo away">${(partido.rival || 'RIV').substring(0,3).toUpperCase()}</div>
+          <h3>${partido.rival || 'Rival'}</h3>
+        </div>
+      </div>
+      <div class="match-info">
+        <div class="info-item">
+          <span class="material-symbols-outlined">schedule</span>
+          <span>${partido.hora || '--:--'}</span>
+        </div>
+        <div class="info-item">
+          <span class="material-symbols-outlined">location_on</span>
+          <span>${partido.lugar || 'Sin definir'}</span>
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="btn-edit" data-id="${partido.id}" data-fila="${partido.fila}">
+          <span class="material-symbols-outlined">edit</span> Editar
+        </button>
+        <button class="btn-delete" data-id="${partido.id}" data-fila="${partido.fila}">
+          <span class="material-symbols-outlined">delete</span> Eliminar
+        </button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+  
+  // Eventos de botones
+  document.querySelectorAll('.btn-edit').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = parseInt(btn.dataset.id);
+      const fila = parseInt(btn.dataset.fila);
+      abrirModalEditar(id, fila);
+    });
+  });
+  
+  document.querySelectorAll('.btn-delete').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const fila = parseInt(btn.dataset.fila);
+      if (confirm('¿Eliminar este partido?')) {
+        eliminarPartido(fila);
+      }
+    });
+  });
+}
+
+function formatearFecha(fechaStr) {
+  if (!fechaStr) return 'Fecha por definir';
+  try {
+    const fecha = new Date(fechaStr);
+    return fecha.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+  } catch(e) {
+    return fechaStr;
+  }
+}
+
+function abrirModalNuevo() {
+  editandoId = null;
+  editandoFila = null;
+  document.getElementById('modalTitle').textContent = 'Nuevo Partido';
+  document.getElementById('inputFecha').value = '';
+  document.getElementById('inputHora').value = '';
+  document.getElementById('selectRival').value = '';
+  document.getElementById('inputLugar').value = '';
+  document.getElementById('inputResultado').value = 'VS';
+  document.getElementById('selectEstado').value = 'PENDIENTE';
+  document.getElementById('modal').classList.add('active');
+}
+
+function abrirModalEditar(id, fila) {
+  const partido = partidosList.find(p => p.id === id);
+  if (!partido) return;
+  
+  editandoId = id;
+  editandoFila = fila;
+  document.getElementById('modalTitle').textContent = 'Editar Partido';
+  document.getElementById('inputFecha').value = partido.fecha || '';
+  document.getElementById('inputHora').value = partido.hora || '';
+  document.getElementById('selectRival').value = partido.rival || '';
+  document.getElementById('inputLugar').value = partido.lugar || '';
+  document.getElementById('inputResultado').value = partido.resultado || 'VS';
+  document.getElementById('selectEstado').value = partido.estado || 'PENDIENTE';
+  document.getElementById('modal').classList.add('active');
+}
+
+async function guardarPartido() {
+  const partido = {
+    fecha: document.getElementById('inputFecha').value,
+    hora: document.getElementById('inputHora').value,
+    rival: document.getElementById('selectRival').value,
+    local: 'NAPOLES F.C.',
+    lugar: document.getElementById('inputLugar').value,
+    resultado: document.getElementById('inputResultado').value || 'VS',
+    estado: document.getElementById('selectEstado').value
+  };
+  
+  let res;
+  if (editandoFila) {
+    partido.fila = editandoFila;
+    res = await apiCall('actualizar', { partido });
+  } else {
+    res = await apiCall('agregar', { partido });
+  }
+  
+  if (res.success) {
+    cerrarModal();
+    await cargarPartidos();
+  } else {
+    alert('Error: ' + (res.error || 'No se pudo guardar'));
+  }
+}
+
+async function eliminarPartido(fila) {
+  const res = await apiCall('eliminar', { fila });
+  if (res.success) {
+    await cargarPartidos();
+  } else {
+    alert('Error al eliminar: ' + (res.error || 'Intenta de nuevo'));
+  }
+}
+
+function cerrarModal() {
+  document.getElementById('modal').classList.remove('active');
+}
 
 // =========================================
 // VALIDAR ADMIN
 // =========================================
-
-if(
-    localStorage.getItem('admin_activo')
-    !== 'true'
-){
-    window.location.href = './login.html';
+if (localStorage.getItem('admin_activo') !== 'true') {
+  window.location.href = './login.html';
 }
 
+// =========================================
+// INICIALIZAR
+// =========================================
+document.addEventListener('DOMContentLoaded', async () => {
+  await cargarRivales();
+  await cargarPartidos();
+  
+  document.getElementById('btnAgregar').addEventListener('click', abrirModalNuevo);
+  document.getElementById('btnGuardar').addEventListener('click', guardarPartido);
+  document.getElementById('btnCancelar').addEventListener('click', cerrarModal);
+  document.getElementById('modal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('modal')) cerrarModal();
+  });
+});
 </script>
-
 </body>
 </html>
