@@ -22,6 +22,36 @@ body {
   overflow-x: hidden;
 }
 
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #e5e7eb;
+  border-top-color: #16a34a;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 20px auto;
+}
+
 .topbar {
   position: sticky;
   top: 0;
@@ -76,6 +106,7 @@ body {
   margin-bottom: 18px;
   box-shadow: 0 10px 30px rgba(15,23,42,.05);
   transition: all 0.2s ease;
+  animation: fadeInUp 0.4s ease;
 }
 
 .match-top {
@@ -234,7 +265,6 @@ body {
   font-size: 34px;
 }
 
-/* MODAL */
 .modal {
   display: none;
   position: fixed;
@@ -279,6 +309,14 @@ body {
   font-size: 0.9rem;
 }
 
+.modal-content label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: block;
+  color: #374151;
+}
+
 .modal-actions {
   display: flex;
   gap: 12px;
@@ -304,10 +342,16 @@ body {
   color: #374151;
 }
 
-.loading {
+.loading-container {
   text-align: center;
-  padding: 40px;
+  padding: 60px 20px;
+}
+
+.loading-text {
   color: #6b7280;
+  font-size: 0.9rem;
+  margin-top: 16px;
+  animation: pulse 1.5s ease infinite;
 }
 
 @media(min-width: 700px) {
@@ -331,29 +375,47 @@ body {
 </header>
 
 <section class="matches" id="matchesContainer">
-  <div class="loading">Cargando partidos...</div>
+  <div class="loading-container">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Cargando partidos y rivales...</div>
+  </div>
 </section>
 
 <button class="fab" id="btnAgregar">
   <span class="material-symbols-outlined">add</span>
 </button>
 
-<!-- MODAL -->
 <div class="modal" id="modal">
   <div class="modal-content">
     <h2 id="modalTitle">Nuevo Partido</h2>
-    <input type="date" id="inputFecha" placeholder="Fecha">
-    <input type="time" id="inputHora" placeholder="Hora">
+    
+    <label>📅 Fecha</label>
+    <input type="date" id="inputFecha">
+    
+    <label>⏰ Hora</label>
+    <input type="time" id="inputHora">
+    
+    <label>⚽ Rival</label>
     <select id="selectRival">
-      <option value="">Selecciona un rival...</option>
+      <option value="">Cargando rivales...</option>
     </select>
-    <input type="text" id="inputLugar" placeholder="Lugar">
-    <input type="text" id="inputResultado" placeholder="Resultado (ej: 3-1 o VS)">
+    
+    <label>🏟️ Lugar</label>
+    <select id="selectLugar">
+      <option value="LIGA SANTA RITA - Cancha 1">LIGA SANTA RITA - Cancha 1</option>
+      <option value="LIGA SANTA RITA - Cancha 2">LIGA SANTA RITA - Cancha 2</option>
+    </select>
+    
+    <label>📊 Resultado</label>
+    <input type="text" id="inputResultado" placeholder="Ej: 3-1 | VS" value="VS">
+    
+    <label>🏁 Estado</label>
     <select id="selectEstado">
-      <option value="PENDIENTE">PENDIENTE</option>
-      <option value="PRÓXIMO">PRÓXIMO</option>
-      <option value="FINALIZADO">FINALIZADO</option>
+      <option value="PENDIENTE">⏳ PENDIENTE</option>
+      <option value="PRÓXIMO">🔥 PRÓXIMO</option>
+      <option value="FINALIZADO">✅ FINALIZADO</option>
     </select>
+    
     <div class="modal-actions">
       <button class="btn-cancel" id="btnCancelar">Cancelar</button>
       <button class="btn-save" id="btnGuardar">Guardar</button>
@@ -363,9 +425,9 @@ body {
 
 <script>
 // =========================================
-// CONFIGURACIÓN
+// CONFIGURACIÓN - URL DE TU WEB APP
 // =========================================
-const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbyokyO8V9qw7jduav76WvQtSWjRXkNMtd4dcq2KBeUFP2FPLr90GvQj3ss9G8CsU50t/exec'; // ⚠️ CAMBIAR POR TU URL
+const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbyokyO8V9qw7jduav76WvQtSWjRXkNMtd4dcq2KBeUFP2FPLr90GvQj3ss9G8CsU50t/exec';
 
 let rivalesList = [];
 let partidosList = [];
@@ -376,53 +438,73 @@ let editandoFila = null;
 // FUNCIONES DE API
 // =========================================
 async function apiCall(accion, data = {}) {
-  const response = await fetch(WEBAPP_URL, {
-    method: 'POST',
-    mode: 'no-cors', // Cambiar a 'cors' si tu Web App lo permite
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ accion, ...data })
-  });
-  const text = await response.text();
   try {
-    return JSON.parse(text);
-  } catch(e) {
-    console.error('Error parseando respuesta:', text);
-    return { success: false, error: 'Error de comunicación' };
+    const response = await fetch(WEBAPP_URL, {
+      method: 'POST',
+      mode: 'cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ accion, ...data })
+    });
+    const resultado = await response.json();
+    return resultado;
+  } catch(error) {
+    console.error('Error en apiCall:', error);
+    return { success: false, error: error.message };
   }
 }
 
 async function cargarRivales() {
   const res = await apiCall('getRivales');
-  if (res.success && res.data) {
+  if (res.success && res.data && res.data.length > 0) {
     rivalesList = res.data;
-    const select = document.getElementById('selectRival');
-    select.innerHTML = '<option value="">Selecciona un rival...</option>';
-    rivalesList.forEach(r => {
-      const option = document.createElement('option');
-      option.value = r.nombre;
-      option.textContent = r.nombre;
-      select.appendChild(option);
-    });
+  } else {
+    // Datos de respaldo por si la hoja está vacía
+    rivalesList = [
+      { nombre: 'IDEAL', local: 'NAPOLES F.C.' },
+      { nombre: 'BARZA', local: 'NAPOLES F.C.' },
+      { nombre: 'SAN MARTIN', local: 'NAPOLES F.C.' },
+      { nombre: 'INDEPENDIENTE', local: 'NAPOLES F.C.' },
+      { nombre: 'VODKILA', local: 'NAPOLES F.C.' },
+      { nombre: 'CHELSEA', local: 'NAPOLES F.C.' },
+      { nombre: 'JUVENTUD DE AMERICA', local: 'NAPOLES F.C.' },
+      { nombre: 'JUVENTUS', local: 'NAPOLES F.C.' },
+      { nombre: 'LEONES', local: 'NAPOLES F.C.' },
+      { nombre: 'FRANCO CANADIENSE', local: 'NAPOLES F.C.' }
+    ];
   }
+  
+  const select = document.getElementById('selectRival');
+  select.innerHTML = '<option value="">Selecciona un rival...</option>';
+  rivalesList.forEach(rival => {
+    const option = document.createElement('option');
+    option.value = rival.nombre;
+    option.textContent = rival.nombre;
+    select.appendChild(option);
+  });
 }
 
 async function cargarPartidos() {
   const container = document.getElementById('matchesContainer');
-  container.innerHTML = '<div class="loading">Cargando partidos...</div>';
+  container.innerHTML = `
+    <div class="loading-container">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">Cargando partidos...</div>
+    </div>
+  `;
   
   const res = await apiCall('getPartidos');
   if (res.success && res.data) {
     partidosList = res.data;
     renderPartidos();
   } else {
-    container.innerHTML = '<div class="loading">Error al cargar partidos</div>';
+    container.innerHTML = '<div class="loading-container"><div class="loading-text">❌ Error al cargar partidos</div></div>';
   }
 }
 
 function renderPartidos() {
   const container = document.getElementById('matchesContainer');
-  if (!partidosList.length) {
-    container.innerHTML = '<div class="loading">No hay partidos programados</div>';
+  if (!partidosList || partidosList.length === 0) {
+    container.innerHTML = '<div class="loading-container"><div class="loading-text">📋 No hay partidos programados</div></div>';
     return;
   }
   
@@ -431,6 +513,7 @@ function renderPartidos() {
     const fechaFormateada = formatearFecha(partido.fecha);
     const resultado = partido.resultado || 'VS';
     const estado = partido.estado || 'PENDIENTE';
+    const abrevRival = partido.rival ? partido.rival.substring(0, 3).toUpperCase() : 'RIV';
     
     const card = document.createElement('div');
     card.className = 'match-card';
@@ -442,11 +525,11 @@ function renderPartidos() {
       <div class="teams">
         <div class="team">
           <div class="team-logo home">NFC</div>
-          <h3>${partido.local || 'Nápoles F.C.'}</h3>
+          <h3>${partido.local || 'NAPOLES F.C.'}</h3>
         </div>
         <div class="score">${resultado}</div>
         <div class="team">
-          <div class="team-logo away">${(partido.rival || 'RIV').substring(0,3).toUpperCase()}</div>
+          <div class="team-logo away">${abrevRival}</div>
           <h3>${partido.rival || 'Rival'}</h3>
         </div>
       </div>
@@ -457,7 +540,7 @@ function renderPartidos() {
         </div>
         <div class="info-item">
           <span class="material-symbols-outlined">location_on</span>
-          <span>${partido.lugar || 'Sin definir'}</span>
+          <span>${partido.lugar || 'LIGA SANTA RITA'}</span>
         </div>
       </div>
       <div class="card-actions">
@@ -472,7 +555,6 @@ function renderPartidos() {
     container.appendChild(card);
   });
   
-  // Eventos de botones
   document.querySelectorAll('.btn-edit').forEach(btn => {
     btn.addEventListener('click', () => {
       const id = parseInt(btn.dataset.id);
@@ -508,7 +590,7 @@ function abrirModalNuevo() {
   document.getElementById('inputFecha').value = '';
   document.getElementById('inputHora').value = '';
   document.getElementById('selectRival').value = '';
-  document.getElementById('inputLugar').value = '';
+  document.getElementById('selectLugar').value = 'LIGA SANTA RITA - Cancha 1';
   document.getElementById('inputResultado').value = 'VS';
   document.getElementById('selectEstado').value = 'PENDIENTE';
   document.getElementById('modal').classList.add('active');
@@ -524,7 +606,7 @@ function abrirModalEditar(id, fila) {
   document.getElementById('inputFecha').value = partido.fecha || '';
   document.getElementById('inputHora').value = partido.hora || '';
   document.getElementById('selectRival').value = partido.rival || '';
-  document.getElementById('inputLugar').value = partido.lugar || '';
+  document.getElementById('selectLugar').value = partido.lugar || 'LIGA SANTA RITA - Cancha 1';
   document.getElementById('inputResultado').value = partido.resultado || 'VS';
   document.getElementById('selectEstado').value = partido.estado || 'PENDIENTE';
   document.getElementById('modal').classList.add('active');
@@ -536,13 +618,18 @@ async function guardarPartido() {
     hora: document.getElementById('inputHora').value,
     rival: document.getElementById('selectRival').value,
     local: 'NAPOLES F.C.',
-    lugar: document.getElementById('inputLugar').value,
+    lugar: document.getElementById('selectLugar').value,
     resultado: document.getElementById('inputResultado').value || 'VS',
     estado: document.getElementById('selectEstado').value
   };
   
+  if (!partido.rival) {
+    alert('Selecciona un rival');
+    return;
+  }
+  
   let res;
-  if (editandoFila) {
+  if (editandoFila !== null) {
     partido.fila = editandoFila;
     res = await apiCall('actualizar', { partido });
   } else {
@@ -552,6 +639,7 @@ async function guardarPartido() {
   if (res.success) {
     cerrarModal();
     await cargarPartidos();
+    await cargarRivales();
   } else {
     alert('Error: ' + (res.error || 'No se pudo guardar'));
   }
@@ -561,6 +649,7 @@ async function eliminarPartido(fila) {
   const res = await apiCall('eliminar', { fila });
   if (res.success) {
     await cargarPartidos();
+    await cargarRivales();
   } else {
     alert('Error al eliminar: ' + (res.error || 'Intenta de nuevo'));
   }
