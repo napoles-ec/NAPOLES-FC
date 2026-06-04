@@ -427,7 +427,7 @@ body {
 // =========================================
 // CONFIGURACIÓN - URL DE TU WEB APP
 // =========================================
-const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxDh4PR5LTrUkYDm4cMxjQ402-mNSd2IhMWHX5mPgv_j46yNAPsAADndOeMhdTAS9yz/exec';
+const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbya-MU3TdpFWE-EexvCPatpFmcUhGWTFv_IdzKDXazOeWRYZHDEiJk-N0jHFzrzXStv/exec';
 
 let rivalesList = [];
 let partidosList = [];
@@ -442,9 +442,17 @@ async function apiCall(accion, data = {}) {
     const response = await fetch(WEBAPP_URL, {
       method: 'POST',
       mode: 'cors',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
       body: JSON.stringify({ accion, ...data })
     });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
     const resultado = await response.json();
     return resultado;
   } catch(error) {
