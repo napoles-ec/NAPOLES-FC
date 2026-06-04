@@ -16,7 +16,7 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  background: #f3f6fb;
+  background: linear-gradient(135deg, #f3f6fb 0%, #e8eef5 100%);
   color: #111827;
   min-height: 100vh;
   overflow-x: hidden;
@@ -34,11 +34,22 @@ body {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
@@ -56,10 +67,10 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(255,255,255,.92);
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid #e5e7eb;
-  padding: 16px 18px;
+  background: rgba(255,255,255,.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(229,231,235,0.5);
+  padding: 16px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -72,12 +83,16 @@ body {
 }
 
 .admin-info h1 {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 800;
+  background: linear-gradient(135deg, #16a34a, #059669);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .admin-info p {
-  font-size: .85rem;
+  font-size: .8rem;
   color: #6b7280;
   margin-top: 2px;
 }
@@ -85,7 +100,7 @@ body {
 .avatar {
   width: 46px;
   height: 46px;
-  border-radius: 16px;
+  border-radius: 20px;
   background: linear-gradient(135deg, #16a34a, #4ade80);
   display: flex;
   align-items: center;
@@ -94,11 +109,13 @@ body {
   font-weight: 800;
   font-size: 1rem;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(22,163,74,0.3);
 }
 
 .avatar:hover {
-  transform: rotate(180deg);
+  transform: rotate(180deg) scale(1.05);
+  box-shadow: 0 6px 16px rgba(22,163,74,0.4);
 }
 
 .matches {
@@ -106,13 +123,20 @@ body {
 }
 
 .match-card {
-  background: #fff;
-  border-radius: 26px;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 28px;
   padding: 20px;
   margin-bottom: 18px;
-  box-shadow: 0 10px 30px rgba(15,23,42,.05);
-  transition: all 0.2s ease;
-  animation: fadeInUp 0.4s ease;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.02);
+  transition: all 0.3s ease;
+  animation: fadeInUp 0.5s ease;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+.match-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 32px rgba(0,0,0,0.1);
 }
 
 .match-top {
@@ -123,80 +147,114 @@ body {
 }
 
 .match-date {
-  background: #ecfdf5;
-  color: #16a34a;
-  padding: 8px 14px;
-  border-radius: 999px;
-  font-size: .82rem;
+  background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+  color: #059669;
+  padding: 8px 16px;
+  border-radius: 40px;
+  font-size: .8rem;
   font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.match-date::before {
+  content: "📅";
+  font-size: 0.9rem;
 }
 
 .status {
-  background: #111827;
-  color: #fff;
-  padding: 8px 14px;
-  border-radius: 999px;
-  font-size: .78rem;
+  padding: 8px 16px;
+  border-radius: 40px;
+  font-size: .75rem;
   font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
-.status.FINALIZADO { background: #16a34a; }
-.status.PRÓXIMO { background: #2563eb; }
-.status.PENDIENTE { background: #ea580c; }
+.status.FINALIZADO { 
+  background: linear-gradient(135deg, #16a34a, #059669);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(22,163,74,0.3);
+}
+.status.PRÓXIMO { 
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.3);
+}
+.status.PENDIENTE { 
+  background: linear-gradient(135deg, #ea580c, #c2410c);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(234,88,12,0.3);
+}
 
 .teams {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 22px;
+  margin-bottom: 24px;
+  gap: 15px;
 }
 
 .team {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   width: 40%;
 }
 
 .team-logo {
-  width: 70px;
-  height: 70px;
-  border-radius: 22px;
+  width: 75px;
+  height: 75px;
+  border-radius: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 800;
+  transition: transform 0.3s ease;
+}
+
+.team-logo:hover {
+  transform: scale(1.05);
 }
 
 .home {
-  background: linear-gradient(135deg, #2563eb, #60a5fa);
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  box-shadow: 0 8px 20px rgba(37,99,235,0.3);
 }
 
 .away {
-  background: linear-gradient(135deg, #ea580c, #fb923c);
+  background: linear-gradient(135deg, #ea580c, #f97316);
+  box-shadow: 0 8px 20px rgba(234,88,12,0.3);
 }
 
 .team h3 {
   font-size: 0.9rem;
   font-weight: 800;
   text-align: center;
+  color: #1f2937;
 }
 
 .score {
-  font-size: 1.8rem;
+  font-size: 2rem;
   font-weight: 900;
-  color: #111827;
+  background: linear-gradient(135deg, #1f2937, #374151);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  padding: 0 10px;
 }
 
 .match-info {
   display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
+  justify-content: space-around;
+  margin-top: 16px;
   padding-top: 16px;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid rgba(229,231,235,0.6);
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .info-item {
@@ -205,22 +263,31 @@ body {
   gap: 8px;
   color: #6b7280;
   font-size: .85rem;
+  background: #f9fafb;
+  padding: 6px 14px;
+  border-radius: 30px;
+  transition: all 0.2s;
+}
+
+.info-item:hover {
+  background: #f3f4f6;
+  transform: translateY(-2px);
 }
 
 .info-item .material-symbols-outlined {
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .card-actions {
   display: flex;
   gap: 12px;
-  margin-top: 16px;
+  margin-top: 20px;
   justify-content: flex-end;
 }
 
 .btn-edit, .btn-delete {
-  padding: 8px 16px;
-  border-radius: 30px;
+  padding: 8px 20px;
+  border-radius: 40px;
   border: none;
   font-weight: 600;
   font-size: 0.8rem;
@@ -228,7 +295,7 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 .btn-edit {
@@ -238,6 +305,8 @@ body {
 
 .btn-edit:hover {
   background: #c7d2fe;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37,99,235,0.2);
 }
 
 .btn-delete {
@@ -247,6 +316,8 @@ body {
 
 .btn-delete:hover {
   background: #fecaca;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220,38,38,0.2);
 }
 
 .fab {
@@ -256,15 +327,21 @@ body {
   width: 64px;
   height: 64px;
   border: none;
-  border-radius: 22px;
+  border-radius: 24px;
   background: linear-gradient(135deg, #16a34a, #4ade80);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 15px 35px rgba(22,163,74,.35);
+  box-shadow: 0 8px 24px rgba(22,163,74,0.4);
+  transition: all 0.3s ease;
   z-index: 200;
+}
+
+.fab:hover {
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 12px 32px rgba(22,163,74,0.5);
 }
 
 .fab .material-symbols-outlined {
@@ -278,11 +355,12 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.5);
-  backdrop-filter: blur(4px);
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
   z-index: 1000;
   align-items: center;
   justify-content: center;
+  animation: fadeInUp 0.3s ease;
 }
 
 .modal.active {
@@ -291,34 +369,51 @@ body {
 
 .modal-content {
   background: white;
-  border-radius: 32px;
+  border-radius: 36px;
   width: 90%;
   max-width: 500px;
   max-height: 85vh;
   overflow-y: auto;
-  padding: 24px;
+  padding: 28px;
+  animation: slideIn 0.3s ease;
+  box-shadow: 0 32px 64px rgba(0,0,0,0.2);
 }
 
 .modal-content h2 {
-  margin-bottom: 20px;
-  font-size: 1.5rem;
+  margin-bottom: 24px;
+  font-size: 1.6rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #16a34a, #059669);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .modal-content input,
 .modal-content select {
   width: 100%;
-  padding: 12px;
-  margin-bottom: 16px;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 18px;
+  border: 2px solid #e5e7eb;
+  border-radius: 20px;
   font-family: 'Inter', sans-serif;
   font-size: 0.9rem;
+  transition: all 0.2s;
+  background: #f9fafb;
+}
+
+.modal-content input:focus,
+.modal-content select:focus {
+  outline: none;
+  border-color: #16a34a;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(22,163,74,0.1);
 }
 
 .modal-content label {
   font-size: 0.85rem;
   font-weight: 600;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   display: block;
   color: #374151;
 }
@@ -327,36 +422,53 @@ body {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
-  margin-top: 20px;
+  margin-top: 24px;
 }
 
 .modal-actions button {
-  padding: 12px 24px;
-  border-radius: 30px;
+  padding: 12px 28px;
+  border-radius: 40px;
   border: none;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s;
 }
 
 .btn-save {
-  background: #16a34a;
+  background: linear-gradient(135deg, #16a34a, #059669);
   color: white;
+  box-shadow: 0 4px 12px rgba(22,163,74,0.3);
+}
+
+.btn-save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(22,163,74,0.4);
+}
+
+.btn-save:disabled {
+  opacity: 0.6;
+  transform: none;
 }
 
 .btn-cancel {
-  background: #e5e7eb;
+  background: #f3f4f6;
   color: #374151;
+}
+
+.btn-cancel:hover {
+  background: #e5e7eb;
+  transform: translateY(-2px);
 }
 
 .loading-container {
   text-align: center;
-  padding: 60px 20px;
+  padding: 80px 20px;
 }
 
 .loading-text {
   color: #6b7280;
   font-size: 0.9rem;
-  margin-top: 16px;
+  margin-top: 20px;
   animation: pulse 1.5s ease infinite;
 }
 
@@ -367,11 +479,37 @@ body {
   transform: translateX(-50%);
   background: #1f2937;
   color: white;
-  padding: 10px 20px;
-  border-radius: 30px;
+  padding: 12px 24px;
+  border-radius: 40px;
   font-size: 0.85rem;
+  font-weight: 500;
   z-index: 300;
   animation: fadeInUp 0.3s ease;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toast::before {
+  content: "✓";
+  font-weight: bold;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.empty-state .material-symbols-outlined {
+  font-size: 64px;
+  color: #cbd5e1;
+  margin-bottom: 16px;
+}
+
+.empty-state p {
+  color: #94a3b8;
+  font-size: 1rem;
 }
 
 @media(min-width: 700px) {
@@ -380,6 +518,24 @@ body {
     margin: auto;
   }
 }
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
 </style>
 </head>
 <body>
@@ -387,8 +543,8 @@ body {
 <header class="topbar">
   <div class="top-left">
     <div class="admin-info">
-      <h1>Partidos</h1>
-      <p>Nápoles F.C.</p>
+      <h1>⚽ Partidos</h1>
+      <p>Nápoles F.C. | Temporada 2026</p>
     </div>
   </div>
   <div class="avatar" id="btnRefrescar">
@@ -409,7 +565,7 @@ body {
 
 <div class="modal" id="modal">
   <div class="modal-content">
-    <h2 id="modalTitle">Nuevo Partido</h2>
+    <h2 id="modalTitle">📅 Nuevo Partido</h2>
     
     <label>📅 Fecha</label>
     <input type="date" id="inputFecha">
@@ -424,8 +580,8 @@ body {
     
     <label>🏟️ Lugar</label>
     <select id="selectLugar">
-      <option value="LIGA SANTA RITA - Cancha 1">LIGA SANTA RITA - Cancha 1</option>
-      <option value="LIGA SANTA RITA - Cancha 2">LIGA SANTA RITA - Cancha 2</option>
+      <option value="LIGA SANTA RITA - Cancha 1">🏟️ LIGA SANTA RITA - Cancha 1</option>
+      <option value="LIGA SANTA RITA - Cancha 2">🏟️ LIGA SANTA RITA - Cancha 2</option>
     </select>
     
     <label>📊 Resultado</label>
@@ -458,6 +614,7 @@ let rivalesList = [];
 let partidosList = [];
 let editandoId = null;
 let editandoFila = null;
+let guardando = false;
 
 // =========================================
 // FUNCIONES DE API
@@ -503,7 +660,7 @@ async function cargarRivales() {
   }
   
   const select = document.getElementById('selectRival');
-  select.innerHTML = '<option value="">Selecciona un rival...</option>';
+  select.innerHTML = '<option value="">🔽 Selecciona un rival...</option>';
   rivalesList.forEach(rival => {
     const option = document.createElement('option');
     option.value = rival.nombre;
@@ -526,21 +683,60 @@ async function cargarPartidos() {
     partidosList = data.data;
     renderPartidos();
   } else {
-    container.innerHTML = '<div class="loading-container"><div class="loading-text">📋 No hay partidos programados</div></div>';
+    container.innerHTML = `
+      <div class="empty-state">
+        <span class="material-symbols-outlined">sports_soccer</span>
+        <p>📋 No hay partidos programados</p>
+        <p style="font-size: 0.8rem; margin-top: 8px;">Presiona el botón + para agregar</p>
+      </div>
+    `;
     partidosList = [];
+  }
+}
+
+function formatearHora(horaStr) {
+  if (!horaStr) return '--:--';
+  // Si ya viene en formato HH:MM, devolverlo igual
+  if (horaStr.match(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/)) {
+    return horaStr;
+  }
+  // Si viene en formato ISO o raro, extraer la hora
+  try {
+    const fecha = new Date(`1970-01-01T${horaStr}`);
+    if (!isNaN(fecha.getTime())) {
+      return fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false });
+    }
+  } catch(e) {}
+  return horaStr.substring(0, 5) || '--:--';
+}
+
+function formatearFecha(fechaStr) {
+  if (!fechaStr) return 'Fecha por definir';
+  try {
+    const fecha = new Date(fechaStr);
+    return fecha.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+  } catch(e) {
+    return fechaStr;
   }
 }
 
 function renderPartidos() {
   const container = document.getElementById('matchesContainer');
   if (!partidosList || partidosList.length === 0) {
-    container.innerHTML = '<div class="loading-container"><div class="loading-text">📋 No hay partidos programados</div></div>';
+    container.innerHTML = `
+      <div class="empty-state">
+        <span class="material-symbols-outlined">sports_soccer</span>
+        <p>📋 No hay partidos programados</p>
+        <p style="font-size: 0.8rem; margin-top: 8px;">Presiona el botón + para agregar</p>
+      </div>
+    `;
     return;
   }
   
   container.innerHTML = '';
   partidosList.forEach(partido => {
     const fechaFormateada = formatearFecha(partido.fecha);
+    const horaFormateada = formatearHora(partido.hora);
     const resultado = partido.resultado || 'VS';
     const estado = partido.estado || 'PENDIENTE';
     const abrevRival = partido.rival ? partido.rival.substring(0, 3).toUpperCase() : 'RIV';
@@ -566,14 +762,14 @@ function renderPartidos() {
       <div class="match-info">
         <div class="info-item">
           <span class="material-symbols-outlined">schedule</span>
-          <span>${partido.hora || '--:--'}</span>
+          <span>${horaFormateada}</span>
         </div>
         <div class="info-item">
           <span class="material-symbols-outlined">location_on</span>
           <span>${partido.lugar || 'LIGA SANTA RITA'}</span>
         </div>
+        ${partido.vocalia ? `<div class="info-item"><span class="material-symbols-outlined">assignment</span><span>${partido.vocalia}</span></div>` : ''}
       </div>
-      ${partido.vocalia ? `<div class="info-item"><span class="material-symbols-outlined">assignment</span><span>Vocalía: ${partido.vocalia}</span></div>` : ''}
       <div class="card-actions">
         <button class="btn-edit" data-id="${partido.id}" data-fila="${partido.fila}">
           <span class="material-symbols-outlined">edit</span> Editar
@@ -604,20 +800,10 @@ function renderPartidos() {
   });
 }
 
-function formatearFecha(fechaStr) {
-  if (!fechaStr) return 'Fecha por definir';
-  try {
-    const fecha = new Date(fechaStr);
-    return fecha.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
-  } catch(e) {
-    return fechaStr;
-  }
-}
-
 function abrirModalNuevo() {
   editandoId = null;
   editandoFila = null;
-  document.getElementById('modalTitle').textContent = 'Nuevo Partido';
+  document.getElementById('modalTitle').textContent = '📅 Nuevo Partido';
   document.getElementById('inputFecha').value = '';
   document.getElementById('inputHora').value = '';
   document.getElementById('selectRival').value = '';
@@ -634,7 +820,7 @@ function abrirModalEditar(id, fila) {
   
   editandoId = id;
   editandoFila = fila;
-  document.getElementById('modalTitle').textContent = 'Editar Partido';
+  document.getElementById('modalTitle').textContent = '✏️ Editar Partido';
   document.getElementById('inputFecha').value = partido.fecha || '';
   document.getElementById('inputHora').value = partido.hora || '';
   document.getElementById('selectRival').value = partido.rival || '';
@@ -646,6 +832,11 @@ function abrirModalEditar(id, fila) {
 }
 
 async function guardarPartido() {
+  if (guardando) {
+    mostrarToast('⏳ Ya se está guardando, espera...');
+    return;
+  }
+  
   const partido = {
     fecha: document.getElementById('inputFecha').value,
     hora: document.getElementById('inputHora').value,
@@ -662,23 +853,47 @@ async function guardarPartido() {
     return;
   }
   
-  let res;
-  if (editandoFila !== null) {
-    partido.fila = editandoFila;
-    res = await enviarDatosPOST('actualizar', { partido });
-  } else {
-    res = await enviarDatosPOST('agregar', { partido });
-  }
+  guardando = true;
+  const btnGuardar = document.getElementById('btnGuardar');
+  const textoOriginal = btnGuardar.textContent;
+  btnGuardar.textContent = '⏳ Guardando...';
+  btnGuardar.disabled = true;
   
-  cerrarModal();
-  mostrarToast('✅ Partido guardado. Recargando...');
-  setTimeout(() => cargarPartidos(), 1000);
+  try {
+    if (editandoFila !== null) {
+      partido.fila = editandoFila;
+      await enviarDatosPOST('actualizar', { partido });
+    } else {
+      await enviarDatosPOST('agregar', { partido });
+    }
+    
+    cerrarModal();
+    mostrarToast('✅ Partido guardado correctamente');
+    setTimeout(() => cargarPartidos(), 1000);
+  } catch (error) {
+    mostrarToast('❌ Error al guardar');
+  } finally {
+    setTimeout(() => {
+      btnGuardar.textContent = textoOriginal;
+      btnGuardar.disabled = false;
+      guardando = false;
+    }, 1000);
+  }
 }
 
 async function eliminarPartido(fila) {
+  if (guardando) {
+    mostrarToast('⏳ Espera a que termine la operación actual');
+    return;
+  }
+  
+  guardando = true;
   await enviarDatosPOST('eliminar', { fila });
-  mostrarToast('🗑️ Partido eliminado. Recargando...');
-  setTimeout(() => cargarPartidos(), 1000);
+  mostrarToast('🗑️ Partido eliminado');
+  setTimeout(() => {
+    cargarPartidos();
+    guardando = false;
+  }, 1000);
 }
 
 function mostrarToast(mensaje) {
