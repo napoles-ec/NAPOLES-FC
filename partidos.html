@@ -509,16 +509,6 @@ body {
   font-size: 1rem;
 }
 
-.vocalia-badge {
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-  color: white;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  margin-left: 8px;
-}
-
 @media(min-width: 700px) {
   .matches {
     max-width: 700px;
@@ -615,7 +605,7 @@ body {
 // =========================================
 // CONFIGURACIÓN
 // =========================================
-const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbyzcYqHxUClX9M9QNOarHrQ_bShfJA-kRSzDrCMpj41ABt19ysfP53Bg9bQLgvtELgN/exec';
+const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxSiXtNbcCiT8AlQNHiXZUC8fz9L1vlGFQoDCG6QIvj5BCWjxxOshL0BRNbtuJvKn92/exec';
 
 let rivalesList = [];
 let partidosList = [];
@@ -703,19 +693,25 @@ async function cargarPartidos() {
 
 // =========================================
 // FUNCIÓN CORREGIDA PARA FORMATEAR HORA
+// Maneja: "12:00:00" → "12:00"
 // =========================================
 function formatearHora(horaStr) {
   if (!horaStr) return '--:--';
   
-  // Si ya viene en formato HH:MM (ej: "12:00", "20:30")
-  if (typeof horaStr === 'string' && horaStr.match(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/)) {
-    return horaStr;
+  // Convertir a string
+  let horaString = String(horaStr);
+  
+  // Si viene como "12:00:00" (con segundos) o "12:00"
+  if (horaString.includes(':')) {
+    const partes = horaString.split(':');
+    if (partes.length >= 2) {
+      // Formato HH:MM (ignorar segundos)
+      return `${partes[0].padStart(2, '0')}:${partes[1].padStart(2, '0')}`;
+    }
   }
   
   // Si es un número (fecha de Excel/Google Sheets)
   if (typeof horaStr === 'number') {
-    // Excel/Sheet guarda horas como fracción de día
-    // 0.5 = 12:00, 0.25 = 06:00, etc.
     const totalSegundos = Math.round(horaStr * 86400);
     const horas = Math.floor(totalSegundos / 3600);
     const minutos = Math.floor((totalSegundos % 3600) / 60);
@@ -723,9 +719,9 @@ function formatearHora(horaStr) {
   }
   
   // Si es string con formato ISO (ej: "1899-12-30T12:00:00.000Z")
-  if (typeof horaStr === 'string' && horaStr.includes('T')) {
+  if (horaString.includes('T')) {
     try {
-      const fecha = new Date(horaStr);
+      const fecha = new Date(horaString);
       if (!isNaN(fecha.getTime())) {
         return fecha.toLocaleTimeString('es-ES', { 
           hour: '2-digit', 
@@ -736,15 +732,12 @@ function formatearHora(horaStr) {
     } catch(e) {}
   }
   
-  // Si es string con formato "HH:MM:SS"
-  if (typeof horaStr === 'string' && horaStr.includes(':')) {
-    const partes = horaStr.split(':');
-    if (partes.length >= 2) {
-      return `${partes[0].padStart(2, '0')}:${partes[1].padStart(2, '0')}`;
-    }
+  // Si ya viene en formato HH:MM exacto
+  if (horaString.match(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/)) {
+    return horaString;
   }
   
-  return horaStr.toString().substring(0, 5) || '--:--';
+  return horaString.substring(0, 5) || '--:--';
 }
 
 function formatearFecha(fechaStr) {
