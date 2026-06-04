@@ -93,6 +93,12 @@ body {
   color: #fff;
   font-weight: 800;
   font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.avatar:hover {
+  transform: rotate(180deg);
 }
 
 .matches {
@@ -354,6 +360,20 @@ body {
   animation: pulse 1.5s ease infinite;
 }
 
+.toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1f2937;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  z-index: 300;
+  animation: fadeInUp 0.3s ease;
+}
+
 @media(min-width: 700px) {
   .matches {
     max-width: 700px;
@@ -371,7 +391,9 @@ body {
       <p>Nápoles F.C.</p>
     </div>
   </div>
-  <div class="avatar">P</div>
+  <div class="avatar" id="btnRefrescar">
+    <span class="material-symbols-outlined">refresh</span>
+  </div>
 </header>
 
 <section class="matches" id="matchesContainer">
@@ -416,6 +438,9 @@ body {
       <option value="FINALIZADO">✅ FINALIZADO</option>
     </select>
     
+    <label>📝 Vocalía</label>
+    <input type="text" id="inputVocalia" placeholder="Vocalía asignada">
+    
     <div class="modal-actions">
       <button class="btn-cancel" id="btnCancelar">Cancelar</button>
       <button class="btn-save" id="btnGuardar">Guardar</button>
@@ -425,9 +450,9 @@ body {
 
 <script>
 // =========================================
-// CONFIGURACIÓN - URL DE TU WEB APP
+// CONFIGURACIÓN
 // =========================================
-const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbya-MU3TdpFWE-EexvCPatpFmcUhGWTFv_IdzKDXazOeWRYZHDEiJk-N0jHFzrzXStv/exec';
+const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbyzcYqHxUClX9M9QNOarHrQ_bShfJA-kRSzDrCMpj41ABt19ysfP53Bg9bQLgvtELgN/exec';
 
 let rivalesList = [];
 let partidosList = [];
@@ -437,28 +462,6 @@ let editandoFila = null;
 // =========================================
 // FUNCIONES DE API
 // =========================================
-async function apiCall(accion, data = {}) {
-  try {
-    const response = await fetch(WEBAPP_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ accion, ...data })
-    });
-    
-    // Con 'no-cors' no podemos leer la respuesta directamente
-    // Por lo tanto, simulamos éxito y recargamos los datos
-    console.log(`Petición enviada: ${accion}`);
-    return { success: true, message: 'Petición enviada' };
-  } catch(error) {
-    console.error('Error en apiCall:', error);
-    return { success: false, error: error.message };
-  }
-}
-
-// Función para cargar datos usando GET (sin CORS)
 async function cargarDatosGET(accion) {
   try {
     const url = `${WEBAPP_URL}?accion=${accion}&t=${Date.now()}`;
@@ -471,24 +474,31 @@ async function cargarDatosGET(accion) {
   }
 }
 
+async function enviarDatosPOST(accion, datos) {
+  try {
+    const response = await fetch(WEBAPP_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ accion, ...datos })
+    });
+    return { success: true };
+  } catch(error) {
+    console.error('Error en POST:', error);
+    return { success: false, error: error.message };
+  }
+}
+
 async function cargarRivales() {
-  // Intentar cargar via GET primero
   const data = await cargarDatosGET('getRivales');
-  if (data && data.data && data.data.length > 0) {
+  if (data && data.success && data.data && data.data.length > 0) {
     rivalesList = data.data;
   } else {
-    // Datos de respaldo
     rivalesList = [
-      { nombre: 'IDEAL', local: 'NAPOLES F.C.' },
-      { nombre: 'BARZA', local: 'NAPOLES F.C.' },
-      { nombre: 'SAN MARTIN', local: 'NAPOLES F.C.' },
-      { nombre: 'INDEPENDIENTE', local: 'NAPOLES F.C.' },
-      { nombre: 'VODKILA', local: 'NAPOLES F.C.' },
-      { nombre: 'CHELSEA', local: 'NAPOLES F.C.' },
-      { nombre: 'JUVENTUD DE AMERICA', local: 'NAPOLES F.C.' },
-      { nombre: 'JUVENTUS', local: 'NAPOLES F.C.' },
-      { nombre: 'LEONES', local: 'NAPOLES F.C.' },
-      { nombre: 'FRANCO CANADIENSE', local: 'NAPOLES F.C.' }
+      { nombre: 'IDEAL' }, { nombre: 'BARZA' }, { nombre: 'SAN MARTIN' },
+      { nombre: 'INDEPENDIENTE' }, { nombre: 'VODKILA' }, { nombre: 'CHELSEA' },
+      { nombre: 'JUVENTUD DE AMERICA' }, { nombre: 'JUVENTUS' }, 
+      { nombre: 'LEONES' }, { nombre: 'FRANCO CANADIENSE' }
     ];
   }
   
@@ -511,17 +521,13 @@ async function cargarPartidos() {
     </div>
   `;
   
-  // Intentar cargar via GET primero
   const data = await cargarDatosGET('getPartidos');
-  if (data && data.data) {
+  if (data && data.success && data.data) {
     partidosList = data.data;
     renderPartidos();
   } else {
-    // Datos de ejemplo si no hay conexión
-    partidosList = [
-      { id: 0, fila: 2, fecha: '2026-06-15', hora: '18:00', rival: 'IDEAL', local: 'NAPOLES F.C.', lugar: 'LIGA SANTA RITA - Cancha 1', resultado: 'VS', estado: 'PENDIENTE' }
-    ];
-    renderPartidos();
+    container.innerHTML = '<div class="loading-container"><div class="loading-text">📋 No hay partidos programados</div></div>';
+    partidosList = [];
   }
 }
 
@@ -567,6 +573,7 @@ function renderPartidos() {
           <span>${partido.lugar || 'LIGA SANTA RITA'}</span>
         </div>
       </div>
+      ${partido.vocalia ? `<div class="info-item"><span class="material-symbols-outlined">assignment</span><span>Vocalía: ${partido.vocalia}</span></div>` : ''}
       <div class="card-actions">
         <button class="btn-edit" data-id="${partido.id}" data-fila="${partido.fila}">
           <span class="material-symbols-outlined">edit</span> Editar
@@ -617,6 +624,7 @@ function abrirModalNuevo() {
   document.getElementById('selectLugar').value = 'LIGA SANTA RITA - Cancha 1';
   document.getElementById('inputResultado').value = 'VS';
   document.getElementById('selectEstado').value = 'PENDIENTE';
+  document.getElementById('inputVocalia').value = '';
   document.getElementById('modal').classList.add('active');
 }
 
@@ -633,6 +641,7 @@ function abrirModalEditar(id, fila) {
   document.getElementById('selectLugar').value = partido.lugar || 'LIGA SANTA RITA - Cancha 1';
   document.getElementById('inputResultado').value = partido.resultado || 'VS';
   document.getElementById('selectEstado').value = partido.estado || 'PENDIENTE';
+  document.getElementById('inputVocalia').value = partido.vocalia || '';
   document.getElementById('modal').classList.add('active');
 }
 
@@ -644,7 +653,8 @@ async function guardarPartido() {
     local: 'NAPOLES F.C.',
     lugar: document.getElementById('selectLugar').value,
     resultado: document.getElementById('inputResultado').value || 'VS',
-    estado: document.getElementById('selectEstado').value
+    estado: document.getElementById('selectEstado').value,
+    vocalia: document.getElementById('inputVocalia').value
   };
   
   if (!partido.rival) {
@@ -655,20 +665,30 @@ async function guardarPartido() {
   let res;
   if (editandoFila !== null) {
     partido.fila = editandoFila;
-    res = await apiCall('actualizar', { partido });
+    res = await enviarDatosPOST('actualizar', { partido });
   } else {
-    res = await apiCall('agregar', { partido });
+    res = await enviarDatosPOST('agregar', { partido });
   }
   
   cerrarModal();
-  alert('Partido guardado. Recarga la página para ver cambios.');
-  setTimeout(() => location.reload(), 1000);
+  mostrarToast('✅ Partido guardado. Recargando...');
+  setTimeout(() => cargarPartidos(), 1000);
 }
 
 async function eliminarPartido(fila) {
-  const res = await apiCall('eliminar', { fila });
-  alert('Partido eliminado. Recarga la página para ver cambios.');
-  setTimeout(() => location.reload(), 1000);
+  await enviarDatosPOST('eliminar', { fila });
+  mostrarToast('🗑️ Partido eliminado. Recargando...');
+  setTimeout(() => cargarPartidos(), 1000);
+}
+
+function mostrarToast(mensaje) {
+  let toast = document.querySelector('.toast');
+  if (toast) toast.remove();
+  toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = mensaje;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2000);
 }
 
 function cerrarModal() {
@@ -690,6 +710,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   await cargarPartidos();
   
   document.getElementById('btnAgregar').addEventListener('click', abrirModalNuevo);
+  document.getElementById('btnRefrescar').addEventListener('click', () => cargarPartidos());
   document.getElementById('btnGuardar').addEventListener('click', guardarPartido);
   document.getElementById('btnCancelar').addEventListener('click', cerrarModal);
   document.getElementById('modal').addEventListener('click', (e) => {
