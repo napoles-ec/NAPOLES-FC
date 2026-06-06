@@ -33,7 +33,6 @@
             --btn-grad-end: #8a2be2;
             --btn-shadow: rgba(139, 43, 226, 0.4);
         }
-        /* Resto del diseño original (sin cambios en estructura) */
         body {
             background: radial-gradient(circle at 20% 30%, #0a1428, #01060f);
             font-family: 'Inter', system-ui, sans-serif;
@@ -260,6 +259,13 @@
             .golden-message { font-size: 1.2rem; }
             .grid-2cols { grid-template-columns: 1fr; }
         }
+        .vocalia-group {
+            background: rgba(0,0,0,0.3);
+            border-radius: 1.2rem;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            border-left: 3px solid var(--dorado);
+        }
     </style>
 </head>
 <body>
@@ -332,7 +338,7 @@
             <button type="button" id="btnPaso6" class="btn-primary" disabled>Siguiente</button>
         </div>
 
-        <!-- PASO 7: Talla, medias, pagos -->
+        <!-- PASO 7: Talla, medias, pagos incluyendo VOCALÍA -->
         <div id="paso7" class="paso">
             <div class="campo"><label>👕 Talla de uniforme</label>
                 <select id="talla">
@@ -363,6 +369,31 @@
                 <label>📅 Fecha compromiso de pago (máximo 5 días)</label>
                 <input type="date" id="fechaPromesaPago">
             </div>
+
+            <!-- NUEVA SECCIÓN: VOCALÍA -->
+            <div class="vocalia-group">
+                <div class="campo">
+                    <label>🎤 VOCALÍA (Cuota de membresía - $2)</label>
+                    <select id="pagoVocaliaOpcion">
+                        <option value="">Selecciona cómo deseas pagar la vocalía</option>
+                        <option value="PAGAR">✅ Pagar ahora ($2)</option>
+                        <option value="PENDIENTE">⏳ Dejar pendiente (deuda)</option>
+                    </select>
+                </div>
+                <div id="campoTransaccionVocalia" class="conditional-field">
+                    <label>🔢 N° de transacción vocalía (5 a 10 dígitos)</label>
+                    <input type="text" id="transaccionVocalia" placeholder="Ej: 123456789">
+                </div>
+                <div id="campoFechaPromesaVocalia" class="conditional-field">
+                    <label>📅 Fecha compromiso de pago de vocalía (máximo 5 días)</label>
+                    <input type="date" id="fechaPromesaVocalia">
+                </div>
+                <div class="campo" id="campoMontoVocalia" style="margin-top: 0.5rem;">
+                    <label>💰 Monto de vocalía (USD)</label>
+                    <input type="number" id="montoVocalia" step="0.01" value="2.00" readonly style="background: rgba(0,0,0,0.4); cursor: not-allowed;">
+                </div>
+            </div>
+
             <button type="button" id="btnFinal" class="btn-primary" disabled>⚽ FINALIZAR REGISTRO ⚽</button>
         </div>
     </form>
@@ -378,7 +409,7 @@
         }
         const URL_GAS = CONFIG.URL_GAS;
         let registroAbierto = true;
-        let categoriaElegida = ''; // 'Masculino' o 'Femenino'
+        let categoriaElegida = '';
 
         // ----- Toast y helpers -----
         function mostrarToast(mensaje, tipo='info', duracion=4000){
@@ -403,7 +434,6 @@
             document.querySelectorAll(".paso").forEach(p => p.classList.remove("activo"));
             document.getElementById(`paso${n}`).classList.add("activo");
         }
-        // Cambio de diseño según categoría
         function aplicarDiseñoPorCategoria(cat){
             const contenedor = document.querySelector('.contenedor-principal');
             if(cat === 'Femenino'){
@@ -412,7 +442,6 @@
                 contenedor.classList.remove('femenino');
             }
         }
-        // Mayúsculas automáticas
         document.querySelectorAll('input:not([type="email"]):not([type="file"]):not([type="hidden"])').forEach(inp => {
             inp.addEventListener('input', function(){
                 if(this.id !== 'correo') this.value = this.value.toUpperCase();
@@ -453,7 +482,7 @@
             try{
                 const resp = await fetch(`${URL_GAS}?action=validarRegistro&cedula=${ced.value}`);
                 const data = await resp.json();
-                if(data.cedulaExiste) mostrarToast("⚠️ Esta cédula ya está registrada (masculino o femenino).", "error");
+                if(data.cedulaExiste) mostrarToast("⚠️ Esta cédula ya está registrada.", "error");
                 else { mostrarToast("✅ Cédula válida", "success"); verPaso(2); }
             } catch(e){ mostrarToast("Error de conexión", "error"); }
             mostrarLoader(false);
@@ -468,7 +497,7 @@
                 categoriaElegida = selectCategoria.value;
                 aplicarDiseñoPorCategoria(categoriaElegida);
             } else {
-                aplicarDiseñoPorCategoria('Masculino'); // default
+                aplicarDiseñoPorCategoria('Masculino');
             }
         });
         btnCategoria.addEventListener('click', ()=>{
@@ -567,7 +596,7 @@
             else mostrarToast("Selecciona nombre y dorsal","error");
         });
 
-        // ----- PASO 7: Talla, medias y pagos -----
+        // ----- PASO 7: Talla, medias, uniforme y VOCALÍA -----
         const talla = document.getElementById('talla'), medias = document.getElementById('medias');
         const inscripcionInput = document.getElementById('inscripcion');
         const pagoUniformeOpcion = document.getElementById('pagoUniformeOpcion');
@@ -575,6 +604,15 @@
         const campoFechaPromesa = document.getElementById('campoFechaPromesa');
         const transaccionUniforme = document.getElementById('transaccionUniforme');
         const fechaPromesaPago = document.getElementById('fechaPromesaPago');
+        
+        // Elementos de vocalía
+        const pagoVocaliaOpcion = document.getElementById('pagoVocaliaOpcion');
+        const campoTransaccionVocalia = document.getElementById('campoTransaccionVocalia');
+        const campoFechaPromesaVocalia = document.getElementById('campoFechaPromesaVocalia');
+        const transaccionVocalia = document.getElementById('transaccionVocalia');
+        const fechaPromesaVocalia = document.getElementById('fechaPromesaVocalia');
+        const montoVocalia = document.getElementById('montoVocalia');
+        
         const btnFinal = document.getElementById('btnFinal');
 
         function actualizarCamposPago(){
@@ -589,45 +627,88 @@
                 const max = new Date(); max.setDate(hoy.getDate()+5);
                 fechaPromesaPago.min = hoy.toISOString().split('T')[0];
                 fechaPromesaPago.max = max.toISOString().split('T')[0];
-                fechaPromesaPago.value = hoy.toISOString().split('T')[0];
+                if(!fechaPromesaPago.value) fechaPromesaPago.value = hoy.toISOString().split('T')[0];
             }
             validarPaso7();
         }
+        
+        function actualizarCamposVocalia(){
+            const opcion = pagoVocaliaOpcion.value;
+            campoTransaccionVocalia.classList.remove('visible');
+            campoFechaPromesaVocalia.classList.remove('visible');
+            if(opcion === 'PAGAR'){
+                campoTransaccionVocalia.classList.add('visible');
+            } else if(opcion === 'PENDIENTE'){
+                campoFechaPromesaVocalia.classList.add('visible');
+                const hoy = new Date();
+                const max = new Date(); max.setDate(hoy.getDate()+5);
+                fechaPromesaVocalia.min = hoy.toISOString().split('T')[0];
+                fechaPromesaVocalia.max = max.toISOString().split('T')[0];
+                if(!fechaPromesaVocalia.value) fechaPromesaVocalia.value = hoy.toISOString().split('T')[0];
+            }
+            validarPaso7();
+        }
+        
         pagoUniformeOpcion.addEventListener('change', actualizarCamposPago);
         transaccionUniforme.addEventListener('input', validarPaso7);
         fechaPromesaPago.addEventListener('change', validarPaso7);
-
+        
+        pagoVocaliaOpcion.addEventListener('change', actualizarCamposVocalia);
+        transaccionVocalia.addEventListener('input', validarPaso7);
+        fechaPromesaVocalia.addEventListener('change', validarPaso7);
+        
         function validarPaso7(){
             let ok = true;
             if(!talla.value) ok = false;
             if(!medias.value) ok = false;
             const numInsc = inscripcionInput.value.trim();
             if(!/^\d{5,10}$/.test(numInsc)) ok = false;
-            const opcion = pagoUniformeOpcion.value;
-            if(opcion === 'SI'){
-                const numUni = transaccionUniforme.value.trim();
-                if(!/^\d{5,10}$/.test(numUni)) ok = false;
-            } else if(opcion === 'NO'){
+            
+            // validar uniforme
+            const opcionUni = pagoUniformeOpcion.value;
+            if(opcionUni === 'SI'){
+                if(!/^\d{5,10}$/.test(transaccionUniforme.value.trim())) ok = false;
+            } else if(opcionUni === 'NO'){
                 if(!fechaPromesaPago.value) ok = false;
             } else {
                 ok = false;
             }
+            
+            // validar vocalía
+            const opcionVocalia = pagoVocaliaOpcion.value;
+            if(opcionVocalia === 'PAGAR'){
+                if(!/^\d{5,10}$/.test(transaccionVocalia.value.trim())) ok = false;
+            } else if(opcionVocalia === 'PENDIENTE'){
+                if(!fechaPromesaVocalia.value) ok = false;
+            } else {
+                ok = false;
+            }
+            
             btnFinal.disabled = !ok;
         }
+        
         [talla, medias, inscripcionInput].forEach(el=>el.addEventListener('input', validarPaso7));
         [talla, medias, inscripcionInput].forEach(el=>el.addEventListener('change', validarPaso7));
         inscripcionInput.addEventListener('input', function(e){ this.value = this.value.replace(/\D/g,'').slice(0,10); });
         transaccionUniforme.addEventListener('input', function(e){ this.value = this.value.replace(/\D/g,'').slice(0,10); });
-
+        transaccionVocalia.addEventListener('input', function(e){ this.value = this.value.replace(/\D/g,'').slice(0,10); });
+        
         // Finalizar registro
         btnFinal.addEventListener('click', async () => {
             if(btnFinal.disabled || !registroAbierto) return mostrarToast("Completa todos los datos", "error");
             mostrarLoader(true, "Registrando... ¡GOL DE ORO!");
+            
             let pagoUniformeData = {};
-            const opcion = pagoUniformeOpcion.value;
-            if(opcion === 'SI') pagoUniformeData = { pagado: true, transaccion: transaccionUniforme.value.trim() };
+            const opcionUni = pagoUniformeOpcion.value;
+            if(opcionUni === 'SI') pagoUniformeData = { pagado: true, transaccion: transaccionUniforme.value.trim() };
             else pagoUniformeData = { pagado: false, fechaPromesa: fechaPromesaPago.value };
-
+            
+            let pagoVocaliaData = {};
+            const opcionVocalia = pagoVocaliaOpcion.value;
+            const montoVocal = montoVocalia.value;
+            if(opcionVocalia === 'PAGAR') pagoVocaliaData = { pagado: true, transaccion: transaccionVocalia.value.trim(), monto: montoVocal };
+            else pagoVocaliaData = { pagado: false, fechaPromesa: fechaPromesaVocalia.value, monto: montoVocal };
+            
             const datos = {
                 ced: ced.value,
                 n1: n1.value.trim(),
@@ -642,9 +723,13 @@
                 nombreCamiseta: nombreCamiseta.value,
                 dorsal: dorsal.value,
                 inscripcion: inscripcionInput.value.trim(),
-                pagoUniformeOpcion: opcion,
+                pagoUniformeOpcion: opcionUni,
                 transaccionUniforme: pagoUniformeData.transaccion || '',
                 fechaPromesaPago: pagoUniformeData.fechaPromesa || '',
+                pagoVocaliaOpcion: opcionVocalia,
+                transaccionVocalia: pagoVocaliaData.transaccion || '',
+                fechaPromesaVocalia: pagoVocaliaData.fechaPromesa || '',
+                montoVocalia: montoVocal,
                 fotoRostroB64: fotoRostroB64.value,
                 fotoCedulaB64: fotoCedulaB64.value
             };
@@ -665,11 +750,12 @@
                 mostrarToast("Error: "+e.message, "error");
             }
         });
-
-        // Inicio
+        
+        // Inicialización
         window.addEventListener('DOMContentLoaded', async () => {
             await verificarEstadoRegistro();
             actualizarCamposPago();
+            actualizarCamposVocalia();
             aplicarDiseñoPorCategoria('Masculino');
         });
     })();
