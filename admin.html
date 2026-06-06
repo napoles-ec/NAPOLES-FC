@@ -21,12 +21,12 @@
         .admin-info h1 { font-size: 1.1rem; font-weight: 800; }
         .admin-info p { font-size: .85rem; color: #6b7280; margin-top: 2px; }
         .avatar { width: 46px; height: 46px; border-radius: 16px; background: linear-gradient(135deg, #7c3aed, #a855f7); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 1rem; box-shadow: 0 10px 20px rgba(124,58,237,.25); }
-        .hero { padding: 22px 18px 10px; }
+        .hero { padding: 22px 18px 10px; max-width: 700px; margin: auto; }
         .hero-card { background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(79,70,229,.95)); border-radius: 28px; padding: 26px; color: #fff; position: relative; overflow: hidden; box-shadow: 0 20px 45px rgba(124,58,237,.18); }
         .hero-card::before { content: ''; position: absolute; width: 260px; height: 260px; border-radius: 50%; background: rgba(255,255,255,.12); right: -80px; top: -80px; }
         .hero h2 { font-size: 1.6rem; font-weight: 800; margin-bottom: 10px; position: relative; z-index: 2; }
         .hero p { opacity: .92; line-height: 1.5; position: relative; z-index: 2; }
-        .dashboard { padding: 20px 18px 40px; }
+        .dashboard { padding: 20px 18px 40px; max-width: 700px; margin: auto; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         .card { background: rgba(255,255,255,.82); backdrop-filter: blur(12px); border: 1px solid rgba(168,85,247,.08); border-radius: 24px; padding: 18px; min-height: 180px; position: relative; overflow: hidden; cursor: pointer; transition: .25s; box-shadow: 0 10px 30px rgba(15,23,42,.05); }
         .card:hover { transform: translateY(-3px); box-shadow: 0 18px 40px rgba(124,58,237,.10); }
@@ -37,6 +37,7 @@
         .badge { min-width: 34px; height: 34px; border-radius: 999px; background: #111827; color: #fff; display: flex; align-items: center; justify-content: center; font-size: .82rem; font-weight: 800; padding: 0 10px; }
         .card h3 { font-size: 1rem; font-weight: 800; margin-bottom: 8px; }
         .card p { color: #6b7280; font-size: .88rem; line-height: 1.5; }
+        /* Colores originales */
         .players .icon { background: linear-gradient(135deg, #2563eb, #60a5fa); }
         .matches .icon { background: linear-gradient(135deg, #16a34a, #4ade80); }
         .rivals .icon { background: linear-gradient(135deg, #ea580c, #fb923c); }
@@ -45,8 +46,9 @@
         .settings .icon { background: linear-gradient(135deg, #0f172a, #475569); }
         .stats .icon { background: linear-gradient(135deg, #db2777, #f472b6); }
         .news .icon { background: linear-gradient(135deg, #0891b2, #22d3ee); }
-        /* Nueva tarjeta Asistencia */
         .attendance .icon { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+        /* Nueva tarjeta: Vocalía (color granate / dorado) */
+        .vocalia .icon { background: linear-gradient(135deg, #b91c1c, #f97316); }
         @media (min-width: 700px) { .dashboard { max-width: 700px; margin: auto; } .hero { max-width: 700px; margin: auto; } }
     </style>
 </head>
@@ -63,7 +65,7 @@
 <section class="hero">
     <div class="hero-card">
         <h2>Hola Gata 👋</h2>
-        <p>Gestiona jugadores, partidos, uniformes, rivales y todo el club desde tu celular.</p>
+        <p>Gestiona jugadores, partidos, uniformes, rivales, vocalía y todo el club desde tu celular.</p>
     </div>
 </section>
 
@@ -109,11 +111,15 @@
             <div class="card-top"><div class="icon"><span class="material-symbols-outlined">notifications</span></div><div class="badge">4</div></div>
             <h3>Notificaciones</h3><p>Envía anuncios, revisa alertas y novedades del club.</p>
         </div>
-        <!-- NUEVA TARJETA: ASISTENCIA A PARTIDOS -->
+        <!-- Asistencia a Partidos (ya existente) -->
         <div class="card attendance" onclick="window.location.href='asistencia.html'">
             <div class="card-top"><div class="icon"><span class="material-symbols-outlined">event_seat</span></div><div class="badge">📋</div></div>
-            <h3>Asistencia a Partidos</h3>
-            <p>Confirma jugadores, revisa asistentes por encuentro y controla el registro.</p>
+            <h3>Asistencia a Partidos</h3><p>Confirma jugadores, revisa asistentes por encuentro y controla el registro.</p>
+        </div>
+        <!-- NUEVA TARJETA: VOCALÍA -->
+        <div class="card vocalia" onclick="window.location.href='vocalia.html'">
+            <div class="card-top"><div class="icon"><span class="material-symbols-outlined">gavel</span></div><div class="badge">🎤</div></div>
+            <h3>Vocalía</h3><p>Gestiona cuotas, compromisos, actas y comunicación con los jugadores.</p>
         </div>
     </div>
 </section>
