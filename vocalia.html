@@ -249,7 +249,7 @@
             if(data.success) {
                 mostrarToast(`Pago de ${formatearMoneda(monto)} registrado correctamente`, "success");
                 cerrarModal();
-                cargarDatos(true); // Recargar forzado
+                cargarDatos(true);
             } else {
                 throw new Error(data.error);
             }
@@ -298,9 +298,9 @@
         document.getElementById('modalHistorial').classList.remove('open');
     }
     
-    // ============ RESETEAR CACHE LOCAL ============
+    // ============ RESETEO DE CACHE LOCAL ============
     function resetearCacheLocal() {
-        if(confirm("⚠️ ¿Estás seguro de resetear los datos en cache? Esto forzará una recarga completa desde el servidor.\n\nNo se borrarán pagos reales, solo se actualizarán los números.")) {
+        if(confirm("⚠️ ¿Estás seguro de resetear los datos en caché? Se forzará una recarga completa desde el servidor.\n\nLos datos reales no se borran, solo se actualizan los números.")) {
             // Limpiar posibles claves de localStorage relacionadas con vocalía
             localStorage.removeItem('vocalia_totalRecaudado');
             localStorage.removeItem('vocalia_historial');
