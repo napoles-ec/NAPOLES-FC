@@ -48,33 +48,28 @@
         .stat-number { font-size: 2rem; font-weight: 900; font-family: 'Outfit', sans-serif; color: #ea580c; }
         .stat-label { font-size: 0.7rem; text-transform: uppercase; color: var(--muted); letter-spacing: 1px; margin-top: 4px; }
         .section-title { font-size: 1.2rem; font-weight: 800; margin: 20px 0 16px 0; color: #7c2d12; display: flex; align-items: center; gap: 8px; justify-content: space-between; flex-wrap: wrap; }
-        .deuda-list, .historial-list { display: flex; flex-direction: column; gap: 12px; }
-        .deuda-item, .historial-item { background: white; border-radius: 24px; padding: 14px 16px; border: 1px solid #ffe4cc; transition: 0.2s; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
-        .historial-item { background: #fef9f0; border-color: #fed7aa; }
-        .deuda-info, .historial-info { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .deuda-list { display: flex; flex-direction: column; gap: 12px; }
+        .deuda-item { background: white; border-radius: 24px; padding: 14px 16px; border: 1px solid #ffe4cc; transition: 0.2s; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+        .deuda-info { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
         .dorsal-badge { background: #f97316; color: white; border-radius: 30px; padding: 4px 12px; font-weight: bold; font-size: 0.75rem; }
         .nombre-jugador { font-weight: 800; color: #111827; }
         .deuda-monto { background: #fee2e2; color: #dc2626; border-radius: 40px; padding: 4px 12px; font-weight: 800; font-size: 0.85rem; }
-        .btn-pago, .btn-ver { background: #f97316; border: none; padding: 6px 16px; border-radius: 40px; color: white; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; }
-        .btn-ver { background: #475569; }
+        .btn-pago { background: #f97316; border: none; padding: 6px 16px; border-radius: 40px; color: white; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; }
         .btn-pago:hover { background: #ea580c; transform: scale(0.96); }
-        .btn-ver:hover { background: #334155; }
         .btn-refresh { background: #7c2d12; border: none; padding: 8px 18px; border-radius: 40px; color: white; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+        .btn-historial { background: #2563eb; border: none; padding: 8px 18px; border-radius: 40px; color: white; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal-overlay.open { opacity: 1; pointer-events: auto; }
-        .modal-container { background: white; width: 90%; max-width: 400px; border-radius: 28px; padding: 24px; transform: translateY(20px); transition: 0.3s; }
-        .modal-overlay.open .modal-container { transform: translateY(0); }
+        .modal-container { background: white; width: 90%; max-width: 700px; border-radius: 28px; padding: 24px; transform: translateY(20px); transition: 0.3s; max-height: 80vh; overflow-y: auto; }
         .modal-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
         .form-group { margin-bottom: 16px; }
         .form-control { width: 100%; padding: 12px; border: 1px solid #fed7aa; border-radius: 16px; outline: none; }
         .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 24px; border-radius: 60px; z-index: 2000; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; }
         .empty-state { text-align: center; padding: 40px; color: var(--muted); }
-        .tab-buttons { display: flex; gap: 12px; margin-bottom: 20px; }
-        .tab-btn { padding: 8px 20px; border-radius: 40px; border: none; background: #e2e8f0; font-weight: 600; cursor: pointer; }
-        .tab-btn.active { background: #f97316; color: white; }
-        .tab-pane { display: none; }
-        .tab-pane.active { display: block; }
-        @media (max-width: 600px) { .deuda-item, .historial-item { flex-direction: column; align-items: flex-start; } .stats-grid { flex-direction: column; } }
+        .historial-item { background: #f8fafc; border-radius: 16px; padding: 12px; margin-bottom: 10px; border-left: 4px solid #f97316; }
+        .historial-fecha { font-size: 0.7rem; color: var(--muted); }
+        .historial-monto { font-weight: 800; color: #16a34a; }
+        @media (max-width: 600px) { .deuda-item { flex-direction: column; align-items: flex-start; } .stats-grid { flex-direction: column; } }
     </style>
 </head>
 <body>
@@ -88,7 +83,7 @@
 <section class="hero">
     <div class="hero-card">
         <h2>Control de Deudas</h2>
-        <p>Administra los pagos de vocalía, registra abonos y mantén la cartera al día.</p>
+        <p>Administra los pagos de vocalía, registra abonos y consulta el historial completo.</p>
     </div>
 </section>
 
@@ -101,31 +96,15 @@
         </div>
     </div>
 
-    <div class="tab-buttons">
-        <button class="tab-btn active" onclick="cambiarTab('deudores')">💰 Deudores</button>
-        <button class="tab-btn" onclick="cambiarTab('historial')">📜 Historial de Pagos</button>
-    </div>
-
-    <!-- Pestaña Deudores -->
-    <div id="tabDeudores" class="tab-pane active">
-        <div class="section-title">
-            <span><i class="fa-solid fa-list-ul"></i> Jugadores con Deuda de Vocalía</span>
+    <div class="section-title">
+        <span><i class="fa-solid fa-list-ul"></i> Jugadores con Deuda de Vocalía</span>
+        <div style="display: flex; gap: 8px;">
+            <button class="btn-historial" id="btnHistorial"><i class="fa-solid fa-clock-rotate-left"></i> Ver historial</button>
             <button class="btn-refresh" id="btnRefresh"><i class="fa-solid fa-arrows-rotate"></i> Actualizar</button>
         </div>
-        <div id="deudoresList" class="deuda-list">
-            <div class="empty-state">Cargando datos...</div>
-        </div>
     </div>
-
-    <!-- Pestaña Historial -->
-    <div id="tabHistorial" class="tab-pane">
-        <div class="section-title">
-            <span><i class="fa-solid fa-clock-rotate-left"></i> Últimos pagos registrados</span>
-            <button class="btn-refresh" id="btnRefreshHistorial"><i class="fa-solid fa-arrows-rotate"></i> Actualizar</button>
-        </div>
-        <div id="historialList" class="historial-list">
-            <div class="empty-state">Cargando historial...</div>
-        </div>
+    <div id="deudoresList" class="deuda-list">
+        <div class="empty-state">Cargando datos...</div>
     </div>
 </section>
 
@@ -152,17 +131,31 @@
     </div>
 </div>
 
+<!-- Modal para historial -->
+<div id="modalHistorial" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-clock-rotate-left"></i> Historial de Pagos de Vocalía</h3>
+            <button class="btn-close-modal" onclick="cerrarModalHistorial()" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+        </div>
+        <div id="historialContenido" style="max-height: 500px; overflow-y: auto;">
+            Cargando...
+        </div>
+    </div>
+</div>
+
 <script>
     // ============ CONFIGURACIÓN ============
-    const API_URL = "https://script.google.com/macros/s/AKfycbzS3jjwK4-soou_jfD9X-Yhacx7IB8XNEE-ySFz_AQsREXSZfIzmar_iRO1PWr_YUmD/exec"; // 🔴 CAMBIAR
+    const API_URL = "https://script.google.com/macros/s/AKfycbzS3jjwK4-soou_jfD9X-Yhacx7IB8XNEE-ySFz_AQsREXSZfIzmar_iRO1PWr_YUmD/exec"; // REEMPLAZAR
     
-    if(localStorage.getItem('admin_activo') !== 'true') {
-        window.location.href = './login.html';
-    }
+    // ============ VALIDACIÓN DE LOGIN ============
+    if(localStorage.getItem('admin_activo') !== 'true') window.location.href = './login.html';
     
+    // ============ VARIABLES ============
     let jugadoresData = [];
     let jugadorSeleccionado = null;
     
+    // ============ UTILIDADES ============
     const formatearMoneda = (v) => new Intl.NumberFormat('es-EC', { style: 'currency', currency: 'USD' }).format(v);
     
     function mostrarToast(mensaje, tipo='info') {
@@ -173,8 +166,8 @@
         setTimeout(() => toast.remove(), 3000);
     }
     
-    // Cargar deudores
-    async function cargarDeudores() {
+    // ============ CARGA DE DATOS ============
+    async function cargarDatos() {
         const contenedor = document.getElementById('deudoresList');
         contenedor.innerHTML = '<div class="empty-state">Cargando...</div>';
         try {
@@ -190,8 +183,8 @@
                 throw new Error(data.error);
             }
         } catch(e) {
-            console.error(e);
             contenedor.innerHTML = `<div class="empty-state">❌ Error: ${e.message}</div>`;
+            mostrarToast("Error de conexión", "error");
         }
     }
     
@@ -218,7 +211,7 @@
         }
         contenedor.innerHTML = html;
         
-        document.querySelectorAll('#deudoresList .btn-pago').forEach(btn => {
+        document.querySelectorAll('.btn-pago').forEach(btn => {
             btn.addEventListener('click', () => {
                 jugadorSeleccionado = {
                     cedula: btn.dataset.cedula,
@@ -234,41 +227,7 @@
         });
     }
     
-    // Cargar historial de pagos
-    async function cargarHistorial() {
-        const contenedor = document.getElementById('historialList');
-        contenedor.innerHTML = '<div class="empty-state">Cargando historial...</div>';
-        try {
-            const res = await fetch(`${API_URL}?action=getHistorialVocalia&nocache=${Date.now()}`);
-            const data = await res.json();
-            if(data.success && data.historial && data.historial.length > 0) {
-                let html = '';
-                for(let h of data.historial) {
-                    let fecha = new Date(h.fecha);
-                    let fechaStr = fecha.toLocaleString('es-EC');
-                    html += `
-                        <div class="historial-item">
-                            <div class="historial-info">
-                                <span><strong>${escapeHtml(h.nombre || 'Jugador')}</strong></span>
-                                <span>💰 ${formatearMoneda(h.monto)}</span>
-                                <span>📉 Deuda anterior: ${formatearMoneda(h.deudaPrevia)}</span>
-                                <span>📈 Deuda restante: ${formatearMoneda(h.deudaRestante)}</span>
-                                <span>🕒 ${fechaStr}</span>
-                                <span>🔢 Ref: ${escapeHtml(h.transaccion || 'N/A')}</span>
-                                <span>👤 ${escapeHtml(h.registradoPor || 'admin')}</span>
-                            </div>
-                        </div>
-                    `;
-                }
-                contenedor.innerHTML = html;
-            } else {
-                contenedor.innerHTML = '<div class="empty-state">📭 No hay pagos registrados aún.</div>';
-            }
-        } catch(e) {
-            contenedor.innerHTML = `<div class="empty-state">❌ Error al cargar historial: ${e.message}</div>`;
-        }
-    }
-    
+    // ============ REGISTRAR PAGO ============
     async function confirmarPago() {
         let monto = parseFloat(document.getElementById('montoPago').value);
         if(isNaN(monto) || monto <= 0) {
@@ -280,15 +239,13 @@
             return;
         }
         const transaccion = document.getElementById('transaccionPago').value.trim() || "SIN REFERENCIA";
-        const cerrar = () => document.getElementById('modalPago').classList.remove('open');
         try {
             const res = await fetch(`${API_URL}?action=registrarPagoVocalia&cedula=${jugadorSeleccionado.cedula}&monto=${monto}&transaccion=${encodeURIComponent(transaccion)}`);
             const data = await res.json();
             if(data.success) {
                 mostrarToast(`Pago de ${formatearMoneda(monto)} registrado correctamente`, "success");
-                cerrar();
-                cargarDeudores();  // recargar deudores
-                cargarHistorial(); // recargar historial
+                cerrarModal();
+                cargarDatos();
             } else {
                 throw new Error(data.error);
             }
@@ -301,18 +258,40 @@
         document.getElementById('modalPago').classList.remove('open');
     }
     
-    function cambiarTab(tab) {
-        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        if(tab === 'deudores') {
-            document.getElementById('tabDeudores').classList.add('active');
-            document.querySelector('.tab-btn:first-child').classList.add('active');
-            cargarDeudores();
-        } else {
-            document.getElementById('tabHistorial').classList.add('active');
-            document.querySelector('.tab-btn:last-child').classList.add('active');
-            cargarHistorial();
+    // ============ HISTORIAL ============
+    async function abrirHistorial() {
+        const modal = document.getElementById('modalHistorial');
+        const contenido = document.getElementById('historialContenido');
+        contenido.innerHTML = '<div class="empty-state">Cargando historial...</div>';
+        modal.classList.add('open');
+        
+        try {
+            const res = await fetch(`${API_URL}?action=getHistorialVocalia&nocache=${Date.now()}`);
+            const data = await res.json();
+            if(data.success && data.historial && data.historial.length > 0) {
+                let html = '';
+                for(let item of data.historial) {
+                    let fecha = new Date(item.fecha).toLocaleString('es-EC');
+                    html += `
+                        <div class="historial-item">
+                            <div><strong>${escapeHtml(item.jugador)}</strong></div>
+                            <div class="historial-fecha">${fecha} | Transacción: ${item.transaccion || 'N/A'}</div>
+                            <div>Monto: <span class="historial-monto">${formatearMoneda(item.monto)}</span> | Deuda restante: ${formatearMoneda(item.deudaRestante)}</div>
+                            <div style="font-size:0.7rem; color:gray;">Registrado por: ${item.registradoPor || 'admin'}</div>
+                        </div>
+                    `;
+                }
+                contenido.innerHTML = html;
+            } else {
+                contenido.innerHTML = '<div class="empty-state">📭 No hay pagos registrados aún.</div>';
+            }
+        } catch(e) {
+            contenido.innerHTML = `<div class="empty-state">❌ Error al cargar historial: ${e.message}</div>`;
         }
+    }
+    
+    function cerrarModalHistorial() {
+        document.getElementById('modalHistorial').classList.remove('open');
     }
     
     function escapeHtml(str) {
@@ -325,12 +304,18 @@
         });
     }
     
-    document.getElementById('btnRefresh').addEventListener('click', cargarDeudores);
-    document.getElementById('btnRefreshHistorial').addEventListener('click', cargarHistorial);
+    // ============ EVENTOS ============
+    document.getElementById('btnRefresh').addEventListener('click', cargarDatos);
     document.getElementById('confirmarPago').addEventListener('click', confirmarPago);
-    window.addEventListener('click', (e) => { if(e.target.classList.contains('modal-overlay')) cerrarModal(); });
+    document.getElementById('btnHistorial').addEventListener('click', abrirHistorial);
+    window.addEventListener('click', (e) => { 
+        if(e.target.classList.contains('modal-overlay')) {
+            cerrarModal();
+            cerrarModalHistorial();
+        }
+    });
     
-    cargarDeudores();
+    cargarDatos();
 </script>
 </body>
 </html>
