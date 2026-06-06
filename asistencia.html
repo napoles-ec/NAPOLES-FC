@@ -68,10 +68,8 @@
 </section>
 
 <script>
-    // ==================== CONFIGURACIÓN ====================
-    const API_URL = "https://script.google.com/macros/s/AKfycbzyeExnP6Xkb_dxSI48V_zl4Hjd76fECec2nh8HBpJXKIyzV_QsELoCVNMdJwmtlqw/exec"; // <--- CAMBIAR por la URL de tu Web App
+    const API_URL = "https://script.google.com/macros/s/AKfycbzhERxywgBwIOAN4Vem-aRGYQYR4w0fSWApWhSTw_E5NzuhKhMFK56LcoJvVXZsTyLA/exec"; // CAMBIAR
 
-    // ==================== FUNCIONES ====================
     async function cargarDatos() {
         const container = document.getElementById("partidosContainer");
         container.innerHTML = '<div style="text-align:center; padding:40px;">🔄 Cargando datos desde Google Sheets...</div>';
@@ -105,7 +103,6 @@
             const rival = p.rival || "Rival";
             const lugar = p.lugar || "Lugar por definir";
             
-            // Mensajes personalizados con detalles del partido
             const mensajeRecordatorio = (nombre) => `🔔 *¡Hola ${nombre}!* 🔔\n\nTe recordamos el partido de *Nápoles FC*:\n⚽ *Rival:* ${rival}\n🕒 *Hora:* ${horaPartido}\n📍 *Lugar:* ${lugar}\n📅 *Fecha:* ${fechaFormateada}\n\nPor favor confirma tu asistencia cuanto antes. ¡Te esperamos para dar lo mejor! 💪⚽🔥`;
             const mensajeFelicitacion = (nombre) => `🎉 *¡Gracias por confirmar, ${nombre}!* 🎉\n\nEstamos muy contentos de contar contigo para el partido:\n⚽ *Rival:* ${rival}\n🕒 *Hora:* ${horaPartido}\n📍 *Lugar:* ${lugar}\n📅 *Fecha:* ${fechaFormateada}\n\nRecuerda ser puntual y traer tu mejor actitud. ¡Juntos sumamos! 🔥🏆\n\n#VamosNápoles`;
             
@@ -155,7 +152,6 @@
         container.innerHTML = html;
     }
 
-    // ==================== INICIALIZACIÓN ====================
     if (localStorage.getItem('admin_activo') !== 'true') window.location.href = 'login.html';
     cargarDatos();
     document.getElementById("btnRefresh").addEventListener("click", cargarDatos);
