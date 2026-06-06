@@ -58,6 +58,7 @@
         .btn-pago:hover { background: #ea580c; transform: scale(0.96); }
         .btn-refresh { background: #7c2d12; border: none; padding: 8px 18px; border-radius: 40px; color: white; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
         .btn-historial { background: #2563eb; border: none; padding: 8px 18px; border-radius: 40px; color: white; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+        .btn-reset { background: #dc2626; border: none; padding: 8px 18px; border-radius: 40px; color: white; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal-overlay.open { opacity: 1; pointer-events: auto; }
         .modal-container { background: white; width: 90%; max-width: 700px; border-radius: 28px; padding: 24px; transform: translateY(20px); transition: 0.3s; max-height: 80vh; overflow-y: auto; }
@@ -98,8 +99,9 @@
 
     <div class="section-title">
         <span><i class="fa-solid fa-list-ul"></i> Jugadores con Deuda de Vocalía</span>
-        <div style="display: flex; gap: 8px;">
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <button class="btn-historial" id="btnHistorial"><i class="fa-solid fa-clock-rotate-left"></i> Ver historial</button>
+            <button class="btn-reset" id="btnResetCache"><i class="fa-solid fa-broom"></i> Resetear cache</button>
             <button class="btn-refresh" id="btnRefresh"><i class="fa-solid fa-arrows-rotate"></i> Actualizar</button>
         </div>
     </div>
@@ -146,7 +148,7 @@
 
 <script>
     // ============ CONFIGURACIÓN ============
-    const API_URL = "https://script.google.com/macros/s/AKfycbzS3jjwK4-soou_jfD9X-Yhacx7IB8XNEE-ySFz_AQsREXSZfIzmar_iRO1PWr_YUmD/exec"; // REEMPLAZAR
+    const API_URL = "https://script.google.com/macros/s/AKfycbzS3jjwK4-soou_jfD9X-Yhacx7IB8XNEE-ySFz_AQsREXSZfIzmar_iRO1PWr_YUmD/exec";
     
     // ============ VALIDACIÓN DE LOGIN ============
     if(localStorage.getItem('admin_activo') !== 'true') window.location.href = './login.html';
@@ -304,8 +306,17 @@
         });
     }
     
+    // ============ RESETEO DE CACHE ============
+    function resetearCache() {
+        if(confirm("¿Resetear caché? Se recargarán los datos desde el servidor.")) {
+            cargarDatos();
+            mostrarToast("Recargando datos...", "success");
+        }
+    }
+    
     // ============ EVENTOS ============
     document.getElementById('btnRefresh').addEventListener('click', cargarDatos);
+    document.getElementById('btnResetCache').addEventListener('click', resetearCache);
     document.getElementById('confirmarPago').addEventListener('click', confirmarPago);
     document.getElementById('btnHistorial').addEventListener('click', abrirHistorial);
     window.addEventListener('click', (e) => { 
