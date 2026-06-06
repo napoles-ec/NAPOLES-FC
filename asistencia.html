@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Nápoles FC - Asistencias por Partido</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(180deg, #ffffff 0%, #faf7ff 45%, #f5f3ff 100%); color: #111827; min-height: 100vh; overflow-x: hidden; }
+        .wave-bg { position: fixed; inset: 0; overflow: hidden; z-index: -1; pointer-events: none; }
+        .wave { position: absolute; width: 220%; height: 280px; left: -60%; border-radius: 45%; opacity: .18; filter: blur(8px); }
+        .wave1 { background: linear-gradient(90deg, #a855f7, #c084fc, #e9d5ff); bottom: -140px; animation: waveMove 18s linear infinite; }
+        .wave2 { background: linear-gradient(90deg, #7c3aed, #d8b4fe, #ede9fe); bottom: -170px; opacity: .12; animation: waveMoveReverse 26s linear infinite; }
+        .wave3 { background: linear-gradient(90deg, #c084fc, #f3e8ff, #ffffff); bottom: -200px; opacity: .08; animation: waveMove 34s linear infinite; }
+        @keyframes waveMove { 0% { transform: translateX(0) rotate(0deg); } 100% { transform: translateX(-12%) rotate(360deg); } }
+        @keyframes waveMoveReverse { 0% { transform: translateX(0) rotate(0deg); } 100% { transform: translateX(12%) rotate(-360deg); } }
+        .topbar { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,.75); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(168,85,247,.08); padding: 16px 18px; display: flex; align-items: center; justify-content: space-between; }
+        .admin-info h1 { font-size: 1.1rem; font-weight: 800; }
+        .admin-info p { font-size: .85rem; color: #6b7280; margin-top: 2px; }
+        .avatar { width: 46px; height: 46px; border-radius: 16px; background: linear-gradient(135deg, #7c3aed, #a855f7); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 1rem; box-shadow: 0 10px 20px rgba(124,58,237,.25); }
+        .hero { padding: 22px 18px 10px; max-width: 700px; margin: auto; }
+        .hero-card { background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(79,70,229,.95)); border-radius: 28px; padding: 26px; color: #fff; position: relative; overflow: hidden; box-shadow: 0 20px 45px rgba(124,58,237,.18); }
+        .hero-card h2 { font-size: 1.6rem; font-weight: 800; margin-bottom: 10px; }
+        .hero-card p { opacity: .92; line-height: 1.5; }
+        .dashboard { padding: 20px 18px 40px; max-width: 700px; margin: auto; }
+        .section-title { font-size: 1.4rem; font-weight: 800; margin: 20px 0 16px 0; color: #2d1b69; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: space-between; }
+        .refresh-btn { background: #7c3aed; border: none; padding: 8px 18px; border-radius: 40px; color: white; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; font-family: 'Inter'; transition: 0.2s; }
+        .refresh-btn:hover { background: #6d28d9; transform: scale(0.97); }
+        .partidos-grid { display: flex; flex-direction: column; gap: 20px; }
+        .match-card { background: rgba(255,255,255,.9); backdrop-filter: blur(8px); border-radius: 28px; padding: 18px; border: 1px solid rgba(168,85,247,.2); box-shadow: 0 8px 20px rgba(0,0,0,.05); transition: .2s; }
+        .match-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; border-bottom: 2px dashed #e9d5ff; padding-bottom: 12px; }
+        .match-date { font-weight: 800; background: #ede9fe; padding: 4px 12px; border-radius: 40px; font-size: .8rem; }
+        .match-rival { font-size: 1.3rem; font-weight: 800; background: linear-gradient(135deg, #7c3aed, #c084fc); background-clip: text; -webkit-background-clip: text; color: transparent; }
+        .match-location { display: flex; align-items: center; gap: 6px; font-size: .85rem; color: #4b5563; }
+        .attendance-summary { background: #f5f3ff; border-radius: 20px; padding: 14px; margin: 12px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .confirmed-badge { background: #16a34a; color: white; border-radius: 999px; padding: 6px 16px; font-weight: 700; font-size: .9rem; display: inline-flex; align-items: center; gap: 6px; }
+        .players-list { margin-top: 16px; }
+        .players-list h4 { font-size: .9rem; font-weight: 700; margin-bottom: 10px; color: #4c1d95; display: flex; align-items: center; gap: 8px; }
+        .player-tag { background: white; border-radius: 40px; padding: 6px 14px; font-size: .8rem; font-weight: 500; box-shadow: 0 2px 6px rgba(0,0,0,.05); border: 1px solid #e9d5ff; display: inline-flex; align-items: center; gap: 8px; margin: 0 6px 8px 0; }
+        .player-dorsal { background: #7c3aed; color: white; border-radius: 30px; padding: 2px 8px; font-size: .7rem; font-weight: bold; }
+        .empty-attendance { color: #9ca3af; font-style: italic; padding: 10px 0; font-size: .85rem; }
+        .back-btn { margin-top: 30px; text-align: center; }
+        .btn { background: #7c3aed; border: none; padding: 12px 24px; border-radius: 40px; color: white; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-family: 'Inter'; text-decoration: none; }
+        .error-msg { background: #fee2e2; color: #dc2626; border-radius: 28px; padding: 20px; text-align: center; margin: 20px 0; }
+        hr { margin: 12px 0; border-color: #ede9fe; }
+        @media (max-width: 500px) { .match-header { flex-direction: column; } .section-title { flex-direction: column; align-items: flex-start; gap: 12px; } }
+    </style>
+</head>
+<body>
+<div class="wave-bg"><div class="wave wave1"></div><div class="wave wave2"></div><div class="wave wave3"></div></div>
+
+<header class="topbar">
+    <div class="admin-info"><h1>Panel de Gata</h1><p>Nápoles F.C. Admin</p></div>
+    <div class="avatar">G</div>
+</header>
+
+<section class="hero">
+    <div class="hero-card">
+        <h2>Asistencias a Partidos 📋</h2>
+        <p>Confirmaciones de jugadores por cada encuentro. Datos en vivo desde Google Sheets.</p>
+    </div>
+</section>
+
+<section class="dashboard">
+    <div class="section-title">
+        <span class="material-symbols-outlined">sports_soccer</span> Partidos y asistentes
+        <button class="refresh-btn" id="btnRefresh">
+            <span class="material-symbols-outlined" style="font-size: 1.2rem;">refresh</span> Actualizar
+        </button>
+    </div>
+    <div id="partidosContainer" class="partidos-grid">
+        <div style="text-align:center; padding:40px;">🔄 Cargando información de asistencia...</div>
+    </div>
+    <div class="back-btn">
+        <button class="btn" onclick="window.location.href='index.html'">
+            <span class="material-symbols-outlined">dashboard</span> Volver al panel
+        </button>
+    </div>
+</section>
+
+<script>
+    // ==================== CONFIGURACIÓN ====================
+    // ⚠️ REEMPLAZA ESTA URL CON LA DE TU WEB APP DESPLEGADA
+    const API_URL = "https://script.google.com/macros/s/AKfycbxCmDsDYVzUqykYRRwFUUqVkB9XcA2NnfomFXeuwOT_WXFAJ8NagsbqDErcegZuA9H9/exec";  // <--- CAMBIA ESTO
+
+    // ==================== FUNCIONES ====================
+    async function cargarDatos() {
+        const container = document.getElementById("partidosContainer");
+        container.innerHTML = '<div style="text-align:center; padding:40px;">🔄 Cargando datos desde Google Sheets...</div>';
+        
+        try {
+            const response = await fetch(API_URL);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            
+            if (!data.success) {
+                throw new Error(data.error || "Error desconocido al obtener datos");
+            }
+            renderizarPartidos(data);
+        } catch (error) {
+            console.error(error);
+            container.innerHTML = `
+                <div class="error-msg">
+                    ❌ Error al cargar datos: ${error.message}<br><br>
+                    Verifica que la URL de la Web App sea correcta<br>
+                    y que las hojas se llamen exactamente <strong>"Jugadores"</strong> y <strong>"Partidos Hombres"</strong>.
+                </div>`;
+        }
+    }
+
+    function renderizarPartidos(data) {
+        const partidos = data.partidosAgrupados;
+        const totalJugadores = data.resumen.totalJugadores;
+        const container = document.getElementById("partidosContainer");
+        
+        if (!partidos || partidos.length === 0) {
+            container.innerHTML = `<div style="background:rgba(255,255,240,0.8); border-radius:28px; padding:30px; text-align:center;">⚠️ No hay partidos registrados con asistencias confirmadas.</div>`;
+            return;
+        }
+        
+        let html = "";
+        for (const partido of partidos) {
+            const asistentes = partido.asistencias || [];
+            const cantidad = asistentes.length;
+            const fecha = new Date(partido.fecha);
+            const fechaFormateada = fecha.toLocaleDateString('es-ES', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+            
+            html += `
+                <div class="match-card">
+                    <div class="match-header">
+                        <div>
+                            <div class="match-date">${fechaFormateada} - ${partido.hora || 'Horario por definir'}</div>
+                            <div class="match-rival">⚽ ${partido.rival || 'Rival por definir'}</div>
+                        </div>
+                        <div class="match-location">
+                            <span class="material-symbols-outlined" style="font-size:1.2rem;">location_on</span> ${partido.lugar || 'Lugar por definir'}
+                        </div>
+                    </div>
+                    <div class="attendance-summary">
+                        <div><strong>✅ Confirmados / Asistieron</strong></div>
+                        <div class="confirmed-badge">
+                            <span class="material-symbols-outlined" style="font-size:1rem;">check_circle</span> ${cantidad} jugadores
+                        </div>
+                    </div>
+                    <div class="players-list">
+                        <h4><span class="material-symbols-outlined">sports_score</span> Lista de asistentes</h4>
+                        ${cantidad === 0 ? '<div class="empty-attendance">✖️ Ningún jugador confirmó asistencia aún.</div>' : ''}
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                            ${asistentes.map(j => `
+                                <div class="player-tag">
+                                    <span class="player-dorsal">${j.dorsal || '?'}</span>
+                                    <strong>${j.nombreCamiseta || (j.nombreCompleto ? j.nombreCompleto.split(' ')[0] : 'Jugador')}</strong>
+                                    ${j.nombreCompleto ? `<span style="color:#4b5563;">(${j.nombreCompleto})</span>` : ''}
+                                    ${j.golesPartido > 0 ? `<span style="background:#facc15; border-radius:20px; padding:2px 8px; font-size:0.7rem;">⚽ ${j.golesPartido}</span>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                        <hr>
+                        <div style="font-size:0.75rem; color:#6b7280; display: flex; justify-content: space-between;">
+                            <span>🔹 ${cantidad} de ${totalJugadores} jugadores registrados</span>
+                            <span>📋 Datos en vivo desde Google Sheets</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        container.innerHTML = html;
+    }
+
+    // ==================== INICIALIZACIÓN Y AUTENTICACIÓN ====================
+    function init() {
+        // Verificar autenticación (opcional, si usas login)
+        if (localStorage.getItem('admin_activo') !== 'true') {
+            window.location.href = './login.html';
+            return;
+        }
+        cargarDatos();
+        
+        // Botón actualizar manual
+        const btn = document.getElementById("btnRefresh");
+        if (btn) btn.addEventListener("click", cargarDatos);
+    }
+    
+    init();
+</script>
+</body>
+</html>
