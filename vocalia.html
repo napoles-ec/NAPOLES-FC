@@ -48,14 +48,17 @@
         .stat-number { font-size: 2rem; font-weight: 900; font-family: 'Outfit', sans-serif; color: #ea580c; }
         .stat-label { font-size: 0.7rem; text-transform: uppercase; color: var(--muted); letter-spacing: 1px; margin-top: 4px; }
         .section-title { font-size: 1.2rem; font-weight: 800; margin: 20px 0 16px 0; color: #7c2d12; display: flex; align-items: center; gap: 8px; justify-content: space-between; flex-wrap: wrap; }
-        .deuda-list { display: flex; flex-direction: column; gap: 12px; }
-        .deuda-item { background: white; border-radius: 24px; padding: 14px 16px; border: 1px solid #ffe4cc; transition: 0.2s; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
-        .deuda-info { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .deuda-list, .historial-list { display: flex; flex-direction: column; gap: 12px; }
+        .deuda-item, .historial-item { background: white; border-radius: 24px; padding: 14px 16px; border: 1px solid #ffe4cc; transition: 0.2s; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+        .historial-item { background: #fef9f0; border-color: #fed7aa; }
+        .deuda-info, .historial-info { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
         .dorsal-badge { background: #f97316; color: white; border-radius: 30px; padding: 4px 12px; font-weight: bold; font-size: 0.75rem; }
         .nombre-jugador { font-weight: 800; color: #111827; }
         .deuda-monto { background: #fee2e2; color: #dc2626; border-radius: 40px; padding: 4px 12px; font-weight: 800; font-size: 0.85rem; }
-        .btn-pago { background: #f97316; border: none; padding: 6px 16px; border-radius: 40px; color: white; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; }
+        .btn-pago, .btn-ver { background: #f97316; border: none; padding: 6px 16px; border-radius: 40px; color: white; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; }
+        .btn-ver { background: #475569; }
         .btn-pago:hover { background: #ea580c; transform: scale(0.96); }
+        .btn-ver:hover { background: #334155; }
         .btn-refresh { background: #7c2d12; border: none; padding: 8px 18px; border-radius: 40px; color: white; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal-overlay.open { opacity: 1; pointer-events: auto; }
@@ -66,7 +69,12 @@
         .form-control { width: 100%; padding: 12px; border: 1px solid #fed7aa; border-radius: 16px; outline: none; }
         .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 24px; border-radius: 60px; z-index: 2000; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; }
         .empty-state { text-align: center; padding: 40px; color: var(--muted); }
-        @media (max-width: 600px) { .deuda-item { flex-direction: column; align-items: flex-start; } .stats-grid { flex-direction: column; } }
+        .tab-buttons { display: flex; gap: 12px; margin-bottom: 20px; }
+        .tab-btn { padding: 8px 20px; border-radius: 40px; border: none; background: #e2e8f0; font-weight: 600; cursor: pointer; }
+        .tab-btn.active { background: #f97316; color: white; }
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+        @media (max-width: 600px) { .deuda-item, .historial-item { flex-direction: column; align-items: flex-start; } .stats-grid { flex-direction: column; } }
     </style>
 </head>
 <body>
@@ -93,15 +101,35 @@
         </div>
     </div>
 
-    <div class="section-title">
-        <span><i class="fa-solid fa-list-ul"></i> Jugadores con Deuda de Vocalía</span>
-        <button class="btn-refresh" id="btnRefresh"><i class="fa-solid fa-arrows-rotate"></i> Actualizar</button>
+    <div class="tab-buttons">
+        <button class="tab-btn active" onclick="cambiarTab('deudores')">💰 Deudores</button>
+        <button class="tab-btn" onclick="cambiarTab('historial')">📜 Historial de Pagos</button>
     </div>
-    <div id="deudoresList" class="deuda-list">
-        <div class="empty-state">Cargando datos...</div>
+
+    <!-- Pestaña Deudores -->
+    <div id="tabDeudores" class="tab-pane active">
+        <div class="section-title">
+            <span><i class="fa-solid fa-list-ul"></i> Jugadores con Deuda de Vocalía</span>
+            <button class="btn-refresh" id="btnRefresh"><i class="fa-solid fa-arrows-rotate"></i> Actualizar</button>
+        </div>
+        <div id="deudoresList" class="deuda-list">
+            <div class="empty-state">Cargando datos...</div>
+        </div>
+    </div>
+
+    <!-- Pestaña Historial -->
+    <div id="tabHistorial" class="tab-pane">
+        <div class="section-title">
+            <span><i class="fa-solid fa-clock-rotate-left"></i> Últimos pagos registrados</span>
+            <button class="btn-refresh" id="btnRefreshHistorial"><i class="fa-solid fa-arrows-rotate"></i> Actualizar</button>
+        </div>
+        <div id="historialList" class="historial-list">
+            <div class="empty-state">Cargando historial...</div>
+        </div>
     </div>
 </section>
 
+<!-- Modal para registrar pago -->
 <div id="modalPago" class="modal-overlay">
     <div class="modal-container">
         <div class="modal-header">
@@ -126,22 +154,15 @@
 
 <script>
     // ============ CONFIGURACIÓN ============
-    // 🔴 REEMPLAZA ESTA URL CON LA DE TU WEB APP (la misma que usas en finanzas.js)
-    const API_URL = "https://script.google.com/macros/s/AKfycbxLMp_cT5ftzdFc5hGuZITfIgKhdUQRZGMkeMBlIMv0j6CSVEpkwrgcdes8ZlJQG_ML/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwDsKj6RA9IQh0E6yQ7SGeIp3CjTMn9rsY3GutI1Kh5yEJRdQkSmD29Vc3u51qh0LrS/exec"; // 🔴 CAMBIAR
     
-    // Si usas un archivo config.js externo, descomenta la siguiente línea y comenta la de arriba
-    // const API_URL = CONFIG.URL_GAS;
-    
-    // ============ VALIDACIÓN DE LOGIN ============
     if(localStorage.getItem('admin_activo') !== 'true') {
         window.location.href = './login.html';
     }
     
-    // ============ VARIABLES GLOBALES ============
     let jugadoresData = [];
     let jugadorSeleccionado = null;
     
-    // ============ UTILIDADES ============
     const formatearMoneda = (v) => new Intl.NumberFormat('es-EC', { style: 'currency', currency: 'USD' }).format(v);
     
     function mostrarToast(mensaje, tipo='info') {
@@ -152,8 +173,8 @@
         setTimeout(() => toast.remove(), 3000);
     }
     
-    // ============ CARGA DE DATOS ============
-    async function cargarDatos() {
+    // Cargar deudores
+    async function cargarDeudores() {
         const contenedor = document.getElementById('deudoresList');
         contenedor.innerHTML = '<div class="empty-state">Cargando...</div>';
         try {
@@ -170,8 +191,7 @@
             }
         } catch(e) {
             console.error(e);
-            contenedor.innerHTML = `<div class="empty-state">❌ Error al cargar datos: ${e.message}</div>`;
-            mostrarToast("Error de conexión", "error");
+            contenedor.innerHTML = `<div class="empty-state">❌ Error: ${e.message}</div>`;
         }
     }
     
@@ -198,7 +218,7 @@
         }
         contenedor.innerHTML = html;
         
-        document.querySelectorAll('.btn-pago').forEach(btn => {
+        document.querySelectorAll('#deudoresList .btn-pago').forEach(btn => {
             btn.addEventListener('click', () => {
                 jugadorSeleccionado = {
                     cedula: btn.dataset.cedula,
@@ -214,17 +234,41 @@
         });
     }
     
-    function escapeHtml(str) {
-        if(!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if(m === '&') return '&amp;';
-            if(m === '<') return '&lt;';
-            if(m === '>') return '&gt;';
-            return m;
-        });
+    // Cargar historial de pagos
+    async function cargarHistorial() {
+        const contenedor = document.getElementById('historialList');
+        contenedor.innerHTML = '<div class="empty-state">Cargando historial...</div>';
+        try {
+            const res = await fetch(`${API_URL}?action=getHistorialVocalia&nocache=${Date.now()}`);
+            const data = await res.json();
+            if(data.success && data.historial && data.historial.length > 0) {
+                let html = '';
+                for(let h of data.historial) {
+                    let fecha = new Date(h.fecha);
+                    let fechaStr = fecha.toLocaleString('es-EC');
+                    html += `
+                        <div class="historial-item">
+                            <div class="historial-info">
+                                <span><strong>${escapeHtml(h.nombre || 'Jugador')}</strong></span>
+                                <span>💰 ${formatearMoneda(h.monto)}</span>
+                                <span>📉 Deuda anterior: ${formatearMoneda(h.deudaPrevia)}</span>
+                                <span>📈 Deuda restante: ${formatearMoneda(h.deudaRestante)}</span>
+                                <span>🕒 ${fechaStr}</span>
+                                <span>🔢 Ref: ${escapeHtml(h.transaccion || 'N/A')}</span>
+                                <span>👤 ${escapeHtml(h.registradoPor || 'admin')}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+                contenedor.innerHTML = html;
+            } else {
+                contenedor.innerHTML = '<div class="empty-state">📭 No hay pagos registrados aún.</div>';
+            }
+        } catch(e) {
+            contenedor.innerHTML = `<div class="empty-state">❌ Error al cargar historial: ${e.message}</div>`;
+        }
     }
     
-    // ============ REGISTRAR PAGO ============
     async function confirmarPago() {
         let monto = parseFloat(document.getElementById('montoPago').value);
         if(isNaN(monto) || monto <= 0) {
@@ -243,7 +287,8 @@
             if(data.success) {
                 mostrarToast(`Pago de ${formatearMoneda(monto)} registrado correctamente`, "success");
                 cerrar();
-                cargarDatos();
+                cargarDeudores();  // recargar deudores
+                cargarHistorial(); // recargar historial
             } else {
                 throw new Error(data.error);
             }
@@ -256,15 +301,36 @@
         document.getElementById('modalPago').classList.remove('open');
     }
     
-    // ============ EVENTOS ============
-    document.getElementById('btnRefresh').addEventListener('click', cargarDatos);
-    document.getElementById('confirmarPago').addEventListener('click', confirmarPago);
-    window.addEventListener('click', (e) => { 
-        if(e.target.classList.contains('modal-overlay')) cerrarModal(); 
-    });
+    function cambiarTab(tab) {
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        if(tab === 'deudores') {
+            document.getElementById('tabDeudores').classList.add('active');
+            document.querySelector('.tab-btn:first-child').classList.add('active');
+            cargarDeudores();
+        } else {
+            document.getElementById('tabHistorial').classList.add('active');
+            document.querySelector('.tab-btn:last-child').classList.add('active');
+            cargarHistorial();
+        }
+    }
     
-    // Iniciar
-    cargarDatos();
+    function escapeHtml(str) {
+        if(!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if(m === '&') return '&amp;';
+            if(m === '<') return '&lt;';
+            if(m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    document.getElementById('btnRefresh').addEventListener('click', cargarDeudores);
+    document.getElementById('btnRefreshHistorial').addEventListener('click', cargarHistorial);
+    document.getElementById('confirmarPago').addEventListener('click', confirmarPago);
+    window.addEventListener('click', (e) => { if(e.target.classList.contains('modal-overlay')) cerrarModal(); });
+    
+    cargarDeudores();
 </script>
 </body>
 </html>
