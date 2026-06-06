@@ -9,18 +9,18 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: radial-gradient(circle at 10% 30%, #f8fafc, #f1f5f9); min-height: 100vh; }
-        .topbar { background: rgba(255,255,255,0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(139,92,246,0.2); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; }
+        .topbar { background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(139,92,246,0.3); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; }
         .admin-info h1 { font-size: 1.3rem; font-weight: 800; background: linear-gradient(135deg, #6d28d9, #a855f7); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        .avatar { width: 48px; height: 48px; background: linear-gradient(135deg, #7c3aed, #c084fc); border-radius: 20px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; box-shadow: 0 8px 20px rgba(124,58,237,0.3); }
+        .avatar { width: 48px; height: 48px; background: linear-gradient(135deg, #7c3aed, #c084fc); border-radius: 20px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; box-shadow: 0 8px 20px rgba(124,58,237,0.4); }
         .hero { max-width: 800px; margin: 20px auto 0; padding: 0 20px; }
         .hero-card { background: linear-gradient(135deg, #6d28d9, #4c1d95); border-radius: 32px; padding: 28px; color: white; box-shadow: 0 20px 35px rgba(79,70,229,0.3); }
-        .hero-card h2 { font-size: 1.8rem; font-weight: 800; }
+        .hero-card h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 8px; }
         .dashboard { max-width: 800px; margin: 30px auto; padding: 0 20px 40px; }
         .header-actions { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 24px; }
-        .refresh-btn { background: #7c3aed; border: none; padding: 10px 20px; border-radius: 60px; color: white; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: 0.2s; }
+        .refresh-btn { background: #7c3aed; border: none; padding: 10px 20px; border-radius: 60px; color: white; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: 0.2s; font-family: 'Inter'; }
         .refresh-btn:hover { background: #6d28d9; transform: scale(0.96); }
         .partidos-grid { display: flex; flex-direction: column; gap: 28px; }
-        .match-card { background: rgba(255,255,255,0.95); backdrop-filter: blur(4px); border-radius: 36px; padding: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.05); border: 1px solid rgba(168,85,247,0.2); transition: 0.2s; }
+        .match-card { background: rgba(255,255,255,0.97); backdrop-filter: blur(4px); border-radius: 36px; padding: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.05); border: 1px solid rgba(168,85,247,0.2); transition: 0.2s; }
         .match-card:hover { transform: translateY(-3px); box-shadow: 0 20px 40px rgba(124,58,237,0.15); }
         .match-header { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; border-bottom: 2px dashed #e9d5ff; padding-bottom: 12px; }
         .match-date { background: #ede9fe; padding: 6px 16px; border-radius: 40px; font-weight: 600; font-size: 0.8rem; }
@@ -31,7 +31,7 @@
         .badge-red { background: #dc2626; color: white; border-radius: 40px; padding: 6px 18px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; }
         .player-list { margin-top: 20px; }
         .player-list h4 { font-size: 1.1rem; font-weight: 800; margin-bottom: 12px; color: #3b0764; display: flex; align-items: center; gap: 8px; }
-        .player-item { background: white; border-radius: 20px; padding: 12px 16px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; border: 1px solid #f3e8ff; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .player-item { background: white; border-radius: 24px; padding: 12px 16px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; border: 1px solid #f3e8ff; box-shadow: 0 2px 4px rgba(0,0,0,0.02); transition: 0.1s; }
         .player-info { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
         .dorsal { background: #7c3aed; color: white; border-radius: 30px; padding: 4px 12px; font-size: 0.75rem; font-weight: bold; }
         .dorsal.missing { background: #dc2626; }
@@ -41,7 +41,7 @@
         .whatsapp-btn:hover { background: #128C7E; transform: scale(1.02); }
         .no-wa { background: #9ca3af; color: white; border-radius: 40px; padding: 6px 16px; font-size: 0.75rem; cursor: default; }
         .back-btn { text-align: center; margin-top: 40px; }
-        .btn-back { background: #7c3aed; border: none; padding: 12px 28px; border-radius: 60px; color: white; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+        .btn-back { background: #7c3aed; border: none; padding: 12px 28px; border-radius: 60px; color: white; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-family: 'Inter'; }
         @media (max-width: 550px) { .player-item { flex-direction: column; align-items: flex-start; } .whatsapp-btn { align-self: flex-start; } }
     </style>
 </head>
@@ -54,7 +54,7 @@
 <section class="hero">
     <div class="hero-card">
         <h2>🎯 Control total de asistencia</h2>
-        <p>Envía recordatorios a los faltantes y felicitaciones a los que confirman. Datos en vivo desde Google Sheets.</p>
+        <p>Envía recordatorios detallados a los faltantes y felicitaciones personalizadas a los que confirman.</p>
     </div>
 </section>
 
@@ -68,13 +68,13 @@
 </section>
 
 <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzyeExnP6Xkb_dxSI48V_zl4Hjd76fECec2nh8HBpJXKIyzV_QsELoCVNMdJwmtlqw/exec"; // CAMBIAR
-    const MSG_RECORDATORIO = "🔔 ¡Hola! Te recordamos el partido de Nápoles FC. Por favor confirma tu asistencia. ¡Te esperamos! ⚽";
-    const MSG_FELICITACION = "🎉 ¡Gracias por confirmar! Te esperamos puntual. Vamos con todo, Nápoles! 🔥";
+    // ==================== CONFIGURACIÓN ====================
+    const API_URL = "https://script.google.com/macros/s/AKfycbzyeExnP6Xkb_dxSI48V_zl4Hjd76fECec2nh8HBpJXKIyzV_QsELoCVNMdJwmtlqw/exec"; // <--- CAMBIAR por la URL de tu Web App
 
+    // ==================== FUNCIONES ====================
     async function cargarDatos() {
         const container = document.getElementById("partidosContainer");
-        container.innerHTML = '<div style="text-align:center; padding:40px;">🔄 Cargando...</div>';
+        container.innerHTML = '<div style="text-align:center; padding:40px;">🔄 Cargando datos desde Google Sheets...</div>';
         try {
             const res = await fetch(API_URL);
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -99,12 +99,21 @@
             const asistentes = p.asistencias || [];
             const cedulasAsistentes = new Set(asistentes.map(a => a.cedula));
             const faltantes = todosJugadores.filter(j => !cedulasAsistentes.has(j.cedula));
-            const fecha = new Date(p.fecha).toLocaleDateString('es-ES', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+            const fecha = new Date(p.fecha);
+            const fechaFormateada = fecha.toLocaleDateString('es-ES', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+            const horaPartido = p.hora || "Hora por definir";
+            const rival = p.rival || "Rival";
+            const lugar = p.lugar || "Lugar por definir";
+            
+            // Mensajes personalizados con detalles del partido
+            const mensajeRecordatorio = (nombre) => `🔔 *¡Hola ${nombre}!* 🔔\n\nTe recordamos el partido de *Nápoles FC*:\n⚽ *Rival:* ${rival}\n🕒 *Hora:* ${horaPartido}\n📍 *Lugar:* ${lugar}\n📅 *Fecha:* ${fechaFormateada}\n\nPor favor confirma tu asistencia cuanto antes. ¡Te esperamos para dar lo mejor! 💪⚽🔥`;
+            const mensajeFelicitacion = (nombre) => `🎉 *¡Gracias por confirmar, ${nombre}!* 🎉\n\nEstamos muy contentos de contar contigo para el partido:\n⚽ *Rival:* ${rival}\n🕒 *Hora:* ${horaPartido}\n📍 *Lugar:* ${lugar}\n📅 *Fecha:* ${fechaFormateada}\n\nRecuerda ser puntual y traer tu mejor actitud. ¡Juntos sumamos! 🔥🏆\n\n#VamosNápoles`;
+            
             html += `<div class="match-card">
                 <div class="match-header">
-                    <div><div class="match-date">${fecha} - ${p.hora || 'Hora por definir'}</div>
-                    <div class="match-rival">⚽ ${p.rival || 'Rival'}</div></div>
-                    <div class="match-location"><span class="material-symbols-outlined">location_on</span> ${p.lugar || 'Lugar'}</div>
+                    <div><div class="match-date">${fechaFormateada} - ${horaPartido}</div>
+                    <div class="match-rival">⚽ ${rival}</div></div>
+                    <div class="match-location"><span class="material-symbols-outlined">location_on</span> ${lugar}</div>
                 </div>
                 <div class="stats-badge">
                     <div class="badge-green">✅ ${asistentes.length} asistentes</div>
@@ -114,29 +123,31 @@
                     <h4><span class="material-symbols-outlined">check_circle</span> Asistentes (${asistentes.length})</h4>`;
             if (asistentes.length === 0) html += `<div style="background:#f1f5f9; border-radius:20px; padding:12px; text-align:center;">Aún no hay confirmados</div>`;
             for (let a of asistentes) {
-                const wa = a.telefono ? `https://wa.me/${a.telefono}?text=${encodeURIComponent(MSG_FELICITACION)}` : null;
+                const nombreWA = a.nombreCamiseta || a.nombreCompleto.split(' ')[0];
+                const waLink = a.telefono ? `https://wa.me/${a.telefono}?text=${encodeURIComponent(mensajeFelicitacion(nombreWA))}` : null;
                 html += `<div class="player-item">
                             <div class="player-info">
                                 <span class="dorsal">${a.dorsal || '?'}</span>
-                                <span class="player-name">${a.nombreCamiseta || a.nombreCompleto.split(' ')[0]}</span>
+                                <span class="player-name">${a.nombreCamiseta || nombreWA}</span>
                                 <span class="player-fullname">${a.nombreCompleto}</span>
                                 ${a.golesPartido > 0 ? `<span style="background:#fbbf24; border-radius:20px; padding:2px 10px;">⚽ ${a.golesPartido}</span>` : ''}
                             </div>
-                            ${wa ? `<a href="${wa}" target="_blank" class="whatsapp-btn">📲 Felicitar</a>` : `<span class="no-wa">📵 Sin WhatsApp</span>`}
+                            ${waLink ? `<a href="${waLink}" target="_blank" class="whatsapp-btn">📲 Felicitar + compromiso</a>` : `<span class="no-wa">📵 Sin WhatsApp</span>`}
                         </div>`;
             }
             html += `</div><div class="player-list" style="margin-top:24px;">
                         <h4><span class="material-symbols-outlined">person_off</span> Faltantes (${faltantes.length})</h4>`;
             if (faltantes.length === 0) html += `<div style="background:#dcfce7; border-radius:20px; padding:12px; text-align:center;">🎉 ¡Todos confirmaron!</div>`;
             for (let f of faltantes) {
-                const wa = f.telefono ? `https://wa.me/${f.telefono}?text=${encodeURIComponent(MSG_RECORDATORIO)}` : null;
+                const nombreWA = f.nombreCamiseta || f.nombreCompleto.split(' ')[0];
+                const waLink = f.telefono ? `https://wa.me/${f.telefono}?text=${encodeURIComponent(mensajeRecordatorio(nombreWA))}` : null;
                 html += `<div class="player-item">
                             <div class="player-info">
                                 <span class="dorsal missing">${f.dorsal || '?'}</span>
-                                <span class="player-name">${f.nombreCamiseta || f.nombreCompleto.split(' ')[0]}</span>
+                                <span class="player-name">${f.nombreCamiseta || nombreWA}</span>
                                 <span class="player-fullname">${f.nombreCompleto}</span>
                             </div>
-                            ${wa ? `<a href="${wa}" target="_blank" class="whatsapp-btn">📲 Recordatorio</a>` : `<span class="no-wa">📵 Sin teléfono registrado</span>`}
+                            ${waLink ? `<a href="${waLink}" target="_blank" class="whatsapp-btn">📲 Recordatorio detallado</a>` : `<span class="no-wa">📵 Sin teléfono registrado</span>`}
                         </div>`;
             }
             html += `</div><hr style="margin:20px 0 0; border-color:#ede9fe;"></div>`;
@@ -144,6 +155,7 @@
         container.innerHTML = html;
     }
 
+    // ==================== INICIALIZACIÓN ====================
     if (localStorage.getItem('admin_activo') !== 'true') window.location.href = 'login.html';
     cargarDatos();
     document.getElementById("btnRefresh").addEventListener("click", cargarDatos);
