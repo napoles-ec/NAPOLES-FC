@@ -95,7 +95,7 @@
 <script>
 // ==================== CONFIGURACIÓN ====================
 // REEMPLAZA ESTA URL CON LA DE TU WEBAPP DESPLEGADA
-const CONFIG = { URL_GAS: "https://script.google.com/macros/s/AKfycbypPGhAhsPW2AnsGdLs68CMkDwkFAp6rPSHaURYqALVqngmSYTjFxqykcyRoNoYiqjk/exec" };
+const CONFIG = { URL_GAS: "https://script.google.com/macros/s/AKfycbyVC23XHXRmGSC-48BpApGAmngt1_Qd-_Z0c9O5TKt9eUWWvtAsMBGSr0Yqp8C0LU6_/exec" };
 
 let jugadorSesion = null;
 try {
@@ -141,9 +141,9 @@ async function obtenerPerfilJugador() {
     return data.success ? data.jugador : null;
 }
 
-async function verificarAsistenciaFutura() {
-    const data = await callApi("verificarAsistenciaFutura", { cedula: cedula });
-    return data.confirmed === true;
+async function obtenerRendimiento() {
+    const data = await callApi("getRendimientoJugador", { cedula: cedula });
+    return data.success ? { puntualidad: data.puntualidad, companerismo: data.companerismo, respeto: data.respeto, humildad: data.humildad } : { puntualidad:0, companerismo:0, respeto:0, humildad:0 };
 }
 
 // ==================== RENDER PERFIL COMPLETO ====================
@@ -193,7 +193,7 @@ async function mostrarPerfil() {
     const container = document.getElementById('dynamicContent');
     container.innerHTML = `<div class="perfil-root"><div class="perfil-container"><div class="soccer-loading-container"><i class="fa-solid fa-futbol fa-spin" style="font-size:3rem;color:#D4AF37;"></i><div>Cargando perfil...</div></div></div></div>`;
     
-    const [partidos, rivalesList, jugador] = await Promise.all([cargarPartidos(), cargarRivales(), obtenerPerfilJugador()]);
+    const [partidos, rivalesList, jugador, rendimiento] = await Promise.all([cargarPartidos(), cargarRivales(), obtenerPerfilJugador(), obtenerRendimiento()]);
     if (!jugador) {
         container.innerHTML = `<div class="perfil-root"><div class="perfil-container"><div class="error-message">No se pudo cargar el perfil</div></div></div>`;
         return;
@@ -213,19 +213,13 @@ async function mostrarPerfil() {
         deudaVocalia: Number(jugador['deuda vocalia']) || 0,
         inscripEstado: escapeHtml(jugador['inscrip_estado'] || 'PENDIENTE'),
         unifEstado: escapeHtml(jugador['unif_estado'] || 'PENDIENTE'),
-        mediasEstado: escapeHtml(jugador['medias_estado'] || 'PENDIENTE'),
-        puntualidad: parseFloat(jugador['puntualidad']) || 0,
-        companerismo: parseFloat(jugador['compañerismo']) || 0,
-        respeto: parseFloat(jugador['respeto']) || 0,
-        humildad: parseFloat(jugador['humildad']) || 0
+        mediasEstado: escapeHtml(jugador['medias_estado'] || 'PENDIENTE')
     };
     let edad = calcularEdad(s.fechaNacimiento);
     let deudaInscripcion = s.inscripEstado.toUpperCase().includes('PENDIENTE') ? 5 : 0;
     let deudaUniforme = s.unifEstado.toUpperCase().includes('PENDIENTE') ? 17 : 0;
     let deudaMedias = s.mediasEstado.toUpperCase().includes('PENDIENTE') ? 2 : 0;
     let totalAdmin = deudaInscripcion + deudaUniforme + deudaMedias + s.deudaVocalia;
-    let suma = s.puntualidad + s.companerismo + s.respeto + s.humildad;
-    let promedio = suma > 0 ? parseFloat((suma / 4).toFixed(1)) : 0;
     
     // Próximo partido (el más cercano con estado no FINALIZADO)
     const hoy = new Date();
@@ -277,7 +271,7 @@ async function mostrarPerfil() {
     // Lista de rivales
     const chipsRivales = rivalesList.map(rival => `<span class="rival-chip">${escapeHtml(rival)}</span>`).join('');
     
-    // Botones de historial completos
+    // Botones de historial
     const botonesHistorial = `
         <div class="botones-historial">
             <button class="btn-historial" onclick="abrirHistorialPartidos()"><i class="fa-solid fa-list"></i> Todos los partidos</button>
@@ -286,27 +280,26 @@ async function mostrarPerfil() {
         </div>
     `;
     
+    let suma = rendimiento.puntualidad + rendimiento.companerismo + rendimiento.respeto + rendimiento.humildad;
+    let promedio = suma > 0 ? parseFloat((suma / 4).toFixed(1)) : 0;
+    
     container.innerHTML = `
     <div class="perfil-root">
         <div class="perfil-container">
             <div class="perfil-header"><h1>⚜️ PANEL NÁPOLES ⚜️</h1><div style="font-size:0.75rem;color:#D4AF37; text-align:center;">Categoría: ${categoria === 'mujeres' ? 'Femenina ♀' : 'Masculina ♂'}</div></div>
             
-            <!-- Tarjeta de identidad y camiseta -->
             <div class="cards-row">
                 <div class="glass-card-perfil id-card-identity" style="padding:15px; text-align:center;"><div class="avatar-icon-box" style="margin:0 auto 10px;"><i class="fa-solid fa-user-ninja"></i></div><div style="font-weight:900;">${s.primerNombre}<br>${s.apellidos}</div><div style="font-size:.65rem;"><i class="fa-solid fa-id-card"></i> ${cedula}</div><div style="margin-top:8px;background:rgba(212,175,55,.2);padding:4px 10px;border-radius:20px; display:inline-block;">${edad} años</div></div>
                 <div class="id-card-jersey-wrap"><div class="jersey-card-inner"><div class="face-front"><div class="jersey-name">${s.nombreCamiseta}</div><div class="jersey-number">${s.dorsal}</div><div>Talla ${s.tallaUni}</div></div><div class="face-back"><div class="jersey-name">NÁPOLES FC</div><div class="jersey-number">${s.dorsal}</div></div></div></div>
             </div>
 
-            <!-- PRÓXIMO ENCUENTRO -->
             ${proximoHTML}
 
-            <!-- OTROS RIVALES -->
             <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-people-group"></i> OTROS RIVALES DEL TORNEO</div>
                 <div class="rivales-scroll">${chipsRivales}</div>
             </div>
 
-            <!-- Estadísticas de partidos -->
             <div class="stats-grid">
                 <div class="stat-card"><div class="stat-icon" style="color:#3498db"><i class="fa-solid fa-shirt"></i></div><div class="stat-value">${historial.length}</div><div class="stat-label">PARTIDOS</div></div>
                 <div class="stat-card"><div class="stat-icon" style="color:#2ecc71"><i class="fa-solid fa-futbol"></i></div><div class="stat-value">${s.goles}</div><div class="stat-label">GOLES</div></div>
@@ -314,19 +307,17 @@ async function mostrarPerfil() {
                 <div class="stat-card"><div class="stat-icon" style="color:#e74c3c"><i class="fa-solid fa-square"></i></div><div class="stat-value">${s.rojas}</div><div class="stat-label">ROJAS</div></div>
             </div>
 
-            <!-- Rendimiento humano (corregido: cuadrícula 2x2 con círculos) -->
             <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-heart"></i> Rendimiento Humano</div>
                 <div class="performance-grid">
-                    <div class="metric-card">${renderProgressCircle(s.puntualidad, '#3498db')}<div class="metric-title" style="margin-top:10px; font-size:.7rem;">PUNTUALIDAD</div></div>
-                    <div class="metric-card">${renderProgressCircle(s.companerismo, '#2ecc71')}<div class="metric-title" style="margin-top:10px; font-size:.7rem;">COMPAÑERISMO</div></div>
-                    <div class="metric-card">${renderProgressCircle(s.respeto, '#f39c12')}<div class="metric-title" style="margin-top:10px; font-size:.7rem;">RESPETO</div></div>
-                    <div class="metric-card">${renderProgressCircle(s.humildad, '#9b59b6')}<div class="metric-title" style="margin-top:10px; font-size:.7rem;">HUMILDAD</div></div>
+                    <div class="metric-card">${renderProgressCircle(rendimiento.puntualidad, '#3498db')}<div class="metric-title" style="margin-top:10px; font-size:.7rem;">PUNTUALIDAD</div></div>
+                    <div class="metric-card">${renderProgressCircle(rendimiento.companerismo, '#2ecc71')}<div class="metric-title" style="margin-top:10px; font-size:.7rem;">COMPAÑERISMO</div></div>
+                    <div class="metric-card">${renderProgressCircle(rendimiento.respeto, '#f39c12')}<div class="metric-title" style="margin-top:10px; font-size:.7rem;">RESPETO</div></div>
+                    <div class="metric-card">${renderProgressCircle(rendimiento.humildad, '#9b59b6')}<div class="metric-title" style="margin-top:10px; font-size:.7rem;">HUMILDAD</div></div>
                 </div>
                 <div class="average-box"><div class="average-score" style="font-size:2.2rem;">${promedio}/10</div><div class="stars-container">${generarEstrellas(promedio)}</div></div>
             </div>
 
-            <!-- Estado Administrativo -->
             <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-chart-line"></i> Estado Administrativo</div>
                 <div class="admin-grid">
@@ -591,8 +582,11 @@ async function enviarFirmaTerminos() {
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ENVIANDO...';
     await callPost("guardarTerminos", { cedula, categoria, opcion });
     document.getElementById('modalTerms').style.display = 'none';
-    const tieneAsistencia = await verificarAsistenciaFutura();
-    if (tieneAsistencia) mostrarPerfil();
+    // Después de aceptar términos, evaluamos si hay partidos programados o mostramos ruleta
+    const partidos = await cargarPartidos();
+    const hoy = new Date();
+    const hayProximo = partidos.some(p => p.estado !== "FINALIZADO" && new Date(p.fecha) >= hoy);
+    if (hayProximo) mostrarPerfil();
     else mostrarRuleta();
 }
 async function verificarTerminos() {
@@ -615,9 +609,15 @@ function cerrarSesion() {
 (async function() {
     const terminosOk = await verificarTerminos();
     if (!terminosOk) return;
-    const tieneAsistencia = await verificarAsistenciaFutura();
-    if (tieneAsistencia) mostrarPerfil();
-    else mostrarRuleta();
+    // Verificar si hay partidos programados (fecha >= hoy y estado no finalizado)
+    const partidos = await cargarPartidos();
+    const hoy = new Date();
+    const hayProximo = partidos.some(p => p.estado !== "FINALIZADO" && new Date(p.fecha) >= hoy);
+    if (hayProximo) {
+        mostrarPerfil();
+    } else {
+        mostrarRuleta();
+    }
 })();
 </script>
 </body>
