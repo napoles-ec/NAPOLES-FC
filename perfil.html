@@ -9,308 +9,530 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-  /* ========== ESTILOS (los mismos que tenías, se omiten por brevedad pero se mantienen) ========== */
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', sans-serif; background: #0a0c10; color: #fff; }
-  .perfil-root { background: radial-gradient(circle at top, #111a33 0%, #060912 100%); min-height: 100vh; padding: 15px; display: flex; justify-content: center; }
-  .perfil-container { width: 100%; max-width: 480px; }
-  .glass-card-perfil { background: linear-gradient(145deg, rgba(10,20,40,.85), rgba(5,10,20,.95)); border-radius: 20px; border: 1px solid rgba(212,175,55,.25); overflow: hidden; padding: 15px; margin-bottom: 15px; }
-  .match-card-gold { background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(0,0,0,0.6)); border-left: 6px solid #D4AF37; border-radius: 24px; padding: 18px 15px; text-align: center; }
-  .match-teams { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 15px; }
-  .team-badge { text-align: center; flex: 1; }
-  .team-badge .team-name { font-size: 1.3rem; font-weight: 900; font-family: 'Outfit'; }
-  .vs-circle { background: #D4AF37; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #000; font-size: 1.3rem; }
-  .match-info { background: rgba(0,0,0,0.5); border-radius: 50px; padding: 12px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 8px; }
-  .match-info-item { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 600; }
-  .match-info-item i { color: #D4AF37; }
-  .result-badge { font-size: 0.7rem; font-weight: 800; margin-top: 6px; padding: 4px 12px; border-radius: 50px; display: inline-block; }
-  .victoria { background: #15803d; color: white; }
-  .derrota { background: #b91c1c; color: white; }
-  .empate { background: #a16207; color: white; }
-  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
-  .stat-card { background: rgba(0,0,0,.35); border-radius: 16px; padding: 10px; text-align: center; }
-  .btn-logout { background: rgba(231,76,60,.12); color: #e74c3c; border: 1px solid rgba(231,76,60,.2); width: 100%; border-radius: 14px; padding: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; }
-  .soccer-loading-container { text-align: center; margin-top: 140px; }
-  .rivales-scroll { overflow-x: auto; white-space: nowrap; padding-bottom: 8px; }
-  .rival-chip { display: inline-block; background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.3); border-radius: 40px; padding: 6px 18px; margin-right: 12px; font-size: 0.8rem; font-weight: 600; color: #f5e6a3; }
-  .terms-backdrop { position: fixed; top:0;left:0;width:100%;height:100%;background:rgba(3,5,10,0.97);backdrop-filter:blur(20px);z-index:10000;display:none;align-items:center;justify-content:center; }
-  .terms-box { background: #091022; border: 2px solid #D4AF37; border-radius: 24px; max-width: 430px; padding: 24px; }
-  .terms-option-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 14px; cursor: pointer; }
-  .btn-modal-send { background: linear-gradient(90deg, #D4AF37 0%, #F3E5AB 100%); color: #000; margin-top: 18px; font-weight: 800; border: none; padding: 14px; border-radius: 40px; width: 100%; }
-  .progress-circle { position: relative; width: 85px; height: 85px; margin: auto; }
-  .avatar-icon-box { width: 75px; height: 75px; border-radius: 50%; border: 3px solid #D4AF37; background: radial-gradient(circle, #1a2a4a 0%, #0a1428 100%); display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; color: #D4AF37; font-size: 2.2rem; }
-  .id-card-jersey-wrap { perspective: 900px; height: 180px; }
-  .jersey-card-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: rotateCard 12s linear infinite; }
-  @keyframes rotateCard { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
-  .face-front, .face-back { position: absolute; width: 100%; height: 100%; border-radius: 20px; backface-visibility: hidden; background: linear-gradient(145deg, #0a1428, #000814); border: 2px solid rgba(212,175,55,.4); display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .face-back { transform: rotateY(180deg); }
-  .jersey-number { font-size: 4.5rem; font-family: 'Outfit'; font-weight: 900; color: #D4AF37; }
-  /* ruleta */
-  .roulette-track { display: flex; gap: 24px; width: fit-content; transform: translateX(0); }
-  .spinning { animation: scroll-fast 0.2s linear infinite; filter: blur(4px); }
-  @keyframes scroll-fast { from { transform: translateX(0); } to { transform: translateX(-1000px); } }
-  .slowing { animation: scroll-slow 3s cubic-bezier(0.1, 0.7, 0.1, 1) forwards; }
-  @keyframes scroll-slow { from { transform: translateX(0); } to { transform: translateX(-4000px); } }
-  .reveal-element { opacity: 0; transform: translateY(20px); transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
-  .revealed { opacity: 1; transform: translateY(0); }
+    /* ========== ESTILOS COMPLETOS (incluye ruleta y perfil) ========== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #0a0c10; color: #fff; }
+    .perfil-root { background: radial-gradient(circle at top, #111a33 0%, #060912 100%); min-height: 100vh; padding: 15px; display: flex; justify-content: center; }
+    .perfil-container { width: 100%; max-width: 460px; }
+    .perfil-header h1 { font-family: 'Outfit', sans-serif; color: #D4AF37; font-size: 1.3rem; letter-spacing: 2px; text-align: center; margin-bottom: 20px; }
+    .cards-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+    .glass-card-perfil { background: linear-gradient(145deg, rgba(10,20,40,.85), rgba(5,10,20,.95)); border-radius: 20px; border: 1px solid rgba(212,175,55,.25); overflow: hidden; padding: 15px; margin-bottom: 15px; }
+    .match-card-gold { background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(0,0,0,0.6)); border-left: 6px solid #D4AF37; border-radius: 24px; padding: 18px 15px; margin-bottom: 0; text-align: center; }
+    .match-teams { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 15px; }
+    .team-badge { text-align: center; flex: 1; }
+    .team-badge .team-name { font-size: 1.3rem; font-weight: 900; font-family: 'Outfit'; letter-spacing: 1px; }
+    .team-badge .team-sub { font-size: 0.7rem; color: #D4AF37; text-transform: uppercase; }
+    .vs-circle { background: #D4AF37; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #000; font-size: 1.3rem; box-shadow: 0 0 10px rgba(212,175,55,0.6); }
+    .match-info { background: rgba(0,0,0,0.5); border-radius: 50px; padding: 12px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 8px; }
+    .match-info-item { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 600; }
+    .match-info-item i { color: #D4AF37; font-size: 1rem; }
+    .rivales-scroll { margin-top: 18px; overflow-x: auto; white-space: nowrap; padding-bottom: 8px; scrollbar-width: thin; }
+    .rival-chip { display: inline-block; background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.3); border-radius: 40px; padding: 6px 18px; margin-right: 12px; font-size: 0.8rem; font-weight: 600; color: #f5e6a3; backdrop-filter: blur(4px); }
+    .avatar-icon-box { width: 75px; height: 75px; border-radius: 50%; border: 3px solid #D4AF37; background: radial-gradient(circle, #1a2a4a 0%, #0a1428 100%); display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; color: #D4AF37; font-size: 2.2rem; }
+    .id-card-jersey-wrap { perspective: 900px; height: 180px; }
+    .jersey-card-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: rotateCard 12s linear infinite; }
+    @keyframes rotateCard { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
+    .face-front, .face-back { position: absolute; width: 100%; height: 100%; border-radius: 20px; backface-visibility: hidden; background: linear-gradient(145deg, #0a1428, #000814); border: 2px solid rgba(212,175,55,.4); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .face-back { transform: rotateY(180deg); }
+    .jersey-number { font-size: 4.5rem; font-family: 'Outfit'; font-weight: 900; line-height: 1; color: #D4AF37; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
+    .stat-card { background: rgba(0,0,0,.35); border-radius: 16px; padding: 10px 5px; text-align: center; }
+    .performance-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 15px; }
+    .progress-circle { position: relative; width: 85px; height: 85px; margin: auto; }
+    .progress-circle svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .average-box { background: rgba(212,175,55,.08); border: 1px solid rgba(212,175,55,.2); border-radius: 15px; padding: 15px; text-align: center; margin-top: 15px; }
+    .admin-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 15px; }
+    .btn-logout { background: rgba(231,76,60,.12); color: #e74c3c; border: 1px solid rgba(231,76,60,.2); width: 100%; border-radius: 14px; padding: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; }
+    .soccer-loading-container { text-align: center; margin-top: 140px; }
+    .result-badge { font-size: 0.7rem; font-weight: 800; margin-top: 6px; padding: 4px 12px; border-radius: 50px; display: inline-block; }
+    .victoria { background: #15803d; color: white; }
+    .derrota { background: #b91c1c; color: white; }
+    .empate { background: #a16207; color: white; }
+    /* Estilos de la ruleta */
+    .roulette-track { display: flex; gap: 24px; width: fit-content; transform: translateX(0); }
+    .spinning { animation: scroll-fast 0.2s linear infinite; filter: blur(4px); }
+    @keyframes scroll-fast { from { transform: translateX(0); } to { transform: translateX(-1000px); } }
+    .slowing { animation: scroll-slow 3s cubic-bezier(0.1, 0.7, 0.1, 1) forwards; filter: blur(0px); transition: filter 2s ease-out; }
+    @keyframes scroll-slow { from { transform: translateX(0); } to { transform: translateX(-4000px); } }
+    .reveal-element { opacity: 0; transform: translateY(20px); transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .revealed { opacity: 1; transform: translateY(0); }
+    .match-info-card { background: #1a1c22; border-radius: 40px; padding: 16px 20px; margin: 15px 0; border-left: 5px solid #e9c349; text-align: center; }
+    .glass-card { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(233, 195, 73, 0.6); color: white; }
+    .premium-glow { box-shadow: 0 0 30px rgba(233, 195, 73, 0.4); }
+    /* Modal términos */
+    .terms-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(3,5,10,0.97); backdrop-filter: blur(20px); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 15px; }
+    .terms-box { background: linear-gradient(145deg, #091022, #040812); border: 2px solid #D4AF37; border-radius: 24px; width: 100%; max-width: 430px; padding: 24px; box-shadow: 0 0 35px rgba(212,175,55,0.25); }
+    .terms-announcement { background: linear-gradient(135deg, rgba(212,175,55,0.04) 0%, rgba(255,255,255,0.01) 100%); border: 1px solid rgba(212,175,55,0.25); border-left: 5px solid #D4AF37; padding: 18px; border-radius: 14px; font-size: 0.88rem; line-height: 1.6; margin-bottom: 22px; white-space: pre-line; }
+    .terms-option-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 14px; cursor: pointer; }
+    .terms-option-card.selected { border-color: #D4AF37; background: rgba(212,175,55,0.08); }
+    .btn-modal-send { background: linear-gradient(90deg, #D4AF37 0%, #F3E5AB 100%); color: #000; margin-top: 18px; font-weight: 800; border: none; padding: 14px; border-radius: 40px; width: 100%; }
 </style>
 </head>
 <body>
 <div class="terms-backdrop" id="modalTerms">
-  <div class="terms-box">
-    <h2 style="text-align:center; color:#D4AF37;">GRAN INAUGURACIÓN</h2>
-    <div class="terms-announcement" style="margin-bottom:20px;">⚽ ATENCIÓN JUGADORES ⚽<br>📅 17 de mayo - 9:30 a.m.<br>✅ Seleccione opción de asistencia</div>
-    <div class="terms-option-card" onclick="selectRadio(1)"><input type="radio" name="termOption" id="opt1" value="1"><label>1️⃣ Asistiré, ahí estaré puntual</label></div>
-    <div class="terms-option-card" onclick="selectRadio(2)"><input type="radio" name="termOption" id="opt2" value="2"><label>2️⃣ Enviaré a mi representante</label></div>
-    <button class="btn-modal-send" id="btnFirmar" disabled onclick="enviarFirmaTerminos()">CONFIRMAR ASISTENCIA</button>
-  </div>
+    <div class="terms-box">
+        <h2 style="text-align:center; color:#D4AF37;">GRAN INAUGURACIÓN</h2>
+        <div class="terms-announcement">⚽ ATENCIÓN JUGADORES ⚽<br>📅 17 de mayo - 9:30 a.m.<br>✅ Seleccione opción de asistencia</div>
+        <div class="terms-option-card" onclick="selectRadio(1)"><input type="radio" name="termOption" id="opt1" value="1"><label>1️⃣ Asistiré, ahí estaré puntual</label></div>
+        <div class="terms-option-card" onclick="selectRadio(2)"><input type="radio" name="termOption" id="opt2" value="2"><label>2️⃣ Enviaré a mi representante</label></div>
+        <button class="btn-modal-send" id="btnFirmar" disabled onclick="enviarFirmaTerminos()">CONFIRMAR ASISTENCIA</button>
+    </div>
 </div>
 <div id="dynamicContent"></div>
 
 <script>
-const CONFIG = { URL_GAS: "https://script.google.com/macros/s/AKfycbxCmR1ivxxiUyqU7Agq-Z1eAEXdJFuM2WHpYR-5SUOPJP3XuNC1IIUNbK9kwI4CZx2U/exec" }; // <- REEMPLAZA
+// ==================== CONFIGURACIÓN ====================
+// REEMPLAZA ESTA URL CON LA DE TU WEBAPP DESPLEGADA (la que tiene el código .gs completo)
+const CONFIG = { URL_GAS: "https://script.google.com/macros/s/AKfycbxCmR1ivxxiUyqU7Agq-Z1eAEXdJFuM2WHpYR-5SUOPJP3XuNC1IIUNbK9kwI4CZx2U/exec" };
 
-let jugadorSesion = JSON.parse(localStorage.getItem('jugador_actual') || 'null');
-if (!jugadorSesion || !jugadorSesion.cedula) window.location.href = 'login.html';
+let jugadorSesion = null;
+try {
+    jugadorSesion = JSON.parse(localStorage.getItem('jugador_actual'));
+} catch(e) { console.warn(e); }
+if (!jugadorSesion || !jugadorSesion.cedula) {
+    window.location.href = 'login.html';
+}
 const cedula = jugadorSesion.cedula;
 const categoria = jugadorSesion.categoria || 'hombres';
+const nombreCompleto = (jugadorSesion.primerNombre || '') + ' ' + (jugadorSesion.apellidos || '');
 
-// ==================== LLAMADAS API ====================
+// ==================== FUNCIONES AUXILIARES API ====================
 async function callApi(action, params = {}) {
-  const url = new URL(CONFIG.URL_GAS);
-  url.searchParams.append("action", action);
-  Object.keys(params).forEach(k => url.searchParams.append(k, params[k]));
-  const resp = await fetch(url.toString());
-  return resp.json();
+    const url = new URL(CONFIG.URL_GAS);
+    url.searchParams.append("action", action);
+    Object.keys(params).forEach(k => url.searchParams.append(k, params[k]));
+    const resp = await fetch(url.toString());
+    return resp.json();
+}
+
+async function callPost(action, body) {
+    const formData = new URLSearchParams();
+    formData.append("action", action);
+    Object.keys(body).forEach(k => formData.append(k, body[k]));
+    await fetch(CONFIG.URL_GAS, { method: "POST", mode: "no-cors", body: formData });
+    return { success: true };
 }
 
 // ==================== OBTENER DATOS REALES ====================
 async function cargarPartidos() {
-  const data = await callApi("getPartidos");
-  return data.success ? data.data : [];
+    const data = await callApi("getPartidos");
+    return data.success ? data.data : [];
 }
 
 async function cargarRivales() {
-  const data = await callApi("getRivales");
-  return data.success ? data.data.map(r => r.nombre) : ["LEONES","IDEAL","BARZA","SAN MARTIN"];
+    const data = await callApi("getRivales");
+    return data.success ? data.data.map(r => r.nombre) : ["LEONES","IDEAL","BARZA","SAN MARTIN","INDEPENDIENTE","VODKILA","CHELSEA","JUVENTUS","FRANCO CANADIENSE"];
 }
 
 async function obtenerPerfilJugador() {
-  const data = await callApi("getPerfil", { cedula, categoria });
-  return data.success ? data.jugador : null;
+    const data = await callApi("getPerfil", { cedula: cedula });
+    return data.success ? data.jugador : null;
 }
 
-// ==================== PERFIL COMPLETO ====================
-async function mostrarPerfil() {
-  document.body.className = '';
-  const container = document.getElementById('dynamicContent');
-  container.innerHTML = `<div class="perfil-root"><div class="perfil-container"><div class="soccer-loading-container"><i class="fa-solid fa-futbol fa-spin" style="font-size:3rem;color:#D4AF37;"></i><div>Cargando perfil...</div></div></div></div>`;
-  
-  const [partidos, rivalesList, jugador] = await Promise.all([cargarPartidos(), cargarRivales(), obtenerPerfilJugador()]);
-  if (!jugador) { container.innerHTML = `<div class="perfil-root"><div class="perfil-container">Error al cargar perfil</div></div>`; return; }
-  
-  const hoy = new Date();
-  const proximos = partidos.filter(p => p.estado !== "FINALIZADO" && new Date(p.fecha) >= hoy).sort((a,b)=>new Date(a.fecha)-new Date(b.fecha));
-  const proximoPartido = proximos[0] || null;
-  const historial = partidos.filter(p => p.estado === "FINALIZADO" && p.resultado && p.resultado !== "VS").sort((a,b)=>new Date(b.fecha)-new Date(a.fecha)).slice(0,5);
-  
-  // Renderizar sección de próximo partido
-  let proximoHTML = '';
-  if (proximoPartido) {
-    const resultadoParse = analizarResultado(proximoPartido.resultado, 'FINALIZADO'); // solo para badges
-    proximoHTML = `
-      <div class="glass-card-perfil">
-        <div class="match-card-gold">
-          <div class="match-teams">
-            <div class="team-badge"><div class="team-name">⚜️ NÁPOLES F.C.</div><div class="team-sub">Local</div></div>
-            <div class="vs-circle">VS</div>
-            <div class="team-badge"><div class="team-name">${proximoPartido.rival}</div><div class="team-sub">Visitante</div></div>
-          </div>
-          <div class="match-info">
-            <div class="match-info-item"><i class="fa-regular fa-calendar-alt"></i> ${new Date(proximoPartido.fecha).toLocaleDateString()}</div>
-            <div class="match-info-item"><i class="fa-regular fa-clock"></i> ${proximoPartido.hora || "12:00"}</div>
-            <div class="match-info-item"><i class="fa-solid fa-location-dot"></i> ${proximoPartido.lugar || "LIGA SANTA RITA"}</div>
-          </div>
-        </div>
-      </div>`;
-  } else {
-    proximoHTML = `<div class="glass-card-perfil" style="text-align:center;">📅 No hay próximos partidos programados aún.</div>`;
-  }
-  
-  // Historial con marcador diferenciado
-  let historialHTML = '<div class="glass-card-perfil"><div style="color:#D4AF37; margin-bottom:12px;">📋 PARTIDOS RECIENTES</div>';
-  if (historial.length === 0) historialHTML += '<div style="text-align:center;">Aún no hay partidos finalizados.</div>';
-  else {
-    historial.forEach(p => {
-      const { tipo, home, away } = analizarResultado(p.resultado, 'FINALIZADO');
-      let badge = '';
-      if (tipo === 'victoria') badge = '<span class="result-badge victoria">🏆 VICTORIA</span>';
-      else if (tipo === 'derrota') badge = '<span class="result-badge derrota">⚠️ DERROTA</span>';
-      else if (tipo === 'empate') badge = '<span class="result-badge empate">🤝 EMPATE</span>';
-      else badge = `<span class="result-badge" style="background:#334155;">${p.resultado}</span>`;
-      historialHTML += `
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding:12px 0;">
-          <div style="font-size:0.8rem;">${new Date(p.fecha).toLocaleDateString()}<br><span style="color:#D4AF37;">vs ${p.rival}</span></div>
-          <div style="font-weight:800;">${home} - ${away}</div>
-          <div>${badge}</div>
-        </div>`;
-    });
-  }
-  historialHTML += '</div>';
-  
-  // Lista de rivales
-  const chips = rivalesList.map(r => `<span class="rival-chip">${r}</span>`).join('');
-  
-  // Aquí iría el resto del perfil (estadísticas, etc.) - por simplicidad se muestra lo esencial
-  container.innerHTML = `
-  <div class="perfil-root">
-    <div class="perfil-container">
-      <div class="perfil-header"><h1 style="font-family:'Outfit'; color:#D4AF37; text-align:center;">⚜️ PANEL NÁPOLES ⚜️</h1></div>
-      <div class="cards-row" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-        <div class="glass-card-perfil" style="text-align:center;"><div class="avatar-icon-box"><i class="fa-solid fa-user-ninja"></i></div><div><strong>${jugador['primer nombre'] || ''} ${jugador['apellidos'] || ''}</strong></div><div>${cedula}</div></div>
-        <div class="id-card-jersey-wrap"><div class="jersey-card-inner"><div class="face-front"><div class="jersey-number">${jugador['número de dorsal'] || '00'}</div></div><div class="face-back"><div class="jersey-number">${jugador['número de dorsal'] || '00'}</div></div></div></div>
-      </div>
-      ${proximoHTML}
-      <div class="glass-card-perfil"><div style="color:#D4AF37;">⚔️ RIVALES DEL TORNEO</div><div class="rivales-scroll">${chips}</div></div>
-      ${historialHTML}
-      <button class="btn-logout" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> CERRAR SESIÓN</button>
-    </div>
-  </div>`;
+// ==================== RENDER PERFIL COMPLETO ====================
+function escapeHtml(str) { if (!str) return ''; return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function calcularEdad(fechaNacimiento) {
+    if (!fechaNacimiento) return '--';
+    let fecha = new Date(fechaNacimiento);
+    if (isNaN(fecha.getTime())) return '--';
+    let hoy = new Date();
+    let edad = hoy.getFullYear() - fecha.getFullYear();
+    let mes = hoy.getMonth() - fecha.getMonth();
+    if (mes < 0 || (mes === 0 && hoy.getDate() < fecha.getDate())) edad--;
+    return edad;
 }
-
-function analizarResultado(res, estado) {
-  if (estado !== 'FINALIZADO') return { tipo: null, home: null, away: null };
-  const parts = (res || '').toString().trim().split('-');
-  if (parts.length === 2) {
-    let home = parseInt(parts[0]), away = parseInt(parts[1]);
-    if (!isNaN(home) && !isNaN(away)) {
-      let tipo = home > away ? 'victoria' : (home < away ? 'derrota' : 'empate');
-      return { home, away, tipo };
+function generarEstrellas(nota) {
+    let puntuacion = Math.min(10, Math.max(0, parseFloat(nota) || 0)) / 2;
+    let html = '';
+    for (let i = 1; i <= 5; i++) {
+        if (puntuacion >= i) html += '<i class="fa-solid fa-star"></i>';
+        else if (puntuacion >= i - 0.5) html += '<i class="fa-solid fa-star-half-stroke"></i>';
+        else html += '<i class="fa-regular fa-star" style="opacity:0.2;"></i>';
     }
-  }
-  return { home: null, away: null, tipo: null };
+    return html;
+}
+function renderProgressCircle(valor, color) {
+    let value = Math.min(10, Math.max(0, parseFloat(valor) || 0));
+    let radius = 40, circum = 2 * Math.PI * radius;
+    let dash = circum - ((value / 10) * circum);
+    return `<div class="progress-circle"><svg viewBox="0 0 100 100"><circle class="progress-bg" cx="50" cy="50" r="40" stroke="rgba(255,255,255,.08)" stroke-width="8" fill="none"></circle><circle class="progress-fill" cx="50" cy="50" r="40" stroke="${color}" stroke-width="8" fill="none" stroke-dasharray="${circum}" stroke-dashoffset="${dash}" stroke-linecap="round"></circle></svg><div class="progress-text" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:1.2rem; font-weight:900;">${value}</div></div>`;
+}
+function analizarResultado(res, estado) {
+    if (estado !== 'FINALIZADO') return { tipo: null, home: null, away: null };
+    const parts = (res || '').toString().trim().split('-');
+    if (parts.length === 2) {
+        let home = parseInt(parts[0]), away = parseInt(parts[1]);
+        if (!isNaN(home) && !isNaN(away)) {
+            let tipo = home > away ? 'victoria' : (home < away ? 'derrota' : 'empate');
+            return { home, away, tipo };
+        }
+    }
+    return { home: null, away: null, tipo: null };
 }
 
-function cerrarSesion() { localStorage.removeItem('jugador_actual'); window.location.href = 'login.html'; }
+async function mostrarPerfil() {
+    document.body.className = '';
+    document.body.style.background = '';
+    const container = document.getElementById('dynamicContent');
+    container.innerHTML = `<div class="perfil-root"><div class="perfil-container"><div class="soccer-loading-container"><div class="soccer-spinner"><i class="fa-solid fa-futbol fa-spin" style="font-size:3rem;color:#D4AF37;"></i></div><div>Cargando perfil...</div></div></div></div>`;
+    
+    const [partidos, rivalesList, jugador] = await Promise.all([cargarPartidos(), cargarRivales(), obtenerPerfilJugador()]);
+    if (!jugador) {
+        container.innerHTML = `<div class="perfil-root"><div class="perfil-container"><div class="error-message">No se pudo cargar el perfil</div></div></div>`;
+        return;
+    }
+    
+    // Datos del jugador
+    const s = {
+        primerNombre: escapeHtml(jugador['primer nombre'] || ''),
+        apellidos: escapeHtml(jugador['apellidos'] || ''),
+        fechaNacimiento: jugador['fecha de nacimiento'] || '',
+        nombreCamiseta: escapeHtml(jugador['nombre en camiseta'] || 'NÁPOLES'),
+        dorsal: escapeHtml(jugador['número de dorsal'] || '00'),
+        tallaUni: escapeHtml(jugador['talla uni.'] || 'M'),
+        goles: Number(jugador['goles']) || 0,
+        amarillas: Number(jugador['amarillas']) || 0,
+        rojas: Number(jugador['rojas']) || 0,
+        deudaVocalia: Number(jugador['deuda vocalia']) || 0,
+        inscripEstado: escapeHtml(jugador['inscrip_estado'] || 'PENDIENTE'),
+        unifEstado: escapeHtml(jugador['unif_estado'] || 'PENDIENTE'),
+        mediasEstado: escapeHtml(jugador['medias_estado'] || 'PENDIENTE')
+    };
+    let edad = calcularEdad(s.fechaNacimiento);
+    let deudaInscripcion = s.inscripEstado.toUpperCase().includes('PENDIENTE') ? 5 : 0;
+    let deudaUniforme = s.unifEstado.toUpperCase().includes('PENDIENTE') ? 17 : 0;
+    let deudaMedias = s.mediasEstado.toUpperCase().includes('PENDIENTE') ? 2 : 0;
+    let totalAdmin = deudaInscripcion + deudaUniforme + deudaMedias + s.deudaVocalia;
+    
+    // Próximo partido (el más cercano con estado no FINALIZADO)
+    const hoy = new Date();
+    const proximos = partidos.filter(p => p.estado !== "FINALIZADO" && new Date(p.fecha) >= hoy).sort((a,b)=>new Date(a.fecha)-new Date(b.fecha));
+    const proximoPartido = proximos[0];
+    let proximoHTML = '';
+    if (proximoPartido) {
+        proximoHTML = `
+            <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
+                <div class="match-card-gold">
+                    <div class="match-teams">
+                        <div class="team-badge"><div class="team-name">⚜️ NÁPOLES F.C.</div><div class="team-sub">Local · Fuerza Azteca</div></div>
+                        <div class="vs-circle">VS</div>
+                        <div class="team-badge"><div class="team-name">${escapeHtml(proximoPartido.rival)}</div><div class="team-sub">Visitante · Tradición</div></div>
+                    </div>
+                    <div class="match-info">
+                        <div class="match-info-item"><i class="fa-regular fa-calendar-alt"></i> ${new Date(proximoPartido.fecha).toLocaleDateString()}</div>
+                        <div class="match-info-item"><i class="fa-regular fa-clock"></i> ${proximoPartido.hora || '12:00'}</div>
+                        <div class="match-info-item"><i class="fa-solid fa-location-dot"></i> ${escapeHtml(proximoPartido.lugar) || 'LIGA SANTA RITA'}</div>
+                    </div>
+                </div>
+            </div>`;
+    } else {
+        proximoHTML = `<div class="glass-card-perfil" style="text-align:center;">📅 No hay próximos partidos programados aún.</div>`;
+    }
+    
+    // Historial de partidos finalizados (últimos 5 con resultado)
+    const historial = partidos.filter(p => p.estado === "FINALIZADO" && p.resultado && p.resultado !== "VS").sort((a,b)=>new Date(b.fecha)-new Date(a.fecha)).slice(0,5);
+    let historialHTML = '<div class="glass-card-perfil"><div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-trophy"></i> PARTIDOS RECIENTES</div>';
+    if (historial.length === 0) historialHTML += '<div style="text-align:center;">Aún no hay partidos finalizados.</div>';
+    else {
+        historial.forEach(p => {
+            const { home, away, tipo } = analizarResultado(p.resultado, 'FINALIZADO');
+            let badge = '';
+            if (tipo === 'victoria') badge = '<span class="result-badge victoria">🏆 VICTORIA</span>';
+            else if (tipo === 'derrota') badge = '<span class="result-badge derrota">⚠️ DERROTA</span>';
+            else if (tipo === 'empate') badge = '<span class="result-badge empate">🤝 EMPATE</span>';
+            else badge = `<span class="result-badge" style="background:#334155;">${p.resultado}</span>`;
+            historialHTML += `
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding:12px 0;">
+                    <div style="font-size:0.8rem;">${new Date(p.fecha).toLocaleDateString()}<br><span style="color:#D4AF37;">vs ${escapeHtml(p.rival)}</span></div>
+                    <div style="font-weight:800;">${home !== null ? home : '?'} - ${away !== null ? away : '?'}</div>
+                    <div>${badge}</div>
+                </div>`;
+        });
+    }
+    historialHTML += '</div>';
+    
+    // Lista de rivales
+    const chipsRivales = rivalesList.map(rival => `<span class="rival-chip">${escapeHtml(rival)}</span>`).join('');
+    
+    // Estadísticas de rendimiento (valores por defecto si no vienen del perfil)
+    const puntualidad = parseFloat(jugador['puntualidad']) || 0;
+    const companerismo = parseFloat(jugador['compañerismo']) || 0;
+    const respeto = parseFloat(jugador['respeto']) || 0;
+    const humildad = parseFloat(jugador['humildad']) || 0;
+    let suma = puntualidad + companerismo + respeto + humildad;
+    let promedio = suma > 0 ? parseFloat((suma / 4).toFixed(1)) : 0;
+    
+    container.innerHTML = `
+    <div class="perfil-root">
+        <div class="perfil-container">
+            <div class="perfil-header"><h1>⚜️ PANEL NÁPOLES ⚜️</h1><div style="font-size:0.75rem;color:#D4AF37; text-align:center;">Categoría: ${categoria === 'mujeres' ? 'Femenina ♀' : 'Masculina ♂'}</div></div>
+            
+            <!-- Tarjeta de identidad y camiseta -->
+            <div class="cards-row">
+                <div class="glass-card-perfil id-card-identity" style="padding:15px; text-align:center;"><div class="avatar-icon-box" style="margin:0 auto 10px;"><i class="fa-solid fa-user-ninja"></i></div><div style="font-weight:900;">${s.primerNombre}<br>${s.apellidos}</div><div style="font-size:.65rem;"><i class="fa-solid fa-id-card"></i> ${cedula}</div><div style="margin-top:8px;background:rgba(212,175,55,.2);padding:4px 10px;border-radius:20px; display:inline-block;">${edad} años</div></div>
+                <div class="id-card-jersey-wrap"><div class="jersey-card-inner"><div class="face-front"><div class="jersey-name">${s.nombreCamiseta}</div><div class="jersey-number">${s.dorsal}</div><div>Talla ${s.tallaUni}</div></div><div class="face-back"><div class="jersey-name">NÁPOLES FC</div><div class="jersey-number">${s.dorsal}</div></div></div></div>
+            </div>
 
-// ==================== RULETA CON RIVALES REALES ====================
-async function mostrarRuleta() {
-  const rivalesReales = await cargarRivales();
-  if (!rivalesReales.length) rivalesReales.push("LEONES");
-  const container = document.getElementById('dynamicContent');
-  container.innerHTML = `
-    <div class="h-screen flex flex-col items-center justify-center bg-black/90">
-      <h2 style="color:#D4AF37;">SORTEO DE RIVAL</h2>
-      <div class="relative w-full overflow-hidden py-12" id="roulette-window">
-        <div class="roulette-track px-[50vw]" id="roulette-track"></div>
-      </div>
-      <div class="hidden text-center" id="reveal-screen">
-        <div class="reveal-element"><div class="text-6xl" id="winnerIcon">🦁</div><div class="text-2xl font-bold" id="winnerName">LEONES</div></div>
-        <div class="reveal-element mt-4"><div class="match-info-card bg-gray-800 p-4 rounded-xl"><div class="flex justify-center gap-4"><span>📅 SÁBADO PRÓXIMO</span><span>⏰ 12:00</span><span>🏟️ CANCHA 1</span></div></div></div>
-        <button id="confirmButton" class="mt-6 bg-yellow-500 text-black px-8 py-3 rounded-full font-bold">Ahí estaré puntual</button>
-      </div>
-    </div>
-  `;
-  const track = document.getElementById('roulette-track');
-  const revealScreen = document.getElementById('reveal-screen');
-  // construir cartas
-  for (let i = 0; i < 40; i++) {
-    const rival = rivalesReales[i % rivalesReales.length];
-    const div = document.createElement('div');
-    div.className = 'flex-shrink-0 w-48 h-64 bg-black/70 rounded-xl flex flex-col items-center justify-center border border-yellow-500/30';
-    div.innerHTML = `<div class="text-5xl">${obtenerIconoRival(rival)}</div><div class="text-white mt-2 font-bold">${rival}</div>`;
-    track.appendChild(div);
-  }
-  let spinning = true;
-  track.classList.add('spinning');
-  setTimeout(() => {
-    track.classList.remove('spinning');
-    track.classList.add('slowing');
-    setTimeout(() => {
-      spinning = false;
-      const items = Array.from(track.children);
-      const centro = window.innerWidth / 2;
-      let closest = null, minDist = Infinity;
-      items.forEach(card => {
-        const rect = card.getBoundingClientRect();
-        const centerCard = rect.left + rect.width/2;
-        const dist = Math.abs(centro - centerCard);
-        if (dist < minDist) { minDist = dist; closest = card; }
-      });
-      const nombreRival = closest.querySelector('div:last-child')?.innerText || "LEONES";
-      document.getElementById('winnerName').innerText = nombreRival;
-      document.getElementById('winnerIcon').innerHTML = obtenerIconoRival(nombreRival);
-      document.querySelector('#roulette-window')?.classList.add('hidden');
-      revealScreen.classList.remove('hidden');
-      setTimeout(() => document.querySelectorAll('.reveal-element').forEach(el => el.classList.add('revealed')), 100);
-      document.getElementById('confirmButton').onclick = () => guardarPartidoConRival(nombreRival);
-    }, 3000);
-  }, 3000);
+            <!-- PRÓXIMO ENCUENTRO (dinámico desde la hoja) -->
+            ${proximoHTML}
+
+            <!-- OTROS RIVALES DEL TORNEO -->
+            <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-people-group"></i> OTROS RIVALES DEL TORNEO</div>
+                <div class="rivales-scroll">${chipsRivales}</div>
+            </div>
+
+            <!-- Estadísticas de partidos -->
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-icon" style="color:#3498db"><i class="fa-solid fa-shirt"></i></div><div class="stat-value">${historial.length}</div><div class="stat-label">PARTIDOS</div></div>
+                <div class="stat-card"><div class="stat-icon" style="color:#2ecc71"><i class="fa-solid fa-futbol"></i></div><div class="stat-value">${s.goles}</div><div class="stat-label">GOLES</div></div>
+                <div class="stat-card"><div class="stat-icon" style="color:#f39c12"><i class="fa-solid fa-square"></i></div><div class="stat-value">${s.amarillas}</div><div class="stat-label">AMARILLAS</div></div>
+                <div class="stat-card"><div class="stat-icon" style="color:#e74c3c"><i class="fa-solid fa-square"></i></div><div class="stat-value">${s.rojas}</div><div class="stat-label">ROJAS</div></div>
+            </div>
+
+            <!-- Rendimiento humano -->
+            <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-heart"></i> Rendimiento Humano</div>
+                <div class="performance-grid">
+                    ${renderProgressCircle(puntualidad, '#3498db')}<div class="metric-title" style="margin-top:10px; font-size:.7rem;">PUNTUALIDAD</div>
+                    ${renderProgressCircle(companerismo, '#2ecc71')}<div class="metric-title" style="margin-top:10px; font-size:.7rem;">COMPAÑERISMO</div>
+                    ${renderProgressCircle(respeto, '#f39c12')}<div class="metric-title" style="margin-top:10px; font-size:.7rem;">RESPETO</div>
+                    ${renderProgressCircle(humildad, '#9b59b6')}<div class="metric-title" style="margin-top:10px; font-size:.7rem;">HUMILDAD</div>
+                </div>
+                <div class="average-box"><div class="average-score" style="font-size:2.2rem;">${promedio}/10</div><div class="stars-container">${generarEstrellas(promedio)}</div></div>
+            </div>
+
+            <!-- Estado Administrativo -->
+            <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-chart-line"></i> Estado Administrativo</div>
+                <div class="admin-grid">
+                    ${deudaInscripcion ? `<div class="admin-card" style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><div class="admin-icon"><i class="fa-solid fa-file-signature"></i></div><div class="admin-value">$5</div><div class="admin-label">INSCRIPCIÓN</div><div class="admin-status pending" style="background:rgba(231,76,60,.15); color:#e74c3c;">PENDIENTE</div></div>` : ''}
+                    ${deudaUniforme ? `<div class="admin-card" style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><div class="admin-icon"><i class="fa-solid fa-tshirt"></i></div><div class="admin-value">$17</div><div class="admin-label">UNIFORME</div><div class="admin-status warning" style="background:rgba(243,156,18,.15); color:#f39c12;">PENDIENTE</div></div>` : ''}
+                    ${deudaMedias ? `<div class="admin-card" style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><div class="admin-icon"><i class="fa-solid fa-socks"></i></div><div class="admin-value">$2</div><div class="admin-label">MEDIAS</div><div class="admin-status info" style="background:rgba(52,152,219,.15); color:#3498db;">PENDIENTE</div></div>` : ''}
+                    ${s.deudaVocalia > 0 ? `<div class="admin-card" style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><div class="admin-icon"><i class="fa-solid fa-money-bill-wave"></i></div><div class="admin-value">$${s.deudaVocalia.toFixed(2)}</div><div class="admin-label">VOCALÍA</div><div class="admin-status vocalia" style="background:rgba(155,89,182,.15); color:#9b59b6;">PENDIENTE</div></div>` : ''}
+                </div>
+                <div class="debt-box" style="margin-top:15px; background:rgba(0,0,0,.4); border-radius:14px; padding:12px;">
+                    <div class="debt-header" style="display:flex; justify-content:space-between;"><span>VALORES PENDIENTES</span><span style="color:${totalAdmin > 0 ? '#e74c3c' : '#2ecc71'}">$${totalAdmin.toFixed(2)}</span></div>
+                    <div class="progress-bar" style="width:100%; height:8px; border-radius:10px; background:rgba(255,255,255,.08); overflow:hidden; margin-top:10px;"><div class="progress-fill-bar" style="height:100%; width:${Math.min(totalAdmin / 30 * 100, 100)}%; background:linear-gradient(90deg,#e74c3c,#f39c12);"></div></div>
+                    <div class="debt-message" style="margin-top:10px; font-size:.7rem; padding:8px; border-radius:10px; text-align:center; background:${totalAdmin === 0 ? 'rgba(46,204,113,.1)' : 'rgba(231,76,60,.1)'};">${totalAdmin === 0 ? '✅ ¡Estás al día!' : '⚠️ Regulariza tus pagos'}</div>
+                </div>
+            </div>
+            ${historialHTML}
+            <button class="btn-logout" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> CERRAR SESIÓN</button>
+        </div>
+    </div>`;
+}
+
+// ==================== RULETA (sorteo de rival) ====================
+function mostrarRuleta() {
+    document.body.className = 'ruleta-mode';
+    document.body.style.background = '#0a0c10';
+    const container = document.getElementById('dynamicContent');
+    container.innerHTML = `
+        <main class="h-screen flex flex-col items-center justify-center pt-16 relative">
+            <div class="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-secondary/10 rounded-full blur-[120px]"></div>
+            </div>
+            <div class="text-center px-4 mb-12" id="intro-header">
+                <h2 class="font-display-lg text-[32px] text-secondary tracking-widest mb-2 uppercase" style="color:#e9c349;">Sorteo de Rivales</h2>
+                <p class="font-label-caps text-on-surface-variant text-[10px] tracking-[0.3em] uppercase" style="color:#ccc;">Buscando el próximo desafío...</p>
+            </div>
+            <div class="relative w-full overflow-hidden py-12 flex items-center" id="roulette-window">
+                <div class="absolute left-1/2 top-0 -translate-x-1/2 z-20 flex flex-col items-center h-full justify-between py-4">
+                    <div class="w-1 h-8 bg-secondary/80 rounded-full blur-[2px]"></div>
+                    <div class="w-1 h-8 bg-secondary/80 rounded-full blur-[2px]"></div>
+                </div>
+                <div class="roulette-track px-[50vw]" id="roulette-track"></div>
+            </div>
+            <div class="hidden absolute inset-0 flex flex-col items-center justify-center z-40 bg-black/90 backdrop-blur-md" id="reveal-screen">
+                <div class="reveal-element text-center mb-8">
+                    <p class="font-label-caps text-secondary tracking-[0.4em] mb-4" style="color:#e9c349;">PRÓXIMO ENCUENTRO</p>
+                    <div class="flex items-center justify-center gap-6 md:gap-12">
+                        <div class="flex flex-col items-center gap-4">
+                            <div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-white/30"><span class="text-5xl">⚜️</span></div>
+                            <span class="font-display-lg text-xl tracking-wider text-white">NÁPOLES</span>
+                        </div>
+                        <div class="font-display-lg text-5xl text-secondary cinematic-text italic" style="color:#e9c349;">VS</div>
+                        <div class="flex flex-col items-center gap-4">
+                            <div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-secondary winner-glow"><span class="text-5xl" id="winnerIcon">🦁</span></div>
+                            <span class="font-display-lg text-xl tracking-wider text-white" id="winnerName">LEONES</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="reveal-element match-info-card w-full max-w-md mx-4">
+                    <div class="flex justify-center gap-6 flex-wrap text-white">
+                        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary" style="color:#e9c349;">event</span><span class="text-sm font-bold" id="proximaFecha">SÁBADO PRÓXIMO</span></div>
+                        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary" style="color:#e9c349;">schedule</span><span class="text-sm font-bold">12:00 HORAS</span></div>
+                        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary" style="color:#e9c349;">stadium</span><span class="text-sm font-bold">CANCHA 1 - LIGA SANTA RITA</span></div>
+                    </div>
+                </div>
+                <div class="reveal-element space-y-6 w-full max-w-xs px-6">
+                    <div class="glass-card p-6 rounded-2xl border border-secondary/40" style="background:rgba(0,0,0,0.7);">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="font-label-caps text-[10px] text-white uppercase">Nivel de Riesgo</span>
+                            <span class="font-label-caps text-[10px] text-secondary" style="color:#e9c349;">MÁXIMO</span>
+                        </div>
+                        <div class="w-full bg-white/20 h-1.5 rounded-full overflow-hidden"><div class="bg-secondary h-full rounded-full" style="width: 95%; background:#e9c349;"></div></div>
+                    </div>
+                    <button id="confirmButton" class="w-full bg-secondary text-black py-4 rounded-lg font-display-lg tracking-widest text-sm premium-glow uppercase font-bold" style="background:#e9c349; color:#000;">Ahí estaré puntual</button>
+                </div>
+            </div>
+            <div class="fixed inset-0 pointer-events-none z-50" id="particles"></div>
+        </main>
+    `;
+
+    // Obtener lista real de rivales
+    cargarRivales().then(rivalesList => {
+        const rivals = rivalesList.map(r => ({ name: r, icon: obtenerIconoRival(r), power: "ALTO" }));
+        const track = document.getElementById('roulette-track');
+        for (let i = 0; i < 40; i++) {
+            const rival = rivals[i % rivals.length];
+            const div = document.createElement('div');
+            div.className = 'flex-shrink-0 w-48 h-64 glass-card rounded-xl p-6 flex flex-col items-center justify-center border border-white/30';
+            div.style.background = 'rgba(0,0,0,0.8)';
+            div.style.backdropFilter = 'blur(8px)';
+            div.innerHTML = `<div class="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center mb-4 border border-white/20"><span class="text-5xl">${rival.icon}</span></div><h3 class="font-display-lg text-lg text-white">${rival.name}</h3><p class="font-label-caps text-[10px] text-gray-300 uppercase mt-1">Poder: ${rival.power}</p>`;
+            track.appendChild(div);
+        }
+        
+        setTimeout(() => {
+            track.classList.add('spinning');
+            setTimeout(() => {
+                track.classList.remove('spinning');
+                track.classList.add('slowing');
+                setTimeout(() => {
+                    const revealScreen = document.getElementById('reveal-screen');
+                    const introHeader = document.getElementById('intro-header');
+                    const rouletteWindow = document.getElementById('roulette-window');
+                    rouletteWindow.style.opacity = '0';
+                    introHeader.style.opacity = '0';
+                    setTimeout(() => {
+                        // Determinar rival ganador (el que queda en el centro)
+                        const items = Array.from(track.children);
+                        const centro = window.innerWidth / 2;
+                        let closest = null, minDist = Infinity;
+                        items.forEach(card => {
+                            const rect = card.getBoundingClientRect();
+                            const centerCard = rect.left + rect.width/2;
+                            const dist = Math.abs(centro - centerCard);
+                            if (dist < minDist) { minDist = dist; closest = card; }
+                        });
+                        const nombreRival = closest?.querySelector('h3')?.innerText || "LEONES";
+                        document.getElementById('winnerName').innerText = nombreRival;
+                        document.getElementById('winnerIcon').innerHTML = obtenerIconoRival(nombreRival);
+                        const fechaPartido = new Date();
+                        fechaPartido.setDate(fechaPartido.getDate() + (7 - fechaPartido.getDay() + 1));
+                        const fechaStr = fechaPartido.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase();
+                        document.getElementById('proximaFecha').innerText = fechaStr;
+                        revealScreen.classList.remove('hidden');
+                        setTimeout(() => {
+                            document.querySelectorAll('.reveal-element').forEach(el => el.classList.add('revealed'));
+                            crearParticulas();
+                        }, 100);
+                        document.getElementById('confirmButton').onclick = () => guardarPartidoConRival(nombreRival, fechaPartido);
+                    }, 800);
+                }, 3000);
+            }, 3000);
+        }, 500);
+    });
 }
 
 function obtenerIconoRival(nombre) {
-  const map = { "LEONES":"🦁", "IDEAL":"⚡", "BARZA":"🔵🔴", "SAN MARTIN":"🏰", "INDEPENDIENTE":"🔥", "VODKILA":"🍺", "CHELSEA":"💙", "JUVENTUD":"⚪⚫", "FRANCO CANADIENSE":"🍁" };
-  return map[nombre] || "⚽";
+    const map = { "LEONES":"🦁", "IDEAL":"⚡", "BARZA":"🔵🔴", "SAN MARTIN":"🏰", "INDEPENDIENTE":"🔥", "VODKILA":"🍺", "CHELSEA":"💙", "JUVENTUS":"⚪⚫", "FRANCO CANADIENSE":"🍁", "JUVENTUD DE AMERICA":"🟡🔴" };
+    return map[nombre] || "⚽";
 }
 
-async function guardarPartidoConRival(rival) {
-  const btn = document.getElementById('confirmButton');
-  if (!btn || btn.disabled) return;
-  btn.disabled = true;
-  btn.innerText = 'GUARDANDO...';
-  const fechaPartido = new Date();
-  fechaPartido.setDate(fechaPartido.getDate() + (7 - fechaPartido.getDay() + 1)); // próximo sábado
-  const fechaStr = fechaPartido.toISOString().split('T')[0];
-  // 1. Crear el partido en Programacion_Partidos_H
-  const partidoData = {
-    fecha: fechaStr,
-    hora: "12:00",
-    rival: rival,
-    local: "NAPOLES F.C.",
-    lugar: "LIGA SANTA RITA - Cancha 1",
-    resultado: "VS",
-    estado: "PRÓXIMO",
-    vocalia: ""
-  };
-  await callApi("agregarPartido", { partido: JSON.stringify(partidoData) });
-  // 2. Registrar asistencia en Partidos Hombres
-  const asistenciaData = {
-    cedula: cedula,
-    categoria: categoria,
-    nombre: jugadorSesion.primerNombre + " " + jugadorSesion.apellidos,
-    rival: rival,
-    fecha: fechaStr,
-    hora: "12:00",
-    lugar: "LIGA SANTA RITA - Cancha 1",
-    amarillas: 0, rojas: 0, goles: 0, valor_vocalia: 2.5, estado: "CONFIRMADO",
-    puntualidad: 10, companerismo: 10, respeto: 10, humildad: 10, dorsal: jugadorSesion.dorsal || ""
-  };
-  await callApi("registrarAsistencia", asistenciaData);
-  alert(`✅ Confirmaste asistencia contra ${rival}. ¡Buena suerte!`);
-  mostrarPerfil();
+function crearParticulas() {
+    const container = document.getElementById('particles');
+    if (!container) return;
+    const colors = ['#e9c349', '#ffffff', '#af8d11'];
+    for (let i = 0; i < 60; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.position = 'absolute';
+        p.style.width = `${Math.random() * 4 + 2}px`;
+        p.style.height = p.style.width;
+        p.style.background = colors[Math.floor(Math.random() * colors.length)];
+        p.style.left = '50%';
+        p.style.top = '50%';
+        p.style.borderRadius = '50%';
+        p.style.pointerEvents = 'none';
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = Math.random() * 300 + 100;
+        const tx = Math.cos(angle) * velocity;
+        const ty = Math.sin(angle) * velocity;
+        container.appendChild(p);
+        p.animate([
+            { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
+            { transform: `translate(${tx}px, ${ty}px) scale(0)`, opacity: 0 }
+        ], { duration: Math.random() * 1500 + 1000, easing: 'cubic-bezier(0, .9, .57, 1)', fill: 'forwards' });
+        setTimeout(() => p.remove(), 2000);
+    }
 }
 
-// ==================== TÉRMINOS ====================
-function selectRadio(num) { document.getElementById(`opt${num}`).checked = true; document.getElementById('btnFirmar').disabled = false; }
+async function guardarPartidoConRival(rival, fechaObj) {
+    const btn = document.getElementById('confirmButton');
+    if (!btn || btn.disabled) return;
+    btn.disabled = true;
+    btn.innerText = 'GUARDANDO...';
+    const fechaStr = fechaObj.toISOString().split('T')[0];
+    const hora = "12:00";
+    const lugar = "LIGA SANTA RITA - Cancha 1";
+    // 1. Crear el partido en Programacion_Partidos_H
+    const partidoData = { fecha: fechaStr, hora, rival: rival, local: "NAPOLES F.C.", lugar, resultado: "VS", estado: "PRÓXIMO", vocalia: "" };
+    await callPost("agregarPartido", { partido: JSON.stringify(partidoData) });
+    // 2. Registrar asistencia en Partidos Hombres
+    const dorsal = jugadorSesion.dorsal || "";
+    const asistenciaData = { cedula, categoria, nombre: nombreCompleto, rival, fecha: fechaStr, hora, lugar, amarillas: 0, rojas: 0, goles: 0, valor_vocalia: 2.5, estado: "CONFIRMADO", puntualidad: 10, companerismo: 10, respeto: 10, humildad: 10, dorsal };
+    await callPost("registrarAsistencia", asistenciaData);
+    alert(`✅ Confirmaste asistencia contra ${rival}. ¡Buena suerte!`);
+    mostrarPerfil();
+}
+
+// ==================== VERIFICACIONES Y MODAL TÉRMINOS ====================
+function selectRadio(num) {
+    document.getElementById('opt'+num).checked = true;
+    document.querySelectorAll('.terms-option-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById(`opt${num}`).parentElement.classList.add('selected');
+    document.getElementById('btnFirmar').disabled = false;
+}
 async function enviarFirmaTerminos() {
-  const opcion = document.querySelector('input[name="termOption"]:checked').value;
-  await callApi("guardarTerminos", { cedula, categoria, opcion });
-  document.getElementById('modalTerms').style.display = 'none';
-  const yaConfirmo = await callApi("verificarConfirmacionPartido", { cedula, rival: "LEONES", fecha: "2026-06-06" });
-  if (yaConfirmo.confirmed) mostrarPerfil();
-  else mostrarRuleta();
+    const opcion = document.querySelector('input[name="termOption"]:checked').value;
+    const btn = document.getElementById('btnFirmar');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ENVIANDO...';
+    await callPost("guardarTerminos", { cedula, categoria, opcion });
+    document.getElementById('modalTerms').style.display = 'none';
+    // Verificar si ya confirmó algún partido
+    const confirmacion = await callApi("verificarConfirmacionPartido", { cedula, rival: "LEONES", fecha: "2026-06-06" }); // fecha por defecto
+    if (confirmacion.confirmed) mostrarPerfil();
+    else mostrarRuleta();
 }
 async function verificarTerminos() {
-  const perfil = await obtenerPerfilJugador();
-  if (!perfil || !perfil.terminos_aceptados) { document.getElementById('modalTerms').style.display = 'flex'; return false; }
-  return true;
+    const perfil = await obtenerPerfilJugador();
+    if (!perfil || !perfil.terminos_aceptados) {
+        document.getElementById('modalTerms').style.display = 'flex';
+        return false;
+    }
+    return true;
 }
+
+function cerrarSesion() {
+    if (confirm('¿Cerrar sesión?')) {
+        localStorage.removeItem('jugador_actual');
+        window.location.href = 'login.html';
+    }
+}
+
+// ==================== FLUJO PRINCIPAL ====================
 (async function() {
-  const terminosOk = await verificarTerminos();
-  if (!terminosOk) return;
-  const yaConfirmo = await callApi("verificarConfirmacionPartido", { cedula, rival: "LEONES", fecha: "2026-06-06" });
-  if (yaConfirmo.confirmed) mostrarPerfil();
-  else mostrarRuleta();
+    const terminosOk = await verificarTerminos();
+    if (!terminosOk) return;
+    // Verificar si ya confirmó algún partido (usamos un partido existente, por ejemplo el próximo)
+    const partidos = await cargarPartidos();
+    const yaConfirmo = partidos.some(p => p.estado !== "FINALIZADO"); // simplificado
+    if (yaConfirmo) mostrarPerfil();
+    else mostrarRuleta();
 })();
 </script>
 </body>
