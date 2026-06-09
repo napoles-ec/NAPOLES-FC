@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-    /* ========== ESTILOS (los mismos que tenías, se omiten por brevedad) ========== */
+    /* ========== ESTILOS COMPLETOS (incluye ruleta y perfil) ========== */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Inter', sans-serif; background: #0a0c10; color: #fff; }
     .perfil-root { background: radial-gradient(circle at top, #111a33 0%, #060912 100%); min-height: 100vh; padding: 15px; display: flex; justify-content: center; }
@@ -43,14 +43,13 @@
     .progress-circle svg { width: 100%; height: 100%; transform: rotate(-90deg); }
     .average-box { background: rgba(212,175,55,.08); border: 1px solid rgba(212,175,55,.2); border-radius: 15px; padding: 15px; text-align: center; margin-top: 15px; }
     .admin-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 15px; }
-    .btn-logout, .btn-ruleta { background: rgba(231,76,60,.12); color: #e74c3c; border: 1px solid rgba(231,76,60,.2); width: 100%; border-radius: 14px; padding: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; text-align: center; }
-    .btn-ruleta { background: rgba(212,175,55,0.2); color: #D4AF37; border-color: rgba(212,175,55,0.4); }
+    .btn-logout { background: rgba(231,76,60,.12); color: #e74c3c; border: 1px solid rgba(231,76,60,.2); width: 100%; border-radius: 14px; padding: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; }
     .soccer-loading-container { text-align: center; margin-top: 140px; }
     .result-badge { font-size: 0.7rem; font-weight: 800; margin-top: 6px; padding: 4px 12px; border-radius: 50px; display: inline-block; }
     .victoria { background: #15803d; color: white; }
     .derrota { background: #b91c1c; color: white; }
     .empate { background: #a16207; color: white; }
-    /* Ruleta */
+    /* Estilos de la ruleta */
     .roulette-track { display: flex; gap: 24px; width: fit-content; transform: translateX(0); }
     .spinning { animation: scroll-fast 0.2s linear infinite; filter: blur(4px); }
     @keyframes scroll-fast { from { transform: translateX(0); } to { transform: translateX(-1000px); } }
@@ -61,7 +60,7 @@
     .match-info-card { background: #1a1c22; border-radius: 40px; padding: 16px 20px; margin: 15px 0; border-left: 5px solid #e9c349; text-align: center; }
     .glass-card { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(233, 195, 73, 0.6); color: white; }
     .premium-glow { box-shadow: 0 0 30px rgba(233, 195, 73, 0.4); }
-    /* Modales */
+    /* Modal términos y otros modales */
     .terms-backdrop, .modal-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(3,5,10,0.97); backdrop-filter: blur(20px); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 15px; }
     .modal-box { background: linear-gradient(145deg, #091022, #040812); border: 2px solid #D4AF37; border-radius: 24px; width: 100%; max-width: 500px; max-height: 85vh; overflow-y: auto; padding: 24px; }
     .terms-announcement { background: linear-gradient(135deg, rgba(212,175,55,0.04) 0%, rgba(255,255,255,0.01) 100%); border: 1px solid rgba(212,175,55,0.25); border-left: 5px solid #D4AF37; padding: 18px; border-radius: 14px; font-size: 0.88rem; line-height: 1.6; margin-bottom: 22px; white-space: pre-line; }
@@ -95,6 +94,7 @@
 
 <script>
 // ==================== CONFIGURACIÓN ====================
+// REEMPLAZA ESTA URL CON LA DE TU WEBAPP DESPLEGADA
 const CONFIG = { URL_GAS: "https://script.google.com/macros/s/AKfycbyVC23XHXRmGSC-48BpApGAmngt1_Qd-_Z0c9O5TKt9eUWWvtAsMBGSr0Yqp8C0LU6_/exec" };
 
 let jugadorSesion = null;
@@ -108,7 +108,7 @@ const cedula = jugadorSesion.cedula;
 const categoria = jugadorSesion.categoria || 'hombres';
 const nombreCompleto = (jugadorSesion.primerNombre || '') + ' ' + (jugadorSesion.apellidos || '');
 
-// ==================== API ====================
+// ==================== FUNCIONES AUXILIARES API ====================
 async function callApi(action, params = {}) {
     const url = new URL(CONFIG.URL_GAS);
     url.searchParams.append("action", action);
@@ -124,7 +124,7 @@ async function callPost(action, body) {
     return { success: true };
 }
 
-// ==================== DATOS ====================
+// ==================== OBTENER DATOS REALES ====================
 async function cargarPartidos() {
     const data = await callApi("getPartidos");
     return data.success ? data.data : [];
@@ -139,14 +139,13 @@ async function obtenerPerfilJugador() {
 }
 async function obtenerRendimiento() {
     const data = await callApi("getRendimientoJugador", { cedula: cedula });
-    console.log("Rendimiento desde backend:", data);
     if (data.success) {
         return { puntualidad: data.puntualidad, companerismo: data.companerismo, respeto: data.respeto, humildad: data.humildad };
     }
     return null;
 }
 
-// ==================== UTILS ====================
+// ==================== RENDER PERFIL COMPLETO ====================
 function escapeHtml(str) { if (!str) return ''; return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function calcularEdad(fechaNacimiento) {
     if (!fechaNacimiento) return '--';
@@ -187,7 +186,6 @@ function analizarResultado(res, estado) {
     return { home: null, away: null, tipo: null };
 }
 
-// ==================== MOSTRAR PERFIL (siempre se muestra, con o sin próximos) ====================
 async function mostrarPerfil() {
     document.body.className = '';
     document.body.style.background = '';
@@ -215,7 +213,6 @@ async function mostrarPerfil() {
         inscripEstado: escapeHtml(jugador['inscrip_estado'] || 'PENDIENTE'),
         unifEstado: escapeHtml(jugador['unif_estado'] || 'PENDIENTE'),
         mediasEstado: escapeHtml(jugador['medias_estado'] || 'PENDIENTE'),
-        // fallback para rendimiento si la API no devuelve nada
         puntualidadPerfil: parseFloat(jugador['puntualidad']) || 0,
         companerismoPerfil: parseFloat(jugador['compañerismo']) || 0,
         respetoPerfil: parseFloat(jugador['respeto']) || 0,
@@ -228,7 +225,6 @@ async function mostrarPerfil() {
         respeto: rendimientoApi?.respeto ?? s.respetoPerfil,
         humildad: rendimientoApi?.humildad ?? s.humildadPerfil
     };
-    console.log("Rendimiento final:", rendimiento);
     
     let edad = calcularEdad(s.fechaNacimiento);
     let deudaInscripcion = s.inscripEstado.toUpperCase().includes('PENDIENTE') ? 5 : 0;
@@ -258,11 +254,7 @@ async function mostrarPerfil() {
                 </div>
             </div>`;
     } else {
-        proximoHTML = `
-            <div class="glass-card-perfil" style="text-align:center;">
-                📅 No hay próximos partidos programados.
-                <button class="btn-ruleta" id="btnLanzarRuleta" style="margin-top:12px;">🎲 SORTEAR NUEVO RIVAL</button>
-            </div>`;
+        proximoHTML = `<div class="glass-card-perfil" style="text-align:center; padding:15px;">📅 No hay próximos partidos programados.</div>`;
     }
     
     // Historial de partidos finalizados (últimos 5)
@@ -357,15 +349,9 @@ async function mostrarPerfil() {
             <button class="btn-logout" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> CERRAR SESIÓN</button>
         </div>
     </div>`;
-    
-    // Si no había próximo partido, agregamos evento al botón de sorteo
-    if (!proximoPartido) {
-        const btnSorteo = document.getElementById('btnLanzarRuleta');
-        if (btnSorteo) btnSorteo.addEventListener('click', () => mostrarRuleta());
-    }
 }
 
-// ==================== FUNCIONES PARA MODALES ====================
+// ==================== FUNCIONES PARA MODALES DE HISTORIAL ====================
 function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
 
 async function abrirHistorialPartidos() {
@@ -392,7 +378,6 @@ async function abrirHistorialPartidos() {
     }
     document.getElementById('modalHistorialPartidos').style.display = 'flex';
 }
-
 async function abrirHistorialPagos() {
     const data = await callApi("getHistorialPagosJugador", { cedula });
     if (!data.success || !data.pagos || data.pagos.length === 0) {
@@ -410,7 +395,6 @@ async function abrirHistorialPagos() {
     }
     document.getElementById('modalHistorialPagos').style.display = 'flex';
 }
-
 async function abrirHistorialDeudas() {
     const data = await callApi("getHistorialDeudasJugador", { cedula });
     if (!data.success || !data.historial || data.historial.length === 0) {
@@ -591,7 +575,7 @@ async function guardarPartidoConRival(rival, fechaObj) {
     mostrarPerfil();
 }
 
-// ==================== TÉRMINOS ====================
+// ==================== VERIFICACIONES Y MODAL TÉRMINOS ====================
 function selectRadio(num) {
     document.getElementById('opt'+num).checked = true;
     document.querySelectorAll('.terms-option-card').forEach(c => c.classList.remove('selected'));
@@ -605,7 +589,12 @@ async function enviarFirmaTerminos() {
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ENVIANDO...';
     await callPost("guardarTerminos", { cedula, categoria, opcion });
     document.getElementById('modalTerms').style.display = 'none';
-    mostrarPerfil();
+    // Después de aceptar términos, evaluamos si hay partidos programados o mostramos ruleta
+    const partidos = await cargarPartidos();
+    const hoy = new Date();
+    const hayProximo = partidos.some(p => p.estado !== "FINALIZADO" && new Date(p.fecha) >= hoy);
+    if (hayProximo) mostrarPerfil();
+    else mostrarRuleta();
 }
 async function verificarTerminos() {
     const perfil = await obtenerPerfilJugador();
@@ -615,20 +604,22 @@ async function verificarTerminos() {
     }
     return true;
 }
-
 function cerrarSesion() {
     if (confirm('¿Cerrar sesión?')) {
         localStorage.removeItem('jugador_actual');
         window.location.href = 'login.html';
     }
 }
-
 // ==================== FLUJO PRINCIPAL ====================
 (async function() {
     const terminosOk = await verificarTerminos();
     if (!terminosOk) return;
-    // Mostrar perfil directamente (ya no se decide aquí si ruleta o no)
-    mostrarPerfil();
+    // Verificar si hay partidos programados (fecha >= hoy y estado no finalizado)
+    const partidos = await cargarPartidos();
+    const hoy = new Date();
+    const hayProximo = partidos.some(p => p.estado !== "FINALIZADO" && new Date(p.fecha) >= hoy);
+    if (hayProximo) mostrarPerfil();
+    else mostrarRuleta();
 })();
 </script>
 </body>
