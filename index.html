@@ -3,132 +3,676 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Panel Admin - Nápoles F.C.</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <title>Nápoles F.C. · Gol de Oro · Inscripciones Abiertas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Inter', sans-serif; background: linear-gradient(180deg, #ffffff 0%, #faf7ff 45%, #f5f3ff 100%); color: #111827; min-height: 100vh; overflow-x: hidden; position: relative; }
-        .wave-bg { position: fixed; inset: 0; overflow: hidden; z-index: -1; pointer-events: none; }
-        .wave { position: absolute; width: 220%; height: 280px; left: -60%; border-radius: 45%; opacity: .18; filter: blur(8px); }
-        .wave1 { background: linear-gradient(90deg, #a855f7, #c084fc, #e9d5ff); bottom: -140px; animation: waveMove 18s linear infinite; }
-        .wave2 { background: linear-gradient(90deg, #7c3aed, #d8b4fe, #ede9fe); bottom: -170px; opacity: .12; animation: waveMoveReverse 26s linear infinite; }
-        .wave3 { background: linear-gradient(90deg, #c084fc, #f3e8ff, #ffffff); bottom: -200px; opacity: .08; animation: waveMove 34s linear infinite; }
-        @keyframes waveMove { 0% { transform: translateX(0) rotate(0deg); } 100% { transform: translateX(-12%) rotate(360deg); } }
-        @keyframes waveMoveReverse { 0% { transform: translateX(0) rotate(0deg); } 100% { transform: translateX(12%) rotate(-360deg); } }
-        .topbar { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,.75); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(168,85,247,.08); padding: 16px 18px; display: flex; align-items: center; justify-content: space-between; }
-        .top-left { display: flex; align-items: center; gap: 14px; }
-        .admin-info h1 { font-size: 1.1rem; font-weight: 800; }
-        .admin-info p { font-size: .85rem; color: #6b7280; margin-top: 2px; }
-        .avatar { width: 46px; height: 46px; border-radius: 16px; background: linear-gradient(135deg, #7c3aed, #a855f7); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 1rem; box-shadow: 0 10px 20px rgba(124,58,237,.25); }
-        .hero { padding: 22px 18px 10px; max-width: 700px; margin: auto; }
-        .hero-card { background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(79,70,229,.95)); border-radius: 28px; padding: 26px; color: #fff; position: relative; overflow: hidden; box-shadow: 0 20px 45px rgba(124,58,237,.18); }
-        .hero-card::before { content: ''; position: absolute; width: 260px; height: 260px; border-radius: 50%; background: rgba(255,255,255,.12); right: -80px; top: -80px; }
-        .hero h2 { font-size: 1.6rem; font-weight: 800; margin-bottom: 10px; position: relative; z-index: 2; }
-        .hero p { opacity: .92; line-height: 1.5; position: relative; z-index: 2; }
-        .dashboard { padding: 20px 18px 40px; max-width: 700px; margin: auto; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .card { background: rgba(255,255,255,.82); backdrop-filter: blur(12px); border: 1px solid rgba(168,85,247,.08); border-radius: 24px; padding: 18px; min-height: 180px; position: relative; overflow: hidden; cursor: pointer; transition: .25s; box-shadow: 0 10px 30px rgba(15,23,42,.05); }
-        .card:hover { transform: translateY(-3px); box-shadow: 0 18px 40px rgba(124,58,237,.10); }
-        .card:active { transform: scale(.98); }
-        .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
-        .icon { width: 58px; height: 58px; border-radius: 18px; display: flex; align-items: center; justify-content: center; color: #fff; }
-        .icon .material-symbols-outlined { font-size: 30px; }
-        .badge { min-width: 34px; height: 34px; border-radius: 999px; background: #111827; color: #fff; display: flex; align-items: center; justify-content: center; font-size: .82rem; font-weight: 800; padding: 0 10px; }
-        .card h3 { font-size: 1rem; font-weight: 800; margin-bottom: 8px; }
-        .card p { color: #6b7280; font-size: .88rem; line-height: 1.5; }
-        /* Colores originales */
-        .players .icon { background: linear-gradient(135deg, #2563eb, #60a5fa); }
-        .matches .icon { background: linear-gradient(135deg, #16a34a, #4ade80); }
-        .rivals .icon { background: linear-gradient(135deg, #ea580c, #fb923c); }
-        .finance .icon { background: linear-gradient(135deg, #d97706, #facc15); }
-        .uniforms .icon { background: linear-gradient(135deg, #7c3aed, #c084fc); }
-        .settings .icon { background: linear-gradient(135deg, #0f172a, #475569); }
-        .stats .icon { background: linear-gradient(135deg, #db2777, #f472b6); }
-        .news .icon { background: linear-gradient(135deg, #0891b2, #22d3ee); }
-        .attendance .icon { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
-        /* Nueva tarjeta: Vocalía (color granate / dorado) */
-        .vocalia .icon { background: linear-gradient(135deg, #b91c1c, #f97316); }
-        @media (min-width: 700px) { .dashboard { max-width: 700px; margin: auto; } .hero { max-width: 700px; margin: auto; } }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        :root {
+            --azul-noche: #0a1a2f;
+            --dorado: #F5B81B;
+            --dorado-oscuro: #C98500;
+            --rojo-error: #e74c3c;
+            --verde-exito: #2ecc71;
+            --bg-glow: rgba(245,184,27,0.08);
+            --border-color: rgba(245, 184, 27, 0.6);
+            --btn-grad-start: #D4AF37;
+            --btn-grad-end: #B47C00;
+            --btn-shadow: rgba(212, 175, 55, 0.4);
+        }
+        /* Modo Femenino (morado) */
+        .contenedor-principal.femenino {
+            --dorado: #c154f0;
+            --dorado-oscuro: #9b2fc0;
+            --bg-glow: rgba(193, 84, 240, 0.08);
+            --border-color: rgba(193, 84, 240, 0.6);
+            --btn-grad-start: #b55ae0;
+            --btn-grad-end: #8a2be2;
+            --btn-shadow: rgba(139, 43, 226, 0.4);
+        }
+        /* Resto del diseño original (sin cambios en estructura) */
+        body {
+            background: radial-gradient(circle at 20% 30%, #0a1428, #01060f);
+            font-family: 'Inter', system-ui, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--bg-glow) 0%, rgba(0,0,0,0) 70%);
+            animation: rotateGlow 25s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        @keyframes rotateGlow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .contenedor-principal {
+            max-width: 540px;
+            width: 100%;
+            margin: 20px auto;
+            background: rgba(10, 26, 47, 0.85);
+            backdrop-filter: blur(18px);
+            border-radius: 2rem;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(255,255,255,0.05) inset, 0 0 18px var(--border-color);
+            padding: 2rem 1.8rem;
+            transition: transform 0.3s ease, box-shadow 0.3s, border-color 0.3s;
+            animation: slideUp 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            position: relative;
+            z-index: 2;
+        }
+        .contenedor-principal:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 40px 60px rgba(0, 0, 0, 0.6), 0 0 0 3px var(--border-color) inset;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        header {
+            text-align: center;
+            margin-bottom: 1.8rem;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #F9D976, #F39F1A, #FFD966);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.3rem;
+        }
+        .subtitulo {
+            color: #c9e2f5;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .badge {
+            display: inline-block;
+            background: linear-gradient(95deg, rgba(0, 139, 148, 0.3), rgba(245, 184, 27, 0.2));
+            border-radius: 60px;
+            padding: 0.3rem 1rem;
+            font-size: 0.7rem;
+            color: var(--dorado);
+            font-weight: 700;
+            margin-top: 0.6rem;
+            border-left: 2px solid var(--dorado);
+            border-right: 2px solid var(--dorado);
+        }
+        .golden-extra-container {
+            background: radial-gradient(ellipse at 30% 40%, rgba(0,0,0,0.6), rgba(245,184,27,0.08));
+            border-radius: 1.8rem;
+            padding: 1rem 0.8rem;
+            margin-top: 1rem;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            animation: pulseGold 2s infinite ease-in-out;
+        }
+        @keyframes pulseGold {
+            0% { box-shadow: 0 0 0 0 rgba(245,184,27,0.2); border-color: rgba(245,184,27,0.5);}
+            70% { box-shadow: 0 0 0 8px rgba(245,184,27,0); border-color: rgba(245,184,27,0.9);}
+            100% { box-shadow: 0 0 0 0 rgba(245,184,27,0); border-color: rgba(245,184,27,0.5);}
+        }
+        .golden-message {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #FFDD88;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            margin: 0.5rem 0;
+        }
+        .golden-sub {
+            font-size: 0.8rem;
+            color: #cfe6ff;
+            background: rgba(0,0,0,0.5);
+            display: inline-block;
+            padding: 0.2rem 1rem;
+            border-radius: 60px;
+        }
+        .paso {
+            display: none;
+            animation: fadeSlide 0.4s ease;
+        }
+        .paso.activo {
+            display: block;
+        }
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .campo { margin-bottom: 1.2rem; }
+        label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #FFE2A4;
+            margin-bottom: 0.25rem;
+        }
+        input, select {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.25s;
+            outline: none;
+        }
+        input:focus, select:focus {
+            border-color: var(--dorado);
+            box-shadow: 0 0 0 3px rgba(245,184,27,0.4);
+            background: rgba(0, 0, 0, 0.8);
+        }
+        .btn-primary {
+            background: linear-gradient(105deg, var(--btn-grad-start), var(--btn-grad-end));
+            border: none;
+            padding: 0.9rem;
+            width: 100%;
+            border-radius: 3rem;
+            font-weight: 800;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #0a1e2c;
+            cursor: pointer;
+            margin-top: 1.2rem;
+            transition: all 0.3s;
+            box-shadow: 0 5px 14px var(--btn-shadow);
+        }
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+            box-shadow: 0 10px 22px var(--btn-shadow);
+        }
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .grid-2cols {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .conditional-field {
+            display: none;
+            margin-top: 0.5rem;
+        }
+        .conditional-field.visible {
+            display: block;
+        }
+        #loader {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 10000;
+        }
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(245,184,27,0.3);
+            border-top: 4px solid var(--dorado);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .toast-notification {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0A1428ee;
+            backdrop-filter: blur(12px);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 10001;
+            border-left: 5px solid var(--dorado);
+        }
+        @media (max-width: 550px) {
+            body { padding: 0.8rem; }
+            .contenedor-principal { padding: 1.3rem; }
+            .golden-message { font-size: 1.2rem; }
+            .grid-2cols { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
-<div class="wave-bg"><div class="wave wave1"></div><div class="wave wave2"></div><div class="wave wave3"></div></div>
+<div class="contenedor-principal">
+    <header>
+        <h1>⚽ NÁPOLES F.C. ⚽</h1>
+        <p class="subtitulo">GOL DE ORO · TIEMPO EXTRA OFICIAL</p>
+        <div class="badge">🏆 TEMPORADA 2026 · ¡INSCRIPCIONES ABIERTAS! 🏆</div>
+        <div class="golden-extra-container">
+            <div class="golden-message">⚡ GOL DE ORO ⚡</div>
+            <div class="golden-sub">Cierre: Viernes 15 de Mayo 23:00</div>
+        </div>
+    </header>
 
-<header class="topbar">
-    <div class="top-left">
-        <div class="admin-info"><h1>Panel de Gata</h1><p>Nápoles F.C. Admin</p></div>
-    </div>
-    <div class="avatar">G</div>
-</header>
+    <form id="formRegistro">
+        <!-- PASO 1: Cédula -->
+        <div id="paso1" class="paso activo">
+            <div class="campo">
+                <label>🔢 CÉDULA (10 dígitos)</label>
+                <input type="text" id="ced" maxlength="10" placeholder="Ej: 1234567890">
+                <div class="help-note">🔑 Ingresa tu número de cédula</div>
+            </div>
+            <button type="button" id="btnCedula" class="btn-primary" disabled>Validar cédula</button>
+        </div>
 
-<section class="hero">
-    <div class="hero-card">
-        <h2>Hola Gata 👋</h2>
-        <p>Gestiona jugadores, partidos, uniformes, rivales, vocalía y todo el club desde tu celular.</p>
-    </div>
-</section>
+        <!-- PASO 2: Elegir categoría (MASCULINO / FEMENINO) -->
+        <div id="paso2" class="paso">
+            <div class="campo">
+                <label>⚧ Elige tu categoría</label>
+                <select id="categoria" required>
+                    <option value="">Selecciona</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Femenino">Femenino</option>
+                </select>
+            </div>
+            <button type="button" id="btnCategoria" class="btn-primary" disabled>Siguiente</button>
+        </div>
 
-<section class="dashboard">
-    <div class="grid">
-        <!-- Jugadores -->
-        <div class="card players" onclick="window.location.href='jugadores.html'">
-            <div class="card-top"><div class="icon"><span class="material-symbols-outlined">groups</span></div><div class="badge">12</div></div>
-            <h3>Jugadores</h3><p>Aprobar jugadores, editar datos y revisar registros.</p>
+        <!-- PASO 3: Datos personales -->
+        <div id="paso3" class="paso">
+            <div class="campo"><label>📝 Primer nombre</label><input type="text" id="n1" placeholder="Ej: TÚ NOMBRE"></div>
+            <div class="campo"><label>📝 Segundo nombre</label><input type="text" id="n2" placeholder="Ej: TÚ NOMBRE"></div>
+            <div class="campo"><label>📝 Apellidos</label><input type="text" id="ape" placeholder="Ej: TUS 2 APELLIDOS "></div>
+            <div class="campo"><label>📅 Fecha de nacimiento</label><input type="date" id="fecha"></div>
+            <button type="button" id="btnPaso3" class="btn-primary" disabled>Siguiente</button>
         </div>
-        <!-- Partidos -->
-        <div class="card matches" onclick="window.location.href='partidos.html'">
-            <div class="card-top"><div class="icon"><span class="material-symbols-outlined">sports_soccer</span></div><div class="badge">3</div></div>
-            <h3>Partidos</h3><p>Programa partidos, horarios y canchas.</p>
-        </div>
-        <!-- Rivales -->
-        <div class="card rivals" onclick="window.location.href='rivales.html'">
-            <div class="card-top"><div class="icon"><span class="material-symbols-outlined">shield</span></div><div class="badge">8</div></div>
-            <h3>Rivales</h3><p>Agrega clubes rivales y administra estadísticas.</p>
-        </div>
-        <!-- Finanzas -->
-        <div class="card finance" onclick="window.location.href='finanzas.html'">
-            <div class="card-top"><div class="icon"><span class="material-symbols-outlined">payments</span></div><div class="badge">5</div></div>
-            <h3>Finanzas</h3><p>Revisa pagos, inscripciones y balances.</p>
-        </div>
-        <!-- Uniformes -->
-        <div class="card uniforms" onclick="window.location.href='uniformes.html'">
-            <div class="card-top"><div class="icon"><span class="material-symbols-outlined">inventory_2</span></div><div class="badge">9</div></div>
-            <h3>Uniformes</h3><p>Gestiona tallas, entregas y stock.</p>
-        </div>
-        <!-- Configuración -->
-        <div class="card settings" onclick="window.location.href='configuracion.html'">
-            <div class="card-top"><div class="icon"><span class="material-symbols-outlined">settings</span></div><div class="badge">2</div></div>
-            <h3>Configuración</h3><p>Ajustes del sistema y permisos del club.</p>
-        </div>
-        <!-- Estadísticas -->
-        <div class="card stats" onclick="window.location.href='estadisticas.html'">
-            <div class="card-top"><div class="icon"><span class="material-symbols-outlined">query_stats</span></div><div class="badge">7</div></div>
-            <h3>Estadísticas</h3><p>Visualiza rendimiento, goles, asistencias y métricas del club.</p>
-        </div>
-        <!-- Notificaciones -->
-        <div class="card news" onclick="window.location.href='notificaciones.html'">
-            <div class="card-top"><div class="icon"><span class="material-symbols-outlined">notifications</span></div><div class="badge">4</div></div>
-            <h3>Notificaciones</h3><p>Envía anuncios, revisa alertas y novedades del club.</p>
-        </div>
-        <!-- Asistencia a Partidos (ya existente) -->
-        <div class="card attendance" onclick="window.location.href='asistencia.html'">
-            <div class="card-top"><div class="icon"><span class="material-symbols-outlined">event_seat</span></div><div class="badge">📋</div></div>
-            <h3>Asistencia a Partidos</h3><p>Confirma jugadores, revisa asistentes por encuentro y controla el registro.</p>
-        </div>
-        <!-- NUEVA TARJETA: VOCALÍA -->
-        <div class="card vocalia" onclick="window.location.href='vocalia.html'">
-            <div class="card-top"><div class="icon"><span class="material-symbols-outlined">gavel</span></div><div class="badge">🎤</div></div>
-            <h3>Vocalía</h3><p>Gestiona cuotas, compromisos, actas y comunicación con los jugadores.</p>
-        </div>
-    </div>
-</section>
 
+        <!-- PASO 4: Contacto -->
+        <div id="paso4" class="paso">
+            <div class="campo"><label>📞 Teléfono (10 dígitos)</label><input type="tel" id="tel" maxlength="10" placeholder="Ej: 0991234567"></div>
+            <div class="campo"><label>✉️ Correo electrónico</label><input type="email" id="correo" placeholder="tú@ejemplo.com"></div>
+            <button type="button" id="btnPaso4" class="btn-primary" disabled>Siguiente</button>
+        </div>
+
+        <!-- PASO 5: Fotos -->
+        <div id="paso5" class="paso">
+            <div class="campo"><label>📸 Foto de perfil</label><input type="file" id="rostro" accept="image/jpeg,image/png"></div>
+            <div class="campo"><label>🪪 Foto de cédula (frontal)</label><input type="file" id="cedulaFile" accept="image/jpeg,image/png"></div>
+            <button type="button" id="btnPaso5" class="btn-primary" disabled>Siguiente</button>
+            <input type="hidden" id="fotoRostroB64">
+            <input type="hidden" id="fotoCedulaB64">
+        </div>
+
+        <!-- PASO 6: Dorsal y nombre camiseta -->
+        <div id="paso6" class="paso">
+            <div class="grid-2cols">
+                <div class="campo"><label>🏷️ Nombre en camiseta</label><select id="nombreCamiseta"><option value="">Selecciona</option></select></div>
+                <div class="campo"><label>🔢 Dorsal</label><select id="dorsal"><option value="">Selecciona</option></select></div>
+            </div>
+            <button type="button" id="btnPaso6" class="btn-primary" disabled>Siguiente</button>
+        </div>
+
+        <!-- PASO 7: Talla, medias, pagos -->
+        <div id="paso7" class="paso">
+            <div class="campo"><label>👕 Talla de uniforme</label>
+                <select id="talla">
+                    <option value="">Selecciona</option>
+                    <option value="38">38</option><option value="40">40</option><option value="42">42</option>
+                    <option value="44">44</option><option value="46">46</option><option value="48">48</option>
+                </select>
+            </div>
+            <div class="campo"><label>🧦 Medias extras (+$2)</label>
+                <select id="medias"><option value="">Selecciona</option><option value="NO">No</option><option value="SI">Sí</option></select>
+            </div>
+            <div class="campo"><label>💰 N° transacción inscripción ($5) - solo números 5 a 10 dígitos</label>
+                <input type="text" id="inscripcion" placeholder="Ej: 123456789">
+            </div>
+            <div class="campo">
+                <label>👕 ¿Pagaste el uniforme? ($17)</label>
+                <select id="pagoUniformeOpcion">
+                    <option value="">Selecciona</option>
+                    <option value="SI">Sí, ya pagué</option>
+                    <option value="NO">No pagaré hoy, prometo pagar</option>
+                </select>
+            </div>
+            <div id="campoTransaccionUni" class="conditional-field">
+                <label>🔢 N° transferencia uniforme (5 a 10 dígitos)</label>
+                <input type="text" id="transaccionUniforme" placeholder="Ej: 987654321">
+            </div>
+            <div id="campoFechaPromesa" class="conditional-field">
+                <label>📅 Fecha compromiso de pago (máximo 5 días)</label>
+                <input type="date" id="fechaPromesaPago">
+            </div>
+            <button type="button" id="btnFinal" class="btn-primary" disabled>⚽ FINALIZAR REGISTRO ⚽</button>
+        </div>
+    </form>
+</div>
+<div id="loader"><div class="spinner"></div><div id="loader-texto">Procesando...</div></div>
+
+<script src="config.js"></script>
 <script>
-    if (localStorage.getItem('admin_activo') !== 'true') {
-        window.location.href = './login.html';
-    }
-    document.body.style.overscrollBehaviorY = 'auto';
+    (function(){
+        if(typeof CONFIG === 'undefined' || !CONFIG.URL_GAS){
+            alert("Error crítico: config.js no encontrado o URL no definida.");
+            return;
+        }
+        const URL_GAS = CONFIG.URL_GAS;
+        let registroAbierto = true;
+        let categoriaElegida = ''; // 'Masculino' o 'Femenino'
+
+        // ----- Toast y helpers -----
+        function mostrarToast(mensaje, tipo='info', duracion=4000){
+            const existing = document.querySelector('.toast-notification');
+            if(existing) existing.remove();
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.innerHTML = `<span>${tipo==='error'?'❌':tipo==='success'?'✅':'⚡'}</span> ${mensaje}`;
+            document.body.appendChild(toast);
+            setTimeout(()=> toast.remove(), duracion);
+        }
+        function marcarErrorInput(input, msg){
+            input.classList.add('error');
+            mostrarToast(msg, 'error', 2500);
+            setTimeout(()=> input.classList.remove('error'), 500);
+        }
+        function mostrarLoader(visible, texto="Procesando..."){
+            document.getElementById('loader').style.display = visible ? "flex" : "none";
+            if(texto) document.getElementById('loader-texto').innerText = texto;
+        }
+        function verPaso(n){
+            document.querySelectorAll(".paso").forEach(p => p.classList.remove("activo"));
+            document.getElementById(`paso${n}`).classList.add("activo");
+        }
+        // Cambio de diseño según categoría
+        function aplicarDiseñoPorCategoria(cat){
+            const contenedor = document.querySelector('.contenedor-principal');
+            if(cat === 'Femenino'){
+                contenedor.classList.add('femenino');
+            } else {
+                contenedor.classList.remove('femenino');
+            }
+        }
+        // Mayúsculas automáticas
+        document.querySelectorAll('input:not([type="email"]):not([type="file"]):not([type="hidden"])').forEach(inp => {
+            inp.addEventListener('input', function(){
+                if(this.id !== 'correo') this.value = this.value.toUpperCase();
+            });
+        });
+
+        // ----- Verificar fecha límite (backend) -----
+        async function verificarEstadoRegistro(){
+            mostrarLoader(true, "Verificando plazo...");
+            try{
+                const resp = await fetch(`${URL_GAS}?action=checkRegistrationOpen`);
+                const data = await resp.json();
+                registroAbierto = data.open === true;
+                if(!registroAbierto){
+                    document.querySelectorAll('input, select, button').forEach(el => el.disabled = true);
+                    document.querySelector('.contenedor-principal').style.opacity = '0.6';
+                    mostrarToast("⛔ INSCRIPCIONES CERRADAS. Plazo finalizado el Viernes 15 de Mayo 23:00.", "error", 8000);
+                }
+            } catch(e){
+                console.error(e);
+                mostrarToast("Error verificando plazo", "error");
+            } finally {
+                mostrarLoader(false);
+            }
+        }
+
+        // ----- Validar cédula (paso1) -----
+        const ced = document.getElementById('ced');
+        const btnCedula = document.getElementById('btnCedula');
+        ced.addEventListener('input', ()=>{
+            ced.value = ced.value.replace(/\D/g,'').slice(0,10);
+            btnCedula.disabled = ced.value.length !== 10 || !registroAbierto;
+        });
+        btnCedula.addEventListener('click', async () => {
+            if(!registroAbierto) return mostrarToast("Plazo cerrado", "error");
+            if(ced.value.length !== 10) return marcarErrorInput(ced, "Cédula 10 dígitos");
+            mostrarLoader(true, "Validando cédula...");
+            try{
+                const resp = await fetch(`${URL_GAS}?action=validarRegistro&cedula=${ced.value}`);
+                const data = await resp.json();
+                if(data.cedulaExiste) mostrarToast("⚠️ Esta cédula ya está registrada (masculino o femenino).", "error");
+                else { mostrarToast("✅ Cédula válida", "success"); verPaso(2); }
+            } catch(e){ mostrarToast("Error de conexión", "error"); }
+            mostrarLoader(false);
+        });
+
+        // ----- PASO 2: Categoría -----
+        const selectCategoria = document.getElementById('categoria');
+        const btnCategoria = document.getElementById('btnCategoria');
+        selectCategoria.addEventListener('change', ()=>{
+            btnCategoria.disabled = !selectCategoria.value;
+            if(selectCategoria.value){
+                categoriaElegida = selectCategoria.value;
+                aplicarDiseñoPorCategoria(categoriaElegida);
+            } else {
+                aplicarDiseñoPorCategoria('Masculino'); // default
+            }
+        });
+        btnCategoria.addEventListener('click', ()=>{
+            if(!selectCategoria.value) return mostrarToast("Selecciona una categoría", "error");
+            verPaso(3);
+        });
+
+        // ----- PASO 3: Nombres y fecha -----
+        const n1 = document.getElementById('n1'), n2 = document.getElementById('n2'), ape = document.getElementById('ape'), fecha = document.getElementById('fecha');
+        const btnPaso3 = document.getElementById('btnPaso3');
+        function validarPaso3(){
+            const fechaValida = fecha.value && !isNaN(new Date(fecha.value));
+            let fechaOk = true;
+            if(fechaValida && new Date(fecha.value) > new Date()) fechaOk = false;
+            btnPaso3.disabled = !(n1.value.trim() && ape.value.trim() && fechaValida && fechaOk);
+        }
+        [n1,n2,ape,fecha].forEach(el=>el.addEventListener('input', validarPaso3));
+        btnPaso3.addEventListener('click', ()=>{
+            if(!n1.value.trim()) return marcarErrorInput(n1,"Primer nombre");
+            if(!ape.value.trim()) return marcarErrorInput(ape,"Apellidos");
+            if(!fecha.value) return marcarErrorInput(fecha,"Fecha nacimiento");
+            if(new Date(fecha.value) > new Date()) return marcarErrorInput(fecha,"Fecha futura");
+            verPaso(4);
+        });
+
+        // ----- PASO 4: Contacto -----
+        const tel = document.getElementById('tel'), correo = document.getElementById('correo'), btnPaso4 = document.getElementById('btnPaso4');
+        tel.addEventListener('input', e=>e.target.value=e.target.value.replace(/\D/g,'').slice(0,10));
+        function validarPaso4(){
+            btnPaso4.disabled = !(tel.value.replace(/\D/g,'').length===10 && correo.value.includes('@') && correo.value.includes('.'));
+        }
+        [tel,correo].forEach(el=>el.addEventListener('input',validarPaso4));
+        btnPaso4.addEventListener('click',()=>{
+            if(tel.value.replace(/\D/g,'').length!==10) return marcarErrorInput(tel,"Teléfono 10 dígitos");
+            if(!correo.value.includes('@')||!correo.value.includes('.')) return marcarErrorInput(correo,"Email inválido");
+            verPaso(5);
+        });
+
+        // ----- PASO 5: Fotos -----
+        const rostro = document.getElementById('rostro'), cedulaFile = document.getElementById('cedulaFile');
+        const fotoRostroB64 = document.getElementById('fotoRostroB64'), fotoCedulaB64 = document.getElementById('fotoCedulaB64');
+        const btnPaso5 = document.getElementById('btnPaso5');
+
+        function archivoABase64(file, inputHidden){
+            return new Promise((resolve, reject)=>{
+                if(!file) return resolve(null);
+                const reader = new FileReader();
+                reader.onload = ()=> { inputHidden.value = reader.result; resolve(true); };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+        function verificarFotos(){
+            btnPaso5.disabled = !(fotoRostroB64.value && fotoCedulaB64.value);
+        }
+        rostro.addEventListener('change', async(e)=>{
+            const f = e.target.files[0];
+            if(f && !f.type.startsWith('image/')) return mostrarToast("Formato imagen", "error");
+            if(f && f.size>2*1024*1024) return mostrarToast("Max 2MB", "error");
+            await archivoABase64(f, fotoRostroB64);
+            verificarFotos();
+        });
+        cedulaFile.addEventListener('change', async(e)=>{
+            const f = e.target.files[0];
+            if(f && !f.type.startsWith('image/')) return mostrarToast("Formato imagen", "error");
+            if(f && f.size>2*1024*1024) return mostrarToast("Max 2MB", "error");
+            await archivoABase64(f, fotoCedulaB64);
+            verificarFotos();
+        });
+        btnPaso5.addEventListener('click', async ()=>{
+            if(!fotoRostroB64.value) return mostrarToast("Foto de perfil requerida","error");
+            if(!fotoCedulaB64.value) return mostrarToast("Foto de cédula requerida","error");
+            mostrarLoader(true, "Cargando dorsales disponibles...");
+            const selectNombre = document.getElementById('nombreCamiseta');
+            const selectDorsal = document.getElementById('dorsal');
+            selectNombre.innerHTML = '<option value="">Selecciona</option>';
+            selectDorsal.innerHTML = '<option value="">Selecciona</option>';
+            selectNombre.add(new Option(n1.value.trim(), n1.value.trim()));
+            if(n2.value.trim()) selectNombre.add(new Option(n2.value.trim(), n2.value.trim()));
+            try{
+                const resp = await fetch(`${URL_GAS}?action=getDorsales&categoria=${categoriaElegida}`);
+                const ocupados = await resp.json();
+                for(let i=1;i<=99;i++) if(!ocupados.includes(String(i))) selectDorsal.add(new Option(i,i));
+                if(selectDorsal.options.length===1) throw new Error("No hay dorsales libres");
+            } catch(e){ mostrarToast("Error cargando dorsales", "error"); mostrarLoader(false); return; }
+            mostrarLoader(false);
+            verPaso(6);
+        });
+
+        // ----- PASO 6: Nombre camiseta y dorsal -----
+        const nombreCamiseta = document.getElementById('nombreCamiseta'), dorsal = document.getElementById('dorsal'), btnPaso6 = document.getElementById('btnPaso6');
+        function validarPaso6(){ btnPaso6.disabled = !(nombreCamiseta.value && dorsal.value); }
+        nombreCamiseta.addEventListener('change',validarPaso6); dorsal.addEventListener('change',validarPaso6);
+        btnPaso6.addEventListener('click',()=>{
+            if(nombreCamiseta.value && dorsal.value) verPaso(7);
+            else mostrarToast("Selecciona nombre y dorsal","error");
+        });
+
+        // ----- PASO 7: Talla, medias y pagos -----
+        const talla = document.getElementById('talla'), medias = document.getElementById('medias');
+        const inscripcionInput = document.getElementById('inscripcion');
+        const pagoUniformeOpcion = document.getElementById('pagoUniformeOpcion');
+        const campoTransaccionUni = document.getElementById('campoTransaccionUni');
+        const campoFechaPromesa = document.getElementById('campoFechaPromesa');
+        const transaccionUniforme = document.getElementById('transaccionUniforme');
+        const fechaPromesaPago = document.getElementById('fechaPromesaPago');
+        const btnFinal = document.getElementById('btnFinal');
+
+        function actualizarCamposPago(){
+            const opcion = pagoUniformeOpcion.value;
+            campoTransaccionUni.classList.remove('visible');
+            campoFechaPromesa.classList.remove('visible');
+            if(opcion === 'SI'){
+                campoTransaccionUni.classList.add('visible');
+            } else if(opcion === 'NO'){
+                campoFechaPromesa.classList.add('visible');
+                const hoy = new Date();
+                const max = new Date(); max.setDate(hoy.getDate()+5);
+                fechaPromesaPago.min = hoy.toISOString().split('T')[0];
+                fechaPromesaPago.max = max.toISOString().split('T')[0];
+                fechaPromesaPago.value = hoy.toISOString().split('T')[0];
+            }
+            validarPaso7();
+        }
+        pagoUniformeOpcion.addEventListener('change', actualizarCamposPago);
+        transaccionUniforme.addEventListener('input', validarPaso7);
+        fechaPromesaPago.addEventListener('change', validarPaso7);
+
+        function validarPaso7(){
+            let ok = true;
+            if(!talla.value) ok = false;
+            if(!medias.value) ok = false;
+            const numInsc = inscripcionInput.value.trim();
+            if(!/^\d{5,10}$/.test(numInsc)) ok = false;
+            const opcion = pagoUniformeOpcion.value;
+            if(opcion === 'SI'){
+                const numUni = transaccionUniforme.value.trim();
+                if(!/^\d{5,10}$/.test(numUni)) ok = false;
+            } else if(opcion === 'NO'){
+                if(!fechaPromesaPago.value) ok = false;
+            } else {
+                ok = false;
+            }
+            btnFinal.disabled = !ok;
+        }
+        [talla, medias, inscripcionInput].forEach(el=>el.addEventListener('input', validarPaso7));
+        [talla, medias, inscripcionInput].forEach(el=>el.addEventListener('change', validarPaso7));
+        inscripcionInput.addEventListener('input', function(e){ this.value = this.value.replace(/\D/g,'').slice(0,10); });
+        transaccionUniforme.addEventListener('input', function(e){ this.value = this.value.replace(/\D/g,'').slice(0,10); });
+
+        // Finalizar registro
+        btnFinal.addEventListener('click', async () => {
+            if(btnFinal.disabled || !registroAbierto) return mostrarToast("Completa todos los datos", "error");
+            mostrarLoader(true, "Registrando... ¡GOL DE ORO!");
+            let pagoUniformeData = {};
+            const opcion = pagoUniformeOpcion.value;
+            if(opcion === 'SI') pagoUniformeData = { pagado: true, transaccion: transaccionUniforme.value.trim() };
+            else pagoUniformeData = { pagado: false, fechaPromesa: fechaPromesaPago.value };
+
+            const datos = {
+                ced: ced.value,
+                n1: n1.value.trim(),
+                n2: n2.value.trim(),
+                ape: ape.value.trim(),
+                fecha: fecha.value,
+                tel: tel.value.replace(/\D/g,''),
+                correo: correo.value.trim().toLowerCase(),
+                categoria: categoriaElegida,
+                talla: talla.value,
+                medias: medias.value,
+                nombreCamiseta: nombreCamiseta.value,
+                dorsal: dorsal.value,
+                inscripcion: inscripcionInput.value.trim(),
+                pagoUniformeOpcion: opcion,
+                transaccionUniforme: pagoUniformeData.transaccion || '',
+                fechaPromesaPago: pagoUniformeData.fechaPromesa || '',
+                fotoRostroB64: fotoRostroB64.value,
+                fotoCedulaB64: fotoCedulaB64.value
+            };
+            try{
+                const response = await fetch(URL_GAS, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams(datos)
+                });
+                const result = await response.json();
+                if(result && result.ok){
+                    mostrarLoader(false);
+                    alert("✅ Registro exitoso. Redirigiendo...");
+                    window.location.href = 'login.html';
+                } else throw new Error(result?.error || "Error del servidor");
+            } catch(e){
+                mostrarLoader(false);
+                mostrarToast("Error: "+e.message, "error");
+            }
+        });
+
+        // Inicio
+        window.addEventListener('DOMContentLoaded', async () => {
+            await verificarEstadoRegistro();
+            actualizarCamposPago();
+            aplicarDiseñoPorCategoria('Masculino');
+        });
+    })();
 </script>
 </body>
 </html>
