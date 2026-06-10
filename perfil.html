@@ -3,76 +3,378 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Nápoles F.C. - Mi Perfil</title>
+<title>Nápoles F.C. - Sorteo de Rivales</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-    /* ========== ESTILOS COMPLETOS (mismos que funcionaban) ========== */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', sans-serif; background: #0a0c10; color: #fff; }
-    .perfil-root { background: radial-gradient(circle at top, #111a33 0%, #060912 100%); min-height: 100vh; padding: 15px; display: flex; justify-content: center; }
-    .perfil-container { width: 100%; max-width: 480px; }
-    .perfil-header h1 { font-family: 'Outfit', sans-serif; color: #D4AF37; font-size: 1.3rem; letter-spacing: 2px; text-align: center; margin-bottom: 20px; }
-    .cards-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
-    .glass-card-perfil { background: linear-gradient(145deg, rgba(10,20,40,.85), rgba(5,10,20,.95)); border-radius: 20px; border: 1px solid rgba(212,175,55,.25); overflow: hidden; padding: 15px; margin-bottom: 15px; }
-    .match-card-gold { background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(0,0,0,0.6)); border-left: 6px solid #D4AF37; border-radius: 24px; padding: 18px 15px; text-align: center; }
-    .match-teams { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 15px; }
-    .team-badge { text-align: center; flex: 1; }
-    .team-badge .team-name { font-size: 1.3rem; font-weight: 900; font-family: 'Outfit'; }
-    .team-badge .team-sub { font-size: 0.7rem; color: #D4AF37; text-transform: uppercase; }
-    .vs-circle { background: #D4AF37; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #000; font-size: 1.3rem; box-shadow: 0 0 10px rgba(212,175,55,0.6); }
-    .match-info { background: rgba(0,0,0,0.5); border-radius: 50px; padding: 12px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 8px; }
-    .match-info-item { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 600; }
-    .match-info-item i { color: #D4AF37; }
-    .rivales-scroll { overflow-x: auto; white-space: nowrap; padding-bottom: 8px; margin-top: 18px; }
-    .rival-chip { display: inline-block; background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.3); border-radius: 40px; padding: 6px 18px; margin-right: 12px; font-size: 0.8rem; font-weight: 600; color: #f5e6a3; }
-    .avatar-icon-box { width: 75px; height: 75px; border-radius: 50%; border: 3px solid #D4AF37; background: radial-gradient(circle, #1a2a4a 0%, #0a1428 100%); display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; color: #D4AF37; font-size: 2.2rem; }
-    .id-card-jersey-wrap { perspective: 900px; height: 180px; }
-    .jersey-card-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: rotateCard 12s linear infinite; }
-    @keyframes rotateCard { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
-    .face-front, .face-back { position: absolute; width: 100%; height: 100%; border-radius: 20px; backface-visibility: hidden; background: linear-gradient(145deg, #0a1428, #000814); border: 2px solid rgba(212,175,55,.4); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    /* ========== ESTILOS (iguales al original que funcionaba) ========== */
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .glass-card {
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(233, 195, 73, 0.6);
+        color: white;
+    }
+    .premium-glow {
+        box-shadow: 0 0 30px rgba(233, 195, 73, 0.4);
+    }
+    .roulette-track {
+        display: flex;
+        gap: 24px;
+        width: fit-content;
+        transform: translateX(0);
+    }
+    .spinning {
+        animation: scroll-fast 0.2s linear infinite;
+        filter: blur(4px);
+    }
+    @keyframes scroll-fast {
+        from { transform: translateX(0); }
+        to { transform: translateX(-1000px); }
+    }
+    .slowing {
+        animation: scroll-slow 3s cubic-bezier(0.1, 0.7, 0.1, 1) forwards;
+        filter: blur(0px);
+        transition: filter 2s ease-out;
+    }
+    @keyframes scroll-slow {
+        from { transform: translateX(0); }
+        to { transform: translateX(-4000px); }
+    }
+    .winner-glow {
+        animation: winner-pulse 2s infinite alternate;
+    }
+    @keyframes winner-pulse {
+        0% { box-shadow: 0 0 20px rgba(233, 195, 73, 0.3); border-color: rgba(233, 195, 73, 0.6); }
+        100% { box-shadow: 0 0 60px rgba(233, 195, 73, 0.8); border-color: #e9c349; transform: scale(1.05); }
+    }
+    .particle {
+        position: absolute;
+        pointer-events: none;
+        z-index: 100;
+    }
+    .cinematic-text {
+        text-shadow: 0 0 20px rgba(233, 195, 73, 0.6);
+    }
+    .reveal-element {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .revealed {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    body.ruleta-mode {
+        background: #0a0c10;
+        overflow: hidden;
+        min-height: 100dvh;
+    }
+    .match-info-card {
+        background: #1a1c22;
+        border-radius: 40px;
+        padding: 16px 20px;
+        margin: 15px 0;
+        border-left: 5px solid #e9c349;
+        text-align: center;
+    }
+    /* Perfil */
+    .perfil-root {
+        background: radial-gradient(circle at top, #111a33 0%, #060912 100%);
+        font-family: 'Inter', sans-serif;
+        color: #fff;
+        min-height: 100vh;
+        padding: 15px;
+        display: flex;
+        justify-content: center;
+    }
+    .perfil-container {
+        width: 100%;
+        max-width: 460px;
+    }
+    .perfil-header h1 {
+        font-family: 'Outfit', sans-serif;
+        color: #D4AF37;
+        font-size: 1.3rem;
+        letter-spacing: 2px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .cards-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+    .glass-card-perfil {
+        background: linear-gradient(145deg, rgba(10,20,40,.85), rgba(5,10,20,.95));
+        border-radius: 20px;
+        border: 1px solid rgba(212,175,55,.25);
+        overflow: hidden;
+    }
+    .match-card-gold {
+        background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(0,0,0,0.6));
+        border-left: 6px solid #D4AF37;
+        border-radius: 24px;
+        padding: 18px 15px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .match-teams {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+    .team-badge {
+        text-align: center;
+        flex: 1;
+    }
+    .team-badge .team-name {
+        font-size: 1.5rem;
+        font-weight: 900;
+        font-family: 'Outfit';
+        letter-spacing: 1px;
+    }
+    .team-badge .team-sub {
+        font-size: 0.7rem;
+        color: #D4AF37;
+        text-transform: uppercase;
+    }
+    .vs-circle {
+        background: #D4AF37;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        color: #000;
+        font-size: 1.3rem;
+        box-shadow: 0 0 10px rgba(212,175,55,0.6);
+    }
+    .match-info {
+        background: rgba(0,0,0,0.5);
+        border-radius: 50px;
+        padding: 12px;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+    }
+    .match-info-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    .match-info-item i {
+        color: #D4AF37;
+        font-size: 1rem;
+    }
+    .rivales-scroll {
+        margin-top: 18px;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 8px;
+        scrollbar-width: thin;
+    }
+    .rival-chip {
+        display: inline-block;
+        background: rgba(212,175,55,0.12);
+        border: 1px solid rgba(212,175,55,0.3);
+        border-radius: 40px;
+        padding: 6px 18px;
+        margin-right: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #f5e6a3;
+        backdrop-filter: blur(4px);
+    }
+    .avatar-icon-box {
+        width: 75px;
+        height: 75px;
+        border-radius: 50%;
+        border: 3px solid #D4AF37;
+        background: radial-gradient(circle, #1a2a4a 0%, #0a1428 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+        color: #D4AF37;
+        font-size: 2.2rem;
+    }
+    .id-card-jersey-wrap {
+        perspective: 900px;
+        height: 180px;
+    }
+    .jersey-card-inner {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        animation: rotateCard 12s linear infinite;
+    }
+    @keyframes rotateCard {
+        from { transform: rotateY(0deg); }
+        to { transform: rotateY(360deg); }
+    }
+    .face-front, .face-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 20px;
+        backface-visibility: hidden;
+        background: linear-gradient(145deg, #0a1428, #000814);
+        border: 2px solid rgba(212,175,55,.4);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
     .face-back { transform: rotateY(180deg); }
-    .jersey-number { font-size: 4.5rem; font-family: 'Outfit'; font-weight: 900; color: #D4AF37; }
-    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
-    .stat-card { background: rgba(0,0,0,.35); border-radius: 16px; padding: 10px 5px; text-align: center; }
-    .performance-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 15px; }
-    .metric-card { background: rgba(0,0,0,.35); border-radius: 16px; padding: 14px 10px; text-align: center; }
-    .progress-circle { position: relative; width: 85px; height: 85px; margin: auto; }
-    .progress-circle svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-    .average-box { background: rgba(212,175,55,.08); border: 1px solid rgba(212,175,55,.2); border-radius: 15px; padding: 15px; text-align: center; margin-top: 15px; }
-    .admin-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 15px; }
-    .btn-logout { background: rgba(231,76,60,.12); color: #e74c3c; border: 1px solid rgba(231,76,60,.2); width: 100%; border-radius: 14px; padding: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; }
-    .soccer-loading-container { text-align: center; margin-top: 140px; }
-    .result-badge { font-size: 0.7rem; font-weight: 800; padding: 4px 12px; border-radius: 50px; display: inline-block; }
-    .victoria { background: #15803d; color: white; }
-    .derrota { background: #b91c1c; color: white; }
-    .empate { background: #a16207; color: white; }
-    /* Ruleta */
-    .roulette-track { display: flex; gap: 24px; width: fit-content; }
-    .spinning { animation: scroll-fast 0.2s linear infinite; filter: blur(4px); }
-    @keyframes scroll-fast { from { transform: translateX(0); } to { transform: translateX(-1000px); } }
-    .slowing { animation: scroll-slow 3s cubic-bezier(0.1, 0.7, 0.1, 1) forwards; filter: blur(0px); transition: filter 2s ease-out; }
-    @keyframes scroll-slow { from { transform: translateX(0); } to { transform: translateX(-4000px); } }
-    .reveal-element { opacity: 0; transform: translateY(20px); transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
-    .revealed { opacity: 1; transform: translateY(0); }
-    .match-info-card { background: #1a1c22; border-radius: 40px; padding: 16px 20px; margin: 15px 0; border-left: 5px solid #e9c349; text-align: center; }
-    .glass-card { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(233, 195, 73, 0.6); }
-    .terms-backdrop, .modal-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(3,5,10,0.97); backdrop-filter: blur(20px); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 15px; }
-    .modal-box { background: linear-gradient(145deg, #091022, #040812); border: 2px solid #D4AF37; border-radius: 24px; width: 100%; max-width: 500px; max-height: 85vh; overflow-y: auto; padding: 24px; }
-    .btn-modal-send, .btn-modal-close { background: linear-gradient(90deg, #D4AF37 0%, #F3E5AB 100%); color: #000; margin-top: 18px; font-weight: 800; border: none; padding: 12px; border-radius: 40px; width: 100%; cursor: pointer; }
-    .close-modal { background: #334155; margin-top: 10px; }
-    .historial-item { border-bottom: 1px solid rgba(255,255,255,0.1); padding: 12px 0; display: flex; justify-content: space-between; align-items: center; }
-    .botones-historial { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
-    .btn-historial { background: rgba(212,175,55,0.15); border: 1px solid rgba(212,175,55,0.3); border-radius: 40px; padding: 10px 16px; font-size: 0.75rem; font-weight: 600; color: #D4AF37; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
-    .btn-historial:hover { background: rgba(212,175,55,0.3); transform: translateY(-2px); }
+    .jersey-number {
+        font-size: 4.5rem;
+        font-family: 'Outfit';
+        font-weight: 900;
+        line-height: 1;
+        color: #D4AF37;
+    }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+    .stat-card {
+        background: rgba(0,0,0,.35);
+        border-radius: 16px;
+        padding: 10px 5px;
+        text-align: center;
+    }
+    .performance-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+    .progress-circle {
+        position: relative;
+        width: 85px;
+        height: 85px;
+        margin: auto;
+    }
+    .progress-circle svg {
+        width: 100%;
+        height: 100%;
+        transform: rotate(-90deg);
+    }
+    .average-box {
+        background: rgba(212,175,55,.08);
+        border: 1px solid rgba(212,175,55,.2);
+        border-radius: 15px;
+        padding: 15px;
+        text-align: center;
+        margin-top: 15px;
+    }
+    .admin-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+    .btn-logout {
+        background: rgba(231,76,60,.12);
+        color: #e74c3c;
+        border: 1px solid rgba(231,76,60,.2);
+        width: 100%;
+        border-radius: 14px;
+        padding: 14px;
+        font-weight: 800;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+    .soccer-loading-container {
+        text-align: center;
+        margin-top: 140px;
+    }
+    .soccer-spinner {
+        font-size: 3.5rem;
+        color: #D4AF37;
+        display: inline-block;
+        animation: spinSoccer 1.2s linear infinite;
+    }
+    .error-message { text-align: center; padding: 60px 20px; color: #e74c3c; }
+    /* Modal términos */
+    .terms-backdrop {
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(3,5,10,0.97);
+        backdrop-filter: blur(20px);
+        z-index: 10000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+    }
+    .terms-box {
+        background: linear-gradient(145deg, #091022, #040812);
+        border: 2px solid #D4AF37;
+        border-radius: 24px;
+        width: 100%;
+        max-width: 430px;
+        padding: 24px;
+        box-shadow: 0 0 35px rgba(212,175,55,0.25);
+        max-height: 92vh;
+        overflow-y: auto;
+    }
+    .terms-announcement {
+        background: linear-gradient(135deg, rgba(212,175,55,0.04) 0%, rgba(255,255,255,0.01) 100%);
+        border: 1px solid rgba(212,175,55,0.25);
+        border-left: 5px solid #D4AF37;
+        padding: 18px;
+        border-radius: 14px;
+        font-size: 0.88rem;
+        line-height: 1.6;
+        margin-bottom: 22px;
+        white-space: pre-line;
+    }
+    .terms-option-card {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 14px;
+        padding: 16px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        cursor: pointer;
+    }
+    .terms-option-card.selected { border-color: #D4AF37; background: rgba(212,175,55,0.08); }
+    .btn-modal-send {
+        background: linear-gradient(90deg, #D4AF37 0%, #F3E5AB 100%);
+        color: #000;
+        margin-top: 18px;
+        font-weight: 800;
+        border: none;
+        padding: 14px;
+        border-radius: 40px;
+        width: 100%;
+    }
 </style>
 </head>
-<body>
-<!-- Modal de términos (común) -->
+<body id="appBody">
+<!-- Modal de términos -->
 <div class="terms-backdrop" id="modalTerms">
-    <div class="modal-box">
+    <div class="terms-box">
         <h2 style="text-align:center; color:#D4AF37;">GRAN INAUGURACIÓN</h2>
         <div class="terms-announcement">⚽ ATENCIÓN JUGADORES ⚽<br>📅 17 de mayo - 9:30 a.m.<br>✅ Seleccione opción de asistencia</div>
         <div class="terms-option-card" onclick="selectRadio(1)"><input type="radio" name="termOption" id="opt1" value="1"><label>1️⃣ Asistiré, ahí estaré puntual</label></div>
@@ -81,17 +383,12 @@
     </div>
 </div>
 
-<!-- Modales de historiales -->
-<div class="modal-backdrop" id="modalHistorialPartidos"><div class="modal-box"><h3 style="color:#D4AF37;">📋 Historial de Partidos</h3><div id="contenidoPartidos"></div><button class="btn-modal-close close-modal" onclick="cerrarModal('modalHistorialPartidos')">Cerrar</button></div></div>
-<div class="modal-backdrop" id="modalHistorialPagos"><div class="modal-box"><h3 style="color:#D4AF37;">💰 Pagos Realizados</h3><div id="contenidoPagos"></div><button class="btn-modal-close close-modal" onclick="cerrarModal('modalHistorialPagos')">Cerrar</button></div></div>
-<div class="modal-backdrop" id="modalHistorialDeudas"><div class="modal-box"><h3 style="color:#D4AF37;">📜 Historial de Deudas</h3><div id="contenidoDeudas"></div><button class="btn-modal-close close-modal" onclick="cerrarModal('modalHistorialDeudas')">Cerrar</button></div></div>
-
 <div id="dynamicContent"></div>
 
 <script>
 // ==================== CONFIGURACIÓN ====================
 const CONFIG = {
-    URL_GAS: "https://script.google.com/macros/s/AKfycbyGfP8oz2vE9KkxR_AjStcdOPULibPtYtzUjMrtAv_DkF2R6_Lk6oae18BmQeeYEX-E/exec"
+    URL_GAS: "https://script.google.com/macros/s/AKfycbydcH2KminQA52AFz_RuOJj1dWCZzTSwD41-gns_W17sG5XdZjUwf-HxK8Jod19FHs_/exec"  // <-- REEMPLAZA POR TU URL
 };
 
 // Obtener sesión del jugador
@@ -105,6 +402,7 @@ if (!jugadorSesion || !jugadorSesion.cedula) {
 const cedula = jugadorSesion.cedula;
 const categoria = jugadorSesion.categoria || 'hombres';
 const nombreCompleto = (jugadorSesion.primerNombre || '') + ' ' + (jugadorSesion.apellidos || '');
+const dorsal = jugadorSesion.dorsal || '';
 
 // ==================== FUNCIONES API ====================
 async function callApi(action, params = {}) {
@@ -122,31 +420,344 @@ async function callPost(action, body) {
     return { success: true };
 }
 
-// ==================== DATOS ====================
-async function cargarPartidos() {
-    const data = await callApi("getPartidos");
-    return data.success ? data.data : [];
-}
-async function cargarRivales() {
-    const data = await callApi("getRivales");
-    return data.success ? data.data.map(r => r.nombre) : ["IDEAL","BARZA","SAN MARTIN","INDEPENDIENTE","VODKILA","CHELSEA","JUVENTUD DE AMERICA","JUVENTUS","LEONES","FRANCO CANADIENSE"];
-}
-async function obtenerPerfilJugador() {
+// ==================== VERIFICACIONES ====================
+async function verificarTerminos() {
     const data = await callApi("getPerfil", { cedula });
-    return data.success ? data.jugador : null;
-}
-async function obtenerRendimiento() {
-    const data = await callApi("getRendimientoJugador", { cedula });
-    if (data.success) return { puntualidad: data.puntualidad, companerismo: data.companerismo, respeto: data.respeto, humildad: data.humildad };
-    return null;
+    if (data.success && data.jugador) {
+        return data.jugador.terminos_aceptados === true;
+    }
+    return false;
 }
 async function verificarConfirmacionPrevia() {
-    const data = await callApi("verificarAsistenciaFutura", { cedula });
+    const data = await callApi("verificarConfirmacionPartido", { cedula });
     return data.confirmed === true;
 }
 
+// ==================== PERFIL (con datos estáticos pero actualizados a Franco Canadiense) ====================
+async function mostrarPerfil() {
+    document.body.className = '';
+    const container = document.getElementById('dynamicContent');
+    container.innerHTML = `<div class="perfil-root"><div class="perfil-container"><div class="soccer-loading-container"><div class="soccer-spinner"><i class="fa-solid fa-futbol"></i></div><div>Cargando perfil...</div></div></div></div>`;
+    try {
+        const url = `${CONFIG.URL_GAS}?action=getPerfil&cedula=${encodeURIComponent(cedula)}&categoria=${encodeURIComponent(categoria)}&t=${Date.now()}`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+        if (data.success && data.jugador) {
+            const j = data.jugador;
+            const s = {
+                primerNombre: escapeHtml(j['primer nombre'] || ''),
+                apellidos: escapeHtml(j['apellidos'] || ''),
+                fechaNacimiento: j['fecha de nacimiento'] || '',
+                nombreCamiseta: escapeHtml(j['nombre en camiseta'] || 'NÁPOLES'),
+                dorsal: escapeHtml(j['número de dorsal'] || '00'),
+                tallaUni: escapeHtml(j['talla uni.'] || 'M'),
+                partidosJugados: Number(j['partidos jugados']) || 0,
+                goles: Number(j['goles']) || 0,
+                amarillas: Number(j['amarillas']) || 0,
+                rojas: Number(j['rojas']) || 0,
+                puntualidad: parseFloat(j['puntualidad']) || 0,
+                companerismo: parseFloat(j['compañerismo']) || 0,
+                respeto: parseFloat(j['respeto']) || 0,
+                humildad: parseFloat(j['humildad']) || 0,
+                deudaVocalia: Number(j['deuda vocalia']) || 0,
+                inscripEstado: escapeHtml(j['inscrip_estado'] || 'PENDIENTE'),
+                unifEstado: escapeHtml(j['unif_estado'] || 'PENDIENTE'),
+                mediasEstado: escapeHtml(j['medias_estado'] || 'PENDIENTE')
+            };
+            let edad = calcularEdad(s.fechaNacimiento);
+            let suma = s.puntualidad + s.companerismo + s.respeto + s.humildad;
+            let promedio = suma > 0 ? parseFloat((suma / 4).toFixed(1)) : 0;
+            let deudaInscripcion = s.inscripEstado.toUpperCase().includes('PENDIENTE') ? 5 : 0;
+            let deudaUniforme = s.unifEstado.toUpperCase().includes('PENDIENTE') ? 17 : 0;
+            let deudaMedias = s.mediasEstado.toUpperCase().includes('PENDIENTE') ? 2 : 0;
+            let totalAdmin = deudaInscripcion + deudaUniforme + deudaMedias + s.deudaVocalia;
+
+            const listaRivales = ["IDEAL", "BARZA", "SAN MARTIN", "INDEPENDIENTE", "VODKILA", "CHELSEA", "JUVENTUD DE AMERICA", "JUVENTUS", "LEONES", "FRANCO CANADIENSE"];
+            const chipsRivales = listaRivales.map(rival => `<span class="rival-chip">${rival}</span>`).join('');
+
+            // Próximo partido: FRANCO CANADIENSE - 13 de junio de 2026
+            container.innerHTML = `
+            <div class="perfil-root">
+                <div class="perfil-container">
+                    <div class="perfil-header"><h1>⚜️ PANEL NÁPOLES ⚜️</h1><div style="font-size:0.75rem;color:#D4AF37; text-align:center;">Categoría: ${categoria === 'mujeres' ? 'Femenina ♀' : 'Masculina ♂'}</div></div>
+                    <div class="cards-row">
+                        <div class="glass-card-perfil" style="padding:15px; text-align:center;"><div class="avatar-icon-box"><i class="fa-solid fa-user-ninja"></i></div><div style="font-weight:900;">${s.primerNombre}<br>${s.apellidos}</div><div style="font-size:.65rem;"><i class="fa-solid fa-id-card"></i> ${cedula}</div><div style="margin-top:8px;background:rgba(212,175,55,.2);padding:4px 10px;border-radius:20px;">${edad} años</div></div>
+                        <div class="id-card-jersey-wrap"><div class="jersey-card-inner"><div class="face-front"><div class="jersey-name">${s.nombreCamiseta}</div><div class="jersey-number">${s.dorsal}</div><div>Talla ${s.tallaUni}</div></div><div class="face-back"><div class="jersey-name">NÁPOLES FC</div><div class="jersey-number">${s.dorsal}</div></div></div></div>
+                    </div>
+                    <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
+                        <div class="match-card-gold">
+                            <div class="match-teams">
+                                <div class="team-badge"><div class="team-name">⚜️ NÁPOLES F.C.</div><div class="team-sub">Local</div></div>
+                                <div class="vs-circle">VS</div>
+                                <div class="team-badge"><div class="team-name">🍁 FRANCO CANADIENSE</div><div class="team-sub">Visitante</div></div>
+                            </div>
+                            <div class="match-info">
+                                <div class="match-info-item"><i class="fa-regular fa-calendar-alt"></i> SÁBADO 13 DE JUNIO, 2026</div>
+                                <div class="match-info-item"><i class="fa-regular fa-clock"></i> 12:00 HORAS</div>
+                                <div class="match-info-item"><i class="fa-solid fa-location-dot"></i> CANCHA 1 - LIGA SANTA RITA</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
+                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-people-group"></i> OTROS RIVALES DEL TORNEO</div>
+                        <div class="rivales-scroll">${chipsRivales}</div>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card"><div class="stat-icon" style="color:#3498db"><i class="fa-solid fa-shirt"></i></div><div class="stat-value">${s.partidosJugados}</div><div class="stat-label">PARTIDOS</div></div>
+                        <div class="stat-card"><div class="stat-icon" style="color:#2ecc71"><i class="fa-solid fa-futbol"></i></div><div class="stat-value">${s.goles}</div><div class="stat-label">GOLES</div></div>
+                        <div class="stat-card"><div class="stat-icon" style="color:#f39c12"><i class="fa-solid fa-square"></i></div><div class="stat-value">${s.amarillas}</div><div class="stat-label">AMARILLAS</div></div>
+                        <div class="stat-card"><div class="stat-icon" style="color:#e74c3c"><i class="fa-solid fa-square"></i></div><div class="stat-value">${s.rojas}</div><div class="stat-label">ROJAS</div></div>
+                    </div>
+                    <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
+                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-heart"></i> Rendimiento Humano</div>
+                        <div class="performance-grid">
+                            ${['puntualidad','companerismo','respeto','humildad'].map((m,i) => `<div class="metric-card" style="background:rgba(0,0,0,.35); border-radius:16px; padding:14px 10px; text-align:center;">${renderProgressCircle(s[m], ['#3498db','#2ecc71','#f39c12','#9b59b6'][i])}<div style="margin-top:10px; font-size:.7rem;">${m.toUpperCase()}</div></div>`).join('')}
+                        </div>
+                        <div class="average-box"><div style="font-size:2.2rem;">${promedio}/10</div><div>${generarEstrellas(promedio)}</div></div>
+                    </div>
+                    <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
+                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-chart-line"></i> Estado Administrativo</div>
+                        <div class="admin-grid">
+                            ${deudaInscripcion ? `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><i class="fa-solid fa-file-signature"></i><div>$5</div><div>INSCRIPCIÓN</div><div style="background:rgba(231,76,60,.15); color:#e74c3c;">PENDIENTE</div></div>` : ''}
+                            ${deudaUniforme ? `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><i class="fa-solid fa-tshirt"></i><div>$17</div><div>UNIFORME</div><div style="background:rgba(243,156,18,.15); color:#f39c12;">PENDIENTE</div></div>` : ''}
+                            ${deudaMedias ? `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><i class="fa-solid fa-socks"></i><div>$2</div><div>MEDIAS</div><div style="background:rgba(52,152,219,.15); color:#3498db;">PENDIENTE</div></div>` : ''}
+                            ${s.deudaVocalia > 0 ? `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><i class="fa-solid fa-money-bill-wave"></i><div>$${s.deudaVocalia.toFixed(2)}</div><div>VOCALÍA</div><div style="background:rgba(155,89,182,.15); color:#9b59b6;">PENDIENTE</div></div>` : ''}
+                        </div>
+                        <div style="margin-top:15px; background:rgba(0,0,0,.4); border-radius:14px; padding:12px;">
+                            <div style="display:flex; justify-content:space-between;"><span>VALORES PENDIENTES</span><span style="color:${totalAdmin > 0 ? '#e74c3c' : '#2ecc71'}">$${totalAdmin.toFixed(2)}</span></div>
+                            <div style="width:100%; height:8px; border-radius:10px; background:rgba(255,255,255,.08); margin-top:10px;"><div style="height:100%; width:${Math.min(totalAdmin / 30 * 100, 100)}%; background:linear-gradient(90deg,#e74c3c,#f39c12);"></div></div>
+                            <div style="margin-top:10px; font-size:.7rem; padding:8px; border-radius:10px; text-align:center; background:${totalAdmin === 0 ? 'rgba(46,204,113,.1)' : 'rgba(231,76,60,.1)'};">${totalAdmin === 0 ? '✅ ¡Estás al día!' : '⚠️ Regulariza tus pagos'}</div>
+                        </div>
+                    </div>
+                    <button class="btn-logout" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> CERRAR SESIÓN</button>
+                </div>
+            </div>`;
+        } else {
+            container.innerHTML = `<div class="perfil-root"><div class="perfil-container"><div class="error-message">${data.message || 'Jugador no encontrado'}</div></div></div>`;
+        }
+    } catch(e) {
+        container.innerHTML = `<div class="perfil-root"><div class="perfil-container"><div class="error-message">❌ Error de conexión</div></div></div>`;
+    }
+}
+
+// ==================== RULETA (con un solo rival: FRANCO CANADIENSE) ====================
+function mostrarRuleta() {
+    document.body.className = 'ruleta-mode';
+    document.body.style.background = '#0a0c10';
+    const container = document.getElementById('dynamicContent');
+    container.innerHTML = `
+        <main class="h-screen flex flex-col items-center justify-center pt-16 relative">
+            <div class="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-secondary/10 rounded-full blur-[120px]"></div>
+            </div>
+            <div class="text-center px-4 mb-12" id="intro-header">
+                <h2 class="font-display-lg text-[32px] text-secondary tracking-widest mb-2 uppercase" style="color:#e9c349;">Sorteo de Rivales</h2>
+                <p class="font-label-caps text-on-surface-variant text-[10px] tracking-[0.3em] uppercase" style="color:#ccc;">Buscando el próximo desafío...</p>
+            </div>
+            <div class="relative w-full overflow-hidden py-12 flex items-center" id="roulette-window">
+                <div class="absolute left-1/2 top-0 -translate-x-1/2 z-20 flex flex-col items-center h-full justify-between py-4">
+                    <div class="w-1 h-8 bg-secondary/80 rounded-full blur-[2px]"></div>
+                    <div class="w-1 h-8 bg-secondary/80 rounded-full blur-[2px]"></div>
+                </div>
+                <div class="roulette-track px-[50vw]" id="roulette-track"></div>
+            </div>
+            <div class="hidden absolute inset-0 flex flex-col items-center justify-center z-40 bg-black/90 backdrop-blur-md" id="reveal-screen">
+                <div class="reveal-element text-center mb-8">
+                    <p class="font-label-caps text-secondary tracking-[0.4em] mb-4" style="color:#e9c349;">PRÓXIMO ENCUENTRO</p>
+                    <div class="flex items-center justify-center gap-6 md:gap-12">
+                        <div class="flex flex-col items-center gap-4">
+                            <div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-white/30"><span class="text-5xl">⚜️</span></div>
+                            <span class="font-display-lg text-xl tracking-wider text-white">NÁPOLES</span>
+                        </div>
+                        <div class="font-display-lg text-5xl text-secondary cinematic-text italic" style="color:#e9c349;">VS</div>
+                        <div class="flex flex-col items-center gap-4">
+                            <div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-secondary winner-glow"><span class="text-5xl">🍁</span></div>
+                            <span class="font-display-lg text-xl tracking-wider text-white">FRANCO CANADIENSE</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="reveal-element match-info-card w-full max-w-md mx-4">
+                    <div class="flex justify-center gap-6 flex-wrap text-white">
+                        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary" style="color:#e9c349;">event</span><span class="text-sm font-bold">SÁBADO 13 DE JUNIO, 2026</span></div>
+                        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary" style="color:#e9c349;">schedule</span><span class="text-sm font-bold">12:00 HORAS</span></div>
+                        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary" style="color:#e9c349;">stadium</span><span class="text-sm font-bold">CANCHA 1 - LIGA SANTA RITA</span></div>
+                    </div>
+                </div>
+                <div class="reveal-element space-y-6 w-full max-w-xs px-6">
+                    <div class="glass-card p-6 rounded-2xl border border-secondary/40" style="background:rgba(0,0,0,0.7);">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="font-label-caps text-[10px] text-white uppercase">Nivel de Riesgo</span>
+                            <span class="font-label-caps text-[10px] text-secondary" style="color:#e9c349;">MÁXIMO</span>
+                        </div>
+                        <div class="w-full bg-white/20 h-1.5 rounded-full overflow-hidden"><div class="bg-secondary h-full rounded-full" style="width: 95%; background:#e9c349;"></div></div>
+                    </div>
+                    <button id="confirmButton" class="w-full bg-secondary text-black py-4 rounded-lg font-display-lg tracking-widest text-sm premium-glow uppercase font-bold" style="background:#e9c349; color:#000;">Ahí estaré puntual</button>
+                </div>
+            </div>
+            <div class="fixed inset-0 pointer-events-none z-50" id="particles"></div>
+        </main>
+    `;
+
+    // Crear las cartas de la ruleta (todas con el mismo rival: FRANCO CANADIENSE)
+    const track = document.getElementById('roulette-track');
+    const rival = { name: "FRANCO CANADIENSE", icon: "🍁", power: "MEDIO" };
+    for (let i = 0; i < 40; i++) {
+        const div = document.createElement('div');
+        div.className = 'flex-shrink-0 w-48 h-64 glass-card rounded-xl p-6 flex flex-col items-center justify-center border border-white/30';
+        div.style.background = 'rgba(0,0,0,0.8)';
+        div.style.backdropFilter = 'blur(8px)';
+        div.innerHTML = `<div class="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center mb-4 border border-white/20"><span class="text-5xl">${rival.icon}</span></div><h3 class="font-display-lg text-lg text-white">${rival.name}</h3><p class="font-label-caps text-[10px] text-gray-300 uppercase mt-1">Poder: ${rival.power}</p>`;
+        track.appendChild(div);
+    }
+
+    setTimeout(() => {
+        track.classList.add('spinning');
+        setTimeout(() => {
+            track.classList.remove('spinning');
+            track.classList.add('slowing');
+            setTimeout(() => {
+                const revealScreen = document.getElementById('reveal-screen');
+                const introHeader = document.getElementById('intro-header');
+                const rouletteWindow = document.getElementById('roulette-window');
+                rouletteWindow.style.opacity = '0';
+                introHeader.style.opacity = '0';
+                setTimeout(() => {
+                    revealScreen.classList.remove('hidden');
+                    setTimeout(() => {
+                        document.querySelectorAll('.reveal-element').forEach(el => el.classList.add('revealed'));
+                        createParticles();
+                    }, 100);
+                }, 800);
+            }, 3000);
+        }, 3000);
+    }, 500);
+
+    function createParticles() {
+        const container = document.getElementById('particles');
+        const colors = ['#e9c349', '#ffffff', '#af8d11'];
+        for (let i = 0; i < 60; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.width = `${Math.random() * 4 + 2}px`;
+            p.style.height = p.style.width;
+            p.style.background = colors[Math.floor(Math.random() * colors.length)];
+            p.style.left = '50%';
+            p.style.top = '50%';
+            p.style.borderRadius = '50%';
+            const angle = Math.random() * Math.PI * 2;
+            const velocity = Math.random() * 300 + 100;
+            const tx = Math.cos(angle) * velocity;
+            const ty = Math.sin(angle) * velocity;
+            container.appendChild(p);
+            p.animate([
+                { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
+                { transform: `translate(${tx}px, ${ty}px) scale(0)`, opacity: 0 }
+            ], { duration: Math.random() * 1500 + 1000, easing: 'cubic-bezier(0, .9, .57, 1)', fill: 'forwards' });
+        }
+    }
+
+    document.getElementById('confirmButton').addEventListener('click', guardarPartido);
+}
+
+// ==================== GUARDADO DE ASISTENCIA (POST a registrarAsistencia) ====================
+async function guardarPartido() {
+    const btn = document.getElementById('confirmButton');
+    if (!btn || btn.disabled) return;
+    btn.disabled = true;
+    btn.innerText = 'GUARDANDO...';
+    const fechaStr = '2026-06-13';
+    const hora = '12:00';
+    const lugar = 'CANCHA 1 - LIGA SANTA RITA';
+    const datos = {
+        cedula: cedula,
+        categoria: categoria,
+        nombre: nombreCompleto,
+        rival: 'FRANCO CANADIENSE',
+        fecha: fechaStr,
+        hora: hora,
+        lugar: lugar,
+        amarillas: 0,
+        rojas: 0,
+        goles: 0,
+        valor_vocalia: 2.5,
+        estado: 'CONFIRMADO',
+        vocalias_pendientes: 'PENDIENTE',
+        puntualidad: 10,
+        companerismo: 10,
+        respeto: 10,
+        humildad: 10,
+        dorsal: dorsal
+    };
+    try {
+        await callPost("registrarAsistencia", datos);
+        alert('✅ Confirmaste asistencia contra FRANCO CANADIENSE. ¡Buena suerte!');
+        mostrarPerfil();
+    } catch(error) {
+        alert('❌ Error de conexión. Intenta de nuevo.');
+        btn.disabled = false;
+        btn.innerText = 'Ahí estaré puntual';
+    }
+}
+
+// ==================== VERIFICAR SI YA CONFIRMÓ ====================
+async function verificarConfirmacionPrevia() {
+    try {
+        const url = `${CONFIG.URL_GAS}?action=verificarConfirmacionPartido&cedula=${encodeURIComponent(cedula)}`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+        return data.confirmed === true;
+    } catch(e) {
+        console.error(e);
+        return false;
+    }
+}
+
+// ==================== MODAL DE TÉRMINOS ====================
+function selectRadio(num) {
+    document.getElementById('opt'+num).checked = true;
+    document.querySelectorAll('.terms-option-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById(`opt${num}`).parentElement.classList.add('selected');
+    document.getElementById('btnFirmar').disabled = false;
+}
+async function enviarFirmaTerminos() {
+    const opcion = document.querySelector('input[name="termOption"]:checked').value;
+    const btn = document.getElementById('btnFirmar');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ENVIANDO...';
+    try {
+        const url = `${CONFIG.URL_GAS}?action=guardarTerminos&cedula=${cedula}&categoria=${categoria}&opcion=${opcion}`;
+        const resp = await fetch(url);
+        const r = await resp.json();
+        if (r.success) {
+            document.getElementById('modalTerms').style.display = 'none';
+            const yaConfirmo = await verificarConfirmacionPrevia();
+            if (yaConfirmo) mostrarPerfil();
+            else mostrarRuleta();
+        } else alert('Error: ' + r.message);
+    } catch(e) { alert('Error de red'); }
+    finally { btn.disabled = false; btn.innerHTML = 'CONFIRMAR ASISTENCIA'; }
+}
+async function verificarTerminos() {
+    try {
+        const url = `${CONFIG.URL_GAS}?action=getPerfil&cedula=${encodeURIComponent(cedula)}&categoria=${encodeURIComponent(categoria)}&t=${Date.now()}`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+        if (data.success && data.jugador) {
+            if (!data.jugador.terminos_aceptados) {
+                document.getElementById('modalTerms').style.display = 'flex';
+                return false;
+            }
+            return true;
+        }
+        return false;
+    } catch(e) { return false; }
+}
+
 // ==================== UTILIDADES ====================
-function escapeHtml(str) { if (!str) return ''; return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 function calcularEdad(fechaNacimiento) {
     if (!fechaNacimiento) return '--';
     let fecha = new Date(fechaNacimiento);
@@ -171,356 +782,8 @@ function renderProgressCircle(valor, color) {
     let value = Math.min(10, Math.max(0, parseFloat(valor) || 0));
     let radius = 40, circum = 2 * Math.PI * radius;
     let dash = circum - ((value / 10) * circum);
-    return `<div class="progress-circle"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,.08)" stroke-width="8" fill="none"></circle><circle cx="50" cy="50" r="40" stroke="${color}" stroke-width="8" fill="none" stroke-dasharray="${circum}" stroke-dashoffset="${dash}" stroke-linecap="round"></circle></svg><div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:1.2rem; font-weight:900;">${value}</div></div>`;
+    return `<div class="progress-circle"><svg viewBox="0 0 100 100"><circle class="progress-bg" cx="50" cy="50" r="40" stroke="rgba(255,255,255,.08)" stroke-width="8" fill="none"></circle><circle class="progress-fill" cx="50" cy="50" r="40" stroke="${color}" stroke-width="8" fill="none" stroke-dasharray="${circum}" stroke-dashoffset="${dash}" stroke-linecap="round"></circle></svg><div class="progress-text" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:1.2rem; font-weight:900;">${value}</div></div>`;
 }
-function analizarResultado(res, estado) {
-    if (estado !== 'FINALIZADO') return { tipo: null, home: null, away: null };
-    const parts = (res || '').toString().trim().split('-');
-    if (parts.length === 2) {
-        let home = parseInt(parts[0]), away = parseInt(parts[1]);
-        if (!isNaN(home) && !isNaN(away)) {
-            let tipo = home > away ? 'victoria' : (home < away ? 'derrota' : 'empate');
-            return { home, away, tipo };
-        }
-    }
-    return { home: null, away: null, tipo: null };
-}
-
-// ==================== PERFIL COMPLETO ====================
-async function mostrarPerfil() {
-    document.body.className = '';
-    const container = document.getElementById('dynamicContent');
-    container.innerHTML = `<div class="perfil-root"><div class="perfil-container"><div class="soccer-loading-container"><i class="fa-solid fa-futbol fa-spin" style="font-size:3rem;color:#D4AF37;"></i><div>Cargando perfil...</div></div></div></div>`;
-    
-    const [partidos, rivalesList, jugador, rendimientoApi] = await Promise.all([cargarPartidos(), cargarRivales(), obtenerPerfilJugador(), obtenerRendimiento()]);
-    if (!jugador) { container.innerHTML = '<div class="perfil-root"><div class="perfil-container">Error al cargar perfil</div></div>'; return; }
-    
-    const s = {
-        primerNombre: escapeHtml(jugador['primer nombre'] || ''),
-        apellidos: escapeHtml(jugador['apellidos'] || ''),
-        fechaNacimiento: jugador['fecha de nacimiento'] || '',
-        nombreCamiseta: escapeHtml(jugador['nombre en camiseta'] || 'NÁPOLES'),
-        dorsal: escapeHtml(jugador['número de dorsal'] || '00'),
-        tallaUni: escapeHtml(jugador['talla uni.'] || 'M'),
-        goles: Number(jugador['goles']) || 0,
-        amarillas: Number(jugador['amarillas']) || 0,
-        rojas: Number(jugador['rojas']) || 0,
-        deudaVocalia: Number(jugador['deuda vocalia']) || 0,
-        inscripEstado: escapeHtml(jugador['inscrip_estado'] || 'PENDIENTE'),
-        unifEstado: escapeHtml(jugador['unif_estado'] || 'PENDIENTE'),
-        mediasEstado: escapeHtml(jugador['medias_estado'] || 'PENDIENTE')
-    };
-    let rendimiento = rendimientoApi || { puntualidad:0, companerismo:0, respeto:0, humildad:0 };
-    let edad = calcularEdad(s.fechaNacimiento);
-    let deudaInscripcion = s.inscripEstado.toUpperCase().includes('PENDIENTE') ? 5 : 0;
-    let deudaUniforme = s.unifEstado.toUpperCase().includes('PENDIENTE') ? 17 : 0;
-    let deudaMedias = s.mediasEstado.toUpperCase().includes('PENDIENTE') ? 2 : 0;
-    let totalAdmin = deudaInscripcion + deudaUniforme + deudaMedias + s.deudaVocalia;
-    
-    // Próximo partido real desde Programacion_Partidos_H
-    const hoy = new Date();
-    const proximosReales = partidos.filter(p => p.estado !== "FINALIZADO" && new Date(p.fecha) >= hoy).sort((a,b)=>new Date(a.fecha)-new Date(b.fecha));
-    const proximoPartido = proximosReales[0];
-    let proximoHTML = '';
-    if (proximoPartido) {
-        const fechaPartido = new Date(proximoPartido.fecha);
-        const fechaStr = fechaPartido.toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long', year:'numeric' }).toUpperCase();
-        proximoHTML = `
-            <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
-                <div class="match-card-gold">
-                    <div class="match-teams">
-                        <div class="team-badge"><div class="team-name">⚜️ NÁPOLES F.C.</div><div class="team-sub">Local</div></div>
-                        <div class="vs-circle">VS</div>
-                        <div class="team-badge"><div class="team-name">${escapeHtml(proximoPartido.rival)}</div><div class="team-sub">Visitante</div></div>
-                    </div>
-                    <div class="match-info">
-                        <div class="match-info-item"><i class="fa-regular fa-calendar-alt"></i> ${fechaStr}</div>
-                        <div class="match-info-item"><i class="fa-regular fa-clock"></i> ${proximoPartido.hora || '12:00'}</div>
-                        <div class="match-info-item"><i class="fa-solid fa-location-dot"></i> ${escapeHtml(proximoPartido.lugar) || 'LIGA SANTA RITA'}</div>
-                    </div>
-                </div>
-            </div>`;
-    } else {
-        proximoHTML = `<div class="glass-card-perfil" style="text-align:center;">📅 No hay próximos partidos programados.</div>`;
-    }
-    
-    // Últimos 5 partidos finalizados
-    const historial = partidos.filter(p => p.estado === "FINALIZADO" && p.resultado && p.resultado !== "VS").sort((a,b)=>new Date(b.fecha)-new Date(a.fecha)).slice(0,5);
-    let historialHTML = '<div class="glass-card-perfil"><div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-trophy"></i> ÚLTIMOS PARTIDOS</div>';
-    if (historial.length === 0) historialHTML += '<div style="text-align:center;">Aún no hay partidos finalizados.</div>';
-    else {
-        historial.forEach(p => {
-            const { home, away, tipo } = analizarResultado(p.resultado, 'FINALIZADO');
-            let badge = '';
-            if (tipo === 'victoria') badge = '<span class="result-badge victoria">🏆 VICTORIA</span>';
-            else if (tipo === 'derrota') badge = '<span class="result-badge derrota">⚠️ DERROTA</span>';
-            else if (tipo === 'empate') badge = '<span class="result-badge empate">🤝 EMPATE</span>';
-            else badge = `<span class="result-badge" style="background:#334155;">${p.resultado}</span>`;
-            historialHTML += `<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding:12px 0;"><div style="font-size:0.8rem;">${new Date(p.fecha).toLocaleDateString()}<br><span style="color:#D4AF37;">vs ${escapeHtml(p.rival)}</span></div><div style="font-weight:800;">${home !== null ? home : '?'} - ${away !== null ? away : '?'}</div><div>${badge}</div></div>`;
-        });
-    }
-    historialHTML += '</div>';
-    
-    const chipsRivales = rivalesList.map(rival => `<span class="rival-chip">${escapeHtml(rival)}</span>`).join('');
-    const botonesHistorial = `
-        <div class="botones-historial">
-            <button class="btn-historial" onclick="abrirHistorialPartidos()"><i class="fa-solid fa-list"></i> Todos los partidos</button>
-            <button class="btn-historial" onclick="abrirHistorialPagos()"><i class="fa-solid fa-coins"></i> Pagos realizados</button>
-            <button class="btn-historial" onclick="abrirHistorialDeudas()"><i class="fa-solid fa-chart-line"></i> Historial de deudas</button>
-        </div>
-    `;
-    let suma = rendimiento.puntualidad + rendimiento.companerismo + rendimiento.respeto + rendimiento.humildad;
-    let promedio = suma > 0 ? parseFloat((suma / 4).toFixed(1)) : 0;
-    
-    container.innerHTML = `
-    <div class="perfil-root">
-        <div class="perfil-container">
-            <div class="perfil-header"><h1>⚜️ PANEL NÁPOLES ⚜️</h1><div style="font-size:0.75rem;color:#D4AF37; text-align:center;">Categoría: ${categoria === 'mujeres' ? 'Femenina ♀' : 'Masculina ♂'}</div></div>
-            <div class="cards-row">
-                <div class="glass-card-perfil" style="padding:15px; text-align:center;"><div class="avatar-icon-box"><i class="fa-solid fa-user-ninja"></i></div><div style="font-weight:900;">${s.primerNombre}<br>${s.apellidos}</div><div style="font-size:.65rem;"><i class="fa-solid fa-id-card"></i> ${cedula}</div><div style="margin-top:8px;background:rgba(212,175,55,.2);padding:4px 10px;border-radius:20px;">${edad} años</div></div>
-                <div class="id-card-jersey-wrap"><div class="jersey-card-inner"><div class="face-front"><div class="jersey-name">${s.nombreCamiseta}</div><div class="jersey-number">${s.dorsal}</div><div>Talla ${s.tallaUni}</div></div><div class="face-back"><div class="jersey-name">NÁPOLES FC</div><div class="jersey-number">${s.dorsal}</div></div></div></div>
-            </div>
-            ${proximoHTML}
-            <div class="glass-card-perfil"><div style="display:flex; align-items:center; gap:8px; color:#D4AF37;"><i class="fa-solid fa-people-group"></i> OTROS RIVALES DEL TORNEO</div><div class="rivales-scroll">${chipsRivales}</div></div>
-            <div class="stats-grid">
-                <div class="stat-card"><div class="stat-icon" style="color:#3498db"><i class="fa-solid fa-shirt"></i></div><div class="stat-value">${historial.length}</div><div class="stat-label">PARTIDOS</div></div>
-                <div class="stat-card"><div class="stat-icon" style="color:#2ecc71"><i class="fa-solid fa-futbol"></i></div><div class="stat-value">${s.goles}</div><div class="stat-label">GOLES</div></div>
-                <div class="stat-card"><div class="stat-icon" style="color:#f39c12"><i class="fa-solid fa-square"></i></div><div class="stat-value">${s.amarillas}</div><div class="stat-label">AMARILLAS</div></div>
-                <div class="stat-card"><div class="stat-icon" style="color:#e74c3c"><i class="fa-solid fa-square"></i></div><div class="stat-value">${s.rojas}</div><div class="stat-label">ROJAS</div></div>
-            </div>
-            <div class="glass-card-perfil">
-                <div style="display:flex; align-items:center; gap:8px; color:#D4AF37;"><i class="fa-solid fa-heart"></i> Rendimiento Humano</div>
-                <div class="performance-grid">
-                    <div class="metric-card">${renderProgressCircle(rendimiento.puntualidad, '#3498db')}<div style="margin-top:10px; font-size:.7rem;">PUNTUALIDAD</div></div>
-                    <div class="metric-card">${renderProgressCircle(rendimiento.companerismo, '#2ecc71')}<div style="margin-top:10px; font-size:.7rem;">COMPAÑERISMO</div></div>
-                    <div class="metric-card">${renderProgressCircle(rendimiento.respeto, '#f39c12')}<div style="margin-top:10px; font-size:.7rem;">RESPETO</div></div>
-                    <div class="metric-card">${renderProgressCircle(rendimiento.humildad, '#9b59b6')}<div style="margin-top:10px; font-size:.7rem;">HUMILDAD</div></div>
-                </div>
-                <div class="average-box"><div style="font-size:2.2rem;">${promedio}/10</div><div>${generarEstrellas(promedio)}</div></div>
-            </div>
-            <div class="glass-card-perfil">
-                <div style="display:flex; align-items:center; gap:8px; color:#D4AF37;"><i class="fa-solid fa-chart-line"></i> Estado Administrativo</div>
-                <div class="admin-grid">
-                    ${deudaInscripcion ? `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><i class="fa-solid fa-file-signature"></i><div>$5</div><div>INSCRIPCIÓN</div><div style="background:rgba(231,76,60,.15); color:#e74c3c;">PENDIENTE</div></div>` : ''}
-                    ${deudaUniforme ? `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><i class="fa-solid fa-tshirt"></i><div>$17</div><div>UNIFORME</div><div style="background:rgba(243,156,18,.15); color:#f39c12;">PENDIENTE</div></div>` : ''}
-                    ${deudaMedias ? `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><i class="fa-solid fa-socks"></i><div>$2</div><div>MEDIAS</div><div style="background:rgba(52,152,219,.15); color:#3498db;">PENDIENTE</div></div>` : ''}
-                    ${s.deudaVocalia > 0 ? `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><i class="fa-solid fa-money-bill-wave"></i><div>$${s.deudaVocalia.toFixed(2)}</div><div>VOCALÍA</div><div style="background:rgba(155,89,182,.15); color:#9b59b6;">PENDIENTE</div></div>` : ''}
-                </div>
-                <div style="margin-top:15px; background:rgba(0,0,0,.4); border-radius:14px; padding:12px;">
-                    <div style="display:flex; justify-content:space-between;"><span>VALORES PENDIENTES</span><span style="color:${totalAdmin > 0 ? '#e74c3c' : '#2ecc71'}">$${totalAdmin.toFixed(2)}</span></div>
-                    <div style="width:100%; height:8px; border-radius:10px; background:rgba(255,255,255,.08); margin-top:10px;"><div style="height:100%; width:${Math.min(totalAdmin / 30 * 100, 100)}%; background:linear-gradient(90deg,#e74c3c,#f39c12);"></div></div>
-                    <div style="margin-top:10px; font-size:.7rem; padding:8px; border-radius:10px; text-align:center; background:${totalAdmin === 0 ? 'rgba(46,204,113,.1)' : 'rgba(231,76,60,.1)'};">${totalAdmin === 0 ? '✅ ¡Estás al día!' : '⚠️ Regulariza tus pagos'}</div>
-                </div>
-            </div>
-            ${historialHTML}
-            ${botonesHistorial}
-            <button class="btn-logout" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> CERRAR SESIÓN</button>
-        </div>
-    </div>`;
-}
-
-// ==================== MODALES DE HISTORIAL ====================
-function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
-async function abrirHistorialPartidos() {
-    const partidos = await cargarPartidos();
-    const misPartidos = partidos.filter(p => p.estado === "FINALIZADO" && p.resultado && p.resultado !== "VS").sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
-    const container = document.getElementById('contenidoPartidos');
-    if (misPartidos.length === 0) container.innerHTML = '<div style="text-align:center;">No hay partidos finalizados.</div>';
-    else {
-        let html = '';
-        misPartidos.forEach(p => {
-            const { home, away, tipo } = analizarResultado(p.resultado, 'FINALIZADO');
-            let badge = '';
-            if (tipo === 'victoria') badge = '<span class="result-badge victoria">🏆 VICTORIA</span>';
-            else if (tipo === 'derrota') badge = '<span class="result-badge derrota">⚠️ DERROTA</span>';
-            else if (tipo === 'empate') badge = '<span class="result-badge empate">🤝 EMPATE</span>';
-            else badge = `<span class="result-badge" style="background:#334155;">${p.resultado}</span>`;
-            html += `<div class="historial-item"><div><strong>${new Date(p.fecha).toLocaleDateString()}</strong><br>vs ${escapeHtml(p.rival)}</div><div style="font-weight:800;">${home !== null ? home : '?'} - ${away !== null ? away : '?'}</div><div>${badge}</div></div>`;
-        });
-        container.innerHTML = html;
-    }
-    document.getElementById('modalHistorialPartidos').style.display = 'flex';
-}
-async function abrirHistorialPagos() {
-    const data = await callApi("getHistorialPagosJugador", { cedula });
-    const container = document.getElementById('contenidoPagos');
-    if (!data.success || !data.pagos || data.pagos.length === 0) container.innerHTML = '<div style="text-align:center;">No hay registros de pagos.</div>';
-    else {
-        let html = '';
-        data.pagos.forEach(p => { html += `<div class="historial-item"><div><strong>${new Date(p.fecha).toLocaleDateString()}</strong><br>${escapeHtml(p.concepto)}</div><div>$${p.monto.toFixed(2)}</div><div>${escapeHtml(p.sector)}</div></div>`; });
-        container.innerHTML = html;
-    }
-    document.getElementById('modalHistorialPagos').style.display = 'flex';
-}
-async function abrirHistorialDeudas() {
-    const data = await callApi("getHistorialDeudasJugador", { cedula });
-    const container = document.getElementById('contenidoDeudas');
-    if (!data.success || !data.historial || data.historial.length === 0) container.innerHTML = '<div style="text-align:center;">No hay historial de pagos de vocalía.</div>';
-    else {
-        let html = '';
-        data.historial.forEach(d => { html += `<div class="historial-item"><div><strong>${new Date(d.fecha).toLocaleDateString()}</strong><br>Transacción: ${escapeHtml(d.transaccion)}</div><div>Pagado: $${d.monto.toFixed(2)}</div><div>Deuda restante: $${d.deudaRestante.toFixed(2)}</div></div>`; });
-        container.innerHTML = html;
-    }
-    document.getElementById('modalHistorialDeudas').style.display = 'flex';
-}
-
-// ==================== RULETA (con los rivales de partidos PRÓXIMO reales) ====================
-async function mostrarRuleta() {
-    // Obtener partidos con estado "PRÓXIMO"
-    const partidos = await cargarPartidos();
-    const proximos = partidos.filter(p => p.estado === "PRÓXIMO");
-    if (proximos.length === 0) {
-        mostrarPerfil();
-        return;
-    }
-    const rivalesUnicos = [...new Set(proximos.map(p => p.rival))];
-    
-    // Si solo hay un rival, confirmar directamente (sin ruleta)
-    if (rivalesUnicos.length === 1) {
-        if (confirm(`Confirma tu asistencia para el partido contra ${rivalesUnicos[0]} el ${new Date(proximos[0].fecha).toLocaleDateString()}?`)) {
-            await guardarAsistenciaDirecta(rivalesUnicos[0], proximos[0].fecha, proximos[0].hora, proximos[0].lugar);
-        }
-        return;
-    }
-    
-    // Ruleta con sorteo
-    document.body.className = 'ruleta-mode';
-    document.body.style.background = '#0a0c10';
-    const container = document.getElementById('dynamicContent');
-    container.innerHTML = `
-        <div class="h-screen flex flex-col items-center justify-center bg-black/90">
-            <div class="text-center px-4 mb-12">
-                <h2 class="text-yellow-500 text-3xl mb-2">Sorteo de Rival</h2>
-                <p class="text-gray-400 text-sm">Girando la ruleta...</p>
-            </div>
-            <div class="relative w-full overflow-hidden py-12">
-                <div class="roulette-track flex gap-6 px-[50vw]" id="rouletteTrack"></div>
-            </div>
-            <div class="hidden text-center" id="revealScreen">
-                <div class="reveal-element">
-                    <div class="text-6xl mb-2" id="winnerIcon">⚽</div>
-                    <div class="text-2xl font-bold text-white" id="winnerName">Cargando...</div>
-                </div>
-                <div class="match-info-card mt-6">
-                    <div class="flex justify-center gap-4 text-sm">
-                        <div>📅 ${new Date().toLocaleDateString()}</div>
-                        <div>⏰ 12:00</div>
-                        <div>🏟️ LIGA SANTA RITA</div>
-                    </div>
-                </div>
-                <button id="confirmButton" class="mt-6 bg-yellow-500 text-black px-8 py-3 rounded-full font-bold">Confirmar Asistencia</button>
-            </div>
-        </div>
-    `;
-    const track = document.getElementById('rouletteTrack');
-    const items = [];
-    for (let i = 0; i < 40; i++) {
-        const rival = rivalesUnicos[i % rivalesUnicos.length];
-        const div = document.createElement('div');
-        div.className = 'flex-shrink-0 w-48 h-64 glass-card rounded-xl p-4 flex flex-col items-center justify-center border border-yellow-500/40 bg-black/70';
-        div.innerHTML = `<div class="text-5xl mb-2">${obtenerIcono(rival)}</div><div class="font-bold text-white text-lg">${rival}</div>`;
-        track.appendChild(div);
-        items.push(rival);
-    }
-    setTimeout(() => {
-        track.classList.add('spinning');
-        setTimeout(() => {
-            track.classList.remove('spinning');
-            track.classList.add('slowing');
-            setTimeout(() => {
-                const centro = window.innerWidth / 2;
-                let selectedIndex = 0, minDist = Infinity;
-                Array.from(track.children).forEach((card, idx) => {
-                    const rect = card.getBoundingClientRect();
-                    const cardCenter = rect.left + rect.width/2;
-                    const dist = Math.abs(centro - cardCenter);
-                    if (dist < minDist) { minDist = dist; selectedIndex = idx; }
-                });
-                const rivalGanador = items[selectedIndex % rivalesUnicos.length];
-                document.getElementById('winnerName').innerText = rivalGanador;
-                document.getElementById('winnerIcon').innerHTML = obtenerIcono(rivalGanador);
-                document.getElementById('revealScreen').classList.remove('hidden');
-                setTimeout(() => document.querySelectorAll('.reveal-element').forEach(el => el.classList.add('revealed')), 100);
-                document.getElementById('confirmButton').onclick = () => guardarAsistencia(rivalGanador);
-            }, 3000);
-        }, 3000);
-    }, 500);
-}
-
-function obtenerIcono(nombre) {
-    const map = { "LEONES":"🦁", "IDEAL":"⚡", "BARZA":"🔵🔴", "SAN MARTIN":"🏰", "INDEPENDIENTE":"🔥", "VODKILA":"🍺", "CHELSEA":"💙", "JUVENTUS":"⚪⚫", "FRANCO CANADIENSE":"🍁", "JUVENTUD DE AMERICA":"🟡🔴" };
-    return map[nombre] || "⚽";
-}
-
-async function guardarAsistencia(rival) {
-    const btn = document.getElementById('confirmButton');
-    if (!btn || btn.disabled) return;
-    btn.disabled = true;
-    btn.innerText = 'GUARDANDO...';
-    const fechaStr = new Date().toISOString().split('T')[0];
-    const hora = "12:00";
-    const lugar = "LIGA SANTA RITA - Cancha 1";
-    const dorsal = jugadorSesion.dorsal || "";
-    const datos = {
-        cedula, categoria, nombre: nombreCompleto, rival, fecha: fechaStr, hora, lugar,
-        amarillas: 0, rojas: 0, goles: 0, valor_vocalia: 2.5, estado: "CONFIRMADO",
-        vocalias_pendientes: "PENDIENTE", puntualidad: 10, companerismo: 10, respeto: 10,
-        humildad: 10, dorsal
-    };
-    await callPost("registrarAsistencia", datos);
-    alert(`✅ Confirmaste asistencia contra ${rival}. ¡Buena suerte!`);
-    mostrarPerfil();
-}
-
-async function guardarAsistenciaDirecta(rival, fecha, hora, lugar) {
-    const fechaStr = new Date(fecha).toISOString().split('T')[0];
-    const dorsal = jugadorSesion.dorsal || "";
-    const datos = {
-        cedula, categoria, nombre: nombreCompleto, rival, fecha: fechaStr, hora: hora || "12:00",
-        lugar: lugar || "LIGA SANTA RITA - Cancha 1", amarillas: 0, rojas: 0, goles: 0,
-        valor_vocalia: 2.5, estado: "CONFIRMADO", vocalias_pendientes: "PENDIENTE",
-        puntualidad: 10, companerismo: 10, respeto: 10, humildad: 10, dorsal
-    };
-    await callPost("registrarAsistencia", datos);
-    alert(`✅ Confirmaste asistencia contra ${rival}. ¡Buena suerte!`);
-    mostrarPerfil();
-}
-
-// ==================== TÉRMINOS ====================
-function selectRadio(num) {
-    document.getElementById('opt'+num).checked = true;
-    document.querySelectorAll('.terms-option-card').forEach(c => c.classList.remove('selected'));
-    document.getElementById(`opt${num}`).parentElement.classList.add('selected');
-    document.getElementById('btnFirmar').disabled = false;
-}
-async function enviarFirmaTerminos() {
-    const opcion = document.querySelector('input[name="termOption"]:checked').value;
-    const btn = document.getElementById('btnFirmar');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ENVIANDO...';
-    await callPost("guardarTerminos", { cedula, categoria, opcion });
-    document.getElementById('modalTerms').style.display = 'none';
-    const yaConfirmo = await verificarConfirmacionPrevia();
-    if (yaConfirmo) mostrarPerfil();
-    else mostrarRuleta();
-}
-async function verificarTerminos() {
-    const perfil = await obtenerPerfilJugador();
-    return perfil && perfil.terminos_aceptados === true;
-}
-async function mostrarNotificacionSiNecesaria() {
-    const aceptado = await verificarTerminos();
-    if (aceptado) return true;
-    document.getElementById('modalTerms').style.display = 'flex';
-    return new Promise((resolve) => {
-        const btn = document.getElementById('btnFirmar');
-        btn.onclick = async () => {
-            await enviarFirmaTerminos();
-            resolve(true);
-        };
-    });
-}
-
 function cerrarSesion() {
     if (confirm('¿Cerrar sesión?')) {
         localStorage.removeItem('jugador_actual');
@@ -530,9 +793,8 @@ function cerrarSesion() {
 
 // ==================== FLUJO PRINCIPAL ====================
 (async function() {
-    document.getElementById('dynamicContent').innerHTML = `<div class="h-screen flex flex-col items-center justify-center bg-black/90"><div class="soccer-loading-container"><i class="fa-solid fa-futbol fa-spin" style="font-size:4rem; color:#D4AF37;"></i><p class="mt-4">Cargando información...</p></div></div>`;
-    const notificacionOk = await mostrarNotificacionSiNecesaria();
-    if (!notificacionOk) return;
+    const terminosOk = await verificarTerminos();
+    if (!terminosOk) return;
     const yaConfirmo = await verificarConfirmacionPrevia();
     if (yaConfirmo) mostrarPerfil();
     else mostrarRuleta();
