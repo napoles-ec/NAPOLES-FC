@@ -351,29 +351,86 @@ async function abrirHistorialDeudas() {
     document.getElementById('modalHistorialDeudas').style.display = 'flex';
 }
 
-// ==================== RULETA (CONFIRMACIÓN DE PARTIDO PENDIENTE) ====================
-function mostrarRuleta(rival) {
+// ==================== RULETA CON SORTEO (para múltiples rivales) ====================
+function mostrarRuletaConSorteo(rivalesLista) {
     document.body.className = 'ruleta-mode';
     document.body.style.background = '#0a0c10';
     const container = document.getElementById('dynamicContent');
     container.innerHTML = `
         <div class="h-screen flex flex-col items-center justify-center bg-black/90">
-            <div class="text-center">
-                <h2 class="text-yellow-500 text-3xl mb-4">Partido Pendiente</h2>
-                <div class="glass-card p-6 rounded-xl" style="background:rgba(0,0,0,0.8); border:1px solid #e9c349;">
-                    <div class="flex items-center justify-center gap-6">
-                        <div>⚜️ NÁPOLES F.C.</div>
-                        <div class="text-yellow-500 text-4xl">VS</div>
-                        <div>${escapeHtml(rival)}</div>
-                    </div>
-                    <div class="match-info-card mt-4">📅 Fecha: ${new Date().toLocaleDateString()} | ⏰ 12:00 | 🏟️ LIGA SANTA RITA</div>
-                    <button id="confirmButton" class="mt-6 bg-yellow-500 text-black px-8 py-3 rounded-full font-bold">Confirmar Asistencia</button>
+            <div class="text-center px-4 mb-12">
+                <h2 class="text-yellow-500 text-3xl mb-2">Sorteo de Rival</h2>
+                <p class="text-gray-400 text-sm">Girando la ruleta...</p>
+            </div>
+            <div class="relative w-full overflow-hidden py-12">
+                <div class="roulette-track flex gap-6 px-[50vw]" id="rouletteTrack"></div>
+            </div>
+            <div class="hidden text-center" id="revealScreen">
+                <div class="reveal-element">
+                    <div class="text-6xl mb-2" id="winnerIcon">⚽</div>
+                    <div class="text-2xl font-bold text-white" id="winnerName">Cargando...</div>
                 </div>
+                <div class="match-info-card mt-6">
+                    <div class="flex justify-center gap-4 text-sm">
+                        <div>📅 ${new Date().toLocaleDateString()}</div>
+                        <div>⏰ 12:00</div>
+                        <div>🏟️ LIGA SANTA RITA</div>
+                    </div>
+                </div>
+                <button id="confirmButton" class="mt-6 bg-yellow-500 text-black px-8 py-3 rounded-full font-bold">Confirmar Asistencia</button>
             </div>
         </div>
     `;
-    document.getElementById('confirmButton').onclick = () => guardarAsistenciaPartidoPendiente(rival);
+    
+    const track = document.getElementById('rouletteTrack');
+    // Crear copias del array de rivales para que la ruleta tenga muchos elementos
+    const items = [];
+    for (let i = 0; i < 30; i++) {
+        const rival = rivalesLista[i % rivalesLista.length];
+        const div = document.createElement('div');
+        div.className = 'flex-shrink-0 w-48 h-64 glass-card rounded-xl p-4 flex flex-col items-center justify-center border border-yellow-500/40 bg-black/70';
+        div.innerHTML = `<div class="text-5xl mb-2">${obtenerIconoRival(rival)}</div><div class="font-bold text-white text-lg">${rival}</div>`;
+        track.appendChild(div);
+        items.push(rival);
+    }
+    
+    // Animación
+    setTimeout(() => {
+        track.classList.add('spinning');
+        setTimeout(() => {
+            track.classList.remove('spinning');
+            track.classList.add('slowing');
+            setTimeout(() => {
+                const centro = window.innerWidth / 2;
+                let minDist = Infinity;
+                let selectedIndex = 0;
+                Array.from(track.children).forEach((card, idx) => {
+                    const rect = card.getBoundingClientRect();
+                    const cardCenter = rect.left + rect.width/2;
+                    const dist = Math.abs(centro - cardCenter);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        selectedIndex = idx;
+                    }
+                });
+                const rivalGanador = items[selectedIndex % rivalesLista.length];
+                document.getElementById('winnerName').innerText = rivalGanador;
+                document.getElementById('winnerIcon').innerHTML = obtenerIconoRival(rivalGanador);
+                document.getElementById('revealScreen').classList.remove('hidden');
+                setTimeout(() => {
+                    document.querySelectorAll('.reveal-element').forEach(el => el.classList.add('revealed'));
+                }, 100);
+                document.getElementById('confirmButton').onclick = () => guardarAsistenciaPartidoPendiente(rivalGanador);
+            }, 3000);
+        }, 3000);
+    }, 500);
 }
+
+function obtenerIconoRival(nombre) {
+    const map = { "LEONES":"🦁", "IDEAL":"⚡", "BARZA":"🔵🔴", "SAN MARTIN":"🏰", "INDEPENDIENTE":"🔥", "VODKILA":"🍺", "CHELSEA":"💙", "JUVENTUS":"⚪⚫", "FRANCO CANADIENSE":"🍁", "JUVENTUD DE AMERICA":"🟡🔴" };
+    return map[nombre] || "⚽";
+}
+
 async function guardarAsistenciaPartidoPendiente(rival) {
     const btn = document.getElementById('confirmButton');
     if (!btn || btn.disabled) return;
@@ -392,24 +449,16 @@ async function guardarAsistenciaPartidoPendiente(rival) {
 // ==================== NOTIFICACIÓN DINÁMICA (TÉRMINOS) ====================
 async function mostrarNotificacionSiNecesaria() {
     const perfil = await obtenerPerfilJugador();
-    // Si ya aceptó términos (columna Terminos no vacía), no mostramos notificación
     if (perfil && perfil.terminos_aceptados) return true;
-    
     const notificacion = await obtenerNotificacion();
-    if (!notificacion) {
-        // No hay notificación, continuar sin modal
-        return true;
-    }
-    // Mostrar modal con título y mensaje desde la hoja
+    if (!notificacion) return true;
     document.getElementById('notificacionTitulo').innerText = notificacion.titulo || "AVISO IMPORTANTE";
     document.getElementById('notificacionMensaje').innerHTML = notificacion.mensaje || "Por favor, confirma que has leído esta información.";
     document.getElementById('modalNotificacion').style.display = 'flex';
-    // Esperar a que el usuario acepte
     return new Promise((resolve) => {
         const btn = document.getElementById('btnAceptarNotificacion');
         const aceptar = async () => {
             btn.removeEventListener('click', aceptar);
-            // Guardar la aceptación en la columna Terminos (guardamos "ACEPTADO" o la fecha)
             await callPost("guardarTerminos", { cedula, categoria, opcion: "ACEPTADO" });
             document.getElementById('modalNotificacion').style.display = 'none';
             resolve(true);
@@ -418,14 +467,37 @@ async function mostrarNotificacionSiNecesaria() {
     });
 }
 
-// ==================== FLUJO PRINCIPAL ====================
+// ==================== FLUJO PRINCIPAL CON ANIMACIÓN DE CARGA ====================
 (async function() {
+    // Mostrar animación de búsqueda mientras se cargan los datos
+    document.getElementById('dynamicContent').innerHTML = `
+        <div class="h-screen flex flex-col items-center justify-center bg-black/90">
+            <div class="soccer-loading-container">
+                <i class="fa-solid fa-futbol fa-spin" style="font-size:4rem; color:#D4AF37;"></i>
+                <p class="mt-4 text-gray-300">Buscando partidos programados...</p>
+            </div>
+        </div>
+    `;
+    
     const notificacionOk = await mostrarNotificacionSiNecesaria();
     if (!notificacionOk) return;
+    
     const partidos = await cargarPartidos();
-    const pendientes = partidos.filter(p => p.estado === "PENDIENTE");
-    if (pendientes.length > 0) mostrarRuleta(pendientes[0].rival);
-    else mostrarPerfil();
+    // Buscar partidos con estado "PRÓXIMO"
+    const proximos = partidos.filter(p => p.estado === "PRÓXIMO");
+    if (proximos.length > 0) {
+        // Extraer rivales únicos de los partidos próximos
+        const rivalesUnicos = [...new Set(proximos.map(p => p.rival))];
+        if (rivalesUnicos.length === 1) {
+            // Solo un rival, mostrar confirmación directa
+            mostrarRuletaConSorteo(rivalesUnicos);
+        } else {
+            // Múltiples rivales, mostrar ruleta con sorteo
+            mostrarRuletaConSorteo(rivalesUnicos);
+        }
+    } else {
+        mostrarPerfil();
+    }
 })();
 </script>
 </body>
