@@ -59,9 +59,6 @@
     .glass-card { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(233, 195, 73, 0.6); }
     .terms-backdrop, .modal-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(3,5,10,0.97); backdrop-filter: blur(20px); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 15px; }
     .modal-box { background: linear-gradient(145deg, #091022, #040812); border: 2px solid #D4AF37; border-radius: 24px; width: 100%; max-width: 500px; max-height: 85vh; overflow-y: auto; padding: 24px; }
-    .terms-announcement { background: linear-gradient(135deg, rgba(212,175,55,0.04) 0%, rgba(255,255,255,0.01) 100%); border: 1px solid rgba(212,175,55,0.25); border-left: 5px solid #D4AF37; padding: 18px; border-radius: 14px; font-size: 0.88rem; margin-bottom: 22px; }
-    .terms-option-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 14px; cursor: pointer; }
-    .terms-option-card.selected { border-color: #D4AF37; background: rgba(212,175,55,0.08); }
     .btn-modal-send, .btn-modal-close { background: linear-gradient(90deg, #D4AF37 0%, #F3E5AB 100%); color: #000; margin-top: 18px; font-weight: 800; border: none; padding: 12px; border-radius: 40px; width: 100%; cursor: pointer; }
     .close-modal { background: #334155; margin-top: 10px; }
     .historial-item { border-bottom: 1px solid rgba(255,255,255,0.1); padding: 12px 0; display: flex; justify-content: space-between; align-items: center; }
@@ -71,14 +68,12 @@
 </style>
 </head>
 <body>
-<!-- Modal de términos -->
-<div class="terms-backdrop" id="modalTerms">
+<!-- Modal de notificaciones (dinámico) -->
+<div class="terms-backdrop" id="modalNotificacion">
     <div class="modal-box">
-        <h2 style="text-align:center; color:#D4AF37;">GRAN INAUGURACIÓN</h2>
-        <div class="terms-announcement">⚽ ATENCIÓN JUGADORES ⚽<br>📅 17 de mayo - 9:30 a.m.<br>✅ Seleccione opción de asistencia</div>
-        <div class="terms-option-card" onclick="selectRadio(1)"><input type="radio" name="termOption" id="opt1" value="1"><label>1️⃣ Asistiré, ahí estaré puntual</label></div>
-        <div class="terms-option-card" onclick="selectRadio(2)"><input type="radio" name="termOption" id="opt2" value="2"><label>2️⃣ Enviaré a mi representante</label></div>
-        <button class="btn-modal-send" id="btnFirmar" disabled onclick="enviarFirmaTerminos()">CONFIRMAR ASISTENCIA</button>
+        <h2 id="notificacionTitulo" style="text-align:center; color:#D4AF37;">Cargando...</h2>
+        <div id="notificacionMensaje" class="terms-announcement" style="margin-top:15px;"></div>
+        <button class="btn-modal-send" id="btnAceptarNotificacion">Aceptar y continuar</button>
     </div>
 </div>
 <!-- Modales de historiales -->
@@ -89,7 +84,7 @@
 <div id="dynamicContent"></div>
 
 <script>
-const CONFIG = { URL_GAS: "https://script.google.com/macros/s/AKfycby9LJS4ZTGGoKV9Mzxjw66l9vXPtAkctwoPhkdTtUT30KKsrUmfXIGfH7OCdhFntpv2/exec" };
+const CONFIG = { URL_GAS: "https://script.google.com/macros/s/AKfycbxCwOM115TIAzDTMhevWt3UC04Eb5vymQ9v-vHMFuk2C8CTmW1IJwkniy22aqnkrVy0/exec" };
 
 let jugadorSesion = null;
 try { jugadorSesion = JSON.parse(localStorage.getItem('jugador_actual')); } catch(e) {}
@@ -129,6 +124,10 @@ async function obtenerRendimiento() {
     const data = await callApi("getRendimientoJugador", { cedula });
     if (data.success) return { puntualidad: data.puntualidad, companerismo: data.companerismo, respeto: data.respeto, humildad: data.humildad };
     return null;
+}
+async function obtenerNotificacion() {
+    const data = await callApi("getNotificacionActiva");
+    return data.success ? data.notificacion : null;
 }
 
 // ==================== UTILIDADES ====================
@@ -172,7 +171,7 @@ function analizarResultado(res, estado) {
     return { home: null, away: null, tipo: null };
 }
 
-// ==================== MOSTRAR PERFIL (cuando NO hay partidos pendientes) ====================
+// ==================== MOSTRAR PERFIL ====================
 async function mostrarPerfil() {
     document.body.className = '';
     const container = document.getElementById('dynamicContent');
@@ -204,7 +203,6 @@ async function mostrarPerfil() {
     let deudaMedias = s.mediasEstado.toUpperCase().includes('PENDIENTE') ? 2 : 0;
     let totalAdmin = deudaInscripcion + deudaUniforme + deudaMedias + s.deudaVocalia;
     
-    // Próximo partido (primer partido con estado no FINALIZADO y fecha >= hoy)
     const hoy = new Date();
     const proximos = partidos.filter(p => p.estado !== "FINALIZADO" && new Date(p.fecha) >= hoy).sort((a,b)=>new Date(a.fecha)-new Date(b.fecha));
     const proximoPartido = proximos[0];
@@ -229,7 +227,6 @@ async function mostrarPerfil() {
         proximoHTML = `<div class="glass-card-perfil" style="text-align:center;">📅 No hay próximos partidos programados.</div>`;
     }
     
-    // Historial de partidos finalizados (últimos 5)
     const historial = partidos.filter(p => p.estado === "FINALIZADO" && p.resultado && p.resultado !== "VS").sort((a,b)=>new Date(b.fecha)-new Date(a.fecha)).slice(0,5);
     let historialHTML = '<div class="glass-card-perfil"><div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-trophy"></i> ÚLTIMOS PARTIDOS</div>';
     if (historial.length === 0) historialHTML += '<div style="text-align:center;">Aún no hay partidos finalizados.</div>';
@@ -377,7 +374,6 @@ function mostrarRuleta(rival) {
     `;
     document.getElementById('confirmButton').onclick = () => guardarAsistenciaPartidoPendiente(rival);
 }
-
 async function guardarAsistenciaPartidoPendiente(rival) {
     const btn = document.getElementById('confirmButton');
     if (!btn || btn.disabled) return;
@@ -393,39 +389,39 @@ async function guardarAsistenciaPartidoPendiente(rival) {
     mostrarPerfil();
 }
 
-// ==================== TÉRMINOS ====================
-function selectRadio(num) {
-    document.getElementById('opt'+num).checked = true;
-    document.querySelectorAll('.terms-option-card').forEach(c => c.classList.remove('selected'));
-    document.getElementById(`opt${num}`).parentElement.classList.add('selected');
-    document.getElementById('btnFirmar').disabled = false;
-}
-async function enviarFirmaTerminos() {
-    const opcion = document.querySelector('input[name="termOption"]:checked').value;
-    const btn = document.getElementById('btnFirmar');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ENVIANDO...';
-    await callPost("guardarTerminos", { cedula, categoria, opcion });
-    document.getElementById('modalTerms').style.display = 'none';
-    const partidos = await cargarPartidos();
-    const pendientes = partidos.filter(p => p.estado === "PENDIENTE");
-    if (pendientes.length > 0) mostrarRuleta(pendientes[0].rival);
-    else mostrarPerfil();
-}
-async function verificarTerminos() {
+// ==================== NOTIFICACIÓN DINÁMICA (TÉRMINOS) ====================
+async function mostrarNotificacionSiNecesaria() {
     const perfil = await obtenerPerfilJugador();
-    if (!perfil || !perfil.terminos_aceptados) {
-        document.getElementById('modalTerms').style.display = 'flex';
-        return false;
+    // Si ya aceptó términos (columna Terminos no vacía), no mostramos notificación
+    if (perfil && perfil.terminos_aceptados) return true;
+    
+    const notificacion = await obtenerNotificacion();
+    if (!notificacion) {
+        // No hay notificación, continuar sin modal
+        return true;
     }
-    return true;
+    // Mostrar modal con título y mensaje desde la hoja
+    document.getElementById('notificacionTitulo').innerText = notificacion.titulo || "AVISO IMPORTANTE";
+    document.getElementById('notificacionMensaje').innerHTML = notificacion.mensaje || "Por favor, confirma que has leído esta información.";
+    document.getElementById('modalNotificacion').style.display = 'flex';
+    // Esperar a que el usuario acepte
+    return new Promise((resolve) => {
+        const btn = document.getElementById('btnAceptarNotificacion');
+        const aceptar = async () => {
+            btn.removeEventListener('click', aceptar);
+            // Guardar la aceptación en la columna Terminos (guardamos "ACEPTADO" o la fecha)
+            await callPost("guardarTerminos", { cedula, categoria, opcion: "ACEPTADO" });
+            document.getElementById('modalNotificacion').style.display = 'none';
+            resolve(true);
+        };
+        btn.addEventListener('click', aceptar);
+    });
 }
-function cerrarSesion() { localStorage.removeItem('jugador_actual'); window.location.href = 'login.html'; }
 
 // ==================== FLUJO PRINCIPAL ====================
 (async function() {
-    const terminosOk = await verificarTerminos();
-    if (!terminosOk) return;
+    const notificacionOk = await mostrarNotificacionSiNecesaria();
+    if (!notificacionOk) return;
     const partidos = await cargarPartidos();
     const pendientes = partidos.filter(p => p.estado === "PENDIENTE");
     if (pendientes.length > 0) mostrarRuleta(pendientes[0].rival);
