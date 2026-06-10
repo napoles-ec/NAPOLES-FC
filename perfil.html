@@ -1,95 +1,61 @@
 <!DOCTYPE html>
 <html class="dark" lang="es">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Nápoles F.C. - Sorteo de Rivales</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Nápoles F.C. - Mi Perfil</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
 <style>
-    /* ========== ESTILOS (igual que en tu versión original, no cambio nada) ========== */
-    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-    .glass-card { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(233, 195, 73, 0.6); color: white; }
-    .premium-glow { box-shadow: 0 0 30px rgba(233, 195, 73, 0.4); }
-    .roulette-track { display: flex; gap: 24px; width: fit-content; transform: translateX(0); }
+    /* ========== ESTILOS COMPLETOS (ruleta + perfil) ========== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #0a0c10; color: #fff; }
+    .perfil-root { background: radial-gradient(circle at top, #111a33 0%, #060912 100%); min-height: 100vh; padding: 15px; display: flex; justify-content: center; }
+    .perfil-container { width: 100%; max-width: 480px; text-align: center; }
+    .glass-card-perfil { background: linear-gradient(145deg, rgba(10,20,40,.85), rgba(5,10,20,.95)); border-radius: 20px; border: 1px solid rgba(212,175,55,.25); padding: 20px; margin-bottom: 20px; }
+    .btn-logout { background: rgba(231,76,60,.12); color: #e74c3c; border: 1px solid rgba(231,76,60,.2); border-radius: 14px; padding: 14px; font-weight: 800; cursor: pointer; width: 100%; }
+    .soccer-loading-container { text-align: center; margin-top: 140px; }
+    /* Ruleta */
+    .roulette-track { display: flex; gap: 24px; width: fit-content; }
     .spinning { animation: scroll-fast 0.2s linear infinite; filter: blur(4px); }
     @keyframes scroll-fast { from { transform: translateX(0); } to { transform: translateX(-1000px); } }
-    .slowing { animation: scroll-slow 3s cubic-bezier(0.1, 0.7, 0.1, 1) forwards; filter: blur(0px); transition: filter 2s ease-out; }
+    .slowing { animation: scroll-slow 3s cubic-bezier(0.1, 0.7, 0.1, 1) forwards; }
     @keyframes scroll-slow { from { transform: translateX(0); } to { transform: translateX(-4000px); } }
-    .winner-glow { animation: winner-pulse 2s infinite alternate; }
-    @keyframes winner-pulse { 0% { box-shadow: 0 0 20px rgba(233, 195, 73, 0.3); border-color: rgba(233, 195, 73, 0.6); } 100% { box-shadow: 0 0 60px rgba(233, 195, 73, 0.8); border-color: #e9c349; transform: scale(1.05); } }
-    .particle { position: absolute; pointer-events: none; z-index: 100; }
-    .cinematic-text { text-shadow: 0 0 20px rgba(233, 195, 73, 0.6); }
     .reveal-element { opacity: 0; transform: translateY(20px); transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
     .revealed { opacity: 1; transform: translateY(0); }
-    body.ruleta-mode { background: #0a0c10; overflow: hidden; min-height: 100dvh; }
-    .match-info-card { background: #1a1c22; border-radius: 40px; padding: 16px 20px; margin: 15px 0; border-left: 5px solid #e9c349; text-align: center; }
-    .perfil-root { background: radial-gradient(circle at top, #111a33 0%, #060912 100%); font-family: 'Inter', sans-serif; color: #fff; min-height: 100vh; padding: 15px; display: flex; justify-content: center; }
-    .perfil-container { width: 100%; max-width: 460px; }
-    .perfil-header h1 { font-family: 'Outfit', sans-serif; color: #D4AF37; font-size: 1.3rem; letter-spacing: 2px; text-align: center; margin-bottom: 20px; }
-    .cards-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
-    .glass-card-perfil { background: linear-gradient(145deg, rgba(10,20,40,.85), rgba(5,10,20,.95)); border-radius: 20px; border: 1px solid rgba(212,175,55,.25); overflow: hidden; }
-    .match-card-gold { background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(0,0,0,0.6)); border-left: 6px solid #D4AF37; border-radius: 24px; padding: 18px 15px; margin-bottom: 20px; text-align: center; }
-    .match-teams { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 15px; }
-    .team-badge { text-align: center; flex: 1; }
-    .team-badge .team-name { font-size: 1.5rem; font-weight: 900; font-family: 'Outfit'; letter-spacing: 1px; }
-    .team-badge .team-sub { font-size: 0.7rem; color: #D4AF37; text-transform: uppercase; }
-    .vs-circle { background: #D4AF37; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #000; font-size: 1.3rem; box-shadow: 0 0 10px rgba(212,175,55,0.6); }
-    .match-info { background: rgba(0,0,0,0.5); border-radius: 50px; padding: 12px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 8px; }
-    .match-info-item { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 600; }
-    .match-info-item i { color: #D4AF37; font-size: 1rem; }
-    .rivales-scroll { margin-top: 18px; overflow-x: auto; white-space: nowrap; padding-bottom: 8px; scrollbar-width: thin; }
-    .rivales-scroll::-webkit-scrollbar { height: 4px; }
-    .rivales-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); border-radius: 10px; }
-    .rivales-scroll::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 10px; }
-    .rival-chip { display: inline-block; background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.3); border-radius: 40px; padding: 6px 18px; margin-right: 12px; font-size: 0.8rem; font-weight: 600; color: #f5e6a3; backdrop-filter: blur(4px); transition: 0.2s; }
-    .rival-chip.active { background: #D4AF37; color: #000; border-color: #D4AF37; box-shadow: 0 0 8px #D4AF37; }
-    .avatar-icon-box { width: 75px; height: 75px; border-radius: 50%; border: 3px solid #D4AF37; background: radial-gradient(circle, #1a2a4a 0%, #0a1428 100%); display: flex; align-items: center; justify-content: center; margin-bottom: 10px; color: #D4AF37; font-size: 2.2rem; }
-    .id-card-jersey-wrap { perspective: 900px; height: 180px; }
-    .jersey-card-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: rotateCard 12s linear infinite; }
-    @keyframes rotateCard { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
-    .face-front, .face-back { position: absolute; width: 100%; height: 100%; border-radius: 20px; backface-visibility: hidden; background: linear-gradient(145deg, #0a1428, #000814); border: 2px solid rgba(212,175,55,.4); display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .face-back { transform: rotateY(180deg); }
-    .jersey-number { font-size: 4.5rem; font-family: 'Outfit'; font-weight: 900; line-height: 1; color: #D4AF37; }
-    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
-    .stat-card { background: rgba(0,0,0,.35); border-radius: 16px; padding: 10px 5px; text-align: center; }
-    .performance-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 15px; }
-    .progress-circle { position: relative; width: 85px; height: 85px; margin: auto; }
-    .progress-circle svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-    .average-box { background: rgba(212,175,55,.08); border: 1px solid rgba(212,175,55,.2); border-radius: 15px; padding: 15px; text-align: center; margin-top: 15px; }
-    .admin-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 15px; }
-    .btn-logout { background: rgba(231,76,60,.12); color: #e74c3c; border: 1px solid rgba(231,76,60,.2); width: 100%; border-radius: 14px; padding: 14px; font-weight: 800; cursor: pointer; margin-top: 10px; }
-    .soccer-loading-container { text-align: center; margin-top: 140px; }
-    .soccer-spinner { font-size: 3.5rem; color: #D4AF37; display: inline-block; animation: spinSoccer 1.2s linear infinite; }
-    @keyframes spinSoccer { 100% { transform: rotate(360deg); } }
-    .error-message { text-align: center; padding: 60px 20px; color: #e74c3c; }
-    .terms-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(3,5,10,0.97); backdrop-filter: blur(20px); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 15px; }
-    .terms-box { background: linear-gradient(145deg, #091022, #040812); border: 2px solid #D4AF37; border-radius: 24px; width: 100%; max-width: 430px; padding: 24px; box-shadow: 0 0 35px rgba(212,175,55,0.25); max-height: 92vh; overflow-y: auto; }
-    .terms-announcement { background: linear-gradient(135deg, rgba(212,175,55,0.04) 0%, rgba(255,255,255,0.01) 100%); border: 1px solid rgba(212,175,55,0.25); border-left: 5px solid #D4AF37; padding: 18px; border-radius: 14px; font-size: 0.88rem; line-height: 1.6; margin-bottom: 22px; white-space: pre-line; }
+    .match-info-card { background: #1a1c22; border-radius: 40px; padding: 16px 20px; margin: 15px 0; border-left: 5px solid #e9c349; }
+    .glass-card { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(233, 195, 73, 0.6); border-radius: 20px; }
+    /* Modal términos */
+    .terms-backdrop { position: fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(3,5,10,0.97); backdrop-filter: blur(20px); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 15px; }
+    .terms-box { background: linear-gradient(145deg, #091022, #040812); border: 2px solid #D4AF37; border-radius: 24px; max-width: 430px; width: 100%; padding: 24px; }
+    .terms-announcement { background: rgba(212,175,55,0.04); border-left: 5px solid #D4AF37; padding: 18px; border-radius: 14px; margin-bottom: 22px; white-space: pre-line; }
     .terms-option-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 14px; cursor: pointer; }
     .terms-option-card.selected { border-color: #D4AF37; background: rgba(212,175,55,0.08); }
-    .btn-modal-send { background: linear-gradient(90deg, #D4AF37 0%, #F3E5AB 100%); color: #000; margin-top: 18px; font-weight: 800; border: none; padding: 14px; border-radius: 40px; width: 100%; }
+    .btn-modal-send { background: linear-gradient(90deg, #D4AF37 0%, #F3E5AB 100%); color: #000; margin-top: 18px; font-weight: 800; border: none; padding: 14px; border-radius: 40px; width: 100%; cursor: pointer; }
 </style>
 </head>
-<body id="appBody">
+<body>
+
+<!-- Modal de términos (dinámico) -->
 <div class="terms-backdrop" id="modalTerms">
     <div class="terms-box">
-        <h2 style="text-align:center; color:#D4AF37;">GRAN INAUGURACIÓN</h2>
-        <div class="terms-announcement">⚽ ATENCIÓN JUGADORES ⚽<br>📅 17 de mayo - 9:30 a.m.<br>✅ Seleccione opción de asistencia</div>
-        <div class="terms-option-card" onclick="selectRadio(1)"><input type="radio" name="termOption" id="opt1" value="1"><label>1️⃣ Asistiré, ahí estaré puntual</label></div>
-        <div class="terms-option-card" onclick="selectRadio(2)"><input type="radio" name="termOption" id="opt2" value="2"><label>2️⃣ Enviaré a mi representante</label></div>
-        <button class="btn-modal-send" id="btnFirmar" disabled onclick="enviarFirmaTerminos()">CONFIRMAR ASISTENCIA</button>
+        <h2 id="notificacionTitulo" style="text-align:center; color:#D4AF37;">GRAN INAUGURACIÓN</h2>
+        <div id="notificacionMensaje" class="terms-announcement">⚽ ATENCIÓN JUGADORES ⚽<br>📅 17 de mayo - 9:30 a.m.<br>✅ Seleccione opción de asistencia</div>
+        <div class="terms-option-card" onclick="selectRadio(1)"><input type="radio" name="termOption" id="opt1" value="1"> <label>1️⃣ Asistiré, ahí estaré puntual</label></div>
+        <div class="terms-option-card" onclick="selectRadio(2)"><input type="radio" name="termOption" id="opt2" value="2"> <label>2️⃣ Enviaré a mi representante</label></div>
+        <button class="btn-modal-send" id="btnFirmar" disabled>CONFIRMAR ASISTENCIA</button>
     </div>
 </div>
+
 <div id="dynamicContent"></div>
 
 <script>
 // ==================== CONFIGURACIÓN ====================
 const CONFIG = {
-    URL_GAS: "https://script.google.com/macros/s/AKfycbyGfP8oz2vE9KkxR_AjStcdOPULibPtYtzUjMrtAv_DkF2R6_Lk6oae18BmQeeYEX-E/exec"   // Reemplazar por tu URL
+    // REEMPLAZA ESTA URL CON LA DE TU WEB APP DESPLEGADA
+    URL_GAS: "https://script.google.com/macros/s/AKfycbyGfP8oz2vE9KkxR_AjStcdOPULibPtYtzUjMrtAv_DkF2R6_Lk6oae18BmQeeYEX-E/exec"
 };
 
 // Obtener sesión del jugador
@@ -103,132 +69,156 @@ if (!jugadorSesion || !jugadorSesion.cedula) {
 const cedula = jugadorSesion.cedula;
 const categoria = jugadorSesion.categoria || 'hombres';
 const nombreCompleto = (jugadorSesion.primerNombre || '') + ' ' + (jugadorSesion.apellidos || '');
+const dorsal = jugadorSesion.dorsal || '';
 
-// ==================== API ====================
-async function callPost(action, body) {
-    const formData = new URLSearchParams();
-    formData.append("accion", action);
-    Object.keys(body).forEach(k => formData.append(k, body[k]));
-    try {
-        await fetch(CONFIG.URL_GAS, { method: "POST", mode: "no-cors", body: formData });
-        return { success: true };
-    } catch(e) {
-        console.error(e);
-        return { success: false, error: e.message };
-    }
-}
-
-async function callGet(action, params = {}) {
+// ==================== FUNCIONES API ====================
+async function callApi(action, params = {}) {
     const url = new URL(CONFIG.URL_GAS);
     url.searchParams.append("action", action);
     Object.keys(params).forEach(k => url.searchParams.append(k, params[k]));
     const resp = await fetch(url.toString());
     return resp.json();
 }
-
-// ==================== FUNCIONES DE VERIFICACIÓN ====================
-async function verificarConfirmacionPrevia() {
-    try {
-        const data = await callGet("verificarConfirmacionPartido", { cedula });
-        return data.confirmed === true;
-    } catch(e) {
-        console.error(e);
-        return false;
-    }
+async function callPost(action, body) {
+    const formData = new URLSearchParams();
+    formData.append("action", action);
+    Object.keys(body).forEach(k => formData.append(k, body[k]));
+    await fetch(CONFIG.URL_GAS, { method: "POST", mode: "no-cors", body: formData });
+    // No podemos leer respuesta con no-cors, pero asumimos éxito (el servidor guarda)
+    return { success: true };
 }
 
+// ==================== VERIFICACIONES ====================
 async function verificarTerminos() {
-    try {
-        const data = await callGet("getPerfil", { cedula, categoria });
-        if (data.success && data.jugador) {
-            if (!data.jugador.terminos_aceptados) {
-                document.getElementById('modalTerms').style.display = 'flex';
-                return false;
-            }
-            return true;
-        }
-        return false;
-    } catch(e) { return false; }
+    const data = await callApi("getPerfil", { cedula });
+    if (data.success && data.jugador) {
+        return data.jugador.terminos_aceptados === true;
+    }
+    return false;
+}
+async function verificarConfirmacionPrevia() {
+    const data = await callApi("verificarConfirmacionPartido", { cedula });
+    return data.confirmed === true;
 }
 
-// ==================== RULETA (CONFIRMACIÓN DIRECTA) ====================
-function mostrarRuleta() {
+// ==================== PERFIL (versión simplificada para confirmación) ====================
+async function mostrarPerfil() {
+    document.body.className = '';
+    const container = document.getElementById('dynamicContent');
+    container.innerHTML = `
+        <div class="perfil-root">
+            <div class="perfil-container">
+                <div class="glass-card-perfil">
+                    <h2 style="color:#D4AF37;">✅ ASISTENCIA CONFIRMADA</h2>
+                    <p style="margin:20px 0;">Gracias por confirmar tu asistencia. Estaremos pendientes de tu puntualidad.</p>
+                    <i class="fa-solid fa-futbol" style="font-size:4rem; color:#D4AF37;"></i>
+                </div>
+                <button class="btn-logout" onclick="cerrarSesion()">CERRAR SESIÓN</button>
+            </div>
+        </div>
+    `;
+}
+
+// ==================== RULETA Y GUARDADO ====================
+async function mostrarRuleta() {
     document.body.className = 'ruleta-mode';
     document.body.style.background = '#0a0c10';
     const container = document.getElementById('dynamicContent');
     container.innerHTML = `
-        <div class="h-screen flex flex-col items-center justify-center bg-black/90">
-            <div class="text-center px-4 mb-12">
-                <h2 class="text-yellow-500 text-3xl mb-2">Partido Pendiente</h2>
-                <p class="text-gray-400 text-sm">Confirma tu asistencia al próximo encuentro</p>
+        <div class="h-screen flex flex-col items-center justify-center pt-16 relative">
+            <div class="text-center px-4 mb-12" id="intro-header">
+                <h2 class="text-yellow-500 text-3xl mb-2">Sorteo de Rival</h2>
+                <p class="text-gray-400 text-sm">Girando la ruleta...</p>
             </div>
-            <div class="glass-card p-6 rounded-xl" style="background:rgba(0,0,0,0.8); border:1px solid #e9c349;">
-                <div class="flex items-center justify-center gap-6">
-                    <div>⚜️ NÁPOLES F.C.</div>
-                    <div class="text-yellow-500 text-4xl">VS</div>
-                    <div>FRANCO CANADIENSE</div>
+            <div class="relative w-full overflow-hidden py-12">
+                <div class="roulette-track flex gap-6 px-[50vw]" id="rouletteTrack"></div>
+            </div>
+            <div class="hidden text-center" id="revealScreen">
+                <div class="reveal-element">
+                    <div class="text-6xl mb-2" id="winnerIcon">⚽</div>
+                    <div class="text-2xl font-bold text-white" id="winnerName">Cargando...</div>
                 </div>
-                <div class="match-info-card mt-4">
+                <div class="match-info-card mt-6">
                     <div class="flex justify-center gap-4 text-sm">
-                        <div>📅 SÁBADO 13 DE JUNIO, 2026</div>
-                        <div>⏰ 12:00 HORAS</div>
-                        <div>🏟️ CANCHA 1 - LIGA SANTA RITA</div>
+                        <div>📅 ${new Date().toLocaleDateString()}</div>
+                        <div>⏰ 12:00</div>
+                        <div>🏟️ LIGA SANTA RITA</div>
                     </div>
                 </div>
                 <button id="confirmButton" class="mt-6 bg-yellow-500 text-black px-8 py-3 rounded-full font-bold">Confirmar Asistencia</button>
             </div>
         </div>
     `;
-    document.getElementById('confirmButton').addEventListener('click', guardarAsistencia);
+
+    // Lista de rivales (puedes obtenerla de getRivales o usar estática)
+    const rivales = ["LEONES", "IDEAL", "BARZA", "SAN MARTIN", "INDEPENDIENTE", "VODKILA", "CHELSEA", "JUVENTUD DE AMERICA", "JUVENTUS", "FRANCO CANADIENSE"];
+    const track = document.getElementById('rouletteTrack');
+    const items = [];
+    for (let i = 0; i < 40; i++) {
+        const rival = rivales[i % rivales.length];
+        const div = document.createElement('div');
+        div.className = 'flex-shrink-0 w-48 h-64 glass-card rounded-xl p-4 flex flex-col items-center justify-center border border-yellow-500/40 bg-black/70';
+        div.innerHTML = `<div class="text-5xl mb-2">${obtenerIcono(rival)}</div><div class="font-bold text-white text-lg">${rival}</div>`;
+        track.appendChild(div);
+        items.push(rival);
+    }
+    
+    setTimeout(() => {
+        track.classList.add('spinning');
+        setTimeout(() => {
+            track.classList.remove('spinning');
+            track.classList.add('slowing');
+            setTimeout(() => {
+                const centro = window.innerWidth / 2;
+                let selectedIndex = 0, minDist = Infinity;
+                Array.from(track.children).forEach((card, idx) => {
+                    const rect = card.getBoundingClientRect();
+                    const cardCenter = rect.left + rect.width/2;
+                    const dist = Math.abs(centro - cardCenter);
+                    if (dist < minDist) { minDist = dist; selectedIndex = idx; }
+                });
+                const rivalGanador = items[selectedIndex % rivales.length];
+                document.getElementById('winnerName').innerText = rivalGanador;
+                document.getElementById('winnerIcon').innerHTML = obtenerIcono(rivalGanador);
+                document.getElementById('revealScreen').classList.remove('hidden');
+                setTimeout(() => {
+                    document.querySelectorAll('.reveal-element').forEach(el => el.classList.add('revealed'));
+                }, 100);
+                document.getElementById('confirmButton').onclick = () => guardarAsistencia(rivalGanador);
+            }, 3000);
+        }, 3000);
+    }, 500);
 }
 
-async function guardarAsistencia() {
+function obtenerIcono(nombre) {
+    const map = { "LEONES":"🦁", "IDEAL":"⚡", "BARZA":"🔵🔴", "SAN MARTIN":"🏰", "INDEPENDIENTE":"🔥", "VODKILA":"🍺", "CHELSEA":"💙", "JUVENTUS":"⚪⚫", "FRANCO CANADIENSE":"🍁", "JUVENTUD DE AMERICA":"🟡🔴" };
+    return map[nombre] || "⚽";
+}
+
+async function guardarAsistencia(rival) {
     const btn = document.getElementById('confirmButton');
     if (!btn || btn.disabled) return;
     btn.disabled = true;
     btn.innerText = 'GUARDANDO...';
-    const fechaStr = "2026-06-13";   // Fecha del partido (la que corresponde al rival)
+    const fechaStr = new Date().toISOString().split('T')[0];
     const hora = "12:00";
-    const lugar = "CANCHA 1 - LIGA SANTA RITA";
-    const dorsal = jugadorSesion.dorsal || "";
-    const asistenciaData = { 
-        cedula, categoria, nombre: nombreCompleto, rival: "FRANCO CANADIENSE",
-        fecha: fechaStr, hora, lugar, amarillas: 0, rojas: 0, goles: 0,
-        valor_vocalia: 2.5, estado: "CONFIRMADO", vocalias_pendientes: "PENDIENTE",
-        puntualidad: 10, companerismo: 10, respeto: 10, humildad: 10, dorsal
+    const lugar = "LIGA SANTA RITA - Cancha 1";
+    const datos = {
+        cedula, categoria, nombre: nombreCompleto, rival, fecha: fechaStr, hora, lugar,
+        amarillas: 0, rojas: 0, goles: 0, valor_vocalia: 2.5, estado: "CONFIRMADO",
+        vocalias_pendientes: "PENDIENTE", puntualidad: 10, companerismo: 10, respeto: 10,
+        humildad: 10, dorsal
     };
     try {
-        await callPost("registrarAsistencia", asistenciaData);
-        alert("✅ Confirmaste asistencia. ¡Buena suerte!");
+        await callPost("registrarAsistencia", datos);
+        alert(`✅ Confirmaste asistencia contra ${rival}. ¡Buena suerte!`);
         mostrarPerfil();
-    } catch(error) {
+    } catch(e) {
         alert("❌ Error al guardar. Intenta de nuevo.");
         btn.disabled = false;
         btn.innerText = "Confirmar Asistencia";
     }
 }
-
-// ==================== PERFIL ESTÁTICO (puedes dejarlo o sustituir por el dinámico) ====================
-function mostrarPerfil() {
-    document.body.className = '';
-    document.body.style.background = '';
-    const container = document.getElementById('dynamicContent');
-    container.innerHTML = `
-    <div class="perfil-root">
-        <div class="perfil-container">
-            <div class="perfil-header"><h1>⚜️ PANEL NÁPOLES ⚜️</h1><div style="font-size:0.75rem;color:#D4AF37; text-align:center;">Categoría: ${categoria === 'mujeres' ? 'Femenina ♀' : 'Masculina ♂'}</div></div>
-            <div class="cards-row">
-                <div class="glass-card-perfil" style="padding:15px; text-align:center;"><div class="avatar-icon-box" style="margin:0 auto 10px;"><i class="fa-solid fa-user-ninja"></i></div><div style="font-weight:900;">${escapeHtml(jugadorSesion.primerNombre || '')}<br>${escapeHtml(jugadorSesion.apellidos || '')}</div><div style="font-size:.65rem;"><i class="fa-solid fa-id-card"></i> ${cedula}</div></div>
-                <div class="id-card-jersey-wrap"><div class="jersey-card-inner"><div class="face-front"><div class="jersey-name">${escapeHtml(jugadorSesion.nombreCamiseta || 'NÁPOLES')}</div><div class="jersey-number">${jugadorSesion.dorsal || '00'}</div><div>Talla ${jugadorSesion.tallaUni || 'M'}</div></div><div class="face-back"><div class="jersey-name">NÁPOLES FC</div><div class="jersey-number">${jugadorSesion.dorsal || '00'}</div></div></div></div>
-            </div>
-            <div class="glass-card-perfil" style="text-align:center;">✅ Tu asistencia ha sido confirmada. ¡Nos vemos en la cancha!</div>
-            <button class="btn-logout" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> CERRAR SESIÓN</button>
-        </div>
-    </div>`;
-}
-
-function escapeHtml(str) { if (!str) return ''; return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function cerrarSesion() { localStorage.removeItem('jugador_actual'); window.location.href = 'login.html'; }
 
 // ==================== TÉRMINOS ====================
 function selectRadio(num) {
@@ -248,14 +238,37 @@ async function enviarFirmaTerminos() {
         const yaConfirmo = await verificarConfirmacionPrevia();
         if (yaConfirmo) mostrarPerfil();
         else mostrarRuleta();
-    } catch(e) { alert('Error de red'); }
-    finally { btn.disabled = false; btn.innerHTML = 'CONFIRMAR ASISTENCIA'; }
+    } catch(e) {
+        alert('Error de red');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'CONFIRMAR ASISTENCIA';
+    }
+}
+
+function cerrarSesion() {
+    if (confirm('¿Cerrar sesión?')) {
+        localStorage.removeItem('jugador_actual');
+        window.location.href = 'login.html';
+    }
 }
 
 // ==================== FLUJO PRINCIPAL ====================
 (async function() {
+    // Mostrar carga
+    document.getElementById('dynamicContent').innerHTML = `
+        <div class="h-screen flex flex-col items-center justify-center bg-black/90">
+            <div class="soccer-loading-container"><i class="fa-solid fa-futbol fa-spin" style="font-size:4rem; color:#D4AF37;"></i><p class="mt-4">Cargando...</p></div>
+        </div>
+    `;
+    
     const terminosOk = await verificarTerminos();
-    if (!terminosOk) return;
+    if (!terminosOk) {
+        // Mostrar modal de términos y asignar evento al botón
+        document.getElementById('modalTerms').style.display = 'flex';
+        document.getElementById('btnFirmar').onclick = enviarFirmaTerminos;
+        return;
+    }
     const yaConfirmo = await verificarConfirmacionPrevia();
     if (yaConfirmo) mostrarPerfil();
     else mostrarRuleta();
