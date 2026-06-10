@@ -9,220 +9,225 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-:root{
-    --gold:#D4AF37;
-    --purple:#7c3aed;
-    --purple-light:#c084fc;
-    --bg:#f3f6fb;
-    --card:#fff;
-    --text:#111827;
-    --muted:#6b7280;
-    --success:#2ecc71;
-    --danger:#e74c3c;
+:root {
+    --gold: #D4AF37;
+    --purple: #7c3aed;
+    --purple-light: #c084fc;
+    --bg: #f1f5f9;
+    --card: #ffffff;
+    --text: #0f172a;
+    --muted: #64748b;
+    --success: #10b981;
+    --danger: #ef4444;
+    --border: #e2e8f0;
+    --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
 }
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
-body{
-    font-family:'Inter',sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    min-height:100vh;
-    overflow-x:hidden;
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
-/* =========================================
-HEADER & TOPBAR
-========================================= */
-.topbar{
-    position:sticky;
-    top:0;
-    z-index:100;
-    background:rgba(255,255,255,.92);
-    backdrop-filter:blur(14px);
-    border-bottom:1px solid #e5e7eb;
-    padding:16px 18px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
+/* Header */
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-.top-left{
-    display:flex;
-    align-items:center;
-    gap:14px;
+.top-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-.admin-info h1{
+.admin-info h1 {
     font-family: 'Outfit', sans-serif;
-    font-size: 1.2rem;
-    font-weight: 900;
-    color: #0f172a;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text);
 }
 
-.admin-info p{
-    font-size:.85rem;
-    color:var(--muted);
-    margin-top:2px;
-    font-weight: 600;
+.admin-info p {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 2px;
+    font-weight: 500;
 }
 
-.avatar{
-    width:44px;
-    height:44px;
-    border-radius:14px;
-    background:linear-gradient(135deg, var(--purple), var(--purple-light));
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:#fff;
-    font-weight:800;
-    font-size:1rem;
+.avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--purple), var(--purple-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 800;
+    font-size: 1rem;
     box-shadow: 0 4px 10px rgba(124,58,237,0.2);
 }
 
-/* =========================================
-DASHBOARD STATS
-========================================= */
-.stats{
-    padding:20px 18px 10px;
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:14px;
+/* Stats */
+.stats {
+    padding: 20px 20px 10px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    max-width: 700px;
+    margin: 0 auto;
 }
 
-.stat-card{
-    background:#fff;
-    border-radius:24px;
-    padding:20px;
-    box-shadow: 0 10px 25px rgba(15,23,42,.04);
+.stat-card {
+    background: var(--card);
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: var(--shadow);
     border: 1px solid rgba(0,0,0,0.02);
 }
 
-.stat-card h3{
+.stat-card h3 {
     font-family: 'Outfit', sans-serif;
-    font-size: 1.8rem;
-    font-weight: 900;
-    margin-bottom:4px;
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 6px;
 }
 
 .stat-card.total h3 { color: var(--purple); }
 .stat-card.pending h3 { color: var(--danger); }
 
-.stat-card p{
-    color:var(--muted);
-    font-size:.85rem;
+.stat-card p {
+    color: var(--muted);
+    font-size: 0.85rem;
     font-weight: 600;
+    letter-spacing: 0.3px;
 }
 
-/* =========================================
-CARDS UNIFORMES
-========================================= */
-.uniforms{
-    padding:14px 18px 80px;
+/* Uniform card */
+.uniforms {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 16px 20px 80px;
 }
 
-.uniform-card{
-    background:#fff;
-    border-radius:26px;
-    padding:20px;
-    margin-bottom:16px;
-    box-shadow: 0 10px 25px rgba(15,23,42,.04);
-    border: 1px solid rgba(0,0,0,0.02);
+.uniform-card {
+    background: var(--card);
+    border-radius: 32px;
+    padding: 24px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    transition: transform 0.2s;
 }
 
-.uniform-top{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    margin-bottom:18px;
+.uniform-card:hover {
+    transform: translateY(-2px);
 }
 
-.uniform-left{
-    display:flex;
-    align-items:center;
-    gap:14px;
+.uniform-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
 }
 
-.uniform-icon{
-    width:58px;
-    height:58px;
-    border-radius:18px;
-    background:linear-gradient(135deg, #0f172a, #1e293b);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:var(--gold);
-    font-size: 1.6rem;
+.uniform-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
 }
 
-.uniform-info h3{
+.uniform-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 20px;
+    background: linear-gradient(145deg, #0f172a, #1e293b);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    font-size: 1.8rem;
+}
+
+.uniform-info h3 {
     font-family: 'Outfit', sans-serif;
-    font-size: 1.05rem;
+    font-size: 1.1rem;
     font-weight: 800;
-    color: #0f172a;
+    color: var(--text);
 }
 
-.uniform-info p{
-    color:var(--muted);
-    font-size:.85rem;
+.uniform-info p {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-top: 2px;
 }
 
-.stock{
-    background:#ede9fe;
-    color:var(--purple);
-    padding:8px 14px;
-    border-radius:999px;
-    font-size:.8rem;
-    font-weight:800;
+.stock {
+    background: #ede9fe;
+    color: var(--purple);
+    padding: 8px 16px;
+    border-radius: 40px;
+    font-size: 0.8rem;
+    font-weight: 700;
 }
 
-.sizes{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    padding-top:14px;
-    border-top:1px solid #e5e7eb;
+.sizes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
 }
 
-.size{
-    background:#f3f4f6;
-    padding:8px 14px;
-    border-radius:12px;
-    font-size:.8rem;
-    font-weight:700;
-    color:#374151;
+.size {
+    background: #f8fafc;
+    padding: 8px 16px;
+    border-radius: 40px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #334155;
+    border: 1px solid var(--border);
 }
 
-/* =========================================
-FÚTBOL SPINNER LOADER
-========================================= */
+/* Loader */
 .soccer-loading-container {
     text-align: center;
     padding: 80px 20px;
+    max-width: 700px;
+    margin: 0 auto;
 }
 
 .soccer-spinner {
-    font-size: 3.5rem;
+    font-size: 3rem;
     color: var(--purple);
-    display: inline-block;
-    animation: spinSoccer 1.2s linear infinite;
+    animation: spinSoccer 1s linear infinite;
 }
 
 .soccer-loading-text {
     margin-top: 16px;
     font-family: 'Outfit', sans-serif;
     color: var(--purple);
-    font-size: 1rem;
-    font-weight: 800;
+    font-weight: 600;
     letter-spacing: 1px;
-    text-transform: uppercase;
-    animation: pulseText 1.5s infinite ease-in-out;
 }
 
 @keyframes spinSoccer {
@@ -230,286 +235,342 @@ FÚTBOL SPINNER LOADER
     100% { transform: rotate(360deg); }
 }
 
-@keyframes pulseText {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 1; }
+/* FAB */
+.fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 60px;
+    height: 60px;
+    border: none;
+    border-radius: 24px;
+    background: linear-gradient(135deg, var(--purple), var(--purple-light));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(124,58,237,0.4);
+    font-size: 1.6rem;
+    transition: transform 0.2s, background 0.2s;
+    z-index: 100;
 }
 
-/* =========================================
-BOTÓN FLOTANTE (FAB)
-========================================= */
-.fab{
-    position:fixed;
-    right:20px;
-    bottom:20px;
-    width:60px;
-    height:60px;
-    border:none;
-    border-radius:20px;
-    background:linear-gradient(135deg, var(--purple), var(--purple-light));
-    color:#fff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    box-shadow: 0 10px 25px rgba(124,58,237,.4);
-    font-size: 1.5rem;
-    transition: transform 0.2s;
-    z-index: 999;
+.fab:hover {
+    transform: scale(1.05);
+    background: linear-gradient(135deg, #6d28d9, #a855f7);
 }
 
-.fab:active {
-    transform: scale(0.92);
-}
-
-/* =========================================
-MODAL DE GESTIÓN Y CAMBIO DE ESTADOS
-========================================= */
+/* Modal */
 .modal-backdrop {
     position: fixed;
-    top:0; left:0; width:100vw; height:100vh;
-    background: rgba(15, 23, 42, 0.6);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.7);
     backdrop-filter: blur(8px);
     z-index: 1000;
     display: none;
     align-items: center;
     justify-content: center;
-    padding: 15px;
+    padding: 16px;
 }
 
 .modal-box {
-    background: #fff;
-    border-radius: 28px;
+    background: white;
+    border-radius: 32px;
     width: 100%;
-    max-width: 440px;
-    padding: 24px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    max-width: 500px;
     max-height: 90vh;
     display: flex;
     flex-direction: column;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+    animation: modalFadeIn 0.2s ease;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
 }
 
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
+    padding: 20px 24px 0 24px;
 }
 
 .modal-header h2 {
     font-family: 'Outfit', sans-serif;
     font-size: 1.3rem;
-    font-weight: 900;
+    font-weight: 800;
+    color: var(--text);
 }
 
 .btn-close-modal {
-    background: #f3f4f6;
+    background: #f1f5f9;
     border: none;
-    width: 36px; height: 36px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.1rem; color: var(--muted);
+    font-size: 1.1rem;
+    color: var(--muted);
+    transition: background 0.2s;
+}
+
+.btn-close-modal:hover {
+    background: #e2e8f0;
 }
 
 .search-box-wrap {
     position: relative;
-    margin-bottom: 16px;
+    margin: 16px 24px;
 }
 
 .search-box-wrap i {
-    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
     color: var(--muted);
 }
 
 .search-input {
-    width: 100%; padding: 12px 12px 12px 40px;
-    border: 1px solid #e5e7eb; border-radius: 14px;
-    font-family: inherit; font-size: 0.95rem; outline: none;
+    width: 100%;
+    padding: 12px 12px 12px 42px;
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    outline: none;
     background: #f9fafb;
 }
 
 .search-input:focus {
     border-color: var(--purple);
-    background: #fff;
+    background: white;
 }
 
 .players-list {
     overflow-y: auto;
     flex: 1;
-    max-height: 320px;
+    padding: 0 24px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .player-item-card {
     background: #f8fafc;
-    border: 1px solid #f1f5f9;
-    border-radius: 16px;
-    padding: 14px;
-    margin-bottom: 10px;
-}
-
-.player-name {
-    font-weight: 700; font-size: 0.95rem; color: #0f172a;
-    margin-bottom: 2px;
-}
-
-.player-meta {
-    font-size: 0.8rem; color: var(--muted); margin-bottom: 12px;
-}
-
-.toggle-row {
-    display: flex; justify-content: space-between; align-items: center;
-    padding-top: 8px; border-top: 1px dashed #e2e8f0; margin-top: 8px;
-}
-
-.toggle-label {
-    font-size: 0.82rem; font-weight: 700; color: #475569;
-}
-
-.status-badge {
-    padding: 6px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 800;
-    cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+    border-radius: 20px;
+    padding: 16px;
+    border: 1px solid var(--border);
     transition: all 0.2s;
 }
 
-.badge-pagado { background: rgba(46,204,113,0.15); color: var(--success); border: 1px solid rgba(46,204,113,0.25); }
-.badge-pendiente { background: rgba(231,76,60,0.12); color: var(--danger); border: 1px solid rgba(231,76,60,0.2); }
+.player-item-card:hover {
+    background: white;
+    border-color: var(--purple-light);
+}
 
-@media(min-width:700px){
-    .stats, .uniforms{ max-width:700px; margin:auto; }
+.player-name {
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--text);
+    margin-bottom: 4px;
+}
+
+.player-meta {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 14px;
+}
+
+.toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+}
+
+.toggle-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #334155;
+}
+
+.status-badge {
+    padding: 6px 14px;
+    border-radius: 40px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.badge-pagado {
+    background: rgba(16,185,129,0.15);
+    color: var(--success);
+    border: 1px solid rgba(16,185,129,0.3);
+}
+
+.badge-pendiente {
+    background: rgba(239,68,68,0.12);
+    color: var(--danger);
+    border: 1px solid rgba(239,68,68,0.25);
+}
+
+.status-badge:hover {
+    transform: scale(1.02);
+    filter: brightness(0.98);
+}
+
+@media (max-width: 640px) {
+    .stats {
+        gap: 12px;
+        padding: 16px;
+    }
+    .stat-card h3 {
+        font-size: 1.6rem;
+    }
+    .uniform-card {
+        padding: 18px;
+    }
+    .modal-box {
+        max-width: 95%;
+    }
 }
 </style>
 </head>
 <body>
 
-<!-- TOPBAR -->
 <header class="topbar">
     <div class="top-left">
         <div class="admin-info">
-            <h1>Gestión de Uniformes</h1>
-            <p>Nápoles F.C. • Panel Central</p>
+            <h1>⚡ Gestión de Uniformes</h1>
+            <p>Nápoles F.C. · Control de pagos</p>
         </div>
     </div>
-    <div class="avatar" id="avatarLetra">A</div>
+    <div class="avatar"><i class="fa-solid fa-shirt"></i></div>
 </header>
 
-<!-- CONTENEDOR CENTRAL DINÁMICO -->
 <main id="mainContainer">
     <div class="soccer-loading-container">
         <div class="soccer-spinner"><i class="fa-solid fa-futbol"></i></div>
-        <div class="soccer-loading-text">Descargando datos del Club...</div>
+        <div class="soccer-loading-text">Cargando datos del club...</div>
     </div>
 </main>
 
-<!-- BOTÓN ACCIÓN FLOTANTE (ABRIR COBRANZAS) -->
-<button class="fab" onclick="abrirModalGestion()" title="Actualizar Estados de Pago">
+<button class="fab" onclick="abrirModalGestion()" title="Actualizar estados de pago">
     <i class="fa-solid fa-cash-register"></i>
 </button>
 
-<!-- MODAL DE CAMBIO DE ESTADOS (INSCRIPCIÓN Y UNIFORME) -->
 <div class="modal-backdrop" id="modalGestion">
     <div class="modal-box">
         <div class="modal-header">
-            <h2>Actualizar Caja / Estados</h2>
+            <h2><i class="fa-solid fa-credit-card"></i> Registrar pagos</h2>
             <button class="btn-close-modal" onclick="cerrarModalGestion()"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        
         <div class="search-box-wrap">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" class="search-input" id="inputBuscar" placeholder="Buscar jugador por nombre o cédula..." oninput="filtrarJugadores()">
+            <input type="text" class="search-input" id="inputBuscar" placeholder="Buscar jugador (nombre o cédula)" oninput="filtrarJugadores()">
         </div>
-
         <div class="players-list" id="listaJugadoresModal">
-            <!-- Cargados Dinámicamente -->
+            <!-- dinámico -->
         </div>
     </div>
 </div>
 
 <script>
-// ==================== CONFIGURACIÓN DIRECTA ====================
-const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxyaDJ54hSaMxcA456QSRQRwFUkB2617vgZ_UhcDpt0mBpKJUn3tfHdHZVHSat8M8GJ/exec';
+// ==================== CONFIGURACIÓN ====================
+const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxRpu3Fhxmws9eFwBxh6XR8zLydNvHGu6EiYV2fjLEdxpw2r4zYJbbqapE8V-ij6nRU/exec';
 
-// Validar sesión administrativa activa
-if(localStorage.getItem('admin_activo') !== 'true'){
+// Validar admin
+if (localStorage.getItem('admin_activo') !== 'true') {
     window.location.href = './login.html';
 }
 
 let BD_JUGADORES = [];
 
-// Carga de Datos desde la Google Sheet vinculada
+// ==================== CARGA INICIAL ====================
 async function inicializarModulo() {
     const mainContainer = document.getElementById('mainContainer');
     try {
         const url = `${WEBAPP_URL}?action=getUniformesData&t=${Date.now()}`;
-        const res = await fetch(url);
-        const data = await res.json();
+        const resp = await fetch(url);
+        const data = await resp.json();
 
-        if(data.success) {
+        if (data.success && data.jugadores) {
             BD_JUGADORES = data.jugadores;
             procesarYRenderizar(BD_JUGADORES);
         } else {
-            mainContainer.innerHTML = `<div style="text-align:center; padding:50px; color:var(--danger); font-weight:700;">Error en la respuesta del Servidor.</div>`;
+            mainContainer.innerHTML = `<div style="text-align:center; padding:50px; color:var(--danger);">Error en la respuesta del servidor.</div>`;
         }
     } catch (error) {
-        mainContainer.innerHTML = `<div style="text-align:center; padding:50px; color:var(--danger); font-weight:700;">❌ Error crítico de enlace con Google Sheets.</div>`;
+        mainContainer.innerHTML = `<div style="text-align:center; padding:50px; color:var(--danger);">❌ No se pudo conectar con la base de datos.</div>`;
         console.error(error);
     }
 }
 
+// ==================== RENDER PRINCIPAL ====================
 function procesarYRenderizar(jugadores) {
-    // Conteos Inteligentes Automatizados basados en columna Y (Unif_Estado)
-    let entregasPendientes = jugadores.filter(j => (j.unif_estado || '').toUpperCase().includes('PENDIENTE')).length;
-    let totalUniformesValidos = jugadores.length;
+    const pendientes = jugadores.filter(j => (j.unif_estado || '').toUpperCase() === 'PENDIENTE').length;
+    const total = jugadores.length;
 
-    // Distribución Automática por Tallas (Columna AA)
-    let stockTallas = { S: 0, M: 0, L: 0, XL: 0, SinTalla: 0 };
+    // Distribución de tallas
+    let tallas = { S: 0, M: 0, L: 0, XL: 0, undefined: 0 };
     jugadores.forEach(j => {
         let t = String(j.talla || '').toUpperCase().trim();
-        if(t.includes('S') && t.length === 1) stockTallas.S++;
-        else if(t.includes('M')) stockTallas.M++;
-        else if(t.includes('L') && t.length === 1) stockTallas.L++;
-        else if(t.includes('XL')) stockTallas.XL++;
-        else stockTallas.SinTalla++;
+        if (t === 'S') tallas.S++;
+        else if (t === 'M') tallas.M++;
+        else if (t === 'L') tallas.L++;
+        else if (t === 'XL' || t === 'X L') tallas.XL++;
+        else tallas.undefined++;
     });
 
-    const mainContainer = document.getElementById('mainContainer');
-    mainContainer.innerHTML = `
+    document.getElementById('mainContainer').innerHTML = `
         <section class="stats">
             <div class="stat-card total">
-                <h3>${totalUniformesValidos}</h3>
-                <p>Uniformes Planificados</p>
+                <h3>${total}</h3>
+                <p>📦 Uniformes planificados</p>
             </div>
             <div class="stat-card pending">
-                <h3>${entregasPendientes}</h3>
-                <p>Pendientes de Pago</p>
+                <h3>${pendientes}</h3>
+                <p>⏳ Pendientes de pago</p>
             </div>
         </section>
-
         <section class="uniforms">
             <div class="uniform-card">
                 <div class="uniform-top">
                     <div class="uniform-left">
                         <div class="uniform-icon"><i class="fa-solid fa-shirt"></i></div>
                         <div class="uniform-info">
-                            <h3>Kits Asignados</h3>
-                            <p>Temporada Activa 2026</p>
+                            <h3>Kits asignados</h3>
+                            <p>Temporada 2026</p>
                         </div>
                     </div>
-                    <div class="stock">Fichados: ${totalUniformesValidos}</div>
+                    <div class="stock">Fichados: ${total}</div>
                 </div>
                 <div class="sizes">
-                    <div class="size">S • ${stockTallas.S} Jugadores</div>
-                    <div class="size">M • ${stockTallas.M} Jugadores</div>
-                    <div class="size">L • ${stockTallas.L} Jugadores</div>
-                    <div class="size">XL • ${stockTallas.XL} Jugadores</div>
-                    ${stockTallas.SinTalla > 0 ? `<div class="size">Por Definir • ${stockTallas.SinTalla}</div>` : ''}
+                    <div class="size">🟣 S • ${tallas.S}</div>
+                    <div class="size">🔵 M • ${tallas.M}</div>
+                    <div class="size">🟢 L • ${tallas.L}</div>
+                    <div class="size">🟠 XL • ${tallas.XL}</div>
+                    ${tallas.undefined > 0 ? `<div class="size">⚪ Sin definir • ${tallas.undefined}</div>` : ''}
                 </div>
             </div>
         </section>
     `;
 }
 
-// Controladores del Modal
+// ==================== MODAL Y LISTA ====================
 function abrirModalGestion() {
     document.getElementById('modalGestion').style.display = 'flex';
     document.getElementById('inputBuscar').value = '';
@@ -522,34 +583,30 @@ function cerrarModalGestion() {
 
 function renderListaJugadoresModal(lista) {
     const contenedor = document.getElementById('listaJugadoresModal');
-    if(lista.length === 0) {
-        contenedor.innerHTML = `<div style="text-align:center; color:var(--muted); font-size:0.85rem; padding:20px;">No se encontraron coincidencias.</div>`;
+    if (lista.length === 0) {
+        contenedor.innerHTML = `<div style="text-align:center; padding:20px; color:var(--muted);">No hay jugadores que coincidan.</div>`;
         return;
     }
-
     contenedor.innerHTML = lista.map(j => {
-        const inscripEsPagado = (j.inscrip_estado || '').toUpperCase() === 'PAGADO';
-        const unifEsPagado = (j.unif_estado || '').toUpperCase() === 'PAGADO';
-
+        const inscripPagado = (j.inscrip_estado || '').toUpperCase() === 'PAGADO';
+        const unifPagado = (j.unif_estado || '').toUpperCase() === 'PAGADO';
         return `
             <div class="player-item-card">
                 <div class="player-name">${escapeHtml(j.nombre)}</div>
-                <div class="player-meta"><i class="fa-solid fa-address-card"></i> C.I: ${j.cedula} | Talla: ${j.talla || 'N/A'}</div>
-                
+                <div class="player-meta"><i class="fa-regular fa-id-card"></i> ${j.cedula} | Talla: ${j.talla || 'N/A'}</div>
                 <div class="toggle-row">
-                    <span class="toggle-label">1. Inscripción (Col. X)</span>
-                    <span class="status-badge ${inscripEsPagado ? 'badge-pagado' : 'badge-pendiente'}" 
+                    <span class="toggle-label"><i class="fa-solid fa-file-invoice"></i> Inscripción</span>
+                    <span class="status-badge ${inscripPagado ? 'badge-pagado' : 'badge-pendiente'}"
                           onclick="alternarEstado('${j.cedula}', 'inscrip', '${j.inscrip_estado || 'PENDIENTE'}')">
-                        <i class="fa-solid ${inscripEsPagado ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i>
+                        <i class="fa-solid ${inscripPagado ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i>
                         ${j.inscrip_estado || 'PENDIENTE'}
                     </span>
                 </div>
-
                 <div class="toggle-row">
-                    <span class="toggle-label">2. Uniforme (Col. Y)</span>
-                    <span class="status-badge ${unifEsPagado ? 'badge-pagado' : 'badge-pendiente'}" 
+                    <span class="toggle-label"><i class="fa-solid fa-shirt"></i> Uniforme</span>
+                    <span class="status-badge ${unifPagado ? 'badge-pagado' : 'badge-pendiente'}"
                           onclick="alternarEstado('${j.cedula}', 'unif', '${j.unif_estado || 'PENDIENTE'}')">
-                        <i class="fa-solid ${unifEsPagado ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i>
+                        <i class="fa-solid ${unifPagado ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i>
                         ${j.unif_estado || 'PENDIENTE'}
                     </span>
                 </div>
@@ -559,52 +616,76 @@ function renderListaJugadoresModal(lista) {
 }
 
 function filtrarJugadores() {
-    const query = document.getElementById('inputBuscar').value.toLowerCase().trim();
-    const filtrados = BD_JUGADORES.filter(j => 
-        j.nombre.toLowerCase().includes(query) || 
-        j.cedula.toString().includes(query)
+    const texto = document.getElementById('inputBuscar').value.toLowerCase().trim();
+    const filtrados = BD_JUGADORES.filter(j =>
+        j.nombre.toLowerCase().includes(texto) ||
+        j.cedula.toString().includes(texto)
     );
     renderListaJugadoresModal(filtrados);
 }
 
-// Guardado Remoto inmediato en Google Sheets al hacer clic sobre el Estado
+// ==================== ACTUALIZAR ESTADO VÍA POST ====================
 async function alternarEstado(cedula, campo, estadoActual) {
     const jugador = BD_JUGADORES.find(j => j.cedula === cedula);
-    if(!jugador) return;
+    if (!jugador) return;
 
-    let nuevoEstado = estadoActual.toUpperCase() === 'PAGADO' ? 'PENDIENTE' : 'PAGADO';
-    
-    let inscripEnvio = campo === 'inscrip' ? nuevoEstado : jugador.inscrip_estado;
-    let unifEnvio = campo === 'unif' ? nuevoEstado : jugador.unif_estado;
+    const nuevoEstado = estadoActual.toUpperCase() === 'PAGADO' ? 'PENDIENTE' : 'PAGADO';
+    let inscripEnvio = (campo === 'inscrip') ? nuevoEstado : jugador.inscrip_estado;
+    let unifEnvio = (campo === 'unif') ? nuevoEstado : jugador.unif_estado;
 
-    // Bloqueo estético de espera
-    document.getElementById('listaJugadoresModal').style.opacity = "0.4";
+    const modalList = document.getElementById('listaJugadoresModal');
+    modalList.style.opacity = '0.5';
+    modalList.style.pointerEvents = 'none';
 
     try {
-        const url = `${WEBAPP_URL}?action=updateEstados&cedula=${encodeURIComponent(cedula)}&inscrip=${encodeURIComponent(inscripEnvio)}&unif=${encodeURIComponent(unifEnvio)}`;
-        const res = await fetch(url);
-        const data = await res.json();
+        // POST con datos urlencoded (la forma más compatible)
+        const formData = new URLSearchParams();
+        formData.append('action', 'updateEstados');
+        formData.append('cedula', cedula);
+        formData.append('inscrip', inscripEnvio || '');
+        formData.append('unif', unifEnvio || '');
 
-        if(data.success) {
-            // Sincronizar memoria interna local
+        const respuesta = await fetch(WEBAPP_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: formData.toString()
+        });
+        const data = await respuesta.json();
+
+        if (data.success) {
+            // Actualizar datos locales
             jugador.inscrip_estado = inscripEnvio;
             jugador.unif_estado = unifEnvio;
-            
-            // Re-renderizar ambas vistas
+            // Refrescar vista principal y modal
             procesarYRenderizar(BD_JUGADORES);
-            filtrarJugadores();
+            filtrarJugadores();  // mantiene el filtro actual
+            // Pequeño toast visual (opcional)
+            const toast = document.createElement('div');
+            toast.textContent = '✅ Estado actualizado';
+            toast.style.position = 'fixed';
+            toast.style.bottom = '100px';
+            toast.style.left = '50%';
+            toast.style.transform = 'translateX(-50%)';
+            toast.style.background = '#0f172a';
+            toast.style.color = 'white';
+            toast.style.padding = '10px 20px';
+            toast.style.borderRadius = '40px';
+            toast.style.fontSize = '0.85rem';
+            toast.style.zIndex = '2000';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
         } else {
-            alert('No se pudo actualizar en la hoja de cálculo.');
+            alert('❌ No se pudo actualizar: ' + (data.error || 'Error desconocido'));
         }
-    } catch (e) {
-        alert('Error de red al conectar con la base de datos.');
-        console.error(e);
+    } catch (error) {
+        console.error(error);
+        alert('Error de red. Revisa tu conexión o la URL del backend.');
     } finally {
-        document.getElementById('listaJugadoresModal').style.opacity = "1";
+        modalList.style.opacity = '1';
+        modalList.style.pointerEvents = 'auto';
     }
 }
 
-// Función de escape por seguridad
 function escapeHtml(str) {
     if (!str) return '';
     return str.replace(/[&<>]/g, function(m) {
@@ -615,9 +696,8 @@ function escapeHtml(str) {
     });
 }
 
-// Inicialización de la aplicación
+// Iniciar
 inicializarModulo();
 </script>
-
 </body>
 </html>
