@@ -7,12 +7,11 @@
 <!-- Tailwind + Fuentes para la RULETA -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<!-- FontAwesome y fuentes para el PERFIL -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-    /* ========== ESTILOS EXCLUSIVOS DE LA RULETA (contraste mejorado) ========== */
+    /* ========== ESTILOS EXCLUSIVOS DE LA RULETA ========== */
     .material-symbols-outlined {
         font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
@@ -77,7 +76,6 @@
         overflow: hidden;
         min-height: 100dvh;
     }
-    /* Tarjeta de información del partido (dentro de ruleta) */
     .match-info-card {
         background: #1a1c22;
         border-radius: 40px;
@@ -87,7 +85,7 @@
         text-align: center;
     }
 
-    /* ========== ESTILOS EXCLUSIVOS DEL PERFIL (con sección de rivales y próximo encuentro) ========== */
+    /* ========== ESTILOS EXCLUSIVOS DEL PERFIL ========== */
     .perfil-root {
         background: radial-gradient(circle at top, #111a33 0%, #060912 100%);
         font-family: 'Inter', sans-serif;
@@ -121,7 +119,6 @@
         border: 1px solid rgba(212,175,55,.25);
         overflow: hidden;
     }
-    /* Tarjeta de próximo encuentro */
     .match-card-gold {
         background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(0,0,0,0.6));
         border-left: 6px solid #D4AF37;
@@ -186,7 +183,6 @@
         color: #D4AF37;
         font-size: 1rem;
     }
-    /* Lista horizontal de rivales */
     .rivales-scroll {
         margin-top: 18px;
         overflow-x: auto;
@@ -224,7 +220,6 @@
         border-color: #D4AF37;
         box-shadow: 0 0 8px #D4AF37;
     }
-    /* Resto de estilos del perfil (sin cambios) */
     .avatar-icon-box {
         width: 75px;
         height: 75px;
@@ -341,7 +336,6 @@
     @keyframes spinSoccer { 100% { transform: rotate(360deg); } }
     .error-message { text-align: center; padding: 60px 20px; color: #e74c3c; }
 
-    /* Modal términos (común) */
     .terms-backdrop {
         position: fixed;
         top: 0; left: 0; width: 100vw; height: 100vh;
@@ -400,7 +394,6 @@
 </style>
 </head>
 <body id="appBody">
-<!-- Modal de términos (común) -->
 <div class="terms-backdrop" id="modalTerms">
     <div class="terms-box">
         <h2 style="text-align:center; color:#D4AF37;">GRAN INAUGURACIÓN</h2>
@@ -411,16 +404,25 @@
     </div>
 </div>
 
-<!-- Contenedor dinámico donde se inyectará la ruleta o el perfil -->
 <div id="dynamicContent"></div>
 
 <script>
 // ==================== CONFIGURACIÓN ====================
 const CONFIG = {
-    URL_GAS: "https://script.google.com/macros/s/AKfycbydcH2KminQA52AFz_RuOJj1dWCZzTSwD41-gns_W17sG5XdZjUwf-HxK8Jod19FHs_/exec"
+    URL_GAS: "https://script.google.com/macros/s/AKfycbzRf-BaHE5qn8j-ikc22OZPfpBN58Am4RnH-GiLv3MW6tjUPca3PHDDr6b0t0JXQF9P/exec"
 };
 
-// Obtener sesión del jugador
+// DATOS DEL PRÓXIMO PARTIDO (FRANCO CANADIENSE)
+const PROXIMO_PARTIDO = {
+    rival: "FRANCO CANADIENSE",
+    icono: "🍁",
+    fecha: "2026-06-13",
+    fechaLegible: "SÁBADO 13 DE JUNIO, 2026",
+    hora: "12:00",
+    lugar: "CANCHA 1 - LIGA SANTA RITA",
+    valorVocalia: 2.5
+};
+
 let jugadorSesion = null;
 try {
     jugadorSesion = JSON.parse(localStorage.getItem('jugador_actual'));
@@ -507,39 +509,35 @@ async function mostrarPerfil() {
             let deudaMedias = s.mediasEstado.toUpperCase().includes('PENDIENTE') ? 2 : 0;
             let totalAdmin = deudaInscripcion + deudaUniforme + deudaMedias + s.deudaVocalia;
 
-            // Lista completa de rivales para mostrar horizontalmente
             const listaRivales = ["IDEAL", "BARZA", "SAN MARTIN", "INDEPENDIENTE", "VODKILA", "CHELSEA", "JUVENTUD DE AMERICA", "JUVENTUS", "LEONES", "FRANCO CANADIENSE"];
             const chipsRivales = listaRivales.map(rival => `<span class="rival-chip">${rival}</span>`).join('');
 
-            // Montar el HTML del perfil con la nueva sección de partido y rivales
             container.innerHTML = `
             <div class="perfil-root">
                 <div class="perfil-container">
                     <div class="perfil-header"><h1>⚜️ PANEL NÁPOLES ⚜️</h1><div style="font-size:0.75rem;color:#D4AF37; text-align:center;">Categoría: ${categoria === 'mujeres' ? 'Femenina ♀' : 'Masculina ♂'}</div></div>
                     
-                    <!-- Tarjeta de identidad y camiseta -->
                     <div class="cards-row">
                         <div class="glass-card-perfil id-card-identity" style="padding:15px; text-align:center;"><div class="avatar-icon-box" style="margin:0 auto 10px;"><i class="fa-solid fa-user-ninja"></i></div><div style="font-weight:900;">${s.primerNombre}<br>${s.apellidos}</div><div style="font-size:.65rem;"><i class="fa-solid fa-id-card"></i> ${cedula}</div><div style="margin-top:8px;background:rgba(212,175,55,.2);padding:4px 10px;border-radius:20px; display:inline-block;">${edad} años</div></div>
                         <div class="id-card-jersey-wrap"><div class="jersey-card-inner"><div class="face-front"><div class="jersey-name">${s.nombreCamiseta}</div><div class="jersey-number">${s.dorsal}</div><div>Talla ${s.tallaUni}</div></div><div class="face-back"><div class="jersey-name">NÁPOLES FC</div><div class="jersey-number">${s.dorsal}</div></div></div></div>
                     </div>
 
-                    <!-- SECCIÓN: PRÓXIMO ENCUENTRO (Nápoles vs Leones) -->
+                    <!-- PRÓXIMO ENCUENTRO: FRANCO CANADIENSE -->
                     <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
                         <div class="match-card-gold" style="margin-bottom:0;">
                             <div class="match-teams">
                                 <div class="team-badge"><div class="team-name">⚜️ NÁPOLES F.C.</div><div class="team-sub">Local · Fuerza Azteca</div></div>
                                 <div class="vs-circle">VS</div>
-                                <div class="team-badge"><div class="team-name">🦁 LEONES</div><div class="team-sub">Visitante · Tradición</div></div>
+                                <div class="team-badge"><div class="team-name">🍁 FRANCO CANADIENSE</div><div class="team-sub">Visitante · Tradición</div></div>
                             </div>
                             <div class="match-info">
-                                <div class="match-info-item"><i class="fa-regular fa-calendar-alt"></i> SÁBADO 6 DE JUNIO, 2026</div>
-                                <div class="match-info-item"><i class="fa-regular fa-clock"></i> 12:00 HORAS</div>
-                                <div class="match-info-item"><i class="fa-solid fa-location-dot"></i> CANCHA 1 - LIGA SANTA RITA</div>
+                                <div class="match-info-item"><i class="fa-regular fa-calendar-alt"></i> ${PROXIMO_PARTIDO.fechaLegible}</div>
+                                <div class="match-info-item"><i class="fa-regular fa-clock"></i> ${PROXIMO_PARTIDO.hora} HORAS</div>
+                                <div class="match-info-item"><i class="fa-solid fa-location-dot"></i> ${PROXIMO_PARTIDO.lugar}</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- SECCIÓN: OTROS RIVALES (scroll horizontal) -->
                     <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
                         <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-people-group"></i> OTROS RIVALES DEL TORNEO</div>
                         <div class="rivales-scroll">
@@ -547,7 +545,6 @@ async function mostrarPerfil() {
                         </div>
                     </div>
 
-                    <!-- Estadísticas de partidos -->
                     <div class="stats-grid">
                         <div class="stat-card"><div class="stat-icon" style="color:#3498db"><i class="fa-solid fa-shirt"></i></div><div class="stat-value">${s.partidosJugados}</div><div class="stat-label">PARTIDOS</div></div>
                         <div class="stat-card"><div class="stat-icon" style="color:#2ecc71"><i class="fa-solid fa-futbol"></i></div><div class="stat-value">${s.goles}</div><div class="stat-label">GOLES</div></div>
@@ -555,7 +552,6 @@ async function mostrarPerfil() {
                         <div class="stat-card"><div class="stat-icon" style="color:#e74c3c"><i class="fa-solid fa-square"></i></div><div class="stat-value">${s.rojas}</div><div class="stat-label">ROJAS</div></div>
                     </div>
 
-                    <!-- Rendimiento humano -->
                     <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
                         <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-heart"></i> Rendimiento Humano</div>
                         <div class="performance-grid">
@@ -564,7 +560,6 @@ async function mostrarPerfil() {
                         <div class="average-box"><div class="average-score" style="font-size:2.2rem;">${promedio}/10</div><div class="stars-container">${generarEstrellas(promedio)}</div></div>
                     </div>
 
-                    <!-- Estado Administrativo -->
                     <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
                         <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-chart-line"></i> Estado Administrativo</div>
                         <div class="admin-grid">
@@ -598,7 +593,7 @@ function cerrarSesion() {
     }
 }
 
-// ==================== RULETA (sin footer y con botón modificado) ====================
+// ==================== RULETA ====================
 function mostrarRuleta() {
     document.body.className = 'ruleta-mode';
     document.body.style.background = '#0a0c10';
@@ -629,27 +624,27 @@ function mostrarRuleta() {
                         </div>
                         <div class="font-display-lg text-5xl text-secondary cinematic-text italic" style="color:#e9c349;">VS</div>
                         <div class="flex flex-col items-center gap-4">
-                            <div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-secondary winner-glow"><span class="text-5xl">🦁</span></div>
-                            <span class="font-display-lg text-xl tracking-wider text-white">LEONES</span>
+                            <div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-secondary winner-glow"><span class="text-5xl">${PROXIMO_PARTIDO.icono}</span></div>
+                            <span class="font-display-lg text-xl tracking-wider text-white">${PROXIMO_PARTIDO.rival}</span>
                         </div>
                     </div>
                 </div>
                 <div class="reveal-element match-info-card w-full max-w-md mx-4">
                     <div class="flex justify-center gap-6 flex-wrap text-white">
-                        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary" style="color:#e9c349;">event</span><span class="text-sm font-bold">SÁBADO 6 DE JUNIO, 2026</span></div>
-                        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary" style="color:#e9c349;">schedule</span><span class="text-sm font-bold">12:00 HORAS</span></div>
-                        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary" style="color:#e9c349;">stadium</span><span class="text-sm font-bold">CANCHA 1 - LIGA SANTA RITA</span></div>
+                        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">event</span><span class="text-sm font-bold">${PROXIMO_PARTIDO.fechaLegible}</span></div>
+                        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">schedule</span><span class="text-sm font-bold">${PROXIMO_PARTIDO.hora} HORAS</span></div>
+                        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">stadium</span><span class="text-sm font-bold">${PROXIMO_PARTIDO.lugar}</span></div>
                     </div>
                 </div>
                 <div class="reveal-element space-y-6 w-full max-w-xs px-6">
-                    <div class="glass-card p-6 rounded-2xl border border-secondary/40" style="background:rgba(0,0,0,0.7);">
+                    <div class="glass-card p-6 rounded-2xl border border-secondary/40">
                         <div class="flex justify-between items-center mb-4">
                             <span class="font-label-caps text-[10px] text-white uppercase">Nivel de Riesgo</span>
-                            <span class="font-label-caps text-[10px] text-secondary" style="color:#e9c349;">MÁXIMO</span>
+                            <span class="font-label-caps text-[10px] text-secondary">MÁXIMO</span>
                         </div>
-                        <div class="w-full bg-white/20 h-1.5 rounded-full overflow-hidden"><div class="bg-secondary h-full rounded-full" style="width: 95%; background:#e9c349;"></div></div>
+                        <div class="w-full bg-white/20 h-1.5 rounded-full overflow-hidden"><div class="bg-secondary h-full rounded-full" style="width: 95%;"></div></div>
                     </div>
-                    <button id="confirmButton" class="w-full bg-secondary text-black py-4 rounded-lg font-display-lg tracking-widest text-sm premium-glow uppercase font-bold" style="background:#e9c349; color:#000;">Ahí estaré puntual</button>
+                    <button id="confirmButton" class="w-full bg-secondary text-black py-4 rounded-lg font-display-lg tracking-widest text-sm premium-glow uppercase font-bold">Ahí estaré puntual</button>
                 </div>
             </div>
             <div class="fixed inset-0 pointer-events-none z-50" id="particles"></div>
@@ -666,7 +661,7 @@ function mostrarRuleta() {
         { name: "CHELSEA", icon: "💙", power: "ALTO" },
         { name: "JUVENTUD DE AMERICA", icon: "🟡🔴", power: "EXTREMO" },
         { name: "JUVENTUS", icon: "⚪⚫", power: "ALTO" },
-        { name: "FRANCO CANADIENSE", icon: "🍁", power: "MEDIO" }
+        { name: "FRANCO CANADIENSE", icon: "🍁", power: "EXTREMO" }
     ];
     const track = document.getElementById('roulette-track');
     const revealScreen = document.getElementById('reveal-screen');
@@ -740,14 +735,14 @@ async function guardarPartido() {
         cedula: cedula,
         categoria: categoria,
         nombre: nombreCompleto,
-        rival: 'LEONES',
-        fecha: '2026-06-06',
-        hora: '12:00',
-        lugar: 'CANCHA 1 - LIGA SANTA RITA',
+        rival: PROXIMO_PARTIDO.rival,
+        fecha: PROXIMO_PARTIDO.fecha,
+        hora: PROXIMO_PARTIDO.hora,
+        lugar: PROXIMO_PARTIDO.lugar,
         amarillas: '0',
         rojas: '0',
         goles: '0',
-        valor_vocalia: '2.5',
+        valor_vocalia: PROXIMO_PARTIDO.valorVocalia.toString(),
         estado: 'CONFIRMADO',
         vocalias_pendientes: '0',
         puntualidad: '10',
@@ -772,10 +767,9 @@ async function guardarPartido() {
     }
 }
 
-// ==================== VERIFICAR SI YA CONFIRMÓ ====================
 async function verificarConfirmacionPrevia() {
     try {
-        const url = `${CONFIG.URL_GAS}?action=verificarConfirmacionPartido&cedula=${encodeURIComponent(cedula)}`;
+        const url = `${CONFIG.URL_GAS}?action=verificarConfirmacionPartido&cedula=${encodeURIComponent(cedula)}&rival=${encodeURIComponent(PROXIMO_PARTIDO.rival)}&fecha=${PROXIMO_PARTIDO.fecha}`;
         const resp = await fetch(url);
         const data = await resp.json();
         return data.confirmed === true;
