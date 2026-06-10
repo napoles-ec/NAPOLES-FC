@@ -409,7 +409,7 @@
 <script>
 // ==================== CONFIGURACIÓN ====================
 const CONFIG = {
-    URL_GAS: "https://script.google.com/macros/s/AKfycbxlylnkO7B7wc628lhr2AevZJIfGqrNUWk_aqx2LmcO1xG7F3AYZQxnxVvPUJomsxUk/exec"
+    URL_GAS: "https://script.google.com/macros/s/AKfycbwLcpH5z2x_EjRPaPu6gI_lLokWkVxsKLgBz-HHCVX7_OhKAFU1LVfZ67bh9DCbn9L6/exec"
 };
 
 // DATOS DEL PRÓXIMO PARTIDO (FRANCO CANADIENSE)
@@ -515,7 +515,6 @@ async function mostrarPerfil() {
             const listaRivales = ["IDEAL", "BARZA", "SAN MARTIN", "INDEPENDIENTE", "VODKILA", "CHELSEA", "JUVENTUD DE AMERICA", "JUVENTUS", "LEONES", "FRANCO CANADIENSE"];
             const chipsRivales = listaRivales.map(rival => `<span class="rival-chip">${rival}</span>`).join('');
 
-            // HTML completo del perfil
             container.innerHTML = `
             <div class="perfil-root">
                 <div class="perfil-container">
@@ -526,7 +525,6 @@ async function mostrarPerfil() {
                         <div class="id-card-jersey-wrap"><div class="jersey-card-inner"><div class="face-front"><div class="jersey-name">${s.nombreCamiseta}</div><div class="jersey-number">${s.dorsal}</div><div>Talla ${s.tallaUni}</div></div><div class="face-back"><div class="jersey-name">NÁPOLES FC</div><div class="jersey-number">${s.dorsal}</div></div></div></div>
                     </div>
 
-                    <!-- PRÓXIMO ENCUENTRO: FRANCO CANADIENSE -->
                     <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
                         <div class="match-card-gold" style="margin-bottom:0;">
                             <div class="match-teams">
@@ -598,7 +596,7 @@ function cerrarSesion() {
     }
 }
 
-// ==================== RULETA ====================
+// ==================== RULETA (CORREGIDA) ====================
 function mostrarRuleta() {
     console.log("🎰 Mostrando ruleta para partido:", PROXIMO_PARTIDO);
     document.body.className = 'ruleta-mode';
@@ -728,7 +726,12 @@ function mostrarRuleta() {
         }
     }
 
-    document.getElementById('confirmButton').addEventListener('click', guardarPartido);
+    // IMPORTANTE: Asegurar que el botón esté habilitado
+    const confirmBtn = document.getElementById('confirmButton');
+    if (confirmBtn) {
+        confirmBtn.disabled = false;
+        confirmBtn.addEventListener('click', guardarPartido);
+    }
 }
 
 async function guardarPartido() {
@@ -771,14 +774,16 @@ async function guardarPartido() {
     } catch(error) {
         console.error(error);
         alert('❌ Error de conexión. Intenta de nuevo.');
-        btn.disabled = false;
-        btn.innerText = 'Ahí estaré puntual';
+        if (btn) {
+            btn.disabled = false;
+            btn.innerText = 'Ahí estaré puntual';
+        }
     }
 }
 
 async function verificarConfirmacionPrevia() {
     try {
-        const url = `${CONFIG.URL_GAS}?action=verificarConfirmacionPartido&cedula=${encodeURIComponent(cedula)}&rival=${encodeURIComponent(PROXIMO_PARTIDO.rival)}&fecha=${PROXIMO_PARTIDO.fecha}`;
+        const url = `${CONFIG.URL_GAS}?action=verificarConfirmacionPartido&cedula=${encodeURIComponent(cedula)}&rival=${encodeURIComponent(PROXIMO_PARTIDO.rival)}&fecha=${PROXIMO_PARTIDO.fecha}&t=${Date.now()}`;
         const resp = await fetch(url);
         const data = await resp.json();
         console.log("🔍 Verificación confirmación previa:", data);
