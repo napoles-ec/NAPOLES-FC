@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
+    /* (Los mismos estilos que tenías, se omiten por brevedad) */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Inter', sans-serif; background: #0a0c10; color: #fff; }
     .perfil-root { background: radial-gradient(circle at top, #111a33 0%, #060912 100%); min-height: 100vh; padding: 15px; display: flex; justify-content: center; }
@@ -128,6 +129,11 @@ async function obtenerRendimiento() {
 async function obtenerNotificacion() {
     const data = await callApi("getNotificacionActiva");
     return data.success ? data.notificacion : null;
+}
+// Nueva función: verificar si el jugador ya confirmó asistencia a algún partido futuro
+async function verificarConfirmacionPrevia() {
+    const data = await callApi("verificarAsistenciaFutura", { cedula });
+    return data.confirmed === true;
 }
 
 // ==================== UTILIDADES ====================
@@ -351,7 +357,7 @@ async function abrirHistorialDeudas() {
     document.getElementById('modalHistorialDeudas').style.display = 'flex';
 }
 
-// ==================== RULETA CON SORTEO (para múltiples rivales) ====================
+// ==================== RULETA CON SORTEO ====================
 function mostrarRuletaConSorteo(rivalesLista) {
     document.body.className = 'ruleta-mode';
     document.body.style.background = '#0a0c10';
@@ -383,7 +389,6 @@ function mostrarRuletaConSorteo(rivalesLista) {
     `;
     
     const track = document.getElementById('rouletteTrack');
-    // Crear copias del array de rivales para que la ruleta tenga muchos elementos
     const items = [];
     for (let i = 0; i < 30; i++) {
         const rival = rivalesLista[i % rivalesLista.length];
@@ -394,7 +399,6 @@ function mostrarRuletaConSorteo(rivalesLista) {
         items.push(rival);
     }
     
-    // Animación
     setTimeout(() => {
         track.classList.add('spinning');
         setTimeout(() => {
@@ -440,13 +444,27 @@ async function guardarAsistenciaPartidoPendiente(rival) {
     const hora = "12:00";
     const lugar = "LIGA SANTA RITA - Cancha 1";
     const dorsal = jugadorSesion.dorsal || "";
-    const asistenciaData = { cedula, categoria, nombre: nombreCompleto, rival, fecha: fechaStr, hora, lugar, amarillas: 0, rojas: 0, goles: 0, valor_vocalia: 2.5, estado: "CONFIRMADO", puntualidad: 10, companerismo: 10, respeto: 10, humildad: 10, dorsal };
-    await callPost("registrarAsistencia", asistenciaData);
-    alert(`✅ Confirmaste asistencia contra ${rival}. ¡Buena suerte!`);
-    mostrarPerfil();
+    // Aseguramos que vocalias_pendientes sea "PENDIENTE" (como en el ejemplo)
+    const asistenciaData = { 
+        cedula, categoria, nombre: nombreCompleto, rival, fecha: fechaStr, hora, lugar,
+        amarillas: 0, rojas: 0, goles: 0, valor_vocalia: 2.5, estado: "CONFIRMADO",
+        vocalias_pendientes: "PENDIENTE",  // Cambiado de 0 a "PENDIENTE"
+        puntualidad: 10, companerismo: 10, respeto: 10, humildad: 10, dorsal
+    };
+    try {
+        await callPost("registrarAsistencia", asistenciaData);
+        alert(`✅ Confirmaste asistencia contra ${rival}. ¡Buena suerte!`);
+        // Después de guardar, recargamos el perfil y ya no aparecerá la ruleta
+        mostrarPerfil();
+    } catch (error) {
+        console.error(error);
+        alert("❌ Error al guardar. Intenta de nuevo.");
+        btn.disabled = false;
+        btn.innerText = "Confirmar Asistencia";
+    }
 }
 
-// ==================== NOTIFICACIÓN DINÁMICA (TÉRMINOS) ====================
+// ==================== NOTIFICACIÓN DINÁMICA ====================
 async function mostrarNotificacionSiNecesaria() {
     const perfil = await obtenerPerfilJugador();
     if (perfil && perfil.terminos_aceptados) return true;
@@ -467,14 +485,14 @@ async function mostrarNotificacionSiNecesaria() {
     });
 }
 
-// ==================== FLUJO PRINCIPAL CON ANIMACIÓN DE CARGA ====================
+// ==================== FLUJO PRINCIPAL ====================
 (async function() {
-    // Mostrar animación de búsqueda mientras se cargan los datos
+    // Mostrar animación de carga
     document.getElementById('dynamicContent').innerHTML = `
         <div class="h-screen flex flex-col items-center justify-center bg-black/90">
             <div class="soccer-loading-container">
                 <i class="fa-solid fa-futbol fa-spin" style="font-size:4rem; color:#D4AF37;"></i>
-                <p class="mt-4 text-gray-300">Buscando partidos programados...</p>
+                <p class="mt-4 text-gray-300">Cargando información...</p>
             </div>
         </div>
     `;
@@ -482,20 +500,22 @@ async function mostrarNotificacionSiNecesaria() {
     const notificacionOk = await mostrarNotificacionSiNecesaria();
     if (!notificacionOk) return;
     
+    // Verificar si el jugador ya confirmó asistencia a algún partido futuro
+    const yaConfirmo = await verificarConfirmacionPrevia();
+    if (yaConfirmo) {
+        // Ya confirmó, mostrar perfil directamente
+        mostrarPerfil();
+        return;
+    }
+    
+    // Si no ha confirmado, buscar partidos con estado "PRÓXIMO" en Programacion_Partidos_H
     const partidos = await cargarPartidos();
-    // Buscar partidos con estado "PRÓXIMO"
     const proximos = partidos.filter(p => p.estado === "PRÓXIMO");
     if (proximos.length > 0) {
-        // Extraer rivales únicos de los partidos próximos
         const rivalesUnicos = [...new Set(proximos.map(p => p.rival))];
-        if (rivalesUnicos.length === 1) {
-            // Solo un rival, mostrar confirmación directa
-            mostrarRuletaConSorteo(rivalesUnicos);
-        } else {
-            // Múltiples rivales, mostrar ruleta con sorteo
-            mostrarRuletaConSorteo(rivalesUnicos);
-        }
+        mostrarRuletaConSorteo(rivalesUnicos);
     } else {
+        // No hay partidos próximos, mostrar perfil
         mostrarPerfil();
     }
 })();
