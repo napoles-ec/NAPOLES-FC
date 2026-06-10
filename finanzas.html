@@ -181,7 +181,7 @@ body{ font-family:'Inter',sans-serif; background:var(--bg); color:#111827; min-h
     </div>
 </div>
 
-<!-- FORMULARIO COBRO POR NOMBRE (MODIFICADO) -->
+<!-- FORMULARIO COBRO POR NOMBRE -->
 <section id="jugadorTab" class="form-card active">
     <h2><i class="fa-solid fa-id-card" style="color: #2563eb"></i> Buscar Jugador por Nombre</h2>
     <div class="form-group">
@@ -286,8 +286,10 @@ body{ font-family:'Inter',sans-serif; background:var(--bg); color:#111827; min-h
 
 <button class="fab" onclick="cargarContabilidad()"><i class="fa-solid fa-arrows-rotate"></i></button>
 
-<script src="config.js"></script>
 <script>
+// ==================== CONFIGURACIÓN ====================
+const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbyTFfe9syea5MekQTHtAZZeCN93aGLeTATYPceXFJ-IiZ5srROK_mcJVsBJ_hK2lxCH/exec';
+
 if(localStorage.getItem('admin_activo') !== 'true') window.location.href = './login.html';
 
 const formatearMoneda = (v) => new Intl.NumberFormat('es-EC', { style: 'currency', currency: 'USD' }).format(v);
@@ -303,7 +305,7 @@ function switchForm(tabId, el) {
 
 async function cargarContabilidad() {
     try {
-        const res = await fetch(`${CONFIG.URL_GAS}?action=getFinanzasData&nocache=${Date.now()}`);
+        const res = await fetch(`${WEBAPP_URL}?action=getFinanzasData&nocache=${Date.now()}`);
         const data = await res.json();
         if (data.success) {
             movimientosLocales = data.movements;
@@ -311,6 +313,7 @@ async function cargarContabilidad() {
         }
     } catch (e) {
         console.error(e);
+        document.getElementById('financialApp').innerHTML = '<div class="summary"><div class="summary-card"><p>Error de conexión</p></div></div>';
     }
 }
 
@@ -377,7 +380,7 @@ function abrirModalDeudas() {
                 </div>
             `;
         });
-        html += `<br><p style="color:gray; font-size:0.75rem; text-align:center;">Nota: Las deudas de jugadores individuales se liquidan directamente buscando su cédula en la pestaña principal.</p>`;
+        html += `<br><p style="color:gray; font-size:0.75rem; text-align:center;">Nota: Las deudas de jugadores individuales se liquidan directamente buscando su nombre en la pestaña principal.</p>`;
     }
     
     modalBody.innerHTML = html;
@@ -390,15 +393,13 @@ function cerrarModalDeudas(e) {
     }
 }
 
-// MODIFICADO: Búsqueda por nombre
 async function buscarJugadorParaCobro() {
     const nombre = document.getElementById('buscarNombre').value.trim();
     if(!nombre) return;
     document.getElementById('lblNombreJugador').innerText = "Buscando en Google Sheets...";
     document.getElementById('resultadoJugadorCard').style.display = 'block';
 
-    // Endpoint modificado para buscar por nombre (se espera que el backend admita action=buscarJugadorPorNombre)
-    const res = await fetch(`${CONFIG.URL_GAS}?action=buscarJugadorPorNombre&nombre=${encodeURIComponent(nombre)}`);
+    const res = await fetch(`${WEBAPP_URL}?action=buscarJugadorPorNombre&nombre=${encodeURIComponent(nombre)}`);
     const data = await res.json();
     
     if(data.success && data.jugador) {
@@ -435,7 +436,7 @@ async function buscarJugadorParaCobro() {
 
 async function procesarCobro(tipo) {
     if(!confirm("¿Confirmar cobro?")) return;
-    const check = await fetch(`${CONFIG.URL_GAS}?action=getPerfil&cedula=${jugadorSeleccionadoCedula}`);
+    const check = await fetch(`${WEBAPP_URL}?action=getPerfil&cedula=${jugadorSeleccionadoCedula}`);
     const currentData = await check.json();
     let estInscrip = currentData.jugador['inscrip_estado'];
     let estUnif = currentData.jugador['unif_estado'];
@@ -443,13 +444,15 @@ async function procesarCobro(tipo) {
     if(tipo === 'inscripcion') estInscrip = "PAGADO";
     if(tipo === 'uniforme') estUnif = "PAGADO";
 
-    const ejecutado = await fetch(`${CONFIG.URL_GAS}?action=updateEstados&cedula=${jugadorSeleccionadoCedula}&inscrip=${estInscrip}&unif=${estUnif}`);
+    const ejecutado = await fetch(`${WEBAPP_URL}?action=updateEstados&cedula=${jugadorSeleccionadoCedula}&inscrip=${estInscrip}&unif=${estUnif}`);
     const res = await ejecutado.json();
     if(res.success) {
         alert("¡Cobro aplicado!");
         document.getElementById('resultadoJugadorCard').style.display = 'none';
         document.getElementById('buscarNombre').value = "";
         cargarContabilidad();
+    } else {
+        alert("Error al aplicar el cobro.");
     }
 }
 
@@ -460,13 +463,15 @@ async function enviarIngresoExtra(e) {
     const monto = document.getElementById('extraMonto').value;
     const estado = document.getElementById('extraEstado').value;
     
-    const url = `${CONFIG.URL_GAS}?action=registrarOtrosIngresos&concepto=${encodeURIComponent(concepto)}&categoria=${encodeURIComponent(categoria)}&monto=${monto}&estado=${estado}`;
+    const url = `${WEBAPP_URL}?action=registrarOtrosIngresos&concepto=${encodeURIComponent(concepto)}&categoria=${encodeURIComponent(categoria)}&monto=${monto}&estado=${estado}`;
     const res = await fetch(url, { method: 'POST' });
     const data = await res.json();
     if(data.success) {
         alert("Registro guardado con éxito.");
         document.getElementById('ingresoExtraForm').reset();
         cargarContabilidad();
+    } else {
+        alert("Error al registrar ingreso.");
     }
 }
 
@@ -476,13 +481,15 @@ async function enviarGasto(e) {
     const categoria = document.getElementById('gastoCategoria').value;
     const monto = document.getElementById('gastoMonto').value;
     
-    const url = `${CONFIG.URL_GAS}?action=registrarGasto&concepto=${encodeURIComponent(concepto)}&categoria=${encodeURIComponent(categoria)}&monto=${monto}`;
+    const url = `${WEBAPP_URL}?action=registrarGasto&concepto=${encodeURIComponent(concepto)}&categoria=${encodeURIComponent(categoria)}&monto=${monto}`;
     const res = await fetch(url, { method: 'POST' });
     const data = await res.json();
     if(data.success) {
         alert("Egreso registrado.");
         document.getElementById('gastoForm').reset();
         cargarContabilidad();
+    } else {
+        alert("Error al registrar gasto.");
     }
 }
 
