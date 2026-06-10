@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-    /* (Los mismos estilos que tenías, se omiten por brevedad) */
+    /* Estilos (igual que antes, se omiten por brevedad) */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Inter', sans-serif; background: #0a0c10; color: #fff; }
     .perfil-root { background: radial-gradient(circle at top, #111a33 0%, #060912 100%); min-height: 100vh; padding: 15px; display: flex; justify-content: center; }
@@ -85,7 +85,7 @@
 <div id="dynamicContent"></div>
 
 <script>
-const CONFIG = { URL_GAS: "https://script.google.com/macros/s/AKfycbwKGjY8Lrjtrs21KnNArVpK6z6xuMd0Z8HUtegMhJSrGdwJCOyRFM7ZZA8hxCgMAg/exec" };
+const CONFIG = { URL_GAS: "https://script.google.com/macros/s/AKfycbw4y80UB8oiRCXwubFGISlezzlnkFvwMNatgetfne5v2rSGqyrPl2l1FXHFUOWH6w0n/exec" };
 
 let jugadorSesion = null;
 try { jugadorSesion = JSON.parse(localStorage.getItem('jugador_actual')); } catch(e) {}
@@ -126,12 +126,20 @@ async function obtenerRendimiento() {
     if (data.success) return { puntualidad: data.puntualidad, companerismo: data.companerismo, respeto: data.respeto, humildad: data.humildad };
     return null;
 }
-async function obtenerNotificacion() {
+async function obtenerNotificacionActiva() {
     const data = await callApi("getNotificacionActiva");
     return data.success ? data.notificacion : null;
 }
-// Nueva función: verificar si el jugador ya confirmó asistencia a algún partido futuro
+async function verificarNotificacionAceptada(notificacionId) {
+    const data = await callApi("verificarNotificacionAceptada", { cedula, notificacionId });
+    return data === true;
+}
 async function verificarConfirmacionPrevia() {
+    // Verifica si el jugador ya confirmó asistencia a algún partido con estado "PRÓXIMO" (futuro)
+    const partidos = await cargarPartidos();
+    const proximos = partidos.filter(p => p.estado === "PRÓXIMO");
+    if (proximos.length === 0) return false; // No hay próximos, no se puede confirmar
+    // Buscar en Partidos Hombres si ya hay registro para algún partido próximo
     const data = await callApi("verificarAsistenciaFutura", { cedula });
     return data.confirmed === true;
 }
@@ -444,17 +452,15 @@ async function guardarAsistenciaPartidoPendiente(rival) {
     const hora = "12:00";
     const lugar = "LIGA SANTA RITA - Cancha 1";
     const dorsal = jugadorSesion.dorsal || "";
-    // Aseguramos que vocalias_pendientes sea "PENDIENTE" (como en el ejemplo)
     const asistenciaData = { 
         cedula, categoria, nombre: nombreCompleto, rival, fecha: fechaStr, hora, lugar,
         amarillas: 0, rojas: 0, goles: 0, valor_vocalia: 2.5, estado: "CONFIRMADO",
-        vocalias_pendientes: "PENDIENTE",  // Cambiado de 0 a "PENDIENTE"
+        vocalias_pendientes: "PENDIENTE",
         puntualidad: 10, companerismo: 10, respeto: 10, humildad: 10, dorsal
     };
     try {
         await callPost("registrarAsistencia", asistenciaData);
         alert(`✅ Confirmaste asistencia contra ${rival}. ¡Buena suerte!`);
-        // Después de guardar, recargamos el perfil y ya no aparecerá la ruleta
         mostrarPerfil();
     } catch (error) {
         console.error(error);
@@ -466,10 +472,11 @@ async function guardarAsistenciaPartidoPendiente(rival) {
 
 // ==================== NOTIFICACIÓN DINÁMICA ====================
 async function mostrarNotificacionSiNecesaria() {
-    const perfil = await obtenerPerfilJugador();
-    if (perfil && perfil.terminos_aceptados) return true;
-    const notificacion = await obtenerNotificacion();
-    if (!notificacion) return true;
+    const notificacion = await obtenerNotificacionActiva();
+    if (!notificacion) return true; // no hay notificación, continuar
+    const aceptada = await verificarNotificacionAceptada(notificacion.id);
+    if (aceptada) return true;
+    // Mostrar modal
     document.getElementById('notificacionTitulo').innerText = notificacion.titulo || "AVISO IMPORTANTE";
     document.getElementById('notificacionMensaje').innerHTML = notificacion.mensaje || "Por favor, confirma que has leído esta información.";
     document.getElementById('modalNotificacion').style.display = 'flex';
@@ -477,7 +484,7 @@ async function mostrarNotificacionSiNecesaria() {
         const btn = document.getElementById('btnAceptarNotificacion');
         const aceptar = async () => {
             btn.removeEventListener('click', aceptar);
-            await callPost("guardarTerminos", { cedula, categoria, opcion: "ACEPTADO" });
+            await callPost("guardarTerminos", { cedula, categoria }); // guarda en Notificaciones
             document.getElementById('modalNotificacion').style.display = 'none';
             resolve(true);
         };
@@ -500,24 +507,25 @@ async function mostrarNotificacionSiNecesaria() {
     const notificacionOk = await mostrarNotificacionSiNecesaria();
     if (!notificacionOk) return;
     
-    // Verificar si el jugador ya confirmó asistencia a algún partido futuro
-    const yaConfirmo = await verificarConfirmacionPrevia();
-    if (yaConfirmo) {
-        // Ya confirmó, mostrar perfil directamente
+    // 1. Buscar partidos con estado "PRÓXIMO"
+    const partidos = await cargarPartidos();
+    const proximos = partidos.filter(p => p.estado === "PRÓXIMO");
+    if (proximos.length === 0) {
+        // No hay próximos partidos, mostrar perfil directamente
         mostrarPerfil();
         return;
     }
     
-    // Si no ha confirmado, buscar partidos con estado "PRÓXIMO" en Programacion_Partidos_H
-    const partidos = await cargarPartidos();
-    const proximos = partidos.filter(p => p.estado === "PRÓXIMO");
-    if (proximos.length > 0) {
-        const rivalesUnicos = [...new Set(proximos.map(p => p.rival))];
-        mostrarRuletaConSorteo(rivalesUnicos);
-    } else {
-        // No hay partidos próximos, mostrar perfil
+    // 2. Verificar si el jugador ya confirmó asistencia a algún partido futuro
+    const yaConfirmo = await verificarConfirmacionPrevia();
+    if (yaConfirmo) {
         mostrarPerfil();
+        return;
     }
+    
+    // 3. No ha confirmado y hay partidos próximos -> mostrar ruleta con los rivales únicos
+    const rivalesUnicos = [...new Set(proximos.map(p => p.rival))];
+    mostrarRuletaConSorteo(rivalesUnicos);
 })();
 </script>
 </body>
