@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
+    /* ========== ESTILOS COMPLETOS (mismos que funcionaban) ========== */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Inter', sans-serif; background: #0a0c10; color: #fff; }
     .perfil-root { background: radial-gradient(circle at top, #111a33 0%, #060912 100%); min-height: 100vh; padding: 15px; display: flex; justify-content: center; }
@@ -48,6 +49,7 @@
     .victoria { background: #15803d; color: white; }
     .derrota { background: #b91c1c; color: white; }
     .empate { background: #a16207; color: white; }
+    /* Ruleta */
     .roulette-track { display: flex; gap: 24px; width: fit-content; }
     .spinning { animation: scroll-fast 0.2s linear infinite; filter: blur(4px); }
     @keyframes scroll-fast { from { transform: translateX(0); } to { transform: translateX(-1000px); } }
@@ -68,14 +70,14 @@
 </style>
 </head>
 <body>
-<!-- Modal de términos (dinámico, se llena desde Notificaciones) -->
+<!-- Modal de términos (común) -->
 <div class="terms-backdrop" id="modalTerms">
     <div class="modal-box">
-        <h2 id="notificacionTitulo" style="text-align:center; color:#D4AF37;">GRAN INAUGURACIÓN</h2>
-        <div id="notificacionMensaje" class="terms-announcement">⚽ ATENCIÓN JUGADORES ⚽<br>📅 17 de mayo - 9:30 a.m.<br>✅ Seleccione opción de asistencia</div>
-        <div class="terms-option-card" onclick="selectRadio(1)"><input type="radio" name="termOption" id="opt1" value="1"> <label>1️⃣ Asistiré, ahí estaré puntual</label></div>
-        <div class="terms-option-card" onclick="selectRadio(2)"><input type="radio" name="termOption" id="opt2" value="2"> <label>2️⃣ Enviaré a mi representante</label></div>
-        <button class="btn-modal-send" id="btnFirmar" disabled>CONFIRMAR ASISTENCIA</button>
+        <h2 style="text-align:center; color:#D4AF37;">GRAN INAUGURACIÓN</h2>
+        <div class="terms-announcement">⚽ ATENCIÓN JUGADORES ⚽<br>📅 17 de mayo - 9:30 a.m.<br>✅ Seleccione opción de asistencia</div>
+        <div class="terms-option-card" onclick="selectRadio(1)"><input type="radio" name="termOption" id="opt1" value="1"><label>1️⃣ Asistiré, ahí estaré puntual</label></div>
+        <div class="terms-option-card" onclick="selectRadio(2)"><input type="radio" name="termOption" id="opt2" value="2"><label>2️⃣ Enviaré a mi representante</label></div>
+        <button class="btn-modal-send" id="btnFirmar" disabled onclick="enviarFirmaTerminos()">CONFIRMAR ASISTENCIA</button>
     </div>
 </div>
 
@@ -88,15 +90,23 @@
 
 <script>
 // ==================== CONFIGURACIÓN ====================
-// REEMPLAZA ESTA URL CON LA DE TU WEB APP DESPLEGADA
-const CONFIG = { URL_GAS: "https://script.google.com/macros/s/AKfycbyGfP8oz2vE9KkxR_AjStcdOPULibPtYtzUjMrtAv_DkF2R6_Lk6oae18BmQeeYEX-E/exec" };
+const CONFIG = {
+    URL_GAS: "https://script.google.com/macros/s/AKfycbyGfP8oz2vE9KkxR_AjStcdOPULibPtYtzUjMrtAv_DkF2R6_Lk6oae18BmQeeYEX-E/exec"
+};
 
+// Obtener sesión del jugador
 let jugadorSesion = null;
-try { jugadorSesion = JSON.parse(localStorage.getItem('jugador_actual')); } catch(e) {}
-if (!jugadorSesion || !jugadorSesion.cedula) window.location.href = 'login.html';
-const cedula = jugadorSesion.cedula, categoria = jugadorSesion.categoria || 'hombres', nombreCompleto = (jugadorSesion.primerNombre||'') + ' ' + (jugadorSesion.apellidos||'');
+try {
+    jugadorSesion = JSON.parse(localStorage.getItem('jugador_actual'));
+} catch(e) { console.warn(e); }
+if (!jugadorSesion || !jugadorSesion.cedula) {
+    window.location.href = 'login.html';
+}
+const cedula = jugadorSesion.cedula;
+const categoria = jugadorSesion.categoria || 'hombres';
+const nombreCompleto = (jugadorSesion.primerNombre || '') + ' ' + (jugadorSesion.apellidos || '');
 
-// ==================== API ====================
+// ==================== FUNCIONES API ====================
 async function callApi(action, params = {}) {
     const url = new URL(CONFIG.URL_GAS);
     url.searchParams.append("action", action);
@@ -112,14 +122,14 @@ async function callPost(action, body) {
     return { success: true };
 }
 
-// ==================== DATOS REALES ====================
+// ==================== DATOS ====================
 async function cargarPartidos() {
     const data = await callApi("getPartidos");
     return data.success ? data.data : [];
 }
 async function cargarRivales() {
     const data = await callApi("getRivales");
-    return data.success ? data.data.map(r => r.nombre) : ["LEONES","IDEAL","BARZA","SAN MARTIN","INDEPENDIENTE","VODKILA","CHELSEA","JUVENTUS","FRANCO CANADIENSE"];
+    return data.success ? data.data.map(r => r.nombre) : ["IDEAL","BARZA","SAN MARTIN","INDEPENDIENTE","VODKILA","CHELSEA","JUVENTUD DE AMERICA","JUVENTUS","LEONES","FRANCO CANADIENSE"];
 }
 async function obtenerPerfilJugador() {
     const data = await callApi("getPerfil", { cedula });
@@ -127,15 +137,12 @@ async function obtenerPerfilJugador() {
 }
 async function obtenerRendimiento() {
     const data = await callApi("getRendimientoJugador", { cedula });
-    return data.success ? { puntualidad: data.puntualidad, companerismo: data.companerismo, respeto: data.respeto, humildad: data.humildad } : null;
+    if (data.success) return { puntualidad: data.puntualidad, companerismo: data.companerismo, respeto: data.respeto, humildad: data.humildad };
+    return null;
 }
 async function verificarConfirmacionPrevia() {
     const data = await callApi("verificarAsistenciaFutura", { cedula });
     return data.confirmed === true;
-}
-async function verificarTerminos() {
-    const perfil = await obtenerPerfilJugador();
-    return perfil && perfil.terminos_aceptados === true;
 }
 
 // ==================== UTILIDADES ====================
@@ -210,7 +217,7 @@ async function mostrarPerfil() {
     let deudaMedias = s.mediasEstado.toUpperCase().includes('PENDIENTE') ? 2 : 0;
     let totalAdmin = deudaInscripcion + deudaUniforme + deudaMedias + s.deudaVocalia;
     
-    // Próximo partido real (estado != FINALIZADO y fecha >= hoy)
+    // Próximo partido real desde Programacion_Partidos_H
     const hoy = new Date();
     const proximosReales = partidos.filter(p => p.estado !== "FINALIZADO" && new Date(p.fecha) >= hoy).sort((a,b)=>new Date(a.fecha)-new Date(b.fecha));
     const proximoPartido = proximosReales[0];
@@ -254,7 +261,6 @@ async function mostrarPerfil() {
     }
     historialHTML += '</div>';
     
-    // Lista de rivales reales
     const chipsRivales = rivalesList.map(rival => `<span class="rival-chip">${escapeHtml(rival)}</span>`).join('');
     const botonesHistorial = `
         <div class="botones-historial">
@@ -358,7 +364,7 @@ async function abrirHistorialDeudas() {
     document.getElementById('modalHistorialDeudas').style.display = 'flex';
 }
 
-// ==================== RULETA INTELIGENTE (con rivales de partidos PRÓXIMO) ====================
+// ==================== RULETA (con los rivales de partidos PRÓXIMO reales) ====================
 async function mostrarRuleta() {
     // Obtener partidos con estado "PRÓXIMO"
     const partidos = await cargarPartidos();
@@ -498,22 +504,16 @@ async function enviarFirmaTerminos() {
     if (yaConfirmo) mostrarPerfil();
     else mostrarRuleta();
 }
+async function verificarTerminos() {
+    const perfil = await obtenerPerfilJugador();
+    return perfil && perfil.terminos_aceptados === true;
+}
 async function mostrarNotificacionSiNecesaria() {
     const aceptado = await verificarTerminos();
     if (aceptado) return true;
-    // Intentar obtener notificación desde hoja Notificaciones
-    const notificacion = await callApi("getNotificacionActiva");
-    if (notificacion.success) {
-        document.getElementById('notificacionTitulo').innerText = notificacion.notificacion.titulo || "AVISO IMPORTANTE";
-        document.getElementById('notificacionMensaje').innerHTML = notificacion.notificacion.mensaje || "";
-    } else {
-        document.getElementById('notificacionTitulo').innerText = "GRAN INAUGURACIÓN";
-        document.getElementById('notificacionMensaje').innerHTML = "⚽ ATENCIÓN JUGADORES ⚽<br>📅 17 de mayo - 9:30 a.m.<br>✅ Seleccione opción de asistencia";
-    }
     document.getElementById('modalTerms').style.display = 'flex';
     return new Promise((resolve) => {
         const btn = document.getElementById('btnFirmar');
-        const originalClick = btn.onclick;
         btn.onclick = async () => {
             await enviarFirmaTerminos();
             resolve(true);
