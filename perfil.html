@@ -4,10 +4,8 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Nápoles F.C. - Sorteo de Rivales</title>
-<!-- Tailwind + Fuentes para la RULETA -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<!-- FontAwesome y fuentes para el PERFIL -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
@@ -417,7 +415,8 @@
 <script>
 // ==================== CONFIGURACIÓN ====================
 const CONFIG = {
-    URL_GAS: "https://script.google.com/macros/s/AKfycbxZvxp0iwjXVrqx3BMdJCeYA6zWSDrCJ0vv3cDcKORY0aEU5ePreyzgFYcLhPAvC8tl/exec"   // <-- REEMPLAZA POR TU URL
+    // REEMPLAZA ESTA URL CON LA DE TU WEB APP DESPLEGADA (la que tiene el Code.gs corregido)
+    URL_GAS: "https://script.google.com/macros/s/AKfycbxUUjo7_hTb3T2dnvKLYQuoqfQPWXINo7pYSEQMXCj7cVqM0uE_5WXP7k2E9V2-WGCj/exec"
 };
 
 // Obtener sesión del jugador
@@ -656,6 +655,7 @@ function mostrarRuleta() {
         </main>
     `;
 
+    // Lista de rivales (el sorteo incluye a FRANCO CANADIENSE)
     const rivals = [
         { name: "FRANCO CANADIENSE", icon: "🍁", power: "MEDIO" },
         { name: "IDEAL", icon: "⚡", power: "MEDIO" },
@@ -730,7 +730,7 @@ function mostrarRuleta() {
     document.getElementById('confirmButton').addEventListener('click', guardarPartido);
 }
 
-// ==================== GUARDAR PARTIDO (GET a guardarPartido - original) ====================
+// ==================== GUARDAR PARTIDO (GET a guardarPartido, que ahora llama a registrarAsistencia) ====================
 async function guardarPartido() {
     const btn = document.getElementById('confirmButton');
     if (!btn || btn.disabled) return;
@@ -763,8 +763,9 @@ async function guardarPartido() {
         if (result.success) {
             mostrarPerfil();
         } else {
-            alert('✅ Ya confirmaste tu asistencia. Redirigiendo a tu perfil...');
-            mostrarPerfil();
+            alert('❌ Error al guardar la asistencia. Contacta al administrador.');
+            btn.disabled = false;
+            btn.innerText = 'Ahí estaré puntual';
         }
     } catch(error) {
         alert('❌ Error de conexión. Intenta de nuevo.');
@@ -773,10 +774,10 @@ async function guardarPartido() {
     }
 }
 
-// ==================== VERIFICAR SI YA CONFIRMÓ ====================
+// ==================== VERIFICAR SI YA CONFIRMÓ (específicamente para FRANCO CANADIENSE) ====================
 async function verificarConfirmacionPrevia() {
     try {
-        const url = `${CONFIG.URL_GAS}?action=verificarConfirmacionPartido&cedula=${encodeURIComponent(cedula)}`;
+        const url = `${CONFIG.URL_GAS}?action=verificarConfirmacionPartidoEspecifico&cedula=${encodeURIComponent(cedula)}&rival=FRANCO%20CANADIENSE&fecha=2026-06-13`;
         const resp = await fetch(url);
         const data = await resp.json();
         return data.confirmed === true;
