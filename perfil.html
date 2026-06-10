@@ -417,7 +417,7 @@
 <script>
 // ==================== CONFIGURACIÓN ====================
 const CONFIG = {
-    URL_GAS: "https://script.google.com/macros/s/AKfycbydcH2KminQA52AFz_RuOJj1dWCZzTSwD41-gns_W17sG5XdZjUwf-HxK8Jod19FHs_/exec"
+    URL_GAS: "https://script.google.com/macros/s/AKfycbydcH2KminQA52AFz_RuOJj1dWCZzTSwD41-gns_W17sG5XdZjUwf-HxK8Jod19FHs_/exec"   // <-- REEMPLAZA POR TU URL
 };
 
 // Obtener sesión del jugador
@@ -523,16 +523,16 @@ async function mostrarPerfil() {
                         <div class="id-card-jersey-wrap"><div class="jersey-card-inner"><div class="face-front"><div class="jersey-name">${s.nombreCamiseta}</div><div class="jersey-number">${s.dorsal}</div><div>Talla ${s.tallaUni}</div></div><div class="face-back"><div class="jersey-name">NÁPOLES FC</div><div class="jersey-number">${s.dorsal}</div></div></div></div>
                     </div>
 
-                    <!-- SECCIÓN: PRÓXIMO ENCUENTRO (Nápoles vs Franco Canadiense) -->
+                    <!-- SECCIÓN: PRÓXIMO ENCUENTRO (Nápoles vs FRANCO CANADIENSE) -->
                     <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
                         <div class="match-card-gold" style="margin-bottom:0;">
                             <div class="match-teams">
                                 <div class="team-badge"><div class="team-name">⚜️ NÁPOLES F.C.</div><div class="team-sub">Local · Fuerza Azteca</div></div>
                                 <div class="vs-circle">VS</div>
-                                <div class="team-badge"><div class="team-name">🦁 FRANCO CANADIENSE</div><div class="team-sub">Visitante · Tradición</div></div>
+                                <div class="team-badge"><div class="team-name">🍁 FRANCO CANADIENSE</div><div class="team-sub">Visitante · Tradición</div></div>
                             </div>
                             <div class="match-info">
-                                <div class="match-info-item"><i class="fa-regular fa-calendar-alt"></i> SÁBADO 6 DE JUNIO, 2026</div>
+                                <div class="match-info-item"><i class="fa-regular fa-calendar-alt"></i> SÁBADO 13 DE JUNIO, 2026</div>
                                 <div class="match-info-item"><i class="fa-regular fa-clock"></i> 12:00 HORAS</div>
                                 <div class="match-info-item"><i class="fa-solid fa-location-dot"></i> CANCHA 1 - LIGA SANTA RITA</div>
                             </div>
@@ -629,14 +629,14 @@ function mostrarRuleta() {
                         </div>
                         <div class="font-display-lg text-5xl text-secondary cinematic-text italic" style="color:#e9c349;">VS</div>
                         <div class="flex flex-col items-center gap-4">
-                            <div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-secondary winner-glow"><span class="text-5xl">🦁</span></div>
+                            <div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-secondary winner-glow"><span class="text-5xl">🍁</span></div>
                             <span class="font-display-lg text-xl tracking-wider text-white">FRANCO CANADIENSE</span>
                         </div>
                     </div>
                 </div>
                 <div class="reveal-element match-info-card w-full max-w-md mx-4">
                     <div class="flex justify-center gap-6 flex-wrap text-white">
-                        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary" style="color:#e9c349;">event</span><span class="text-sm font-bold">SÁBADO 6 DE JUNIO, 2026</span></div>
+                        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary" style="color:#e9c349;">event</span><span class="text-sm font-bold">SÁBADO 13 DE JUNIO, 2026</span></div>
                         <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary" style="color:#e9c349;">schedule</span><span class="text-sm font-bold">12:00 HORAS</span></div>
                         <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary" style="color:#e9c349;">stadium</span><span class="text-sm font-bold">CANCHA 1 - LIGA SANTA RITA</span></div>
                     </div>
@@ -657,7 +657,7 @@ function mostrarRuleta() {
     `;
 
     const rivals = [
-        { name: "LEONES", icon: "🦁", power: "ALTO" },
+        { name: "FRANCO CANADIENSE", icon: "🍁", power: "MEDIO" },
         { name: "IDEAL", icon: "⚡", power: "MEDIO" },
         { name: "BARZA", icon: "🔵🔴", power: "EXTREMO" },
         { name: "SAN MARTIN", icon: "🏰", power: "MEDIO" },
@@ -666,7 +666,7 @@ function mostrarRuleta() {
         { name: "CHELSEA", icon: "💙", power: "ALTO" },
         { name: "JUVENTUD DE AMERICA", icon: "🟡🔴", power: "EXTREMO" },
         { name: "JUVENTUS", icon: "⚪⚫", power: "ALTO" },
-        { name: "FRANCO CANADIENSE", icon: "🍁", power: "MEDIO" }
+        { name: "LEONES", icon: "🦁", power: "ALTO" }
     ];
     const track = document.getElementById('roulette-track');
     const revealScreen = document.getElementById('reveal-screen');
@@ -730,6 +730,7 @@ function mostrarRuleta() {
     document.getElementById('confirmButton').addEventListener('click', guardarPartido);
 }
 
+// ==================== GUARDAR PARTIDO (GET a guardarPartido - original) ====================
 async function guardarPartido() {
     const btn = document.getElementById('confirmButton');
     if (!btn || btn.disabled) return;
