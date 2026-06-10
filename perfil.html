@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-    /* Estilos (igual que antes, se omiten por brevedad) */
+    /* (Mismos estilos que en el código anterior - se omiten por brevedad pero debes copiarlos) */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Inter', sans-serif; background: #0a0c10; color: #fff; }
     .perfil-root { background: radial-gradient(circle at top, #111a33 0%, #060912 100%); min-height: 100vh; padding: 15px; display: flex; justify-content: center; }
@@ -69,7 +69,7 @@
 </style>
 </head>
 <body>
-<!-- Modal de notificaciones (dinámico) -->
+<!-- Modal de notificaciones -->
 <div class="terms-backdrop" id="modalNotificacion">
     <div class="modal-box">
         <h2 id="notificacionTitulo" style="text-align:center; color:#D4AF37;">Cargando...</h2>
@@ -85,7 +85,7 @@
 <div id="dynamicContent"></div>
 
 <script>
-const CONFIG = { URL_GAS: "https://script.google.com/macros/s/AKfycbw4y80UB8oiRCXwubFGISlezzlnkFvwMNatgetfne5v2rSGqyrPl2l1FXHFUOWH6w0n/exec" };
+const CONFIG = { URL_GAS: "https://script.google.com/macros/s/AKfycbyvMMkhkFaX6cIC3ROVtLow5xqLGbm8QGXonCeEAL_gQlG394o0JeejTc7w7AuhsBpL/exec" };
 
 let jugadorSesion = null;
 try { jugadorSesion = JSON.parse(localStorage.getItem('jugador_actual')); } catch(e) {}
@@ -123,8 +123,7 @@ async function obtenerPerfilJugador() {
 }
 async function obtenerRendimiento() {
     const data = await callApi("getRendimientoJugador", { cedula });
-    if (data.success) return { puntualidad: data.puntualidad, companerismo: data.companerismo, respeto: data.respeto, humildad: data.humildad };
-    return null;
+    return data.success ? { puntualidad: data.puntualidad, companerismo: data.companerismo, respeto: data.respeto, humildad: data.humildad } : null;
 }
 async function obtenerNotificacionActiva() {
     const data = await callApi("getNotificacionActiva");
@@ -132,14 +131,12 @@ async function obtenerNotificacionActiva() {
 }
 async function verificarNotificacionAceptada(notificacionId) {
     const data = await callApi("verificarNotificacionAceptada", { cedula, notificacionId });
-    return data === true;
+    return data.accepted === true;
 }
 async function verificarConfirmacionPrevia() {
-    // Verifica si el jugador ya confirmó asistencia a algún partido con estado "PRÓXIMO" (futuro)
     const partidos = await cargarPartidos();
     const proximos = partidos.filter(p => p.estado === "PRÓXIMO");
-    if (proximos.length === 0) return false; // No hay próximos, no se puede confirmar
-    // Buscar en Partidos Hombres si ya hay registro para algún partido próximo
+    if (proximos.length === 0) return false;
     const data = await callApi("verificarAsistenciaFutura", { cedula });
     return data.confirmed === true;
 }
@@ -473,7 +470,7 @@ async function guardarAsistenciaPartidoPendiente(rival) {
 // ==================== NOTIFICACIÓN DINÁMICA ====================
 async function mostrarNotificacionSiNecesaria() {
     const notificacion = await obtenerNotificacionActiva();
-    if (!notificacion) return true; // no hay notificación, continuar
+    if (!notificacion) return true; // no hay notificación
     const aceptada = await verificarNotificacionAceptada(notificacion.id);
     if (aceptada) return true;
     // Mostrar modal
@@ -484,7 +481,7 @@ async function mostrarNotificacionSiNecesaria() {
         const btn = document.getElementById('btnAceptarNotificacion');
         const aceptar = async () => {
             btn.removeEventListener('click', aceptar);
-            await callPost("guardarTerminos", { cedula, categoria }); // guarda en Notificaciones
+            await callPost("guardarTerminos", { cedula, categoria });
             document.getElementById('modalNotificacion').style.display = 'none';
             resolve(true);
         };
@@ -511,7 +508,6 @@ async function mostrarNotificacionSiNecesaria() {
     const partidos = await cargarPartidos();
     const proximos = partidos.filter(p => p.estado === "PRÓXIMO");
     if (proximos.length === 0) {
-        // No hay próximos partidos, mostrar perfil directamente
         mostrarPerfil();
         return;
     }
@@ -523,7 +519,7 @@ async function mostrarNotificacionSiNecesaria() {
         return;
     }
     
-    // 3. No ha confirmado y hay partidos próximos -> mostrar ruleta con los rivales únicos
+    // 3. No ha confirmado y hay partidos próximos -> mostrar ruleta
     const rivalesUnicos = [...new Set(proximos.map(p => p.rival))];
     mostrarRuletaConSorteo(rivalesUnicos);
 })();
