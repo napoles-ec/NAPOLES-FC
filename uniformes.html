@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -381,7 +380,6 @@ MODAL DE GESTIÓN Y CAMBIO DE ESTADOS
 }
 </style>
 </head>
-
 <body>
 
 <!-- TOPBAR -->
@@ -427,8 +425,10 @@ MODAL DE GESTIÓN Y CAMBIO DE ESTADOS
     </div>
 </div>
 
-<script src="config.js"></script>
 <script>
+// ==================== CONFIGURACIÓN DIRECTA ====================
+const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxyaDJ54hSaMxcA456QSRQRwFUkB2617vgZ_UhcDpt0mBpKJUn3tfHdHZVHSat8M8GJ/exec';
+
 // Validar sesión administrativa activa
 if(localStorage.getItem('admin_activo') !== 'true'){
     window.location.href = './login.html';
@@ -440,7 +440,7 @@ let BD_JUGADORES = [];
 async function inicializarModulo() {
     const mainContainer = document.getElementById('mainContainer');
     try {
-        const url = `${CONFIG.URL_GAS}?action=getUniformesData&t=${Date.now()}`;
+        const url = `${WEBAPP_URL}?action=getUniformesData&t=${Date.now()}`;
         const res = await fetch(url);
         const data = await res.json();
 
@@ -452,18 +452,19 @@ async function inicializarModulo() {
         }
     } catch (error) {
         mainContainer.innerHTML = `<div style="text-align:center; padding:50px; color:var(--danger); font-weight:700;">❌ Error crítico de enlace con Google Sheets.</div>`;
+        console.error(error);
     }
 }
 
 function procesarYRenderizar(jugadores) {
     // Conteos Inteligentes Automatizados basados en columna Y (Unif_Estado)
-    let entregasPendientes = jugadores.filter(j => j.unif_estado.toUpperCase().includes('PENDIENTE')).length;
+    let entregasPendientes = jugadores.filter(j => (j.unif_estado || '').toUpperCase().includes('PENDIENTE')).length;
     let totalUniformesValidos = jugadores.length;
 
     // Distribución Automática por Tallas (Columna AA)
     let stockTallas = { S: 0, M: 0, L: 0, XL: 0, SinTalla: 0 };
     jugadores.forEach(j => {
-        let t = String(j.talla).toUpperCase().trim();
+        let t = String(j.talla || '').toUpperCase().trim();
         if(t.includes('S') && t.length === 1) stockTallas.S++;
         else if(t.includes('M')) stockTallas.M++;
         else if(t.includes('L') && t.length === 1) stockTallas.L++;
@@ -485,7 +486,6 @@ function procesarYRenderizar(jugadores) {
         </section>
 
         <section class="uniforms">
-            <!-- CATEGORÍA LOCAL -->
             <div class="uniform-card">
                 <div class="uniform-top">
                     <div class="uniform-left">
@@ -528,29 +528,27 @@ function renderListaJugadoresModal(lista) {
     }
 
     contenedor.innerHTML = lista.map(j => {
-        const inscripEsPagado = j.inscrip_estado.toUpperCase() === 'PAGADO';
-        const unifEsPagado = j.unif_estado.toUpperCase() === 'PAGADO';
+        const inscripEsPagado = (j.inscrip_estado || '').toUpperCase() === 'PAGADO';
+        const unifEsPagado = (j.unif_estado || '').toUpperCase() === 'PAGADO';
 
         return `
             <div class="player-item-card">
-                <div class="player-name">${j.nombre}</div>
+                <div class="player-name">${escapeHtml(j.nombre)}</div>
                 <div class="player-meta"><i class="fa-solid fa-address-card"></i> C.I: ${j.cedula} | Talla: ${j.talla || 'N/A'}</div>
                 
-                <!-- CONTROL COLUMNA X: INSCRIP_ESTADO -->
                 <div class="toggle-row">
                     <span class="toggle-label">1. Inscripción (Col. X)</span>
                     <span class="status-badge ${inscripEsPagado ? 'badge-pagado' : 'badge-pendiente'}" 
-                          onclick="alternarEstado('${j.cedula}', 'inscrip', '${j.inscrip_estado}')">
+                          onclick="alternarEstado('${j.cedula}', 'inscrip', '${j.inscrip_estado || 'PENDIENTE'}')">
                         <i class="fa-solid ${inscripEsPagado ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i>
                         ${j.inscrip_estado || 'PENDIENTE'}
                     </span>
                 </div>
 
-                <!-- CONTROL COLUMNA Y: UNIF_ESTADO -->
                 <div class="toggle-row">
                     <span class="toggle-label">2. Uniforme (Col. Y)</span>
                     <span class="status-badge ${unifEsPagado ? 'badge-pagado' : 'badge-pendiente'}" 
-                          onclick="alternarEstado('${j.cedula}', 'unif', '${j.unif_estado}')">
+                          onclick="alternarEstado('${j.cedula}', 'unif', '${j.unif_estado || 'PENDIENTE'}')">
                         <i class="fa-solid ${unifEsPagado ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i>
                         ${j.unif_estado || 'PENDIENTE'}
                     </span>
@@ -583,7 +581,7 @@ async function alternarEstado(cedula, campo, estadoActual) {
     document.getElementById('listaJugadoresModal').style.opacity = "0.4";
 
     try {
-        const url = `${CONFIG.URL_GAS}?action=updateEstados&cedula=${encodeURIComponent(cedula)}&inscrip=${encodeURIComponent(inscripEnvio)}&unif=${encodeURIComponent(unifEnvio)}`;
+        const url = `${WEBAPP_URL}?action=updateEstados&cedula=${encodeURIComponent(cedula)}&inscrip=${encodeURIComponent(inscripEnvio)}&unif=${encodeURIComponent(unifEnvio)}`;
         const res = await fetch(url);
         const data = await res.json();
 
@@ -600,9 +598,21 @@ async function alternarEstado(cedula, campo, estadoActual) {
         }
     } catch (e) {
         alert('Error de red al conectar con la base de datos.');
+        console.error(e);
     } finally {
         document.getElementById('listaJugadoresModal').style.opacity = "1";
     }
+}
+
+// Función de escape por seguridad
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    });
 }
 
 // Inicialización de la aplicación
