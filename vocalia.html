@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>Vocalía | Nápoles FC - Gestión por conceptos</title>
+<title>Vocalía | Nápoles FC - Gestión por conceptos con filtros</title>
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -70,11 +70,14 @@
         }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        .concepto-pill {
-            transition: all 0.15s ease;
+        .filter-chip {
+            transition: all 0.2s ease;
+            cursor: pointer;
         }
-        .concepto-pill:hover {
-            transform: translateY(-2px);
+        .filter-chip.active {
+            background-color: #9d4300 !important;
+            color: white !important;
+            border-color: #9d4300 !important;
         }
         .toast-notify {
             position: fixed;
@@ -141,6 +144,30 @@
         </div>
     </section>
 
+    <!-- Filtros por concepto y estado -->
+    <section class="glass-card p-5 rounded-xl mb-6">
+        <div class="flex flex-col gap-4">
+            <div class="flex flex-wrap gap-2 items-center">
+                <span class="text-label-md font-medium text-on-surface-variant mr-2">Filtrar por deuda:</span>
+                <button data-filtro-concepto="todos" class="filter-chip active px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm font-medium">Todos</button>
+                <button data-filtro-concepto="vocalia" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm font-medium">Vocalía</button>
+                <button data-filtro-concepto="uniformes" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm font-medium">Uniformes</button>
+                <button data-filtro-concepto="inscripcion" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm font-medium">Inscripción</button>
+                <button data-filtro-concepto="inauguracion" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm font-medium">Inauguración</button>
+                <button data-filtro-concepto="multas" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm font-medium">Multas</button>
+                <button data-filtro-concepto="tarjeta_amarilla" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm font-medium">Tarj. Amarilla</button>
+                <button data-filtro-concepto="tarjeta_roja" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm font-medium">Tarj. Roja</button>
+            </div>
+            <div class="flex flex-wrap gap-2 items-center">
+                <span class="text-label-md font-medium text-on-surface-variant mr-2">Estado:</span>
+                <button data-filtro-estado="todos" class="filter-estado active px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm font-medium">Todos</button>
+                <button data-filtro-estado="morosos" class="filter-estado px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm font-medium">Con deuda (morosos)</button>
+                <button data-filtro-estado="aldia" class="filter-estado px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm font-medium">Al día (sin deuda)</button>
+                <button data-filtro-estado="credito" class="filter-estado px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm font-medium">Con crédito a favor</button>
+            </div>
+        </div>
+    </section>
+
     <!-- Player Search & Actions -->
     <section class="glass-card p-6 rounded-xl mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
         <div class="relative w-full md:w-96">
@@ -158,6 +185,9 @@
         </div>
     </section>
 
+    <!-- Contador de resultados -->
+    <div class="text-right text-label-sm text-on-surface-variant mb-3" id="resultados-contador">Mostrando todos los jugadores</div>
+
     <!-- Player List (Bento Grid) -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="lista-jugadores">
         <div class="col-span-full py-20 text-center">
@@ -167,7 +197,7 @@
     </div>
 </main>
 
-<!-- Modal: Pago individual o múltiple (concepto + monto) -->
+<!-- Modal: Pago individual o múltiple -->
 <div id="modalPago" class="fixed inset-0 z-[60] hidden items-center justify-center p-4">
     <div class="absolute inset-0 bg-on-surface/40 backdrop-blur-sm" onclick="cerrarModalPago()"></div>
     <div class="relative glass-card w-full max-w-md rounded-2xl overflow-hidden">
@@ -227,14 +257,15 @@
     // ========== CONFIGURACIÓN API REAL ==========
     const API_URL = "https://script.google.com/macros/s/AKfycbwLcpH5z2x_EjRPaPu6gI_lLokWkVxsKLgBz-HHCVX7_OhKAFU1LVfZ67bh9DCbn9L6/exec";
     
-    // Verificación de login (opcional, si usas login.html)
-    if(localStorage.getItem('admin_activo') !== 'true') {
-        // window.location.href = './login.html'; // Descomenta si tienes login
-    }
-
+    // Variables globales
     let jugadoresData = [];
-    let selectedPlayers = new Set(); // cédulas seleccionadas
-    let modoPagoMultiple = false;    // para saber si pagamos a varios
+    let selectedPlayers = new Set();
+    let modoPagoMultiple = false;
+    
+    // Filtros activos
+    let filtroConcepto = "todos";   // 'todos', 'vocalia', 'uniformes', etc.
+    let filtroEstado = "todos";     // 'todos', 'morosos', 'aldia', 'credito'
+    let busquedaTexto = "";
 
     const CONCEPTOS_ORDER = ["uniformes", "inscripcion", "vocalia", "inauguracion", "multas", "tarjeta_amarilla", "tarjeta_roja"];
     const NOMBRES_CONCEPTOS = {
@@ -243,7 +274,6 @@
     };
 
     function formatearMoneda(v) { return new Intl.NumberFormat('es-EC', { style: 'currency', currency: 'USD' }).format(v); }
-
     function mostrarToast(mensaje, tipo='info') {
         let toast = document.createElement('div');
         toast.className = 'toast-notify';
@@ -252,7 +282,6 @@
         setTimeout(() => toast.remove(), 3000);
     }
 
-    // Calcula deuda total (soporta formato nuevo con deudas y crédito)
     function calcularDeudaTotal(jugador) {
         if(jugador.deuda !== undefined && !jugador.deudas) return jugador.deuda;
         let suma = 0;
@@ -261,7 +290,26 @@
         return Math.max(0, suma - credito);
     }
 
-    // Cargar datos desde la API real
+    // Función que determina si un jugador cumple con los filtros
+    function cumpleFiltros(jugador) {
+        // Filtro por nombre
+        const nombreCompleto = (jugador.nombreCompleto || jugador.nombreCamiseta || "").toLowerCase();
+        if(busquedaTexto && !nombreCompleto.includes(busquedaTexto.toLowerCase())) return false;
+        
+        // Filtro por estado
+        const deudaTotal = calcularDeudaTotal(jugador);
+        const tieneCredito = (jugador.credito || 0) > 0;
+        if(filtroEstado === "morosos" && deudaTotal === 0) return false;
+        if(filtroEstado === "aldia" && deudaTotal > 0) return false;
+        if(filtroEstado === "credito" && !tieneCredito) return false;
+        
+        // Filtro por concepto de deuda (muestra jugadores que tengan deuda > 0 en ese concepto específico)
+        if(filtroConcepto !== "todos") {
+            if(!jugador.deudas || (jugador.deudas[filtroConcepto] || 0) <= 0) return false;
+        }
+        return true;
+    }
+
     async function cargarDatos() {
         const container = document.getElementById('lista-jugadores');
         container.innerHTML = `<div class="col-span-full py-20 text-center"><div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent mb-4"></div><p class="text-on-surface-variant">Cargando plantilla...</p></div>`;
@@ -270,8 +318,7 @@
             const data = await res.json();
             if(data.success) {
                 jugadoresData = data.deudores;
-                
-                // Calcular total deuda y deudores
+                // Actualizar stats generales (sin filtros)
                 let totalDeuda = 0, deudoresCount = 0;
                 for(let j of jugadoresData) {
                     let deuda = calcularDeudaTotal(j);
@@ -281,7 +328,6 @@
                 document.getElementById('jugadores-activos').innerText = jugadoresData.length;
                 document.getElementById('pendientes-pago').innerText = deudoresCount;
                 
-                // Obtener total recaudado desde historial
                 const resHist = await fetch(`${API_URL}?action=getHistorialVocalia&nocache=${Date.now()}`);
                 const histData = await resHist.json();
                 let totalRec = 0;
@@ -290,7 +336,7 @@
                 }
                 document.getElementById('total-recaudado').innerText = formatearMoneda(totalRec);
                 
-                renderizarJugadores(jugadoresData);
+                aplicarFiltrosYRerenderizar();
             } else {
                 throw new Error(data.error);
             }
@@ -300,10 +346,16 @@
         }
     }
 
+    function aplicarFiltrosYRerenderizar() {
+        const filtrados = jugadoresData.filter(j => cumpleFiltros(j));
+        document.getElementById('resultados-contador').innerHTML = `Mostrando ${filtrados.length} de ${jugadoresData.length} jugadores`;
+        renderizarJugadores(filtrados);
+    }
+
     function renderizarJugadores(lista) {
         const container = document.getElementById('lista-jugadores');
         if(!lista.length) {
-            container.innerHTML = '<div class="col-span-full py-20 text-center text-on-surface-variant">🎉 No hay jugadores registrados.</div>';
+            container.innerHTML = '<div class="col-span-full py-20 text-center text-on-surface-variant">🎯 No hay jugadores que coincidan con los filtros.</div>';
             return;
         }
         let html = '';
@@ -311,7 +363,6 @@
             const deudaTotal = calcularDeudaTotal(j);
             const isChecked = selectedPlayers.has(j.cedula);
             const tieneConceptos = j.deudas && typeof j.deudas === 'object';
-            // Generar mini badges de conceptos con deuda > 0
             let conceptosBadges = '';
             if(tieneConceptos) {
                 for(let c of CONCEPTOS_ORDER) {
@@ -356,7 +407,7 @@
         }
         container.innerHTML = html;
         
-        // Eventos para checkboxes
+        // Reasignar eventos a los nuevos elementos
         document.querySelectorAll('.player-checkbox').forEach(cb => {
             cb.addEventListener('change', (e) => {
                 e.stopPropagation();
@@ -369,7 +420,6 @@
             });
         });
         
-        // Clic en la tarjeta para expandir detalles (si tiene conceptos)
         document.querySelectorAll('.glass-card').forEach(card => {
             const cedula = card.dataset.cedula;
             const detalleDiv = document.getElementById(`detalle-${cedula}`);
@@ -379,9 +429,8 @@
                     detalleDiv.classList.toggle('hidden');
                 });
             }
-            // Botón de pago directo (ícono)
-            const iconPay = card.querySelector('.material-symbols-outlined');
-            if(iconPay) {
+            const iconPay = card.querySelector('.material-symbols-outlined:last-child');
+            if(iconPay && iconPay.classList.contains('opacity-0')) {
                 iconPay.addEventListener('click', (e) => {
                     e.stopPropagation();
                     const jugador = jugadoresData.find(j => j.cedula === cedula);
@@ -395,7 +444,6 @@
         modoPagoMultiple = false;
         document.getElementById('modal-titulo').innerText = `Pagar a ${jugador.nombreCompleto || jugador.nombreCamiseta}`;
         document.getElementById('jugadores-seleccionados-resumen').innerHTML = '';
-        // Guardamos la cédula en un atributo
         document.getElementById('btn-confirmar-pago').setAttribute('data-cedula', jugador.cedula);
         document.getElementById('montoPago').value = '';
         document.getElementById('transaccionPago').value = '';
@@ -440,7 +488,7 @@
                 if(data.success) {
                     mostrarToast(`Pago registrado: ${data.detalle || 'correcto'}`, "success");
                     cerrarModalPago();
-                    cargarDatos();
+                    cargarDatos(); // recarga todo y mantiene filtros
                 } else {
                     throw new Error(data.error);
                 }
@@ -448,7 +496,6 @@
                 mostrarToast(e.message, "error");
             }
         } else {
-            // Pago múltiple
             let exitosos = 0, fallidos = 0;
             for(let cedula of selectedPlayers) {
                 try {
@@ -511,18 +558,36 @@
     }
     function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
     
-    function filtrarJugadores() {
-        const query = document.getElementById('busqueda').value.toLowerCase();
-        const filtrados = jugadoresData.filter(j => (j.nombreCompleto || j.nombreCamiseta).toLowerCase().includes(query));
-        renderizarJugadores(filtrados);
+    function handleBusqueda() {
+        busquedaTexto = document.getElementById('busqueda').value;
+        aplicarFiltrosYRerenderizar();
     }
-
-    // Eventos
-    document.getElementById('btn-refresh').addEventListener('click', cargarDatos);
+    
+    // Configurar filtros de concepto
+    document.querySelectorAll('[data-filtro-concepto]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('[data-filtro-concepto]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            filtroConcepto = btn.getAttribute('data-filtro-concepto');
+            aplicarFiltrosYRerenderizar();
+        });
+    });
+    
+    // Configurar filtros de estado
+    document.querySelectorAll('.filter-estado').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-estado').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            filtroEstado = btn.getAttribute('data-filtro-estado');
+            aplicarFiltrosYRerenderizar();
+        });
+    });
+    
+    document.getElementById('btn-refresh').addEventListener('click', () => cargarDatos());
     document.getElementById('btn-ver-historial').addEventListener('click', abrirHistorial);
     document.getElementById('btn-pago-multiple').addEventListener('click', abrirModalPagoMultiple);
     document.getElementById('btn-confirmar-pago').addEventListener('click', confirmarPago);
-    document.getElementById('busqueda').addEventListener('input', filtrarJugadores);
+    document.getElementById('busqueda').addEventListener('input', handleBusqueda);
     window.cerrarModalPago = cerrarModalPago;
     window.cerrarModalHistorial = cerrarModalHistorial;
     
