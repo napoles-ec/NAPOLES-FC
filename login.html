@@ -53,7 +53,7 @@ input:focus{border-color:var(--primary);background:rgba(15,23,42,.92);box-shadow
 <div class="login-card" id="loginCard">
   <div class="logo-area"><h1>NÁPOLES F.C.</h1><p>Acceso de Jugadores PRO</p></div>
   <form id="formLogin">
-    <div class="input-group"><label>Ingresa tus credenciales</label><input type="text" id="loginCedula" placeholder="Cédula o clave admin" autocomplete="off" required></div>
+    <div class="input-group"><label>Ingresa tus credenciales</label><input type="text" id="loginCedula" placeholder="0000000000" autocomplete="off" required></div>
     <button type="submit" id="btnLogin" class="btn-submit" disabled>Ingresa al Vestuario</button>
   </form>
   <div id="errorMsg" class="error-message"></div>
@@ -61,7 +61,7 @@ input:focus{border-color:var(--primary);background:rgba(15,23,42,.92);box-shadow
     <p style="margin-top:30px;margin-bottom:24px;text-align:center;">¿No tienes cuenta? <a href="./index.html">REGÍSTRATE ✨</a></p>
     <div style="display:flex;justify-content:center;"><button id="manualDownloadBtn" type="button">📲 INSTALAR APP</button></div>
     <div class="footer-version" id="versionInfo"></div>
-    <div class="security-note">🔒 Datos encriptados • Conexión segura • By Corporación 360</div>
+    <div class="security-note">🔒 Datos encriptados • Conexión segura • bY Corporación 360</div>
   </div>
 </div>
 <div id="updateBanner" class="update-banner"><p><i class="fa-solid fa-arrow-rotate-right"></i> Nueva versión disponible. Actualiza para obtener las últimas mejoras.</p><button id="updateBtn">Actualizar ahora</button></div>
@@ -74,43 +74,65 @@ input:focus{border-color:var(--primary);background:rgba(15,23,42,.92);box-shadow
     const res = await fetch('./sw.js');
     const txt = await res.text();
     const match = txt.match(/CACHE_NAME\s*=\s*['"](?:napoles-)?v?([\d\.]+)['"]/);
-    const version = match ? 'v' + match[1] : 'v1.0.47';
+    const version = match ? 'v' + match[1] : 'v1.0.50';
     document.getElementById('versionInfo').innerHTML = `<span>${version}</span><span> • </span><span>By Corporación 360</span>`;
   } catch(e) {
-    document.getElementById('versionInfo').innerHTML = `<span>v1.0.47</span><span> • </span><span>By Corporación 360</span>`;
+    document.getElementById('versionInfo').innerHTML = `<span>v1.0.50</span><span> • </span><span>DARK</span>`;
   }
 })();
 
-// ==================== INSTALACIÓN PWA ====================
+// ==================== INSTALACIÓN PWA CON DETECCIÓN DE APP YA INSTALADA ====================
 let deferredPrompt = null;
 const installBtn = document.getElementById('manualDownloadBtn');
 
-// Capturar el evento beforeinstallprompt
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  console.log('✅ beforeinstallprompt CAPTURADO. La app es instalable.');
-  installBtn.textContent = '📲 INSTALAR APP (LISTO)';
-  installBtn.style.background = "linear-gradient(135deg, #059669, #10b981)";
-});
+// Función para detectar si la app ya está instalada
+function isPWAInstalled() {
+  // Modo standalone en Android/Chrome/Edge
+  if (window.matchMedia('(display-mode: standalone)').matches) return true;
+  // Modo standalone en iOS Safari
+  if (window.navigator.standalone === true) return true;
+  return false;
+}
 
-// Acción del botón de instalación
-installBtn.addEventListener('click', async () => {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      console.log('Usuario aceptó la instalación');
+// Si ya está instalada, ocultar el botón y no hacer nada más
+if (isPWAInstalled()) {
+  installBtn.style.display = 'none';
+  console.log('App ya instalada, botón ocultado');
+} else {
+  // Solo mostrar lógica de instalación si no está instalada
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    console.log('✅ beforeinstallprompt CAPTURADO. La app es instalable.');
+    installBtn.textContent = '📲 INSTALAR APP (LISTO)';
+    installBtn.style.background = "linear-gradient(135deg, #059669, #10b981)";
+  });
+
+  installBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        console.log('Usuario aceptó la instalación');
+        // Ocultar el botón después de instalar (por si el evento 'appinstalled' falla)
+        installBtn.style.display = 'none';
+      } else {
+        console.log('Usuario rechazó la instalación');
+      }
+      deferredPrompt = null;
+      installBtn.textContent = '📲 INSTALAR APP';
+      installBtn.style.background = "linear-gradient(135deg, #00d2ff, #008f9b)";
     } else {
-      console.log('Usuario rechazó la instalación');
+      alert('🔧 Instalación automática no disponible.\n\nPara instalar, abre el menú del navegador (tres puntos) y selecciona "Instalar aplicación".\nSi no ves la opción, interactúa más con la página y recárgala.');
     }
-    deferredPrompt = null;
-    installBtn.textContent = '📲 INSTALAR APP';
-    installBtn.style.background = "linear-gradient(135deg, #00d2ff, #008f9b)";
-  } else {
-    alert('🔧 Instalación automática no disponible.\n\nPara instalar, abre el menú del navegador (tres puntos) y selecciona "Instalar aplicación".\nSi no ves la opción, asegúrate de interactuar con la página y esperar unos segundos.');
-  }
-});
+  });
+
+  // Evento 'appinstalled' como respaldo para ocultar el botón
+  window.addEventListener('appinstalled', () => {
+    console.log('App instalada (evento appinstalled), ocultando botón');
+    installBtn.style.display = 'none';
+  });
+}
 
 // ==================== SERVICE WORKER Y ACTUALIZACIONES ====================
 let waitingWorker = null;
@@ -137,7 +159,7 @@ if ('serviceWorker' in navigator) {
     })
     .catch(err => console.error('❌ Error al registrar SW:', err));
 
-  // Forzar claim del SW si es necesario (para que tome control rápidamente)
+  // Forzar claim del SW si es necesario
   navigator.serviceWorker.ready.then(registration => {
     if (registration.active && !navigator.serviceWorker.controller) {
       window.location.reload();
@@ -146,7 +168,7 @@ if ('serviceWorker' in navigator) {
 }
 document.getElementById('updateBtn').addEventListener('click', updateApp);
 
-// ==================== LOGIN (sin cambios) ====================
+// ==================== LOGIN ====================
 const form = document.getElementById('formLogin');
 const cedula = document.getElementById('loginCedula');
 const btn = document.getElementById('btnLogin');
