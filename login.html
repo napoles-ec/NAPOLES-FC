@@ -649,10 +649,39 @@ document.getElementById('errorMsg');
 const loginCard =
 document.getElementById('loginCard');
 
-// =====================================================
-// ERROR
-// =====================================================
+// ==================== INSTALACIÓN PWA (beforeinstallprompt) ====================
+let deferredPrompt = null;
 
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevenir que el navegador muestre automáticamente el diálogo
+    e.preventDefault();
+    // Guardar el evento para usarlo más tarde
+    deferredPrompt = e;
+    console.log('Evento beforeinstallprompt capturado');
+});
+
+const installBtn = document.getElementById('manualDownloadBtn');
+installBtn.addEventListener('click', () => {
+    if (deferredPrompt) {
+        // Mostrar el diálogo de instalación
+        deferredPrompt.prompt();
+        // Esperar a que el usuario responda
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('Usuario aceptó la instalación');
+            } else {
+                console.log('Usuario rechazó la instalación');
+            }
+            deferredPrompt = null;
+        });
+    } else {
+        // Si el evento no está disponible (ya instalada o el navegador no soporta),
+        // mostrar una ayuda para instalar manualmente
+        alert('Para instalar la app, abre el menú del navegador y selecciona "Instalar aplicación" o "Agregar a pantalla de inicio".');
+    }
+});
+
+// ==================== LOGIN (sin cambios) ====================
 function mostrarError(msj){
 
     errorDiv.textContent = msj;
@@ -666,10 +695,6 @@ function mostrarError(msj){
     }, 5000);
 }
 
-// =====================================================
-// INPUT
-// =====================================================
-
 cedulaInput.addEventListener('input', () => {
 
     const val =
@@ -677,8 +702,6 @@ cedulaInput.addEventListener('input', () => {
 
     btnLogin.disabled =
     !val;
-
-    // EFECTO ADMIN MORADO
 
     if(val.includes('Gata')){
 
@@ -694,10 +717,6 @@ cedulaInput.addEventListener('input', () => {
     }
 
 });
-
-// =====================================================
-// LOGIN CORREGIDO Y ADAPTADO AL BACKEND
-// =====================================================
 
 formLogin.addEventListener('submit', async (e) => {
 
@@ -740,7 +759,7 @@ formLogin.addEventListener('submit', async (e) => {
 
     try{
 
-        // LOGIN ADMIN (Adaptado a POST + estructura de datos correcta)
+        // LOGIN ADMIN
 
         if(valor === 'GataFiera54321'){
 
@@ -756,7 +775,6 @@ formLogin.addEventListener('submit', async (e) => {
 
             const dataAdmin = await responseAdmin.json();
 
-            // Modificado de dataAdmin.ok a dataAdmin.success conforme a tu Apps Script
             if(
                 dataAdmin.success === true &&
                 dataAdmin.acceso === true
@@ -811,8 +829,6 @@ formLogin.addEventListener('submit', async (e) => {
 
         const data = await response.json();
 
-        // APROBADO (Modificado de data.ok a data.success conforme a tu Apps Script)
-
         if(
             data.success === true &&
             data.cedulaExiste === true &&
@@ -836,8 +852,6 @@ formLogin.addEventListener('submit', async (e) => {
             return;
         }
 
-        // PENDIENTE / RECHAZADO
-
         if(
             data.success === true &&
             data.cedulaExiste === true
@@ -849,8 +863,6 @@ formLogin.addEventListener('submit', async (e) => {
 
             return;
         }
-
-        // NO EXISTE
 
         if(
             data.success === true &&
@@ -886,29 +898,7 @@ formLogin.addEventListener('submit', async (e) => {
 
 });
 
-// =====================================================
-// INSTALAR APP
-// =====================================================
-
-const manualDownloadBtn =
-document.getElementById('manualDownloadBtn');
-
-manualDownloadBtn.addEventListener('click', () => {
-
-    alert(
-`📲 INSTALAR APP
-
-1. Abre el menú del navegador
-
-2. Presiona:
-"Instalar aplicación"
-
-3. Agregar a pantalla principal`
-    );
-
-});
-
-// ==================== REGISTRO DEL SERVICE WORKER (PWA) ====================
+// ==================== REGISTRO DEL SERVICE WORKER ====================
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
