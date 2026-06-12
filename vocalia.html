@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
+        /* (Mismos estilos que antes, no los repito por brevedad, pero mantenlos) */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
             font-family: 'Inter', sans-serif;
@@ -156,7 +157,6 @@
         <div class="btn-group">
             <button class="btn btn-historial" id="btnHistorial"><i class="fa-solid fa-clock-rotate-left"></i> Historial</button>
             <button class="btn btn-pago-multiple" id="btnPagoMultiple"><i class="fa-solid fa-users"></i> Pagar seleccionados</button>
-            <button class="btn btn-reset" id="btnResetCache"><i class="fa-solid fa-broom"></i> Reset demo</button>
             <button class="btn btn-refresh" id="btnRefresh"><i class="fa-solid fa-arrows-rotate"></i> Actualizar</button>
         </div>
     </div>
@@ -251,19 +251,17 @@
 </div>
 
 <script>
-    // ================= CONFIGURACIÓN =================
-    // Si estás conectando a una API real, cambia esta URL y las funciones de carga/registro.
-    // Ahora usamos un almacenamiento local de demostración para mostrar la funcionalidad completa.
-    const USAR_DEMO_LOCAL = true;   // Cambia a false cuando tengas el backend real actualizado
+    // ============ CONEXIÓN REAL CON GOOGLE APPS SCRIPT ============
     const API_URL = "https://script.google.com/macros/s/AKfycbwLcpH5z2x_EjRPaPu6gI_lLokWkVxsKLgBz-HHCVX7_OhKAFU1LVfZ67bh9DCbn9L6/exec";
     
-    // Para demo, usamos localStorage
-    let jugadoresData = [];
-    let selectedPlayers = new Set(); // cedulas seleccionadas
-    let jugadorSeleccionado = null;
-    let historialPagos = [];   // almacen local para demo
+    // Verificación de login (opcional, si usas login.html)
+    if(localStorage.getItem('admin_activo') !== 'true') window.location.href = './login.html';
     
-    // Lista ordenada de conceptos para redistribución automática
+    let jugadoresData = [];
+    let selectedPlayers = new Set(); // cédulas seleccionadas
+    let jugadorSeleccionado = null;
+    
+    // Lista ordenada de conceptos para redistribución automática (la misma lógica del backend)
     const CONCEPTOS_ORDER = ["uniformes", "inscripcion", "vocalia", "inauguracion", "multas", "tarjeta_amarilla", "tarjeta_roja"];
     const NOMBRES_CONCEPTOS = {
         uniformes: "Uniformes", inscripcion: "Inscripción", vocalia: "Vocalía", inauguracion: "Inauguración",
@@ -280,7 +278,7 @@
         setTimeout(() => toast.remove(), 3000);
     }
     
-    // Calcula deuda total de un jugador (suma conceptos - credito)
+    // Calcula deuda total de un jugador (suma conceptos - crédito)
     function calcularDeudaTotal(jugador) {
         let suma = 0;
         for(let c of CONCEPTOS_ORDER) suma += jugador.deudas[c] || 0;
@@ -288,147 +286,55 @@
         return Math.max(0, suma - credito);
     }
     
-    // Aplica un pago a un jugador, sobre un concepto inicial, con posibilidad de excedente que se redistribuye.
-    // Retorna { aplicado: montoTotalUsado, sobrante: montoNoUsado, detalle: string }
-    function aplicarPago(jugador, conceptoInicial, montoPagar) {
-        let montoRestante = montoPagar;
-        let usadoTotal = 0;
-        let detalles = [];
-        // 1. Primero intentar pagar el concepto específico
-        let deudaConcepto = jugador.deudas[conceptoInicial] || 0;
-        if(deudaConcepto > 0 && montoRestante > 0) {
-            let aplicar = Math.min(montoRestante, deudaConcepto);
-            jugador.deudas[conceptoInicial] = deudaConcepto - aplicar;
-            montoRestante -= aplicar;
-            usadoTotal += aplicar;
-            detalles.push(`${NOMBRES_CONCEPTOS[conceptoInicial]}: ${formatearMoneda(aplicar)}`);
-        }
-        // 2. Si sobra, redistribuir automáticamente por orden de conceptos (pero no repetir el inicial si ya quedó en cero)
-        if(montoRestante > 0) {
-            for(let concepto of CONCEPTOS_ORDER) {
-                if(concepto === conceptoInicial && (jugador.deudas[conceptoInicial] || 0) === 0 && deudaConcepto > 0) continue; // ya lo tratamos
-                let deuda = jugador.deudas[concepto] || 0;
-                if(deuda > 0 && montoRestante > 0) {
-                    let aplicar = Math.min(montoRestante, deuda);
-                    jugador.deudas[concepto] = deuda - aplicar;
-                    montoRestante -= aplicar;
-                    usadoTotal += aplicar;
-                    detalles.push(`${NOMBRES_CONCEPTOS[concepto]}: ${formatearMoneda(aplicar)}`);
+    // Cargar datos desde la API (formato nuevo)
+    async function cargarDatos() {
+        const contenedor = document.getElementById('deudoresList');
+        contenedor.innerHTML = '<div class="empty-state">Cargando...</div>';
+        try {
+            // Obtener lista de jugadores con deudas desglosadas
+            const res = await fetch(`${API_URL}?action=getVocaliaData&nocache=${Date.now()}`);
+            const data = await res.json();
+            if(data.success) {
+                jugadoresData = data.deudores;  // debe contener: cedula, nombreCompleto, dorsal, deudas { ... }, credito
+                // Calcular totales
+                let totalDeuda = 0, deudoresCount = 0;
+                for(let j of jugadoresData) {
+                    let deuda = calcularDeudaTotal(j);
+                    totalDeuda += deuda;
+                    if(deuda > 0) deudoresCount++;
                 }
+                document.getElementById('totalDeuda').innerText = formatearMoneda(totalDeuda);
+                document.getElementById('cantidadDeudores').innerText = deudoresCount;
+                
+                // Obtener total recaudado desde historial
+                const resHist = await fetch(`${API_URL}?action=getHistorialVocalia&nocache=${Date.now()}`);
+                const histData = await resHist.json();
+                if(histData.success && histData.historial) {
+                    let totalRec = histData.historial.reduce((sum, item) => sum + (item.monto || 0), 0);
+                    document.getElementById('totalRecaudado').innerText = formatearMoneda(totalRec);
+                } else {
+                    document.getElementById('totalRecaudado').innerText = formatearMoneda(0);
+                }
+                renderizarDeudores();
+            } else {
+                throw new Error(data.error || "Error al cargar datos");
             }
+        } catch(e) {
+            contenedor.innerHTML = `<div class="empty-state">❌ Error: ${e.message}</div>`;
+            mostrarToast("Error de conexión con el servidor", "error");
         }
-        // 3. Si aún sobra, va a crédito (saldo a favor para futuras deudas)
-        let sobranteFinal = montoRestante;
-        if(sobranteFinal > 0) {
-            jugador.credito = (jugador.credito || 0) + sobranteFinal;
-            usadoTotal += sobranteFinal;
-            detalles.push(`Crédito a favor: ${formatearMoneda(sobranteFinal)}`);
-        }
-        // Si por alguna razón usó menos del total (ej: pago 0), no pasa nada
-        return { usado: usadoTotal, sobrante: sobranteFinal, detalle: detalles.join(" , ") };
-    }
-    
-    // Registrar pago (demo local)
-    async function registrarPagoDemo(cedula, monto, concepto, transaccion) {
-        const jugador = jugadoresData.find(j => j.cedula === cedula);
-        if(!jugador) throw new Error("Jugador no encontrado");
-        if(monto <= 0) throw new Error("Monto inválido");
-        
-        let deudaAntes = calcularDeudaTotal(jugador);
-        let resultado = aplicarPago(jugador, concepto, monto);
-        let deudaDespues = calcularDeudaTotal(jugador);
-        
-        // guardar historial
-        historialPagos.unshift({
-            fecha: new Date().toISOString(),
-            jugador: jugador.nombreCompleto,
-            cedula: cedula,
-            monto: monto,
-            conceptoAplicado: concepto,
-            detalle: resultado.detalle,
-            deudaRestante: deudaDespues,
-            transaccion: transaccion || "SIN REF",
-            registradoPor: "admin"
-        });
-        // mantener solo últimos 200
-        if(historialPagos.length > 200) historialPagos.pop();
-        localStorage.setItem("demo_vocalia_jugadores", JSON.stringify(jugadoresData));
-        localStorage.setItem("demo_vocalia_historial", JSON.stringify(historialPagos));
-        return { success: true, deudaRestante: deudaDespues, detalle: resultado.detalle };
-    }
-    
-    async function cargarDatosDemo() {
-        let stored = localStorage.getItem("demo_vocalia_jugadores");
-        if(!stored) {
-            // Datos de ejemplo con desglose variado
-            jugadoresData = [
-                {
-                    cedula: "111111",
-                    nombreCompleto: "Luis Fernández",
-                    dorsal: 9,
-                    deudas: {
-                        uniformes: 25.00,
-                        inscripcion: 10.00,
-                        vocalia: 5.00,
-                        inauguracion: 0,
-                        multas: 12.50,
-                        tarjeta_amarilla: 8.00,
-                        tarjeta_roja: 0
-                    },
-                    credito: 0
-                },
-                {
-                    cedula: "222222",
-                    nombreCompleto: "Carlos Mena",
-                    dorsal: 7,
-                    deudas: {
-                        uniformes: 0,
-                        inscripcion: 30.00,
-                        vocalia: 3.00,
-                        inauguracion: 15.00,
-                        multas: 0,
-                        tarjeta_amarilla: 4.00,
-                        tarjeta_roja: 20.00
-                    },
-                    credito: 0
-                }
-            ];
-        } else {
-            jugadoresData = JSON.parse(stored);
-        }
-        let historialStored = localStorage.getItem("demo_vocalia_historial");
-        if(historialStored) historialPagos = JSON.parse(historialStored);
-        else historialPagos = [];
-        
-        actualizarResumen();
-        renderizarDeudores();
-    }
-    
-    function actualizarResumen() {
-        let totalDeuda = 0;
-        let deudoresCount = 0;
-        for(let j of jugadoresData) {
-            let deuda = calcularDeudaTotal(j);
-            totalDeuda += deuda;
-            if(deuda > 0) deudoresCount++;
-        }
-        let totalRecaudado = historialPagos.reduce((sum, p) => sum + (p.monto || 0), 0);
-        document.getElementById('totalDeuda').innerText = formatearMoneda(totalDeuda);
-        document.getElementById('cantidadDeudores').innerText = deudoresCount;
-        document.getElementById('totalRecaudado').innerText = formatearMoneda(totalRecaudado);
     }
     
     function renderizarDeudores() {
         const contenedor = document.getElementById('deudoresList');
-        if(!jugadoresData.length) {
-            contenedor.innerHTML = '<div class="empty-state">No hay jugadores registrados.</div>';
+        if(!jugadoresData || jugadoresData.length === 0) {
+            contenedor.innerHTML = '<div class="empty-state">🎉 No hay jugadores registrados.</div>';
             return;
         }
         let html = '';
         for(let j of jugadoresData) {
             let deudaTotal = calcularDeudaTotal(j);
             let isChecked = selectedPlayers.has(j.cedula);
-            let tieneCredito = (j.credito || 0) > 0;
             html += `
                 <div class="deuda-item ${isChecked ? 'selected' : ''}" data-cedula="${j.cedula}">
                     <div class="deuda-header">
@@ -455,7 +361,7 @@
         }
         contenedor.innerHTML = html;
         
-        // Eventos para checkboxes
+        // Eventos checkboxes
         document.querySelectorAll('.player-checkbox').forEach(cb => {
             cb.addEventListener('change', (e) => {
                 e.stopPropagation();
@@ -468,7 +374,7 @@
             });
         });
         
-        // Eventos para botones de pago individual
+        // Botones pago individual
         document.querySelectorAll('.btn-pago').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -489,7 +395,7 @@
             });
         });
         
-        // Evento para expandir/contraer detalles al hacer clic en la fila (excepto checkbox/botón)
+        // Expandir/contraer detalles al hacer clic en la fila
         document.querySelectorAll('.deuda-item').forEach(item => {
             item.addEventListener('click', (e) => {
                 if(e.target.classList.contains('player-checkbox') || e.target.classList.contains('btn-pago') || e.target.closest('.btn-pago')) return;
@@ -500,21 +406,38 @@
         });
     }
     
-    async function confirmarPagoDemo() {
+    // Registrar pago individual (llamada real a la API)
+    async function registrarPago(cedula, monto, concepto, transaccion) {
+        const params = new URLSearchParams();
+        params.append('action', 'registrarPagoVocalia');
+        params.append('cedula', cedula);
+        params.append('monto', monto);
+        params.append('concepto', concepto);
+        params.append('transaccion', transaccion);
+        const res = await fetch(`${API_URL}?${params.toString()}`);
+        const data = await res.json();
+        if(!data.success) throw new Error(data.error);
+        return data;
+    }
+    
+    async function confirmarPago() {
         if(!jugadorSeleccionado) return;
         let monto = parseFloat(document.getElementById('montoPago').value);
         if(isNaN(monto) || monto <= 0) { mostrarToast("Monto inválido", "error"); return; }
         const concepto = document.getElementById('conceptoPago').value;
-        const transaccion = document.getElementById('transaccionPago').value.trim() || "SIN REF";
+        const transaccion = document.getElementById('transaccionPago').value.trim() || "SIN REFERENCIA";
         try {
-            const res = await registrarPagoDemo(jugadorSeleccionado.cedula, monto, concepto, transaccion);
-            mostrarToast(`Pago registrado: ${res.detalle}`, "success");
+            const result = await registrarPago(jugadorSeleccionado.cedula, monto, concepto, transaccion);
+            mostrarToast(`Pago registrado: ${result.detalle || 'correcto'}`, "success");
             cerrarModal();
-            cargarDatosDemo(); // recarga vista
-        } catch(e) { mostrarToast(e.message, "error"); }
+            cargarDatos();  // recargar todo
+        } catch(e) {
+            mostrarToast(e.message, "error");
+        }
     }
     
-    async function confirmarPagoMultipleDemo() {
+    // Pago múltiple (llama secuencialmente a registrarPago)
+    async function confirmarPagoMultiple() {
         if(selectedPlayers.size === 0) { mostrarToast("Selecciona al menos un jugador", "error"); return; }
         let monto = parseFloat(document.getElementById('montoMultiple').value);
         if(isNaN(monto) || monto <= 0) { mostrarToast("Monto inválido", "error"); return; }
@@ -523,66 +446,75 @@
         let exitosos = 0, fallidos = 0;
         for(let cedula of selectedPlayers) {
             try {
-                await registrarPagoDemo(cedula, monto, concepto, transaccion);
+                await registrarPago(cedula, monto, concepto, transaccion);
                 exitosos++;
-            } catch(e) { fallidos++; console.error(e); }
+            } catch(e) {
+                fallidos++;
+                console.error(e);
+            }
         }
         if(fallidos === 0) mostrarToast(`${exitosos} pagos de ${formatearMoneda(monto)} registrados`, "success");
         else mostrarToast(`${exitosos} OK, ${fallidos} fallidos`, "error");
         cerrarModalMultiple();
         selectedPlayers.clear();
-        cargarDatosDemo();
+        cargarDatos();
     }
     
-    function abrirHistorialDemo() {
+    // Historial
+    async function abrirHistorial() {
         const modal = document.getElementById('modalHistorial');
         const contenido = document.getElementById('historialContenido');
-        if(!historialPagos.length) {
-            contenido.innerHTML = '<div class="empty-state">📭 No hay pagos registrados aún.</div>';
-        } else {
-            let html = '';
-            for(let item of historialPagos) {
-                let fecha = new Date(item.fecha).toLocaleString('es-EC');
-                html += `
-                    <div class="historial-item">
-                        <div><strong>${escapeHtml(item.jugador)}</strong> - ${NOMBRES_CONCEPTOS[item.conceptoAplicado] || item.conceptoAplicado}</div>
-                        <div class="historial-fecha">${fecha} | Transacción: ${item.transaccion}</div>
-                        <div>Monto: ${formatearMoneda(item.monto)} | Deuda restante: ${formatearMoneda(item.deudaRestante)}</div>
-                        <div style="font-size:0.7rem;">Detalle: ${item.detalle}</div>
-                    </div>
-                `;
-            }
-            contenido.innerHTML = html;
-        }
+        contenido.innerHTML = '<div class="empty-state">Cargando historial...</div>';
         modal.classList.add('open');
-    }
-    
-    function resetDemo() {
-        if(confirm("¿Borrar todos los datos de prueba y reiniciar la demostración?")) {
-            localStorage.removeItem("demo_vocalia_jugadores");
-            localStorage.removeItem("demo_vocalia_historial");
-            cargarDatosDemo();
-            mostrarToast("Datos reiniciados a valores iniciales", "success");
+        try {
+            const res = await fetch(`${API_URL}?action=getHistorialVocalia&nocache=${Date.now()}`);
+            const data = await res.json();
+            if(data.success && data.historial && data.historial.length > 0) {
+                let html = '';
+                for(let item of data.historial) {
+                    let fecha = new Date(item.fecha).toLocaleString('es-EC');
+                    html += `
+                        <div class="historial-item">
+                            <div><strong>${escapeHtml(item.jugador)}</strong> - ${NOMBRES_CONCEPTOS[item.conceptoAplicado] || item.conceptoAplicado}</div>
+                            <div class="historial-fecha">${fecha} | Transacción: ${item.transaccion || 'N/A'}</div>
+                            <div>Monto: ${formatearMoneda(item.monto)} | Deuda restante: ${formatearMoneda(item.deudaRestante)}</div>
+                            <div style="font-size:0.7rem;">Detalle: ${item.detalle || ''}</div>
+                        </div>
+                    `;
+                }
+                contenido.innerHTML = html;
+            } else {
+                contenido.innerHTML = '<div class="empty-state">📭 No hay pagos registrados aún.</div>';
+            }
+        } catch(e) {
+            contenido.innerHTML = `<div class="empty-state">❌ Error al cargar historial: ${e.message}</div>`;
         }
     }
     
+    // Funciones de cierre de modales
     function cerrarModal() { document.getElementById('modalPago').classList.remove('open'); }
     function cerrarModalMultiple() { document.getElementById('modalPagoMultiple').classList.remove('open'); }
     function cerrarModalHistorial() { document.getElementById('modalHistorial').classList.remove('open'); }
     
-    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
     
-    // Enganchar eventos
-    document.getElementById('btnRefresh').addEventListener('click', () => cargarDatosDemo());
-    document.getElementById('btnResetCache').addEventListener('click', resetDemo);
-    document.getElementById('confirmarPago').addEventListener('click', confirmarPagoDemo);
-    document.getElementById('btnHistorial').addEventListener('click', abrirHistorialDemo);
-    document.getElementById('btnPagoMultiple').addEventListener('click', () => { if(selectedPlayers.size===0) mostrarToast("Selecciona jugadores", "error"); else document.getElementById('modalPagoMultiple').classList.add('open'); });
-    document.getElementById('confirmarPagoMultiple').addEventListener('click', confirmarPagoMultipleDemo);
-    window.addEventListener('click', (e) => { if(e.target.classList.contains('modal-overlay')) { cerrarModal(); cerrarModalHistorial(); cerrarModalMultiple(); } });
+    // Eventos
+    document.getElementById('btnRefresh').addEventListener('click', cargarDatos);
+    document.getElementById('confirmarPago').addEventListener('click', confirmarPago);
+    document.getElementById('btnHistorial').addEventListener('click', abrirHistorial);
+    document.getElementById('btnPagoMultiple').addEventListener('click', () => {
+        if(selectedPlayers.size === 0) mostrarToast("Selecciona jugadores", "error");
+        else document.getElementById('modalPagoMultiple').classList.add('open');
+    });
+    document.getElementById('confirmarPagoMultiple').addEventListener('click', confirmarPagoMultiple);
+    window.addEventListener('click', (e) => {
+        if(e.target.classList.contains('modal-overlay')) {
+            cerrarModal(); cerrarModalHistorial(); cerrarModalMultiple();
+        }
+    });
     
-    // Inicializar
-    cargarDatosDemo();
+    // Iniciar
+    cargarDatos();
 </script>
 </body>
 </html>
