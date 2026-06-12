@@ -48,7 +48,8 @@
     .rivales-scroll::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 10px; }
     .rival-chip { display: inline-block; background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.3); border-radius: 40px; padding: 6px 18px; margin-right: 12px; font-size: 0.8rem; font-weight: 600; color: #f5e6a3; backdrop-filter: blur(4px); transition: 0.2s; }
     .rival-chip.active { background: #D4AF37; color: #000; border-color: #D4AF37; box-shadow: 0 0 8px #D4AF37; }
-    .avatar-icon-box { width: 75px; height: 75px; border-radius: 50%; border: 3px solid #D4AF37; background: radial-gradient(circle, #1a2a4a 0%, #0a1428 100%); display: flex; align-items: center; justify-content: center; margin-bottom: 10px; color: #D4AF37; font-size: 2.2rem; }
+    .avatar-icon-box { width: 75px; height: 75px; border-radius: 50%; border: 3px solid #D4AF37; background: radial-gradient(circle, #1a2a4a 0%, #0a1428 100%); display: flex; align-items: center; justify-content: center; margin-bottom: 10px; overflow: hidden; }
+    .avatar-icon-box img { width: 100%; height: 100%; object-fit: cover; }
     .id-card-jersey-wrap { perspective: 900px; height: 180px; }
     .jersey-card-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: rotateCard 12s linear infinite; }
     @keyframes rotateCard { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
@@ -90,7 +91,8 @@
 <script>
 // ==================== CONFIGURACIÓN ====================
 const CONFIG = {
-    URL_GAS: "https://script.google.com/macros/s/AKfycbwjophe8wostDR9rNsMjGkIMP3WpE_IiUPJvorurqXs5OHgjAMyHHAlnmuDY4qwxRVh/exec"  // REEMPLAZA CON TU URL
+    // REEMPLAZA CON TU URL DE APPS SCRIPT
+    URL_GAS: "https://script.google.com/macros/s/AKfycbwjophe8wostDR9rNsMjGkIMP3WpE_IiUPJvorurqXs5OHgjAMyHHAlnmuDY4qwxRVh/exec"
 };
 
 const PROXIMO_PARTIDO = {
@@ -200,7 +202,17 @@ async function mostrarPerfil() {
                     <div class="perfil-header"><h1>⚜️ PANEL NÁPOLES ⚜️</h1><div style="font-size:0.75rem;color:#D4AF37; text-align:center;">Categoría: ${categoria === 'mujeres' ? 'Femenina ♀' : 'Masculina ♂'}</div></div>
                     
                     <div class="cards-row">
-                        <div class="glass-card-perfil id-card-identity" style="padding:15px; text-align:center;"><div class="avatar-icon-box" style="margin:0 auto 10px;"><i class="fa-solid fa-user-ninja"></i></div><div style="font-weight:900;">${s.primerNombre}<br>${s.apellidos}</div><div style="font-size:.65rem;"><i class="fa-solid fa-id-card"></i> ${cedula}</div><div style="margin-top:8px;background:rgba(212,175,55,.2);padding:4px 10px;border-radius:20px; display:inline-block;">${edad} años</div></div>
+                        <div class="glass-card-perfil id-card-identity" style="padding:15px; text-align:center;">
+                            <div class="avatar-icon-box" style="margin:0 auto 10px;">
+                                <img src="./imagen/avatar/${cedula}.png" 
+                                     alt="Avatar" 
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <i class="fa-solid fa-user-ninja" style="display:none;"></i>
+                            </div>
+                            <div style="font-weight:900;">${s.primerNombre}<br>${s.apellidos}</div>
+                            <div style="font-size:.65rem;"><i class="fa-solid fa-id-card"></i> ${cedula}</div>
+                            <div style="margin-top:8px;background:rgba(212,175,55,.2);padding:4px 10px;border-radius:20px; display:inline-block;">${edad} años</div>
+                        </div>
                         <div class="id-card-jersey-wrap"><div class="jersey-card-inner"><div class="face-front"><div class="jersey-name">${s.nombreCamiseta}</div><div class="jersey-number">${s.dorsal}</div><div>Talla ${s.tallaUni}</div></div><div class="face-back"><div class="jersey-name">NÁPOLES FC</div><div class="jersey-number">${s.dorsal}</div></div></div></div>
                     </div>
 
