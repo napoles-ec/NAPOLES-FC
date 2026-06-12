@@ -1,21 +1,24 @@
-const CACHE_NAME = 'napoles-v1.0.35'; // 🔥 Cambia el número CADA VEZ que actualices archivos (HTML, CSS, JS, etc.)
+const CACHE_NAME = 'napoles-v1.0.36'; // 🔥 Cambia este número CADA VEZ que modifiques archivos
 
 const ASSETS = [
   'login.html',
-  'perfil.html',     // Ajusta según tu archivo principal después del login
-  'index.html',      // Si usas index.html como entrada
+  'perfil.html',
+  'config.js',
   'manifest.json',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@600;800;900&display=swap'
+  'imagen/logo/napoles_fc.png',
+  'imagen/logo/icon-192x192.png',
+  'imagen/logo/icon-512x512.png',
+  'favicon.ico',
+  'https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@600;800;900&display=swap',
+  'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap'
 ];
 
 // ====================== INSTALACIÓN ======================
 self.addEventListener('install', (e) => {
   console.log('[SW] Instalando nueva versión:', CACHE_NAME);
-  self.skipWaiting(); // El nuevo SW toma el control de inmediato
+  self.skipWaiting();
   e.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(ASSETS);
-    })
+    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
   );
 });
 
@@ -32,17 +35,7 @@ self.addEventListener('activate', (e) => {
           }
         })
       );
-    }).then(() => {
-      // Notificar a la página que hay una nueva versión disponible
-      self.clients.matchAll().then(clients => {
-        clients.forEach(client => {
-          client.postMessage({
-            type: 'NEW_VERSION_AVAILABLE',
-            version: CACHE_NAME
-          });
-        });
-      });
-    })
+    }).then(() => self.clients.claim())
   );
 });
 
@@ -51,15 +44,10 @@ self.addEventListener('fetch', (e) => {
   e.respondWith(
     fetch(e.request)
       .then(response => {
-        // Clonar la respuesta para guardar en caché
         const responseClone = response.clone();
-        caches.open(CACHE_NAME).then(cache => {
-          cache.put(e.request, responseClone);
-        });
+        caches.open(CACHE_NAME).then(cache => cache.put(e.request, responseClone));
         return response;
       })
-      .catch(() => {
-        return caches.match(e.request);
-      })
+      .catch(() => caches.match(e.request))
   );
 });
