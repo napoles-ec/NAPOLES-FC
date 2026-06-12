@@ -74,39 +74,27 @@ input:focus{border-color:var(--primary);background:rgba(15,23,42,.92);box-shadow
     const res = await fetch('./sw.js');
     const txt = await res.text();
     const match = txt.match(/CACHE_NAME\s*=\s*['"](?:napoles-)?v?([\d\.]+)['"]/);
-    const version = match ? 'v' + match[1] : 'v1.0.45';
+    const version = match ? 'v' + match[1] : 'v1.0.47';
     document.getElementById('versionInfo').innerHTML = `<span>${version}</span><span> • </span><span>By Corporación 360</span>`;
   } catch(e) {
-    document.getElementById('versionInfo').innerHTML = `<span>v1.0.45</span><span> • </span><span>By Corporación 360</span>`;
+    document.getElementById('versionInfo').innerHTML = `<span>v1.0.47</span><span> • </span><span>By Corporación 360</span>`;
   }
 })();
 
-// ==================== INSTALACIÓN PWA CON DEPURACIÓN ====================
+// ==================== INSTALACIÓN PWA ====================
 let deferredPrompt = null;
 const installBtn = document.getElementById('manualDownloadBtn');
 
-// 1. Evento beforeinstallprompt (debe dispararse automáticamente si la PWA es instalable)
+// Capturar el evento beforeinstallprompt
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  console.log('✅ beforeinstallprompt CAPTURADO. La app SÍ es instalable.');
+  console.log('✅ beforeinstallprompt CAPTURADO. La app es instalable.');
   installBtn.textContent = '📲 INSTALAR APP (LISTO)';
-  // Opcional: cambiar color del botón para indicar que está listo
   installBtn.style.background = "linear-gradient(135deg, #059669, #10b981)";
 });
 
-// 2. Fallback: si después de 5 segundos no se disparó beforeinstallprompt, mostrar ayuda
-setTimeout(() => {
-  if (!deferredPrompt) {
-    console.warn('⚠️ beforeinstallprompt NO se disparó. La PWA no es instalable automáticamente.');
-    installBtn.textContent = '📲 INSTALAR (MANUAL)';
-    installBtn.style.background = "linear-gradient(135deg, #6b7280, #4b5563)";
-    // No mostramos alert automático, solo cambiamos texto y color.
-    // Al hacer clic, se darán instrucciones.
-  }
-}, 5000);
-
-// 3. Acción del botón
+// Acción del botón de instalación
 installBtn.addEventListener('click', async () => {
   if (deferredPrompt) {
     deferredPrompt.prompt();
@@ -120,33 +108,40 @@ installBtn.addEventListener('click', async () => {
     installBtn.textContent = '📲 INSTALAR APP';
     installBtn.style.background = "linear-gradient(135deg, #00d2ff, #008f9b)";
   } else {
-    // Si no hay evento, mostrar el método manual
-    alert('🔧 La instalación automática no está disponible.\n\nPara instalar la aplicación:\n1. Abre el menú del navegador (tres puntos).\n2. Selecciona "Instalar aplicación" o "Agregar a pantalla de inicio".\n\nSi no ves esa opción, verifica que el Service Worker esté activo (consola F12 → Application → Service Workers).');
+    alert('🔧 Instalación automática no disponible.\n\nPara instalar, abre el menú del navegador (tres puntos) y selecciona "Instalar aplicación".\nSi no ves la opción, asegúrate de interactuar con la página y esperar unos segundos.');
   }
 });
 
-// ==================== SERVICE WORKER Y ACTUALIZACIÓN ====================
+// ==================== SERVICE WORKER Y ACTUALIZACIONES ====================
 let waitingWorker = null;
 function showUpdateBanner() { document.getElementById('updateBanner').classList.add('show'); }
 function updateApp() { if (waitingWorker) { waitingWorker.postMessage({ action: 'skipWaiting' }); } window.location.reload(); }
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').then(reg => {
-    console.log('Service Worker registrado:', reg);
-    if (reg.waiting) { waitingWorker = reg.waiting; showUpdateBanner(); }
-    reg.addEventListener('updatefound', () => {
-      const newWorker = reg.installing;
-      newWorker.addEventListener('statechange', () => {
-        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-          waitingWorker = newWorker;
-          showUpdateBanner();
-        }
+  navigator.serviceWorker.register('./sw.js')
+    .then(registration => {
+      console.log('✅ Service Worker registrado', registration);
+      if (registration.waiting) {
+        waitingWorker = registration.waiting;
+        showUpdateBanner();
+      }
+      registration.addEventListener('updatefound', () => {
+        const newWorker = registration.installing;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            waitingWorker = newWorker;
+            showUpdateBanner();
+          }
+        });
       });
-    });
-  }).catch(err => console.error('Error SW:', err));
+    })
+    .catch(err => console.error('❌ Error al registrar SW:', err));
 
-  navigator.serviceWorker.addEventListener('message', (event) => {
-    if (event.data && event.data.type === 'NEW_VERSION_AVAILABLE') { waitingWorker = event.data.worker; showUpdateBanner(); }
+  // Forzar claim del SW si es necesario (para que tome control rápidamente)
+  navigator.serviceWorker.ready.then(registration => {
+    if (registration.active && !navigator.serviceWorker.controller) {
+      window.location.reload();
+    }
   });
 }
 document.getElementById('updateBtn').addEventListener('click', updateApp);
