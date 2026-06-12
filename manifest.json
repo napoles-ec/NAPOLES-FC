@@ -1,11 +1,13 @@
 {
   "name": "Nápoles F.C.",
   "short_name": "Nápoles FC",
+  "description": "Panel de jugadores del club Nápoles F.C.",
   "start_url": "/NAPOLES-FC/login.html",
   "scope": "/NAPOLES-FC/",
   "display": "standalone",
   "theme_color": "#38bdf8",
   "background_color": "#020c1a",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "/NAPOLES-FC/imagen/logo/icon-192x192.png",
