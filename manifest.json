@@ -8,12 +8,12 @@
   "background_color": "#020c1a",
   "icons": [
     {
-      "src": "https://napoles-ec.github.io/NAPOLES-FC/imagen/logo/icon-192x192.png",
+      "src": "/NAPOLES-FC/imagen/logo/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "https://napoles-ec.github.io/NAPOLES-FC/imagen/logo/icon-512x512.png",
+      "src": "/NAPOLES-FC/imagen/logo/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
