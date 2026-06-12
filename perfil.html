@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-    /* ========== ESTILOS DE LA RULETA ========== */
+    /* ========== ESTILOS DE LA RULETA (sin cambios) ========== */
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
     .glass-card { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(233, 195, 73, 0.6); color: white; }
     .premium-glow { box-shadow: 0 0 30px rgba(233, 195, 73, 0.4); }
@@ -66,7 +66,7 @@
         gap: 12px;
         margin-bottom: 15px;
     }
-    .card-identity, .card-jersey {
+    .card-identity, .jersey-card-wrapper {
         flex: 1;
         background: linear-gradient(145deg, rgba(10,20,40,.85), rgba(5,10,20,.95));
         border-radius: 20px;
@@ -102,7 +102,7 @@
     }
     .avatar-icon-box img { width: 100%; height: 100%; object-fit: cover; }
     
-    /* Jersey con rotación 3D optimizada (GPU) */
+    /* Jersey con rotación 3D optimizada, SIN doble contenedor */
     .id-card-jersey-wrap {
         perspective: 900px;
         height: 150px;
@@ -563,7 +563,7 @@ async function mostrarPerfil() {
                 <button class="btn-report" onclick="abrirReporte()"><i class="fa-solid fa-flag"></i> Reportar</button>
             </div>
 
-            <!-- Tarjetas igualadas -->
+            <!-- Tarjetas igualadas (jersey ahora sin doble contenedor) -->
             <div class="cards-row">
                 <div class="card-identity">
                     <div class="avatar-icon-box">
@@ -574,7 +574,7 @@ async function mostrarPerfil() {
                     <div style="font-size:.65rem;"><i class="fa-solid fa-id-card"></i> ${cedula}</div>
                     <div style="margin-top:8px;background:rgba(212,175,55,.2);padding:4px 10px;border-radius:20px; display:inline-block;">${edad} años</div>
                 </div>
-                <div class="card-jersey">
+                <div class="jersey-card-wrapper">
                     <div class="id-card-jersey-wrap">
                         <div class="jersey-card-inner">
                             <div class="face-front">
