@@ -1,4 +1,4 @@
-const CACHE_NAME = 'napoles-v1.0.39'; // Cambia el número cuando modifiques archivos
+const CACHE_NAME = 'napoles-v1.0.40'; // Cambia el número cuando modifiques archivos
 
 const ASSETS = [
   'login.html',
