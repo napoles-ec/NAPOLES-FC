@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
 <title>Nápoles F.C. - Acceso</title>
 <link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#020c1a">
+<meta name="theme-color" content="#38bdf8">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="icon" type="image/x-icon" href="./favicon.ico">
@@ -31,7 +31,8 @@ body::after{background:radial-gradient(circle,rgba(111,0,255,.95) 0%,rgba(168,85
 .logo-area p{opacity:.92;font-size:1rem;font-weight:700;color:#d7f7ff;letter-spacing:1px}
 .input-group{margin-bottom:28px}
 .input-group label{display:block;margin-bottom:12px;color:var(--primary);font-size:.82rem;font-weight:700;letter-spacing:1.6px;text-transform:uppercase}
-input{width:100%;min-height:62px;border-radius:18px;border:2px solid rgba(255,255,255,.06);background:rgba(15,23,42,.7);color:#fff;font-size:1.05rem;font-weight:700;padding:0 18px;text-align:center;outline:none;transition:.35s}
+/* INPUT MÁS GRANDE */
+input{width:100%;min-height:62px;border-radius:18px;border:2px solid rgba(255,255,255,.06);background:rgba(15,23,42,.7);color:#fff;font-size:1.2rem;font-weight:700;padding:0 18px;text-align:center;outline:none;transition:.35s}
 input:focus{border-color:var(--primary);background:rgba(15,23,42,.92);box-shadow:0 0 18px rgba(0,210,255,.35)}
 .btn-submit{width:100%;height:58px;border:none;border-radius:18px;background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;font-size:1rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;margin-top:12px;transition:.35s}
 .btn-submit:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(0,210,255,.35)}
@@ -43,7 +44,7 @@ input:focus{border-color:var(--primary);background:rgba(15,23,42,.92);box-shadow
 #manualDownloadBtn:hover{transform:translateY(-2px)}
 .footer-version{text-align:center;margin-top:20px;font-size:0.7rem;opacity:0.6;color:#ccc}
 .security-note{text-align:center;margin-top:15px;font-size:0.65rem;color:#a0aec0}
-@media(max-width:480px){.login-card{padding:32px 22px}.logo-area h1{font-size:1.7rem}input{min-height:56px}.btn-submit{height:54px}}
+@media(max-width:480px){.login-card{padding:32px 22px}.logo-area h1{font-size:1.7rem}input{min-height:56px;font-size:1.1rem}.btn-submit{height:54px}}
 </style>
 </head>
 <body>
@@ -58,7 +59,7 @@ input:focus{border-color:var(--primary);background:rgba(15,23,42,.92);box-shadow
     <p style="margin-top:30px;margin-bottom:24px;text-align:center;">¿No tienes cuenta? <a href="./index.html">REGÍSTRATE ✨</a></p>
     <div style="display:flex;justify-content:center;"><button id="manualDownloadBtn" type="button">📲 INSTALAR APP</button></div>
     <div class="footer-version" id="versionInfo"></div>
-    <div class="security-note">🔒 Datos encriptados • Conexión segura con bY Corporación 360</div>
+    <div class="security-note">🔒 Datos encriptados • Conexión segura • By Corporación 360</div>
   </div>
 </div>
 <script src="./config.js"></script>
@@ -69,19 +70,42 @@ input:focus{border-color:var(--primary);background:rgba(15,23,42,.92);box-shadow
     const res = await fetch('./sw.js');
     const txt = await res.text();
     const match = txt.match(/CACHE_NAME\s*=\s*['"](?:napoles-)?v?([\d\.]+)['"]/);
-    const version = match ? 'v' + match[1] : 'v1.0.44';
-    document.getElementById('versionInfo').innerHTML = `<span>${version}</span><span> • </span><span>bY Corporación 360</span>`;
+    const version = match ? 'v' + match[1] : 'v1.0.45';
+    document.getElementById('versionInfo').innerHTML = `<span>${version}</span><span> • </span><span>By Corporación 360</span>`;
   } catch(e) {
-    document.getElementById('versionInfo').innerHTML = `<span>v1.0.44</span><span> • </span><span>bY Corporación 360</span>`;
+    document.getElementById('versionInfo').innerHTML = `<span>v1.0.45</span><span> • </span><span>By Corporación 360</span>`;
   }
 })();
 
-// ==================== INSTALACIÓN PWA ====================
+// ==================== INSTALACIÓN PWA MEJORADA ====================
 let deferredPrompt = null;
-window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
-document.getElementById('manualDownloadBtn').addEventListener('click', () => {
-  if(deferredPrompt){ deferredPrompt.prompt(); deferredPrompt.userChoice.then(()=> deferredPrompt=null); }
-  else alert('Para instalar, abre menú del navegador → "Instalar aplicación"');
+const installBtn = document.getElementById('manualDownloadBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  console.log('✅ beforeinstallprompt capturado. La app se puede instalar.');
+  installBtn.textContent = '📲 INSTALAR APP (LISTO)';
+});
+
+installBtn.addEventListener('click', async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      console.log('Usuario aceptó la instalación');
+    } else {
+      console.log('Usuario rechazó la instalación');
+    }
+    deferredPrompt = null;
+    installBtn.textContent = '📲 INSTALAR APP';
+  } else {
+    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+      alert('⚠️ No se puede instalar la app automáticamente.\nPara instalarla, abre el menú del navegador (tres puntos) y selecciona "Instalar aplicación".');
+    } else {
+      alert('⏳ La aplicación aún no está lista para instalarse. Recarga la página e intenta de nuevo.\nSi el problema persiste, verifica que el service worker esté activo.');
+    }
+  }
 });
 
 // ==================== LOGIN ====================
@@ -100,14 +124,12 @@ form.addEventListener('submit', async(e)=>{
   if(typeof CONFIG==='undefined' || !CONFIG.URL_GAS) return mostrarError('❌ Error de configuración');
   btn.disabled=true; btn.textContent='CONECTANDO...';
   try{
-    // ADMIN (clave alfanumérica)
     if(valor==='GataFiera54321'){
       let params=new URLSearchParams(); params.append('action','loginAdmin'); params.append('clave',valor);
       let res=await fetch(CONFIG.URL_GAS,{method:'POST',mode:'cors',body:params}); let data=await res.json();
       if(data.success && data.acceso){ localStorage.setItem('admin_activo','true'); window.location='./admin.html'; return; }
       mostrarError('❌ Clave admin incorrecta'); return;
     }
-    // JUGADOR (solo números, 10 dígitos)
     if(!/^\d{10}$/.test(valor)){ mostrarError('❌ Ingresa una cédula válida (10 dígitos) o la clave admin'); return; }
     let params=new URLSearchParams(); params.append('action','validarRegistro'); params.append('cedula',valor);
     let res=await fetch(CONFIG.URL_GAS,{method:'POST',mode:'cors',body:params}); let data=await res.json();
@@ -122,8 +144,20 @@ form.addEventListener('submit', async(e)=>{
   finally{ btn.disabled=false; btn.textContent='Ingresa al Vestuario'; }
 });
 
-// ==================== SERVICE WORKER ====================
-if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));
+// ==================== REGISTRO DEL SERVICE WORKER ====================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', async () => {
+    try {
+      const registration = await navigator.serviceWorker.register('./sw.js');
+      console.log('Service Worker registrado con éxito:', registration);
+      if (registration.active && !navigator.serviceWorker.controller) {
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('Error al registrar el Service Worker:', error);
+    }
+  });
+}
 </script>
 </body>
 </html>
