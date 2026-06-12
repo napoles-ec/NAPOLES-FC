@@ -3,14 +3,11 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>Vocalía | Nápoles FC - Gestión por conceptos con filtros</title>
-<!-- Google Fonts -->
+<title>Vocalía | Nápoles FC - Gestión de deudas por conceptos</title>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet"/>
-<!-- Material Symbols -->
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script>
         tailwind.config = {
@@ -44,9 +41,7 @@
         }
     </script>
 <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
         .glass-card {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(16px);
@@ -59,22 +54,17 @@
                         #faf9f6;
             background-attachment: fixed;
         }
-        .stat-card-gradient {
-            background: linear-gradient(135deg, #9d4300 0%, #f97316 100%);
-        }
+        .stat-card-gradient { background: linear-gradient(135deg, #9d4300 0%, #f97316 100%); }
         .player-selected {
             border: 2px solid #9d4300 !important;
             background: rgba(249, 115, 22, 0.08) !important;
             transform: scale(1.02);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        .filter-chip {
+        .filter-chip, .filter-estado {
             transition: all 0.2s ease;
             cursor: pointer;
         }
-        .filter-chip.active {
+        .filter-chip.active, .filter-estado.active {
             background-color: #9d4300 !important;
             color: white !important;
             border-color: #9d4300 !important;
@@ -93,25 +83,34 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             white-space: nowrap;
             backdrop-filter: blur(8px);
         }
+        .deuda-item-concepto {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            background: #f4f3f1;
+            border-radius: 12px;
+            margin-bottom: 4px;
+        }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="athletic-bg font-body-md text-on-surface min-h-screen pb-32">
 
-<!-- Top App Bar -->
 <header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl border-b border-white/30 flex justify-between items-center px-gutter h-16 shadow-sm">
-<div class="flex items-center gap-3 px-4 md:px-6">
-    <span class="material-symbols-outlined text-primary text-3xl">sports_soccer</span>
-    <h1 class="text-headline-md font-headline-md font-bold tracking-tighter text-primary">VOCALÍA NÁPOLES FC</h1>
-</div>
-<div class="flex items-center gap-4 px-4 md:px-6">
-    <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden border-2 border-primary/20">
-        <span class="material-symbols-outlined text-primary">gavel</span>
+    <div class="flex items-center gap-3 px-4 md:px-6">
+        <span class="material-symbols-outlined text-primary text-3xl">sports_soccer</span>
+        <h1 class="text-headline-md font-headline-md font-bold tracking-tighter text-primary">VOCALÍA NÁPOLES FC</h1>
     </div>
-</div>
+    <div class="flex items-center gap-4 px-4 md:px-6">
+        <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden border-2 border-primary/20">
+            <span class="material-symbols-outlined text-primary">gavel</span>
+        </div>
+    </div>
 </header>
 
 <main class="pt-24 px-4 md:px-gutter max-w-container-max mx-auto">
@@ -144,74 +143,89 @@
         </div>
     </section>
 
-    <!-- Filtros por concepto y estado -->
+    <!-- Filtros mejorados -->
     <section class="glass-card p-5 rounded-xl mb-6">
         <div class="flex flex-col gap-4">
-            <div class="flex flex-wrap gap-2 items-center">
-                <span class="text-label-md font-medium text-on-surface-variant mr-2">Filtrar por deuda:</span>
-                <button data-filtro-concepto="todos" class="filter-chip active px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm font-medium">Todos</button>
-                <button data-filtro-concepto="vocalia" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm font-medium">Vocalía</button>
-                <button data-filtro-concepto="uniformes" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm font-medium">Uniformes</button>
-                <button data-filtro-concepto="inscripcion" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm font-medium">Inscripción</button>
-                <button data-filtro-concepto="inauguracion" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm font-medium">Inauguración</button>
-                <button data-filtro-concepto="multas" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm font-medium">Multas</button>
-                <button data-filtro-concepto="tarjeta_amarilla" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm font-medium">Tarj. Amarilla</button>
-                <button data-filtro-concepto="tarjeta_roja" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm font-medium">Tarj. Roja</button>
+            <!-- Filtro por concepto (deuda específica) -->
+            <div>
+                <p class="text-label-md font-semibold text-on-surface-variant mb-2">🔍 Filtrar por tipo de deuda:</p>
+                <div class="flex flex-wrap gap-2">
+                    <button data-filtro-concepto="todos" class="filter-chip active px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">Todos</button>
+                    <button data-filtro-concepto="vocalia" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">Vocalía</button>
+                    <button data-filtro-concepto="uniformes" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">Uniformes</button>
+                    <button data-filtro-concepto="inscripcion" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">Inscripción</button>
+                    <button data-filtro-concepto="inauguracion" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">Inauguración</button>
+                    <button data-filtro-concepto="multas" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">Multas</button>
+                    <button data-filtro-concepto="tarjeta_amarilla" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">Tarj. Amarilla</button>
+                    <button data-filtro-concepto="tarjeta_roja" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">Tarj. Roja</button>
+                </div>
             </div>
-            <div class="flex flex-wrap gap-2 items-center">
-                <span class="text-label-md font-medium text-on-surface-variant mr-2">Estado:</span>
-                <button data-filtro-estado="todos" class="filter-estado active px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm font-medium">Todos</button>
-                <button data-filtro-estado="morosos" class="filter-estado px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm font-medium">Con deuda (morosos)</button>
-                <button data-filtro-estado="aldia" class="filter-estado px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm font-medium">Al día (sin deuda)</button>
-                <button data-filtro-estado="credito" class="filter-estado px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm font-medium">Con crédito a favor</button>
+            <!-- Filtro por estado -->
+            <div>
+                <p class="text-label-md font-semibold text-on-surface-variant mb-2">📊 Estado financiero:</p>
+                <div class="flex flex-wrap gap-2">
+                    <button data-filtro-estado="todos" class="filter-estado active px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">Todos</button>
+                    <button data-filtro-estado="morosos" class="filter-estado px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">Con deuda (morosos)</button>
+                    <button data-filtro-estado="aldia" class="filter-estado px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">Al día (sin deuda)</button>
+                    <button data-filtro-estado="credito" class="filter-estado px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">Con crédito a favor</button>
+                </div>
+            </div>
+            <!-- Filtro por rango de deuda total -->
+            <div>
+                <p class="text-label-md font-semibold text-on-surface-variant mb-2">💰 Deuda total (rango):</p>
+                <div class="flex flex-wrap gap-3 items-center">
+                    <select id="filtro-rango-deuda" class="px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">
+                        <option value="todos">Todos</option>
+                        <option value="mayor0">Mayor a $0</option>
+                        <option value="mayor50">Mayor a $50</option>
+                        <option value="mayor100">Mayor a $100</option>
+                        <option value="menor50">Menor o igual a $50</option>
+                    </select>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Player Search & Actions -->
+    <!-- Search & Actions -->
     <section class="glass-card p-6 rounded-xl mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
         <div class="relative w-full md:w-96">
             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-            <input class="w-full pl-12 pr-4 py-3 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary/20 transition-all text-body-md" id="busqueda" placeholder="Buscar jugador por nombre..." type="text">
+            <input class="w-full pl-12 pr-4 py-3 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary/20" id="busqueda" placeholder="Buscar jugador por nombre...">
         </div>
         <div class="flex gap-3 w-full md:w-auto">
-            <button id="btn-pago-multiple" class="flex-1 md:flex-none px-6 py-3 bg-primary text-white font-label-md rounded-xl shadow-lg hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2">
+            <button id="btn-pago-multiple" class="flex-1 md:flex-none px-6 py-3 bg-primary text-white font-label-md rounded-xl shadow-lg hover:brightness-110 active:scale-95 flex items-center justify-center gap-2">
                 <span class="material-symbols-outlined">groups</span>
                 Pagar seleccionados
             </button>
-            <button id="btn-refresh" class="px-4 py-3 bg-secondary-container text-on-secondary-container rounded-xl hover:bg-secondary-container/80 transition-colors">
+            <button id="btn-refresh" class="px-4 py-3 bg-secondary-container text-on-secondary-container rounded-xl hover:bg-secondary-container/80">
                 <span class="material-symbols-outlined">refresh</span>
             </button>
         </div>
     </section>
 
-    <!-- Contador de resultados -->
     <div class="text-right text-label-sm text-on-surface-variant mb-3" id="resultados-contador">Mostrando todos los jugadores</div>
 
-    <!-- Player List (Bento Grid) -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="lista-jugadores">
         <div class="col-span-full py-20 text-center">
             <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent mb-4"></div>
-            <p class="text-on-surface-variant font-medium">Cargando plantilla de Nápoles FC...</p>
+            <p class="text-on-surface-variant">Cargando plantilla...</p>
         </div>
     </div>
 </main>
 
-<!-- Modal: Pago individual o múltiple -->
+<!-- Modal Pago -->
 <div id="modalPago" class="fixed inset-0 z-[60] hidden items-center justify-center p-4">
     <div class="absolute inset-0 bg-on-surface/40 backdrop-blur-sm" onclick="cerrarModalPago()"></div>
     <div class="relative glass-card w-full max-w-md rounded-2xl overflow-hidden">
         <div class="p-6 border-b border-outline-variant/20 flex justify-between items-center">
             <h3 class="text-headline-md font-headline-md text-primary" id="modal-titulo">Registrar Pago</h3>
-            <button class="p-2 hover:bg-surface-container-high rounded-full transition-colors" onclick="cerrarModalPago()">
-                <span class="material-symbols-outlined">close</span>
-            </button>
+            <button class="p-2 hover:bg-surface-container-high rounded-full" onclick="cerrarModalPago()"><span class="material-symbols-outlined">close</span></button>
         </div>
         <div class="p-6 space-y-4">
-            <div id="jugadores-seleccionados-resumen" class="text-sm text-on-surface-variant mb-2"></div>
-            <div class="form-group">
+            <div id="jugadores-seleccionados-resumen" class="text-sm text-on-surface-variant"></div>
+            <div>
                 <label class="block text-label-md font-medium mb-1">Concepto a pagar</label>
-                <select id="conceptoPago" class="w-full p-3 bg-surface-container-low rounded-xl border-none focus:ring-2 focus:ring-primary/20">
+                <select id="conceptoPago" class="w-full p-3 bg-surface-container-low rounded-xl border-none">
                     <option value="uniformes">Uniformes</option>
                     <option value="inscripcion">Inscripción</option>
                     <option value="vocalia">Vocalía</option>
@@ -221,133 +235,117 @@
                     <option value="tarjeta_roja">Tarjeta Roja</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label class="block text-label-md font-medium mb-1">Monto a pagar (USD)</label>
-                <input type="number" id="montoPago" step="0.01" class="w-full p-3 bg-surface-container-low rounded-xl border-none focus:ring-2 focus:ring-primary/20" placeholder="0.00">
+            <div>
+                <label class="block text-label-md font-medium mb-1">Monto (USD)</label>
+                <input type="number" id="montoPago" step="0.01" class="w-full p-3 bg-surface-container-low rounded-xl border-none" placeholder="0.00">
             </div>
-            <div class="form-group">
-                <label class="block text-label-md font-medium mb-1">N° de transacción (opcional)</label>
+            <div>
+                <label class="block text-label-md font-medium mb-1">Transacción (opcional)</label>
                 <input type="text" id="transaccionPago" class="w-full p-3 bg-surface-container-low rounded-xl border-none" placeholder="Referencia">
             </div>
         </div>
         <div class="p-6 bg-surface-container-low flex justify-end gap-3">
-            <button class="px-6 py-2 text-secondary font-label-md hover:bg-surface-container-high rounded-lg transition-colors" onclick="cerrarModalPago()">Cancelar</button>
-            <button id="btn-confirmar-pago" class="px-6 py-2 bg-primary text-white font-label-md rounded-lg shadow-md hover:brightness-110">Registrar pago</button>
+            <button class="px-6 py-2 text-secondary font-label-md hover:bg-surface-container-high rounded-lg" onclick="cerrarModalPago()">Cancelar</button>
+            <button id="btn-confirmar-pago" class="px-6 py-2 bg-primary text-white font-label-md rounded-lg shadow-md hover:brightness-110">Registrar</button>
         </div>
     </div>
 </div>
 
-<!-- Modal: Historial -->
+<!-- Modal Historial -->
 <div id="modalHistorial" class="fixed inset-0 z-[60] hidden items-center justify-center p-4">
     <div class="absolute inset-0 bg-on-surface/40 backdrop-blur-sm" onclick="cerrarModalHistorial()"></div>
     <div class="relative glass-card w-full max-w-2xl max-h-[80vh] rounded-2xl overflow-hidden flex flex-col">
         <div class="p-6 border-b border-outline-variant/20 flex justify-between items-center">
             <h3 class="text-headline-md font-headline-md text-primary">Historial de Pagos</h3>
-            <button class="p-2 hover:bg-surface-container-high rounded-full transition-colors" onclick="cerrarModalHistorial()">
-                <span class="material-symbols-outlined">close</span>
-            </button>
+            <button class="p-2 hover:bg-surface-container-high rounded-full" onclick="cerrarModalHistorial()"><span class="material-symbols-outlined">close</span></button>
         </div>
-        <div class="p-6 overflow-y-auto scrollbar-hide" id="historial-contenido">
-            <div class="text-center py-8 text-on-surface-variant">Cargando historial...</div>
-        </div>
+        <div class="p-6 overflow-y-auto scrollbar-hide" id="historial-contenido">Cargando...</div>
     </div>
 </div>
 
 <script>
-    // ========== CONFIGURACIÓN API REAL ==========
     const API_URL = "https://script.google.com/macros/s/AKfycbwLcpH5z2x_EjRPaPu6gI_lLokWkVxsKLgBz-HHCVX7_OhKAFU1LVfZ67bh9DCbn9L6/exec";
-    
-    // Variables globales
+    if(localStorage.getItem('admin_activo') !== 'true') { /* window.location.href = './login.html'; */ }
+
     let jugadoresData = [];
     let selectedPlayers = new Set();
     let modoPagoMultiple = false;
-    
-    // Filtros activos
-    let filtroConcepto = "todos";   // 'todos', 'vocalia', 'uniformes', etc.
-    let filtroEstado = "todos";     // 'todos', 'morosos', 'aldia', 'credito'
+    let filtroConcepto = "todos";
+    let filtroEstado = "todos";
+    let filtroRangoDeuda = "todos";
     let busquedaTexto = "";
 
-    const CONCEPTOS_ORDER = ["uniformes", "inscripcion", "vocalia", "inauguracion", "multas", "tarjeta_amarilla", "tarjeta_roja"];
-    const NOMBRES_CONCEPTOS = {
-        uniformes: "Uniformes", inscripcion: "Inscripción", vocalia: "Vocalía", inauguracion: "Inauguración",
-        multas: "Multas", tarjeta_amarilla: "Tarjeta Amarilla", tarjeta_roja: "Tarjeta Roja"
-    };
+    const CONCEPTOS = ["uniformes", "inscripcion", "vocalia", "inauguracion", "multas", "tarjeta_amarilla", "tarjeta_roja"];
+    const NOMBRES = { uniformes:"Uniformes", inscripcion:"Inscripción", vocalia:"Vocalía", inauguracion:"Inauguración", multas:"Multas", tarjeta_amarilla:"Tarj.Amarilla", tarjeta_roja:"Tarj.Roja" };
 
-    function formatearMoneda(v) { return new Intl.NumberFormat('es-EC', { style: 'currency', currency: 'USD' }).format(v); }
-    function mostrarToast(mensaje, tipo='info') {
-        let toast = document.createElement('div');
-        toast.className = 'toast-notify';
-        toast.innerHTML = `<span>${tipo === 'error' ? '❌' : '✅'}</span> ${mensaje}`;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
+    function formatMoney(v) { return new Intl.NumberFormat('es-EC', { style:'currency', currency:'USD' }).format(v); }
+    function toast(msg, type='info') {
+        let t = document.createElement('div');
+        t.className = 'toast-notify';
+        t.innerHTML = `<span>${type==='error'?'❌':'✅'}</span> ${msg}`;
+        document.body.appendChild(t);
+        setTimeout(()=>t.remove(),3000);
     }
 
-    function calcularDeudaTotal(jugador) {
-        if(jugador.deuda !== undefined && !jugador.deudas) return jugador.deuda;
+    function deudaTotal(j) {
+        if(j.deuda!==undefined && !j.deudas) return j.deuda;
         let suma = 0;
-        for(let c of CONCEPTOS_ORDER) suma += jugador.deudas?.[c] || 0;
-        let credito = jugador.credito || 0;
-        return Math.max(0, suma - credito);
+        for(let c of CONCEPTOS) suma += j.deudas?.[c] || 0;
+        let cred = j.credito || 0;
+        return Math.max(0, suma - cred);
     }
 
-    // Función que determina si un jugador cumple con los filtros
-    function cumpleFiltros(jugador) {
-        // Filtro por nombre
-        const nombreCompleto = (jugador.nombreCompleto || jugador.nombreCamiseta || "").toLowerCase();
-        if(busquedaTexto && !nombreCompleto.includes(busquedaTexto.toLowerCase())) return false;
-        
-        // Filtro por estado
-        const deudaTotal = calcularDeudaTotal(jugador);
-        const tieneCredito = (jugador.credito || 0) > 0;
-        if(filtroEstado === "morosos" && deudaTotal === 0) return false;
-        if(filtroEstado === "aldia" && deudaTotal > 0) return false;
-        if(filtroEstado === "credito" && !tieneCredito) return false;
-        
-        // Filtro por concepto de deuda (muestra jugadores que tengan deuda > 0 en ese concepto específico)
+    function cumpleFiltros(j) {
+        // nombre
+        let nom = (j.nombreCompleto || j.nombreCamiseta || "").toLowerCase();
+        if(busquedaTexto && !nom.includes(busquedaTexto.toLowerCase())) return false;
+        // estado
+        let deuda = deudaTotal(j);
+        let cred = (j.credito||0)>0;
+        if(filtroEstado==="morosos" && deuda===0) return false;
+        if(filtroEstado==="aldia" && deuda>0) return false;
+        if(filtroEstado==="credito" && !cred) return false;
+        // rango deuda
+        if(filtroRangoDeuda !== "todos") {
+            if(filtroRangoDeuda === "mayor0" && deuda === 0) return false;
+            if(filtroRangoDeuda === "mayor50" && deuda <= 50) return false;
+            if(filtroRangoDeuda === "mayor100" && deuda <= 100) return false;
+            if(filtroRangoDeuda === "menor50" && deuda > 50) return false;
+        }
+        // concepto específico (debe tener deuda >0 en ese concepto)
         if(filtroConcepto !== "todos") {
-            if(!jugador.deudas || (jugador.deudas[filtroConcepto] || 0) <= 0) return false;
+            if(!j.deudas || (j.deudas[filtroConcepto] || 0) <= 0) return false;
         }
         return true;
     }
 
     async function cargarDatos() {
         const container = document.getElementById('lista-jugadores');
-        container.innerHTML = `<div class="col-span-full py-20 text-center"><div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent mb-4"></div><p class="text-on-surface-variant">Cargando plantilla...</p></div>`;
+        container.innerHTML = `<div class="col-span-full py-20 text-center"><div class="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent mb-4"></div><p>Cargando...</p></div>`;
         try {
             const res = await fetch(`${API_URL}?action=getVocaliaData&nocache=${Date.now()}`);
             const data = await res.json();
             if(data.success) {
                 jugadoresData = data.deudores;
-                // Actualizar stats generales (sin filtros)
-                let totalDeuda = 0, deudoresCount = 0;
-                for(let j of jugadoresData) {
-                    let deuda = calcularDeudaTotal(j);
-                    totalDeuda += deuda;
-                    if(deuda > 0) deudoresCount++;
-                }
+                let totalDeuda=0, deudores=0;
+                for(let j of jugadoresData) { let d=deudaTotal(j); totalDeuda+=d; if(d>0) deudores++; }
                 document.getElementById('jugadores-activos').innerText = jugadoresData.length;
-                document.getElementById('pendientes-pago').innerText = deudoresCount;
-                
-                const resHist = await fetch(`${API_URL}?action=getHistorialVocalia&nocache=${Date.now()}`);
-                const histData = await resHist.json();
-                let totalRec = 0;
-                if(histData.success && histData.historial) {
-                    totalRec = histData.historial.reduce((sum, item) => sum + (item.monto || 0), 0);
-                }
-                document.getElementById('total-recaudado').innerText = formatearMoneda(totalRec);
-                
-                aplicarFiltrosYRerenderizar();
-            } else {
-                throw new Error(data.error);
-            }
+                document.getElementById('pendientes-pago').innerText = deudores;
+                const hist = await fetch(`${API_URL}?action=getHistorialVocalia&nocache=${Date.now()}`);
+                const histData = await hist.json();
+                let recaudado = 0;
+                if(histData.success && histData.historial) recaudado = histData.historial.reduce((s,i)=>s+(i.monto||0),0);
+                document.getElementById('total-recaudado').innerText = formatMoney(recaudado);
+                aplicarFiltros();
+            } else throw new Error(data.error);
         } catch(e) {
-            container.innerHTML = `<div class="col-span-full py-20 text-center text-error">❌ Error: ${e.message}</div>`;
-            mostrarToast("Error al cargar datos", "error");
+            container.innerHTML = `<div class="col-span-full py-20 text-center text-error">❌ ${e.message}</div>`;
+            toast("Error de conexión","error");
         }
     }
 
-    function aplicarFiltrosYRerenderizar() {
-        const filtrados = jugadoresData.filter(j => cumpleFiltros(j));
+    function aplicarFiltros() {
+        const filtrados = jugadoresData.filter(cumpleFiltros);
         document.getElementById('resultados-contador').innerHTML = `Mostrando ${filtrados.length} de ${jugadoresData.length} jugadores`;
         renderizarJugadores(filtrados);
     }
@@ -355,114 +353,91 @@
     function renderizarJugadores(lista) {
         const container = document.getElementById('lista-jugadores');
         if(!lista.length) {
-            container.innerHTML = '<div class="col-span-full py-20 text-center text-on-surface-variant">🎯 No hay jugadores que coincidan con los filtros.</div>';
+            container.innerHTML = '<div class="col-span-full py-20 text-center">🎯 No hay jugadores con esos filtros.</div>';
             return;
         }
         let html = '';
         for(let j of lista) {
-            const deudaTotal = calcularDeudaTotal(j);
-            const isChecked = selectedPlayers.has(j.cedula);
-            const tieneConceptos = j.deudas && typeof j.deudas === 'object';
-            let conceptosBadges = '';
-            if(tieneConceptos) {
-                for(let c of CONCEPTOS_ORDER) {
-                    if(j.deudas[c] > 0) {
-                        conceptosBadges += `<span class="px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-red-100 text-red-700">${NOMBRES_CONCEPTOS[c].substring(0,4)}</span>`;
+            const deudaTot = deudaTotal(j);
+            const selec = selectedPlayers.has(j.cedula);
+            const tieneDetalle = j.deudas && typeof j.deudas === 'object';
+            // Construir desglose visible de cada concepto adeudado
+            let desgloseHtml = '';
+            if(tieneDetalle) {
+                for(let c of CONCEPTOS) {
+                    let val = j.deudas[c] || 0;
+                    if(val > 0) {
+                        desgloseHtml += `<div class="deuda-item-concepto"><span>${NOMBRES[c]}</span><span class="font-bold text-primary">${formatMoney(val)}</span></div>`;
                     }
                 }
             } else {
-                conceptosBadges = `<span class="px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-orange-100 text-orange-700">Deuda: ${formatearMoneda(deudaTotal)}</span>`;
+                desgloseHtml = `<div class="deuda-item-concepto"><span>Deuda total</span><span class="font-bold">${formatMoney(deudaTot)}</span></div>`;
             }
-            
+            if((j.credito||0)>0) {
+                desgloseHtml += `<div class="deuda-item-concepto text-green-700"><span>💰 Crédito a favor</span><span>${formatMoney(j.credito)}</span></div>`;
+            }
             html += `
-                <div class="glass-card p-5 rounded-xl cursor-pointer hover:shadow-lg transition-all duration-300 border ${isChecked ? 'border-primary player-selected' : 'border-transparent'} flex flex-col gap-4 group" data-cedula="${j.cedula}">
+                <div class="glass-card p-5 rounded-xl cursor-pointer hover:shadow-lg transition-all duration-300 border ${selec ? 'border-primary player-selected' : 'border-transparent'} flex flex-col gap-3 group" data-cedula="${j.cedula}">
                     <div class="flex items-start justify-between">
-                        <div class="flex items-center gap-4">
-                            <input type="checkbox" class="player-checkbox w-5 h-5 accent-primary" data-cedula="${j.cedula}" ${isChecked ? 'checked' : ''}>
-                            <div class="w-12 h-12 bg-primary-container/20 rounded-full flex items-center justify-center text-primary font-bold text-lg">
-                                ${j.dorsal || '?'}
-                            </div>
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" class="player-checkbox w-5 h-5 accent-primary" data-cedula="${j.cedula}" ${selec ? 'checked' : ''}>
+                            <div class="w-12 h-12 bg-primary-container/20 rounded-full flex items-center justify-center text-primary font-bold text-lg">${j.dorsal || '?'}</div>
                             <div>
-                                <h4 class="font-headline-md text-on-surface group-hover:text-primary transition-colors">${escapeHtml(j.nombreCompleto || j.nombreCamiseta)}</h4>
-                                <p class="text-label-sm text-on-surface-variant">Deuda total: ${deudaTotal > 0 ? formatearMoneda(deudaTotal) : '<span class="text-green-600">✓ Al día</span>'}</p>
+                                <h4 class="font-headline-md text-on-surface group-hover:text-primary">${escapeHtml(j.nombreCompleto || j.nombreCamiseta)}</h4>
+                                <p class="text-label-sm text-on-surface-variant">Total adeudado: <span class="font-bold ${deudaTot>0?'text-red-600':'text-green-600'}">${deudaTot>0?formatMoney(deudaTot):'✓ Al día'}</span></p>
                             </div>
                         </div>
-                        <span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">payments</span>
+                        <span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" data-pagar="${j.cedula}">payments</span>
                     </div>
-                    <div class="flex flex-wrap gap-2 pt-2">
-                        ${conceptosBadges}
-                        ${(j.credito || 0) > 0 ? `<span class="px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-green-100 text-green-700">Crédito: ${formatearMoneda(j.credito)}</span>` : ''}
+                    <div class="border-t border-outline-variant/30 pt-2">
+                        <p class="text-xs font-semibold text-on-surface-variant mb-1">📋 Desglose de deudas:</p>
+                        ${desgloseHtml || '<div class="text-xs text-gray-400">Sin deudas pendientes</div>'}
                     </div>
-                    ${tieneConceptos ? `
-                    <div class="detalle-conceptos hidden grid-cols-2 gap-2 pt-2 text-xs" id="detalle-${j.cedula}">
-                        ${CONCEPTOS_ORDER.map(c => {
-                            let val = j.deudas[c] || 0;
-                            if(val > 0) return `<div class="flex justify-between bg-surface-container-low p-2 rounded"><span>${NOMBRES_CONCEPTOS[c]}:</span><span class="font-bold">${formatearMoneda(val)}</span></div>`;
-                            return '';
-                        }).join('')}
-                    </div>
-                    ` : ''}
                 </div>
             `;
         }
         container.innerHTML = html;
-        
-        // Reasignar eventos a los nuevos elementos
+        // Checkboxes
         document.querySelectorAll('.player-checkbox').forEach(cb => {
             cb.addEventListener('change', (e) => {
                 e.stopPropagation();
-                const cedula = cb.dataset.cedula;
-                if(cb.checked) selectedPlayers.add(cedula);
-                else selectedPlayers.delete(cedula);
-                const parentDiv = cb.closest('.glass-card');
-                if(cb.checked) parentDiv.classList.add('player-selected', 'border-primary');
-                else parentDiv.classList.remove('player-selected', 'border-primary');
+                let ced = cb.dataset.cedula;
+                if(cb.checked) selectedPlayers.add(ced);
+                else selectedPlayers.delete(ced);
+                let parent = cb.closest('.glass-card');
+                if(cb.checked) parent.classList.add('player-selected','border-primary');
+                else parent.classList.remove('player-selected','border-primary');
             });
         });
-        
-        document.querySelectorAll('.glass-card').forEach(card => {
-            const cedula = card.dataset.cedula;
-            const detalleDiv = document.getElementById(`detalle-${cedula}`);
-            if(detalleDiv) {
-                card.addEventListener('click', (e) => {
-                    if(e.target.classList.contains('player-checkbox') || e.target.closest('.player-checkbox')) return;
-                    detalleDiv.classList.toggle('hidden');
-                });
-            }
-            const iconPay = card.querySelector('.material-symbols-outlined:last-child');
-            if(iconPay && iconPay.classList.contains('opacity-0')) {
-                iconPay.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const jugador = jugadoresData.find(j => j.cedula === cedula);
-                    if(jugador) abrirModalPagoIndividual(jugador);
-                });
-            }
+        // Botón de pagar ícono
+        document.querySelectorAll('[data-pagar]').forEach(icon => {
+            icon.addEventListener('click', (e) => {
+                e.stopPropagation();
+                let ced = icon.getAttribute('data-pagar');
+                let jug = jugadoresData.find(j=>j.cedula===ced);
+                if(jug) abrirModalPagoIndividual(jug);
+            });
         });
+        // Clic en la tarjeta (opcional: mostrar más detalles? ya se ven todos)
     }
 
-    function abrirModalPagoIndividual(jugador) {
+    function abrirModalPagoIndividual(jug) {
         modoPagoMultiple = false;
-        document.getElementById('modal-titulo').innerText = `Pagar a ${jugador.nombreCompleto || jugador.nombreCamiseta}`;
+        document.getElementById('modal-titulo').innerText = `Pagar a ${jug.nombreCompleto || jug.nombreCamiseta}`;
         document.getElementById('jugadores-seleccionados-resumen').innerHTML = '';
-        document.getElementById('btn-confirmar-pago').setAttribute('data-cedula', jugador.cedula);
+        document.getElementById('btn-confirmar-pago').setAttribute('data-cedula', jug.cedula);
         document.getElementById('montoPago').value = '';
         document.getElementById('transaccionPago').value = '';
         document.getElementById('modalPago').classList.remove('hidden');
         document.getElementById('modalPago').classList.add('flex');
     }
 
-    function abrirModalPagoMultiple() {
-        if(selectedPlayers.size === 0) {
-            mostrarToast("Selecciona al menos un jugador", "error");
-            return;
-        }
+    function abrirModalMultiple() {
+        if(selectedPlayers.size===0) { toast("Selecciona al menos un jugador","error"); return; }
         modoPagoMultiple = true;
-        const nombres = Array.from(selectedPlayers).map(ced => {
-            const j = jugadoresData.find(j => j.cedula === ced);
-            return j ? (j.nombreCompleto || j.nombreCamiseta) : ced;
-        }).join(', ');
+        let nombres = Array.from(selectedPlayers).map(c=>{let j=jugadoresData.find(j=>j.cedula===c); return j?(j.nombreCompleto||j.nombreCamiseta):c;}).join(', ');
         document.getElementById('modal-titulo').innerText = `Pagar a ${selectedPlayers.size} jugadores`;
-        document.getElementById('jugadores-seleccionados-resumen').innerHTML = `<p class="mb-2">Jugadores: ${nombres}</p>`;
+        document.getElementById('jugadores-seleccionados-resumen').innerHTML = `<p>Jugadores: ${nombres}</p>`;
         document.getElementById('btn-confirmar-pago').removeAttribute('data-cedula');
         document.getElementById('montoPago').value = '';
         document.getElementById('transaccionPago').value = '';
@@ -472,41 +447,28 @@
 
     async function confirmarPago() {
         let monto = parseFloat(document.getElementById('montoPago').value);
-        if(isNaN(monto) || monto <= 0) {
-            mostrarToast("Monto inválido", "error");
-            return;
-        }
+        if(isNaN(monto) || monto<=0) { toast("Monto inválido","error"); return; }
         const concepto = document.getElementById('conceptoPago').value;
-        const transaccion = document.getElementById('transaccionPago').value.trim() || "SIN REFERENCIA";
-        
+        const transaccion = document.getElementById('transaccionPago').value.trim() || "SIN_REF";
         if(!modoPagoMultiple) {
-            const cedula = document.getElementById('btn-confirmar-pago').getAttribute('data-cedula');
+            let cedula = document.getElementById('btn-confirmar-pago').getAttribute('data-cedula');
             if(!cedula) return;
             try {
-                const res = await fetch(`${API_URL}?action=registrarPagoVocalia&cedula=${cedula}&monto=${monto}&concepto=${concepto}&transaccion=${encodeURIComponent(transaccion)}`);
-                const data = await res.json();
-                if(data.success) {
-                    mostrarToast(`Pago registrado: ${data.detalle || 'correcto'}`, "success");
-                    cerrarModalPago();
-                    cargarDatos(); // recarga todo y mantiene filtros
-                } else {
-                    throw new Error(data.error);
-                }
-            } catch(e) {
-                mostrarToast(e.message, "error");
-            }
+                let res = await fetch(`${API_URL}?action=registrarPagoVocalia&cedula=${cedula}&monto=${monto}&concepto=${concepto}&transaccion=${encodeURIComponent(transaccion)}`);
+                let data = await res.json();
+                if(data.success) { toast(`Pago registrado: ${data.detalle||''}`); cerrarModalPago(); cargarDatos(); }
+                else throw new Error(data.error);
+            } catch(e) { toast(e.message,"error"); }
         } else {
-            let exitosos = 0, fallidos = 0;
-            for(let cedula of selectedPlayers) {
+            let ok=0, fail=0;
+            for(let ced of selectedPlayers) {
                 try {
-                    const res = await fetch(`${API_URL}?action=registrarPagoVocalia&cedula=${cedula}&monto=${monto}&concepto=${concepto}&transaccion=${encodeURIComponent(transaccion)}`);
-                    const data = await res.json();
-                    if(data.success) exitosos++;
-                    else fallidos++;
-                } catch(e) { fallidos++; }
+                    let res = await fetch(`${API_URL}?action=registrarPagoVocalia&cedula=${ced}&monto=${monto}&concepto=${concepto}&transaccion=${encodeURIComponent(transaccion)}`);
+                    let data = await res.json();
+                    if(data.success) ok++; else fail++;
+                } catch(e) { fail++; }
             }
-            if(fallidos === 0) mostrarToast(`${exitosos} pagos registrados correctamente`, "success");
-            else mostrarToast(`${exitosos} OK, ${fallidos} fallidos`, "error");
+            if(fail===0) toast(`${ok} pagos registrados correctamente`); else toast(`${ok} OK, ${fail} fallidos`,"error");
             cerrarModalPago();
             selectedPlayers.clear();
             cargarDatos();
@@ -515,82 +477,58 @@
 
     async function abrirHistorial() {
         const modal = document.getElementById('modalHistorial');
-        const contenido = document.getElementById('historial-contenido');
-        contenido.innerHTML = '<div class="text-center py-8">Cargando historial...</div>';
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
+        const cont = document.getElementById('historial-contenido');
+        cont.innerHTML = '<div class="text-center py-8">Cargando...</div>';
+        modal.classList.remove('hidden'); modal.classList.add('flex');
         try {
-            const res = await fetch(`${API_URL}?action=getHistorialVocalia&nocache=${Date.now()}`);
-            const data = await res.json();
-            if(data.success && data.historial && data.historial.length) {
+            let res = await fetch(`${API_URL}?action=getHistorialVocalia&nocache=${Date.now()}`);
+            let data = await res.json();
+            if(data.success && data.historial?.length) {
                 let html = '<div class="space-y-3">';
-                for(let item of data.historial) {
-                    let fecha = new Date(item.fecha).toLocaleString('es-EC');
-                    html += `
-                        <div class="p-4 bg-surface-container-low rounded-xl border-l-4 border-primary">
-                            <div class="flex justify-between items-start flex-wrap gap-2">
-                                <div><strong>${escapeHtml(item.jugador)}</strong> - ${NOMBRES_CONCEPTOS[item.conceptoAplicado] || item.conceptoAplicado}</div>
-                                <div class="text-sm font-bold text-primary">${formatearMoneda(item.monto)}</div>
-                            </div>
-                            <div class="text-xs text-on-surface-variant mt-1">${fecha} | Transacción: ${item.transaccion || 'N/A'}</div>
-                            <div class="text-xs mt-1">Deuda restante: ${formatearMoneda(item.deudaRestante)}</div>
-                            ${item.detalle ? `<div class="text-xs text-gray-500 mt-1">Detalle: ${item.detalle}</div>` : ''}
-                        </div>
-                    `;
+                for(let it of data.historial) {
+                    let fecha = new Date(it.fecha).toLocaleString('es-EC');
+                    html += `<div class="p-4 bg-surface-container-low rounded-xl border-l-4 border-primary">
+                        <div class="flex justify-between flex-wrap"><strong>${escapeHtml(it.jugador)}</strong> <span class="text-primary font-bold">${formatMoney(it.monto)}</span></div>
+                        <div class="text-xs text-on-surface-variant">${fecha} | Transacción: ${it.transaccion||'N/A'}</div>
+                        <div class="text-xs">Deuda restante: ${formatMoney(it.deudaRestante)}</div>
+                        ${it.detalle ? `<div class="text-xs text-gray-500 mt-1">Detalle: ${it.detalle}</div>` : ''}
+                    </div>`;
                 }
                 html += '</div>';
-                contenido.innerHTML = html;
-            } else {
-                contenido.innerHTML = '<div class="text-center py-8 text-on-surface-variant">📭 No hay pagos registrados aún.</div>';
-            }
-        } catch(e) {
-            contenido.innerHTML = `<div class="text-center py-8 text-error">Error: ${e.message}</div>`;
-        }
+                cont.innerHTML = html;
+            } else cont.innerHTML = '<div class="text-center py-8">📭 No hay pagos registrados</div>';
+        } catch(e) { cont.innerHTML = `<div class="text-center py-8 text-error">Error: ${e.message}</div>`; }
     }
 
-    function cerrarModalPago() {
-        document.getElementById('modalPago').classList.add('hidden');
-        document.getElementById('modalPago').classList.remove('flex');
-    }
-    function cerrarModalHistorial() {
-        document.getElementById('modalHistorial').classList.add('hidden');
-        document.getElementById('modalHistorial').classList.remove('flex');
-    }
-    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
-    
-    function handleBusqueda() {
-        busquedaTexto = document.getElementById('busqueda').value;
-        aplicarFiltrosYRerenderizar();
-    }
-    
-    // Configurar filtros de concepto
-    document.querySelectorAll('[data-filtro-concepto]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('[data-filtro-concepto]').forEach(b => b.classList.remove('active'));
+    function cerrarModalPago() { document.getElementById('modalPago').classList.add('hidden'); document.getElementById('modalPago').classList.remove('flex'); }
+    function cerrarModalHistorial() { document.getElementById('modalHistorial').classList.add('hidden'); document.getElementById('modalHistorial').classList.remove('flex'); }
+    function escapeHtml(s) { if(!s) return ''; return s.replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+
+    // Eventos
+    document.getElementById('btn-refresh').addEventListener('click', cargarDatos);
+    document.getElementById('btn-ver-historial').addEventListener('click', abrirHistorial);
+    document.getElementById('btn-pago-multiple').addEventListener('click', abrirModalMultiple);
+    document.getElementById('btn-confirmar-pago').addEventListener('click', confirmarPago);
+    document.getElementById('busqueda').addEventListener('input', (e)=>{ busquedaTexto=e.target.value; aplicarFiltros(); });
+    document.getElementById('filtro-rango-deuda').addEventListener('change', (e)=>{ filtroRangoDeuda=e.target.value; aplicarFiltros(); });
+    document.querySelectorAll('[data-filtro-concepto]').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+            document.querySelectorAll('[data-filtro-concepto]').forEach(b=>b.classList.remove('active'));
             btn.classList.add('active');
             filtroConcepto = btn.getAttribute('data-filtro-concepto');
-            aplicarFiltrosYRerenderizar();
+            aplicarFiltros();
         });
     });
-    
-    // Configurar filtros de estado
-    document.querySelectorAll('.filter-estado').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.filter-estado').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.filter-estado').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+            document.querySelectorAll('.filter-estado').forEach(b=>b.classList.remove('active'));
             btn.classList.add('active');
             filtroEstado = btn.getAttribute('data-filtro-estado');
-            aplicarFiltrosYRerenderizar();
+            aplicarFiltros();
         });
     });
-    
-    document.getElementById('btn-refresh').addEventListener('click', () => cargarDatos());
-    document.getElementById('btn-ver-historial').addEventListener('click', abrirHistorial);
-    document.getElementById('btn-pago-multiple').addEventListener('click', abrirModalPagoMultiple);
-    document.getElementById('btn-confirmar-pago').addEventListener('click', confirmarPago);
-    document.getElementById('busqueda').addEventListener('input', handleBusqueda);
     window.cerrarModalPago = cerrarModalPago;
     window.cerrarModalHistorial = cerrarModalHistorial;
-    
     cargarDatos();
 </script>
 </body>
