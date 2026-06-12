@@ -11,9 +11,9 @@
 <link rel="icon" type="image/x-icon" href="./favicon.ico">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--primary:#00d2ff;--primary-dark:#008f9b;--bg-dark:#020c1a}
+:root{--primary:#00d2ff;--primary-dark:#008f9b}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:'Plus Jakarta Sans',sans-serif;background:#020c1a;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;color:#fff;position:relative;overflow:hidden;overscroll-behavior:none}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#020c1a;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;color:#fff;position:relative;overflow-x:hidden;overflow-y:auto} /* Permitir scroll y pull-to-refresh */
 body::before,body::after{content:'';position:fixed;width:950px;height:950px;border-radius:50%;filter:blur(130px);opacity:.85;z-index:0;animation:moveGlow 14s infinite ease-in-out;pointer-events:none}
 body::before{background:radial-gradient(circle,rgba(0,210,255,.95) 0%,rgba(0,140,255,.55) 40%,transparent 75%);top:-340px;left:-260px}
 body::after{background:radial-gradient(circle,rgba(111,0,255,.95) 0%,rgba(168,85,247,.55) 40%,transparent 75%);bottom:-340px;right:-260px;animation-delay:7s}
@@ -61,18 +61,20 @@ input:focus{border-color:var(--primary);background:rgba(15,23,42,.92);box-shadow
 </div>
 <script src="./config.js"></script>
 <script>
-// Mostrar versión desde el Service Worker
+// ==================== VERSIÓN (leída desde sw.js) ====================
 (async function() {
   try {
     const res = await fetch('./sw.js');
     const txt = await res.text();
     const match = txt.match(/CACHE_NAME\s*=\s*['"](?:napoles-)?v?([\d\.]+)['"]/);
-    const version = match ? 'v' + match[1] : 'v1.0.0';
+    const version = match ? 'v' + match[1] : 'v1.0.42';
     document.getElementById('versionInfo').innerHTML = `<span>${version}</span><span> • </span><span>By Corporación 360</span>`;
-  } catch(e) { document.getElementById('versionInfo').innerHTML = `<span>v1.0.0</span><span> • </span><span>By Corporación 360</span>`; }
+  } catch(e) {
+    document.getElementById('versionInfo').innerHTML = `<span>v1.0.42</span><span> • </span><span>By Corporación 360</span>`;
+  }
 })();
 
-// Instalación PWA
+// ==================== INSTALACIÓN PWA ====================
 let deferredPrompt = null;
 window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
 document.getElementById('manualDownloadBtn').addEventListener('click', () => {
@@ -80,12 +82,13 @@ document.getElementById('manualDownloadBtn').addEventListener('click', () => {
   else alert('Para instalar, abre menú del navegador → "Instalar aplicación"');
 });
 
-// Login (igual que antes)
+// ==================== LOGIN ====================
 const form = document.getElementById('formLogin');
 const cedula = document.getElementById('loginCedula');
 const btn = document.getElementById('btnLogin');
 const errorDiv = document.getElementById('errorMsg');
 const loginCard = document.getElementById('loginCard');
+
 function mostrarError(msg){ errorDiv.textContent=msg; errorDiv.style.display='block'; setTimeout(()=>errorDiv.style.display='none',5000); }
 cedula.addEventListener('input',()=>{ let val=cedula.value.trim(); btn.disabled=!val; loginCard.classList.toggle('admin-mode',val.includes('Gata')); });
 form.addEventListener('submit', async(e)=>{
@@ -95,12 +98,14 @@ form.addEventListener('submit', async(e)=>{
   if(typeof CONFIG==='undefined' || !CONFIG.URL_GAS) return mostrarError('❌ Error de configuración');
   btn.disabled=true; btn.textContent='CONECTANDO...';
   try{
+    // ADMIN
     if(valor==='GataFiera54321'){
       let params=new URLSearchParams(); params.append('action','loginAdmin'); params.append('clave',valor);
       let res=await fetch(CONFIG.URL_GAS,{method:'POST',mode:'cors',body:params}); let data=await res.json();
       if(data.success && data.acceso){ localStorage.setItem('admin_activo','true'); window.location='./admin.html'; return; }
       mostrarError('❌ Clave admin incorrecta'); return;
     }
+    // JUGADOR
     if(!/^\d{10}$/.test(valor)){ mostrarError('❌ Ingresa cédula válida o clave admin'); return; }
     let params=new URLSearchParams(); params.append('action','validarRegistro'); params.append('cedula',valor);
     let res=await fetch(CONFIG.URL_GAS,{method:'POST',mode:'cors',body:params}); let data=await res.json();
@@ -115,7 +120,7 @@ form.addEventListener('submit', async(e)=>{
   finally{ btn.disabled=false; btn.textContent='Ingresa al Vestuario'; }
 });
 
-// Service Worker
+// ==================== SERVICE WORKER ====================
 if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));
 </script>
 </body>
