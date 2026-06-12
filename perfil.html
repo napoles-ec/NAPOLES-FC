@@ -28,7 +28,7 @@
     body.ruleta-mode { background: #0a0c10; overflow: hidden; min-height: 100dvh; }
     .match-info-card { background: #1a1c22; border-radius: 40px; padding: 16px 20px; margin: 15px 0; border-left: 5px solid #e9c349; text-align: center; }
 
-    /* ========== ESTILOS EXCLUSIVOS DEL PERFIL (DISEÑO ORIGINAL) ========== */
+    /* ========== ESTILOS EXCLUSIVOS DEL PERFIL (DISEÑO ORIGINAL CORREGIDO) ========== */
     .perfil-root {
         background: radial-gradient(circle at top, #111a33 0%, #060912 100%);
         font-family: 'Inter', sans-serif;
@@ -42,13 +42,22 @@
         width: 100%;
         max-width: 460px;
     }
+    .perfil-header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
     .perfil-header h1 {
         font-family: 'Outfit', sans-serif;
         color: #D4AF37;
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         letter-spacing: 2px;
-        text-align: center;
-        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+    }
+    .perfil-header h1 img {
+        height: 45px;
     }
     .cards-row {
         display: grid;
@@ -56,12 +65,85 @@
         gap: 12px;
         margin-bottom: 15px;
     }
-    .glass-card-perfil {
+    /* Tarjetas igualadas */
+    .card-identity, .card-jersey {
         background: linear-gradient(145deg, rgba(10,20,40,.85), rgba(5,10,20,.95));
         border-radius: 20px;
         border: 1px solid rgba(212,175,55,.25);
+        padding: 15px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 240px;
+    }
+    .card-identity {
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 0 15px rgba(212,175,55,0.3), inset 0 0 5px rgba(255,215,0,0.2);
+        animation: glowPulse 2s infinite alternate;
+    }
+    @keyframes glowPulse {
+        0% { box-shadow: 0 0 5px rgba(212,175,55,0.2), inset 0 0 2px rgba(255,215,0,0.1); }
+        100% { box-shadow: 0 0 25px rgba(212,175,55,0.6), inset 0 0 10px rgba(255,215,0,0.3); }
+    }
+    .avatar-icon-box {
+        width: 75px;
+        height: 75px;
+        border-radius: 50%;
+        border: 3px solid #D4AF37;
+        background: radial-gradient(circle, #1a2a4a 0%, #0a1428 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 10px;
         overflow: hidden;
     }
+    .avatar-icon-box img { width: 100%; height: 100%; object-fit: cover; }
+    .id-card-jersey-wrap {
+        perspective: 900px;
+        height: 150px;
+        margin-bottom: 10px;
+    }
+    .jersey-card-inner {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        animation: rotateCard 12s linear infinite;
+    }
+    @keyframes rotateCard {
+        from { transform: rotateY(0deg); }
+        to { transform: rotateY(360deg); }
+    }
+    .face-front, .face-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 20px;
+        backface-visibility: hidden;
+        background: linear-gradient(145deg, #0a1428, #000814);
+        border: 2px solid rgba(212,175,55,.4);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .face-back { transform: rotateY(180deg); }
+    .jersey-number {
+        font-size: 3rem;
+        font-family: 'Outfit';
+        font-weight: 900;
+        line-height: 1;
+        color: #D4AF37;
+    }
+    .jersey-name {
+        font-size: 0.9rem;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    /* Tarjeta del partido */
     .match-card-gold {
         background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(0,0,0,0.6));
         border-left: 6px solid #D4AF37;
@@ -69,6 +151,22 @@
         padding: 18px 15px;
         margin-bottom: 20px;
         text-align: center;
+    }
+    /* Próximo partido (verde/neón) */
+    .match-next {
+        border-left: 6px solid #2ecc71;
+        box-shadow: 0 0 15px rgba(46,204,113,0.4);
+        animation: neonPulseGreen 1.5s infinite alternate;
+    }
+    @keyframes neonPulseGreen {
+        0% { box-shadow: 0 0 5px rgba(46,204,113,0.3); border-left-color: #2ecc71; }
+        100% { box-shadow: 0 0 25px rgba(46,204,113,0.7); border-left-color: #27ae60; }
+    }
+    /* Partido jugado (gris) */
+    .match-past {
+        border-left: 6px solid #7f8c8d;
+        filter: grayscale(0.3);
+        opacity: 0.8;
     }
     .match-teams {
         display: flex;
@@ -82,15 +180,10 @@
         flex: 1;
     }
     .team-badge .team-name {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
         font-weight: 900;
         font-family: 'Outfit';
         letter-spacing: 1px;
-    }
-    .team-badge .team-sub {
-        font-size: 0.7rem;
-        color: #D4AF37;
-        text-transform: uppercase;
     }
     .vs-circle {
         background: #D4AF37;
@@ -124,25 +217,26 @@
     }
     .match-info-item i {
         color: #D4AF37;
-        font-size: 1rem;
     }
+
+    /* Rivales con animación de giro */
     .rivales-scroll {
         margin-top: 18px;
-        overflow-x: auto;
+        overflow-x: hidden;
         white-space: nowrap;
         padding-bottom: 8px;
-        scrollbar-width: thin;
     }
-    .rivales-scroll::-webkit-scrollbar {
-        height: 4px;
+    .rivales-track {
+        display: inline-flex;
+        gap: 12px;
+        animation: girarRivales 20s linear infinite;
     }
-    .rivales-scroll::-webkit-scrollbar-track {
-        background: rgba(255,255,255,0.1);
-        border-radius: 10px;
+    .rivales-track:hover {
+        animation-play-state: paused;
     }
-    .rivales-scroll::-webkit-scrollbar-thumb {
-        background: #D4AF37;
-        border-radius: 10px;
+    @keyframes girarRivales {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
     }
     .rival-chip {
         display: inline-block;
@@ -150,72 +244,13 @@
         border: 1px solid rgba(212,175,55,0.3);
         border-radius: 40px;
         padding: 6px 18px;
-        margin-right: 12px;
         font-size: 0.8rem;
         font-weight: 600;
         color: #f5e6a3;
         backdrop-filter: blur(4px);
-        transition: 0.2s;
     }
-    .rival-chip.active {
-        background: #D4AF37;
-        color: #000;
-        border-color: #D4AF37;
-        box-shadow: 0 0 8px #D4AF37;
-    }
-    .avatar-icon-box {
-        width: 75px;
-        height: 75px;
-        border-radius: 50%;
-        border: 3px solid #D4AF37;
-        background: radial-gradient(circle, #1a2a4a 0%, #0a1428 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 10px;
-        overflow: hidden;
-    }
-    .avatar-icon-box img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-    .id-card-jersey-wrap {
-        perspective: 900px;
-        height: 180px;
-    }
-    .jersey-card-inner {
-        width: 100%;
-        height: 100%;
-        position: relative;
-        transform-style: preserve-3d;
-        animation: rotateCard 12s linear infinite;
-    }
-    @keyframes rotateCard {
-        from { transform: rotateY(0deg); }
-        to { transform: rotateY(360deg); }
-    }
-    .face-front, .face-back {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        border-radius: 20px;
-        backface-visibility: hidden;
-        background: linear-gradient(145deg, #0a1428, #000814);
-        border: 2px solid rgba(212,175,55,.4);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
-    .face-back { transform: rotateY(180deg); }
-    .jersey-number {
-        font-size: 4.5rem;
-        font-family: 'Outfit';
-        font-weight: 900;
-        line-height: 1;
-        color: #D4AF37;
-    }
+
+    /* Estadísticas básicas */
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -229,6 +264,7 @@
         text-align: center;
         cursor: help;
     }
+    /* Rendimiento */
     .performance-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -254,6 +290,7 @@
         text-align: center;
         margin-top: 15px;
     }
+    /* Estado administrativo */
     .admin-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -271,59 +308,32 @@
         cursor: pointer;
         margin-top: 10px;
     }
-    .soccer-loading-container {
-        text-align: center;
-        margin-top: 140px;
+    /* Botones de acción centrados */
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 20px;
     }
-    .soccer-spinner {
-        font-size: 3.5rem;
-        color: #D4AF37;
-        display: inline-block;
-        animation: spinSoccer 1.2s linear infinite;
-    }
-    @keyframes spinSoccer { 100% { transform: rotate(360deg); } }
-    .error-message { text-align: center; padding: 60px 20px; color: #e74c3c; }
-
-    /* ========== MEJORAS (Tooltips, botones, ranking, etc.) ========== */
-    [data-tooltip] { position: relative; cursor: help; border-bottom: 1px dotted rgba(255,215,0,0.5); }
-    [data-tooltip]:before {
-        content: attr(data-tooltip);
-        position: absolute;
-        bottom: 120%;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #000c;
-        color: #FFD700;
-        padding: 5px 10px;
-        border-radius: 8px;
-        font-size: 0.7rem;
-        white-space: nowrap;
-        z-index: 100;
-        display: none;
-        pointer-events: none;
-    }
-    [data-tooltip]:hover:before { display: block; }
     .btn-share, .btn-report, .btn-pdf {
         background: rgba(212,175,55,0.15);
         border: 1px solid rgba(212,175,55,0.3);
         border-radius: 40px;
-        padding: 6px 12px;
-        font-size: 0.7rem;
+        padding: 8px 16px;
+        font-size: 0.8rem;
         font-weight: 600;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
         transition: 0.2s;
-        color: #D4AF37;
+        color: #FFD700;
     }
-    .btn-share:hover, .btn-report:hover, .btn-pdf:hover { background: rgba(212,175,55,0.3); }
-    .ranking-card { background: rgba(0,0,0,.3); border-radius: 20px; padding: 12px; margin-bottom: 15px; }
-    .ranking-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
-    .calendar-grid { background: rgba(0,0,0,.3); border-radius: 20px; padding: 12px; margin-bottom: 15px; max-height: 220px; overflow-y: auto; }
-    .match-event { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 8px; margin-bottom: 8px; }
-    .advanced-stats { display: flex; gap: 8px; justify-content: space-between; margin-bottom: 15px; }
-    .stat-advanced { background: rgba(0,0,0,.3); border-radius: 16px; padding: 8px; flex: 1; text-align: center; cursor: help; }
+    .btn-share:hover, .btn-report:hover, .btn-pdf:hover {
+        background: rgba(212,175,55,0.3);
+        transform: scale(1.02);
+    }
+    /* Notificaciones y otros */
     .notification-banner {
         background: linear-gradient(135deg, rgba(212,175,55,0.2), rgba(0,0,0,0.7));
         border-left: 5px solid #FFD700;
@@ -335,7 +345,10 @@
         gap: 12px;
         justify-content: space-between;
     }
-    .close-notification { background: none; border: none; color: #fff; cursor: pointer; }
+    .soccer-loading-container { text-align: center; margin-top: 140px; }
+    .soccer-spinner { font-size: 3.5rem; color: #D4AF37; animation: spinSoccer 1.2s linear infinite; }
+    @keyframes spinSoccer { 100% { transform: rotate(360deg); } }
+    .error-message { text-align: center; padding: 60px 20px; color: #e74c3c; }
     .modal-backdrop-report {
         position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
         z-index: 1000; display: none; align-items: center; justify-content: center; padding: 15px;
@@ -414,16 +427,7 @@ function mostrarNotificacion(notificacion) {
 }
 
 // ==================== RANKING Y PARTIDOS ====================
-async function obtenerRanking() {
-    try {
-        const res = await fetch(`${CONFIG.URL_GAS}?action=getJugadores&t=${Date.now()}`);
-        const data = await res.json();
-        if (data.success && data.jugadores) {
-            return data.jugadores.filter(j => j.estado === 'APROBADO').sort((a,b) => (b.goles || 0) - (a.goles || 0));
-        }
-        return [];
-    } catch(e) { return []; }
-}
+async function obtenerRanking() { return []; } // Eliminado, no se usa
 async function obtenerPartidosConfirmados() { return []; } // Placeholder
 
 // ==================== PDF, COMPARTIR, REPORTE ====================
@@ -457,7 +461,7 @@ function enviarReporte() {
     document.getElementById('reportText').value = '';
 }
 
-// ==================== RENDER PERFIL (DISEÑO ORIGINAL) ====================
+// ==================== RENDER PERFIL (DISEÑO ORIGINAL CORREGIDO) ====================
 async function mostrarPerfil() {
     document.body.className = '';
     document.body.style.background = '';
@@ -490,15 +494,14 @@ async function mostrarPerfil() {
         guardarCache(perfil, partidos, ranking, notificacion);
     }
     jugadorData = perfil;
-    rankingData = ranking;
     partidosConfirmados = partidos;
 
-    const posicion = ranking.findIndex(j => j.cedula === cedula) + 1;
-    const rankingTop5 = ranking.slice(0,5);
     const partidosJugados = Number(perfil.partidosJugados) || 0;
     const goles = Number(perfil.goles) || 0;
+    const amarillas = Number(perfil.amarillas) || 0;
+    const rojas = Number(perfil.rojas) || 0;
     const promedioGoles = partidosJugados > 0 ? (goles / partidosJugados).toFixed(2) : 0;
-    const tarjetasPorPartido = partidosJugados > 0 ? ((Number(perfil.amarillas) + Number(perfil.rojas)) / partidosJugados).toFixed(2) : 0;
+    const tarjetasPorPartido = partidosJugados > 0 ? ((amarillas + rojas) / partidosJugados).toFixed(2) : 0;
     const efectividad = (goles / (partidosJugados || 1)).toFixed(2);
     
     const s = {
@@ -510,8 +513,8 @@ async function mostrarPerfil() {
         tallaUni: escapeHtml(perfil['talla uni.'] || 'M'),
         partidosJugados: partidosJugados,
         goles: goles,
-        amarillas: Number(perfil.amarillas) || 0,
-        rojas: Number(perfil.rojas) || 0,
+        amarillas: amarillas,
+        rojas: rojas,
         puntualidad: parseFloat(perfil.puntualidad) || 0,
         companerismo: parseFloat(perfil.compañerismo) || 0,
         respeto: parseFloat(perfil.respeto) || 0,
@@ -530,27 +533,28 @@ async function mostrarPerfil() {
     let totalAdmin = deudaInscripcion + deudaUniforme + deudaMedias + s.deudaVocalia;
 
     const listaRivales = ["IDEAL", "BARZA", "SAN MARTIN", "INDEPENDIENTE", "VODKILA", "CHELSEA", "JUVENTUD DE AMERICA", "JUVENTUS", "LEONES", "FRANCO CANADIENSE"];
-    const chipsRivales = listaRivales.map(rival => `<span class="rival-chip">${rival}</span>`).join('');
+    const chipsRivales = [...listaRivales, ...listaRivales].map(rival => `<span class="rival-chip">${rival}</span>`).join('');
 
     container.innerHTML = `
     <div class="perfil-root">
         <div class="perfil-container">
-            <!-- Header con logo -->
-            <div class="perfil-header" style="display: flex; align-items: center; justify-content: center; gap: 12px;">
-                <img src="./imagen/logo/napoles_fc.png" alt="Logo" style="height: 50px;">
-                <h1>⚜️ PANEL NÁPOLES ⚜️</h1>
+            <!-- Header con logo y título -->
+            <div class="perfil-header">
+                <h1><img src="./imagen/logo/napoles_fc.png" alt="Logo"> NÁPOLES F.C.</h1>
             </div>
             <div style="font-size:0.75rem;color:#D4AF37; text-align:center; margin-bottom:20px;">Categoría: ${categoria === 'mujeres' ? 'Femenina ♀' : 'Masculina ♂'}</div>
             
-            <div style="display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 12px;">
+            <!-- Botones centrados -->
+            <div class="action-buttons">
                 <button class="btn-share" onclick="compartirPerfil()"><i class="fa-solid fa-share-alt"></i> Compartir</button>
                 <button class="btn-pdf" onclick="descargarPDF()"><i class="fa-solid fa-file-pdf"></i> PDF</button>
                 <button class="btn-report" onclick="abrirReporte()"><i class="fa-solid fa-flag"></i> Reportar</button>
             </div>
 
+            <!-- Tarjetas de identidad y jersey (igualadas) -->
             <div class="cards-row">
-                <div class="glass-card-perfil id-card-identity" style="padding:15px; text-align:center;">
-                    <div class="avatar-icon-box" style="margin:0 auto 10px;">
+                <div class="card-identity">
+                    <div class="avatar-icon-box">
                         <img src="./imagen/avatar/${cedula}.png" alt="Avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                         <i class="fa-solid fa-user-ninja" style="display:none;"></i>
                     </div>
@@ -558,34 +562,45 @@ async function mostrarPerfil() {
                     <div style="font-size:.65rem;"><i class="fa-solid fa-id-card"></i> ${cedula}</div>
                     <div style="margin-top:8px;background:rgba(212,175,55,.2);padding:4px 10px;border-radius:20px; display:inline-block;">${edad} años</div>
                 </div>
-                <div class="id-card-jersey-wrap">
-                    <div class="jersey-card-inner">
-                        <div class="face-front"><div class="jersey-name">${s.nombreCamiseta}</div><div class="jersey-number">${s.dorsal}</div></div>
-                        <div class="face-back"><div class="jersey-name">NÁPOLES FC</div><div class="jersey-number">${s.dorsal}</div></div>
+                <div class="card-jersey">
+                    <div class="id-card-jersey-wrap">
+                        <div class="jersey-card-inner">
+                            <div class="face-front">
+                                <div class="jersey-name">${s.nombreCamiseta}</div>
+                                <div class="jersey-number">${s.dorsal}</div>
+                            </div>
+                            <div class="face-back">
+                                <div class="jersey-name">NÁPOLES FC</div>
+                                <div class="jersey-number">${s.dorsal}</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
-                <div class="match-card-gold" style="margin-bottom:0;">
-                    <div class="match-teams">
-                        <div class="team-badge"><div class="team-name">⚜️ NÁPOLES F.C.</div><div class="team-sub">Local</div></div>
-                        <div class="vs-circle">VS</div>
-                        <div class="team-badge"><div class="team-name">🍁 FRANCO CANADIENSE</div><div class="team-sub">Visitante</div></div>
-                    </div>
-                    <div class="match-info">
-                        <div class="match-info-item"><i class="fa-regular fa-calendar-alt"></i> ${PROXIMO_PARTIDO.fechaLegible}</div>
-                        <div class="match-info-item"><i class="fa-regular fa-clock"></i> ${PROXIMO_PARTIDO.hora} HORAS</div>
-                        <div class="match-info-item"><i class="fa-solid fa-location-dot"></i> ${PROXIMO_PARTIDO.lugar}</div>
-                    </div>
+            <!-- Tarjeta del partido: Próximo partido con animación verde, partido jugado (si hubiera) en gris. Por ahora solo el próximo -->
+            <div class="match-card-gold match-next">
+                <div class="match-teams">
+                    <div class="team-badge"><div class="team-name">⚜️ NÁPOLES F.C.</div></div>
+                    <div class="vs-circle">VS</div>
+                    <div class="team-badge"><div class="team-name">🍁 FRANCO CANADIENSE</div></div>
+                </div>
+                <div class="match-info">
+                    <div class="match-info-item"><i class="fa-regular fa-calendar-alt"></i> ${PROXIMO_PARTIDO.fechaLegible}</div>
+                    <div class="match-info-item"><i class="fa-regular fa-clock"></i> ${PROXIMO_PARTIDO.hora} HORAS</div>
+                    <div class="match-info-item"><i class="fa-solid fa-location-dot"></i> ${PROXIMO_PARTIDO.lugar}</div>
                 </div>
             </div>
 
+            <!-- Rivales con animación giratoria -->
             <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-people-group"></i> OTROS RIVALES DEL TORNEO</div>
-                <div class="rivales-scroll">${chipsRivales}</div>
+                <div class="rivales-scroll">
+                    <div class="rivales-track">${chipsRivales}</div>
+                </div>
             </div>
 
+            <!-- Estadísticas básicas (reales) -->
             <div class="stats-grid">
                 <div class="stat-card" data-tooltip="Partidos confirmados">${s.partidosJugados}<div>PARTIDOS</div></div>
                 <div class="stat-card" data-tooltip="Total de goles">${s.goles}<div>GOLES</div></div>
@@ -593,6 +608,7 @@ async function mostrarPerfil() {
                 <div class="stat-card" data-tooltip="Tarjetas rojas">${s.rojas}<div>ROJAS</div></div>
             </div>
 
+            <!-- Rendimiento Humano (gráficos circulares) -->
             <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-heart"></i> Rendimiento Humano</div>
                 <div class="performance-grid">
@@ -601,24 +617,14 @@ async function mostrarPerfil() {
                 <div class="average-box"><div class="average-score" style="font-size:2.2rem;">${promedio}/10</div><div class="stars-container">${generarEstrellas(promedio)}</div></div>
             </div>
 
-            <div class="ranking-card">
-                <h4 style="color:#D4AF37;"><i class="fa-solid fa-trophy"></i> Ranking de Goleadores</h4>
-                <div class="ranking-item"><span>Tu posición</span><span>#${posicion} con ${s.goles} goles</span></div>
-                <div><strong>Top 5:</strong></div>
-                ${rankingTop5.map((j, idx) => `<div class="ranking-item"><span>${idx+1}. ${escapeHtml(j.nombre)}</span><span>${j.goles || 0}</span></div>`).join('')}
-            </div>
-
-            <div class="calendar-grid">
-                <h4 style="color:#D4AF37;"><i class="fa-solid fa-calendar-alt"></i> Tus partidos</h4>
-                ${partidosConfirmados.length === 0 ? '<div class="match-event">Próximamente podrás ver tus partidos</div>' : partidosConfirmados.map(p => `<div class="match-event">${new Date(p.fecha).toLocaleDateString()} - ${p.rival}</div>`).join('')}
-            </div>
-
-            <div class="advanced-stats">
+            <!-- Estadísticas avanzadas -->
+            <div class="advanced-stats" style="display: flex; gap: 8px; margin-bottom: 15px;">
                 <div class="stat-advanced" data-tooltip="Promedio de goles por partido"><div>⚽ Prom. G/P</div><div style="font-weight:bold;">${promedioGoles}</div></div>
                 <div class="stat-advanced" data-tooltip="Tarjetas por partido"><div>🟨🟥 Tarj./P</div><div style="font-weight:bold;">${tarjetasPorPartido}</div></div>
                 <div class="stat-advanced" data-tooltip="Efectividad goleadora"><div>🎯 Efectividad</div><div style="font-weight:bold;">${efectividad}</div></div>
             </div>
 
+            <!-- Estado Administrativo -->
             <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-chart-line"></i> Estado Administrativo</div>
                 <div class="admin-grid">
@@ -676,8 +682,7 @@ async function actualizarDatosEnSegundoPlano() {
     const resp = await fetch(url);
     const data = await resp.json();
     if (data.success && data.jugador) {
-        const nuevoRanking = await obtenerRanking();
-        guardarCache(data.jugador, partidosConfirmados, nuevoRanking, null);
+        guardarCache(data.jugador, partidosConfirmados, [], null);
         mostrarPerfil();
     }
 }
@@ -688,7 +693,7 @@ window.cerrarSesion = function() {
     }
 };
 
-// ==================== RULETA COMPLETA ====================
+// ==================== RULETA COMPLETA (sin cambios, solo por completar) ====================
 function mostrarRuleta() {
     console.log("🎰 Mostrando ruleta para partido:", PROXIMO_PARTIDO);
     document.body.className = 'ruleta-mode';
@@ -847,7 +852,7 @@ async function verificarConfirmacionPrevia() {
     } catch(e) { return false; }
 }
 
-// ==================== INICIALIZACIÓN DEL FLUJO (sin modal de términos) ====================
+// ==================== INICIALIZACIÓN ====================
 (async function() {
     const yaConfirmo = await verificarConfirmacionPrevia();
     if (yaConfirmo) mostrarPerfil();
