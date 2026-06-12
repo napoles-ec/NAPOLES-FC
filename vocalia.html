@@ -1,550 +1,530 @@
 <!DOCTYPE html>
-<html lang="es">
+<html class="light" lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
-    <title>Vocalía - Nápoles F.C. | Deuda por conceptos</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        /* ========== ESTILOS (iguales a los tuyos, solo se agrega .detalle-conceptos) ========== */
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(180deg, #fef9f1 0%, #fff7ed 100%);
-            min-height: 100vh;
-            padding-bottom: 80px;
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Vocalía | Nápoles FC - Gestión por conceptos</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#9d4300",
+                        "primary-container": "#f97316",
+                        "secondary": "#565e74",
+                        "secondary-container": "#dae2fd",
+                        "surface": "#faf9f6",
+                        "surface-dim": "#dbdad7",
+                        "surface-container": "#efeeeb",
+                        "surface-container-high": "#e9e8e5",
+                        "surface-container-low": "#f4f3f1",
+                        "on-surface": "#1a1c1a",
+                        "on-surface-variant": "#584237",
+                        "outline-variant": "#e0c0b1",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                    },
+                    fontFamily: {
+                        "headline-md": ["Outfit", "sans-serif"],
+                        "headline-lg": ["Outfit", "sans-serif"],
+                        "body-md": ["Inter", "sans-serif"],
+                        "label-md": ["Inter", "sans-serif"],
+                    }
+                }
+            }
         }
-        .wave-bg { position: fixed; inset: 0; overflow: hidden; z-index: -1; pointer-events: none; }
-        .wave { position: absolute; width: 220%; height: 280px; left: -60%; border-radius: 45%; opacity: 0.2; filter: blur(10px); }
-        .wave1 { background: linear-gradient(90deg, #f97316, #facc15); bottom: -140px; animation: waveMove 18s linear infinite; }
-        .wave2 { background: linear-gradient(90deg, #ea580c, #fed7aa); bottom: -170px; opacity: 0.15; animation: waveMoveReverse 26s linear infinite; }
-        .wave3 { background: linear-gradient(90deg, #fdba74, #ffedd5); bottom: -200px; opacity: 0.1; animation: waveMove 34s linear infinite; }
-        @keyframes waveMove { 0% { transform: translateX(0) rotate(0deg); } 100% { transform: translateX(-12%) rotate(360deg); } }
-        @keyframes waveMoveReverse { 0% { transform: translateX(0) rotate(0deg); } 100% { transform: translateX(12%) rotate(-360deg); } }
-        
-        .topbar {
-            position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.9); backdrop-filter: blur(12px);
-            border-bottom: 2px solid #f97316; padding: 14px 20px; display: flex;
-            align-items: center; justify-content: space-between;
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
-        .admin-info h1 { font-family: 'Outfit', sans-serif; font-size: 1.3rem; font-weight: 900; color: #7c2d12; letter-spacing: -0.5px; }
-        .admin-info p { font-size: 0.7rem; color: #ea580c; font-weight: 600; text-transform: uppercase; }
-        .avatar { width: 44px; height: 44px; border-radius: 14px; background: linear-gradient(135deg, #f97316, #c2410c); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.3rem; box-shadow: 0 6px 14px rgba(249,115,22,0.4); }
-        
-        .hero { padding: 20px 18px 10px; max-width: 700px; margin: auto; }
-        .hero-card { background: linear-gradient(135deg, #ea580c, #9a3412); border-radius: 32px; padding: 24px; color: white; box-shadow: 0 20px 30px -10px rgba(154,52,18,0.4); }
-        .hero-card h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 6px; }
-        .hero-card p { opacity: 0.9; font-size: 0.85rem; }
-        
-        .dashboard { padding: 20px 18px 40px; max-width: 700px; margin: auto; }
-        .summary-card { background: white; border-radius: 32px; padding: 20px; margin-bottom: 28px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); border: 1px solid #fed7aa; }
-        .stats-grid { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-        .stat-item { flex: 1; text-align: center; background: #fff7ed; border-radius: 24px; padding: 16px 8px; transition: 0.2s; }
-        .stat-number { font-size: 1.8rem; font-weight: 900; font-family: 'Outfit', sans-serif; color: #ea580c; line-height: 1.2; }
-        .stat-label { font-size: 0.65rem; text-transform: uppercase; color: #9c6b3e; letter-spacing: 0.5px; margin-top: 6px; }
-        
-        .section-title {
-            font-size: 1.2rem; font-weight: 800; margin: 24px 0 16px 0; color: #7c2d12;
-            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 30px rgba(86, 94, 116, 0.04);
         }
-        .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
-        .btn {
-            border: none; padding: 8px 18px; border-radius: 40px; font-weight: 600; font-size: 0.8rem;
-            display: inline-flex; align-items: center; gap: 6px; cursor: pointer; transition: 0.2s;
-            font-family: 'Inter', sans-serif;
+        .athletic-bg {
+            background: radial-gradient(circle at 0% 0%, rgba(249, 115, 22, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 100% 100%, rgba(86, 94, 116, 0.05) 0%, transparent 50%),
+                        #faf9f6;
+            background-attachment: fixed;
         }
-        .btn-historial { background: #2563eb; color: white; }
-        .btn-reset { background: #dc2626; color: white; }
-        .btn-refresh { background: #7c2d12; color: white; }
-        .btn-pago-multiple { background: #059669; color: white; }
-        .btn-pago { background: #f97316; color: white; border: none; padding: 8px 18px; border-radius: 40px; font-weight: 600; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; transition: 0.2s; }
-        .btn-pago:hover, .btn:hover { transform: scale(0.96); opacity: 0.9; }
-        
-        .deuda-list { display: flex; flex-direction: column; gap: 12px; }
-        .deuda-item {
-            background: white; border-radius: 28px; padding: 16px; border: 1px solid #fed7aa;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: 0.2s; cursor: pointer;
+        .stat-card-gradient {
+            background: linear-gradient(135deg, #9d4300 0%, #f97316 100%);
         }
-        .deuda-item.selected { background: #fef3c7; border-color: #f59e0b; }
-        .deuda-header {
-            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+        .player-selected {
+            border: 2px solid #9d4300 !important;
+            background: rgba(249, 115, 22, 0.08) !important;
+            transform: scale(1.02);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .deuda-info { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-        .dorsal-badge { background: #f97316; color: white; border-radius: 30px; padding: 4px 12px; font-weight: bold; font-size: 0.75rem; }
-        .nombre-jugador { font-weight: 800; color: #2d1b0e; font-size: 0.95rem; }
-        .deuda-monto { background: #fee2e2; color: #dc2626; border-radius: 40px; padding: 4px 12px; font-weight: 800; font-size: 0.85rem; }
-        .credito-monto { background: #dcfce7; color: #16a34a; border-radius: 40px; padding: 4px 12px; font-weight: 800; font-size: 0.85rem; }
-        
-        .detalle-conceptos {
-            margin-top: 12px; padding-top: 12px; border-top: 1px dashed #fed7aa;
-            display: none; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap: 8px;
-            font-size: 0.75rem;
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .concepto-pill {
+            transition: all 0.15s ease;
         }
-        .detalle-conceptos.visible { display: grid; }
-        .concepto-item {
-            background: #fff7ed; border-radius: 16px; padding: 6px 10px;
-            display: flex; justify-content: space-between;
+        .concepto-pill:hover {
+            transform: translateY(-2px);
         }
-        .concepto-nombre { font-weight: 600; color: #92400e; }
-        .concepto-monto { font-weight: 700; color: #dc2626; }
-        .concepto-credito { color: #16a34a; }
-        
-        .player-checkbox { width: 24px; height: 24px; cursor: pointer; margin-right: 8px; }
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
-            z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s;
-        }
-        .modal-overlay.open { opacity: 1; pointer-events: auto; }
-        .modal-container {
-            background: white; width: 90%; max-width: 550px; border-radius: 36px; padding: 24px;
-            transform: translateY(20px); transition: 0.3s; max-height: 85vh; overflow-y: auto;
-        }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .modal-header h3 { font-size: 1.3rem; font-weight: 800; color: #7c2d12; }
-        .close-modal { background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #9ca3af; }
-        .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; font-weight: 600; color: #475569; margin-bottom: 6px; font-size: 0.8rem; }
-        .form-control { width: 100%; padding: 12px 16px; border: 1px solid #fed7aa; border-radius: 24px; outline: none; font-size: 1rem; }
-        .selected-players-list { max-height: 200px; overflow-y: auto; background: #fef9f1; border-radius: 24px; padding: 12px; margin-bottom: 16px; }
-        .selected-player-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #fed7aa; }
-        .selected-player-name { font-weight: 600; }
-        .selected-player-debt { color: #dc2626; font-weight: 700; }
-        .toast {
-            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); background: #1e293b;
-            color: white; padding: 12px 24px; border-radius: 60px; z-index: 2000; font-size: 0.85rem;
-            display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        .empty-state { text-align: center; padding: 40px; color: #9ca3af; background: #fffbeb; border-radius: 28px; }
-        .historial-item {
-            background: #fef9f1; border-radius: 24px; padding: 14px; margin-bottom: 12px;
-            border-left: 5px solid #f97316; transition: 0.1s;
-        }
-        .historial-fecha { font-size: 0.7rem; color: #9c6b3e; margin-bottom: 6px; }
-        .historial-monto { font-weight: 800; color: #16a34a; font-size: 1rem; }
-        
-        @media (max-width: 550px) {
-            .deuda-header { flex-direction: column; align-items: stretch; }
-            .btn-pago, .btn-pago-multiple { justify-content: center; }
-            .stats-grid { gap: 8px; }
-            .stat-number { font-size: 1.4rem; }
-            .section-title { flex-direction: column; align-items: stretch; }
-            .btn-group { justify-content: center; }
+        .toast-notify {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 60px;
+            z-index: 2000;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            white-space: nowrap;
+            backdrop-filter: blur(8px);
         }
     </style>
 </head>
-<body>
-<div class="wave-bg"><div class="wave wave1"></div><div class="wave wave2"></div><div class="wave wave3"></div></div>
+<body class="athletic-bg font-body-md text-on-surface min-h-screen pb-32">
 
-<header class="topbar">
-    <div class="admin-info"><h1>🎙️ Vocalía Nápoles FC</h1><p>Gestión por conceptos | Uniformes · Inscripción · Multas · Tarjetas</p></div>
-    <div class="avatar"><i class="fa-solid fa-gavel"></i></div>
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl border-b border-white/30 flex justify-between items-center px-gutter h-16 shadow-sm">
+<div class="flex items-center gap-3 px-4 md:px-6">
+    <span class="material-symbols-outlined text-primary text-3xl">sports_soccer</span>
+    <h1 class="text-headline-md font-headline-md font-bold tracking-tighter text-primary">VOCALÍA NÁPOLES FC</h1>
+</div>
+<div class="flex items-center gap-4 px-4 md:px-6">
+    <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden border-2 border-primary/20">
+        <span class="material-symbols-outlined text-primary">gavel</span>
+    </div>
+</div>
 </header>
 
-<section class="hero">
-    <div class="hero-card">
-        <h2>Control de Deudas Detallado</h2>
-        <p>Registra pagos por concepto. Si pagas más de lo que debes en un concepto, el excedente se aplica a otros o queda como crédito.</p>
-    </div>
-</section>
+<main class="pt-24 px-4 md:px-gutter max-w-container-max mx-auto">
+    <!-- Stats Dashboard -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div class="stat-card-gradient p-6 rounded-xl shadow-xl text-white relative overflow-hidden group">
+            <div class="relative z-10">
+                <p class="text-label-sm uppercase tracking-wider opacity-80 mb-1">Total Recaudado</p>
+                <h2 class="text-headline-lg font-headline-lg mb-4" id="total-recaudado">$0</h2>
+                <div class="flex items-center gap-2 text-sm bg-white/20 w-fit px-3 py-1 rounded-full">
+                    <span class="material-symbols-outlined text-sm">payments</span>
+                    <span>Historial real</span>
+                </div>
+            </div>
+            <span class="material-symbols-outlined absolute -right-4 -bottom-4 text-9xl opacity-10 group-hover:scale-110 transition-transform">account_balance_wallet</span>
+        </div>
+        <div class="glass-card p-6 rounded-xl border-l-4 border-primary">
+            <p class="text-on-surface-variant text-label-sm uppercase tracking-wider mb-1">Jugadores Activos</p>
+            <h2 class="text-headline-lg font-headline-lg text-on-surface mb-4" id="jugadores-activos">0</h2>
+            <div class="w-full bg-surface-container-high rounded-full h-1.5">
+                <div class="bg-primary h-1.5 rounded-full" style="width: 75%"></div>
+            </div>
+        </div>
+        <div class="glass-card p-6 rounded-xl border-l-4 border-secondary">
+            <p class="text-on-surface-variant text-label-sm uppercase tracking-wider mb-1">Pendientes de Pago</p>
+            <h2 class="text-headline-lg font-headline-lg text-on-surface mb-4" id="pendientes-pago">0</h2>
+            <button id="btn-ver-historial" class="text-primary font-label-md flex items-center gap-1 hover:underline">
+                Ver historial <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </button>
+        </div>
+    </section>
 
-<section class="dashboard">
-    <div class="summary-card" id="resumenContainer">
-        <div class="stats-grid">
-            <div class="stat-item"><div class="stat-number" id="totalDeuda">-</div><div class="stat-label">Deuda Total</div></div>
-            <div class="stat-item"><div class="stat-number" id="cantidadDeudores">-</div><div class="stat-label">Jugadores con Deuda</div></div>
-            <div class="stat-item"><div class="stat-number" id="totalRecaudado">-</div><div class="stat-label">Total Recaudado</div></div>
+    <!-- Player Search & Actions -->
+    <section class="glass-card p-6 rounded-xl mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div class="relative w-full md:w-96">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+            <input class="w-full pl-12 pr-4 py-3 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary/20 transition-all text-body-md" id="busqueda" placeholder="Buscar jugador por nombre..." type="text">
         </div>
-    </div>
+        <div class="flex gap-3 w-full md:w-auto">
+            <button id="btn-pago-multiple" class="flex-1 md:flex-none px-6 py-3 bg-primary text-white font-label-md rounded-xl shadow-lg hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined">groups</span>
+                Pagar seleccionados
+            </button>
+            <button id="btn-refresh" class="px-4 py-3 bg-secondary-container text-on-secondary-container rounded-xl hover:bg-secondary-container/80 transition-colors">
+                <span class="material-symbols-outlined">refresh</span>
+            </button>
+        </div>
+    </section>
 
-    <div class="section-title">
-        <span><i class="fa-solid fa-list-ul"></i> Jugadores (clic para ver desglose)</span>
-        <div class="btn-group">
-            <button class="btn btn-historial" id="btnHistorial"><i class="fa-solid fa-clock-rotate-left"></i> Historial</button>
-            <button class="btn btn-pago-multiple" id="btnPagoMultiple"><i class="fa-solid fa-users"></i> Pagar seleccionados</button>
-            <button class="btn btn-refresh" id="btnRefresh"><i class="fa-solid fa-arrows-rotate"></i> Actualizar</button>
+    <!-- Player List (Bento Grid) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="lista-jugadores">
+        <div class="col-span-full py-20 text-center">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent mb-4"></div>
+            <p class="text-on-surface-variant font-medium">Cargando plantilla de Nápoles FC...</p>
         </div>
     </div>
-    <div id="deudoresList" class="deuda-list">
-        <div class="empty-state">Cargando datos...</div>
-    </div>
-</section>
+</main>
 
-<!-- Modal pago múltiple -->
-<div id="modalPagoMultiple" class="modal-overlay">
-    <div class="modal-container">
-        <div class="modal-header">
-            <h3><i class="fa-solid fa-hand-holding-usd"></i> Pagar a múltiples jugadores</h3>
-            <button class="close-modal" onclick="cerrarModalMultiple()">&times;</button>
+<!-- Modal: Pago individual o múltiple (concepto + monto) -->
+<div id="modalPago" class="fixed inset-0 z-[60] hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-on-surface/40 backdrop-blur-sm" onclick="cerrarModalPago()"></div>
+    <div class="relative glass-card w-full max-w-md rounded-2xl overflow-hidden">
+        <div class="p-6 border-b border-outline-variant/20 flex justify-between items-center">
+            <h3 class="text-headline-md font-headline-md text-primary" id="modal-titulo">Registrar Pago</h3>
+            <button class="p-2 hover:bg-surface-container-high rounded-full transition-colors" onclick="cerrarModalPago()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
         </div>
-        <div class="form-group">
-            <label>Jugadores seleccionados:</label>
-            <div id="selectedPlayersList" class="selected-players-list"></div>
+        <div class="p-6 space-y-4">
+            <div id="jugadores-seleccionados-resumen" class="text-sm text-on-surface-variant mb-2"></div>
+            <div class="form-group">
+                <label class="block text-label-md font-medium mb-1">Concepto a pagar</label>
+                <select id="conceptoPago" class="w-full p-3 bg-surface-container-low rounded-xl border-none focus:ring-2 focus:ring-primary/20">
+                    <option value="uniformes">Uniformes</option>
+                    <option value="inscripcion">Inscripción</option>
+                    <option value="vocalia">Vocalía</option>
+                    <option value="inauguracion">Inauguración</option>
+                    <option value="multas">Multas</option>
+                    <option value="tarjeta_amarilla">Tarjeta Amarilla</option>
+                    <option value="tarjeta_roja">Tarjeta Roja</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="block text-label-md font-medium mb-1">Monto a pagar (USD)</label>
+                <input type="number" id="montoPago" step="0.01" class="w-full p-3 bg-surface-container-low rounded-xl border-none focus:ring-2 focus:ring-primary/20" placeholder="0.00">
+            </div>
+            <div class="form-group">
+                <label class="block text-label-md font-medium mb-1">N° de transacción (opcional)</label>
+                <input type="text" id="transaccionPago" class="w-full p-3 bg-surface-container-low rounded-xl border-none" placeholder="Referencia">
+            </div>
         </div>
-        <div class="form-group">
-            <label>Concepto a pagar</label>
-            <select id="conceptoMultiple" class="form-control">
-                <option value="uniformes">Uniformes</option>
-                <option value="inscripcion">Inscripción</option>
-                <option value="vocalia">Vocalía</option>
-                <option value="inauguracion">Inauguración</option>
-                <option value="multas">Multas</option>
-                <option value="tarjeta_amarilla">Tarjeta Amarilla</option>
-                <option value="tarjeta_roja">Tarjeta Roja</option>
-            </select>
+        <div class="p-6 bg-surface-container-low flex justify-end gap-3">
+            <button class="px-6 py-2 text-secondary font-label-md hover:bg-surface-container-high rounded-lg transition-colors" onclick="cerrarModalPago()">Cancelar</button>
+            <button id="btn-confirmar-pago" class="px-6 py-2 bg-primary text-white font-label-md rounded-lg shadow-md hover:brightness-110">Registrar pago</button>
         </div>
-        <div class="form-group">
-            <label>Monto para cada jugador ($)</label>
-            <input type="number" id="montoMultiple" step="0.01" class="form-control" placeholder="0.00">
-        </div>
-        <div class="form-group">
-            <label>N° de transacción (opcional, se usará para todos)</label>
-            <input type="text" id="transaccionMultiple" class="form-control" placeholder="Referencia">
-        </div>
-        <button id="confirmarPagoMultiple" class="btn-pago" style="width:100%; justify-content:center;">Registrar Pagos</button>
     </div>
 </div>
 
-<!-- Modal registrar pago individual -->
-<div id="modalPago" class="modal-overlay">
-    <div class="modal-container">
-        <div class="modal-header">
-            <h3><i class="fa-solid fa-money-bill-wave"></i> Registrar Pago por Concepto</h3>
-            <button class="close-modal" onclick="cerrarModal()">&times;</button>
+<!-- Modal: Historial -->
+<div id="modalHistorial" class="fixed inset-0 z-[60] hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-on-surface/40 backdrop-blur-sm" onclick="cerrarModalHistorial()"></div>
+    <div class="relative glass-card w-full max-w-2xl max-h-[80vh] rounded-2xl overflow-hidden flex flex-col">
+        <div class="p-6 border-b border-outline-variant/20 flex justify-between items-center">
+            <h3 class="text-headline-md font-headline-md text-primary">Historial de Pagos</h3>
+            <button class="p-2 hover:bg-surface-container-high rounded-full transition-colors" onclick="cerrarModalHistorial()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
         </div>
-        <div class="form-group">
-            <label>Jugador:</label>
-            <strong id="modalJugadorNombre" style="display:block; margin-bottom:8px;"></strong>
-            <label>Deuda actual total:</label>
-            <strong id="modalDeudaActual" style="color:#ea580c; display:block;"></strong>
-        </div>
-        <div class="form-group">
-            <label>Concepto a pagar</label>
-            <select id="conceptoPago" class="form-control">
-                <option value="uniformes">Uniformes</option>
-                <option value="inscripcion">Inscripción</option>
-                <option value="vocalia">Vocalía</option>
-                <option value="inauguracion">Inauguración</option>
-                <option value="multas">Multas</option>
-                <option value="tarjeta_amarilla">Tarjeta Amarilla</option>
-                <option value="tarjeta_roja">Tarjeta Roja</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Monto a pagar ($)</label>
-            <input type="number" id="montoPago" step="0.01" class="form-control" placeholder="0.00">
-        </div>
-        <div class="form-group">
-            <label>N° de transacción (opcional)</label>
-            <input type="text" id="transaccionPago" class="form-control" placeholder="Referencia">
-        </div>
-        <button id="confirmarPago" class="btn-pago" style="width:100%; justify-content:center;">Registrar Pago</button>
-    </div>
-</div>
-
-<!-- Modal historial -->
-<div id="modalHistorial" class="modal-overlay">
-    <div class="modal-container">
-        <div class="modal-header">
-            <h3><i class="fa-solid fa-clock-rotate-left"></i> Historial de Pagos de Vocalía</h3>
-            <button class="close-modal" onclick="cerrarModalHistorial()">&times;</button>
-        </div>
-        <div id="historialContenido" style="max-height: 500px; overflow-y: auto;">
-            Cargando...
+        <div class="p-6 overflow-y-auto scrollbar-hide" id="historial-contenido">
+            <div class="text-center py-8 text-on-surface-variant">Cargando historial...</div>
         </div>
     </div>
 </div>
 
 <script>
-    // ============ CONFIGURACIÓN (TU MISMA API) ============
+    // ========== CONFIGURACIÓN API REAL ==========
     const API_URL = "https://script.google.com/macros/s/AKfycbwLcpH5z2x_EjRPaPu6gI_lLokWkVxsKLgBz-HHCVX7_OhKAFU1LVfZ67bh9DCbn9L6/exec";
     
-    if(localStorage.getItem('admin_activo') !== 'true') window.location.href = './login.html';
-    
+    // Verificación de login (opcional, si usas login.html)
+    if(localStorage.getItem('admin_activo') !== 'true') {
+        // window.location.href = './login.html'; // Descomenta si tienes login
+    }
+
     let jugadoresData = [];
-    let jugadorSeleccionado = null;
     let selectedPlayers = new Set(); // cédulas seleccionadas
-    
-    // Lista de conceptos y sus nombres amigables
+    let modoPagoMultiple = false;    // para saber si pagamos a varios
+
     const CONCEPTOS_ORDER = ["uniformes", "inscripcion", "vocalia", "inauguracion", "multas", "tarjeta_amarilla", "tarjeta_roja"];
     const NOMBRES_CONCEPTOS = {
         uniformes: "Uniformes", inscripcion: "Inscripción", vocalia: "Vocalía", inauguracion: "Inauguración",
         multas: "Multas", tarjeta_amarilla: "Tarjeta Amarilla", tarjeta_roja: "Tarjeta Roja"
     };
-    
-    const formatearMoneda = (v) => new Intl.NumberFormat('es-EC', { style: 'currency', currency: 'USD' }).format(v);
-    
+
+    function formatearMoneda(v) { return new Intl.NumberFormat('es-EC', { style: 'currency', currency: 'USD' }).format(v); }
+
     function mostrarToast(mensaje, tipo='info') {
         let toast = document.createElement('div');
-        toast.className = 'toast';
+        toast.className = 'toast-notify';
         toast.innerHTML = `<span>${tipo === 'error' ? '❌' : '✅'}</span> ${mensaje}`;
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 3000);
     }
-    
-    // Calcula deuda total (suma conceptos - crédito)
+
+    // Calcula deuda total (soporta formato nuevo con deudas y crédito)
     function calcularDeudaTotal(jugador) {
-        if(jugador.deuda !== undefined && !jugador.deudas) {
-            // Formato antiguo (solo deuda total) - compatibilidad mientras actualizas el backend
-            return jugador.deuda;
-        }
+        if(jugador.deuda !== undefined && !jugador.deudas) return jugador.deuda;
         let suma = 0;
         for(let c of CONCEPTOS_ORDER) suma += jugador.deudas?.[c] || 0;
         let credito = jugador.credito || 0;
         return Math.max(0, suma - credito);
     }
-    
+
+    // Cargar datos desde la API real
     async function cargarDatos() {
-        const contenedor = document.getElementById('deudoresList');
-        contenedor.innerHTML = '<div class="empty-state">Cargando...</div>';
+        const container = document.getElementById('lista-jugadores');
+        container.innerHTML = `<div class="col-span-full py-20 text-center"><div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent mb-4"></div><p class="text-on-surface-variant">Cargando plantilla...</p></div>`;
         try {
             const res = await fetch(`${API_URL}?action=getVocaliaData&nocache=${Date.now()}`);
             const data = await res.json();
             if(data.success) {
                 jugadoresData = data.deudores;
                 
-                // Calcular totales (soporta formato nuevo y antiguo)
+                // Calcular total deuda y deudores
                 let totalDeuda = 0, deudoresCount = 0;
                 for(let j of jugadoresData) {
                     let deuda = calcularDeudaTotal(j);
                     totalDeuda += deuda;
                     if(deuda > 0) deudoresCount++;
                 }
-                document.getElementById('totalDeuda').innerText = formatearMoneda(totalDeuda);
-                document.getElementById('cantidadDeudores').innerText = deudoresCount;
+                document.getElementById('jugadores-activos').innerText = jugadoresData.length;
+                document.getElementById('pendientes-pago').innerText = deudoresCount;
                 
+                // Obtener total recaudado desde historial
                 const resHist = await fetch(`${API_URL}?action=getHistorialVocalia&nocache=${Date.now()}`);
                 const histData = await resHist.json();
+                let totalRec = 0;
                 if(histData.success && histData.historial) {
-                    let totalRec = histData.historial.reduce((sum, item) => sum + (item.monto || 0), 0);
-                    document.getElementById('totalRecaudado').innerText = formatearMoneda(totalRec);
-                } else {
-                    document.getElementById('totalRecaudado').innerText = formatearMoneda(0);
+                    totalRec = histData.historial.reduce((sum, item) => sum + (item.monto || 0), 0);
                 }
-                renderizarDeudores();
+                document.getElementById('total-recaudado').innerText = formatearMoneda(totalRec);
+                
+                renderizarJugadores(jugadoresData);
             } else {
                 throw new Error(data.error);
             }
         } catch(e) {
-            contenedor.innerHTML = `<div class="empty-state">❌ Error: ${e.message}</div>`;
-            mostrarToast("Error de conexión", "error");
+            container.innerHTML = `<div class="col-span-full py-20 text-center text-error">❌ Error: ${e.message}</div>`;
+            mostrarToast("Error al cargar datos", "error");
         }
     }
-    
-    function renderizarDeudores() {
-        const contenedor = document.getElementById('deudoresList');
-        if(!jugadoresData || jugadoresData.length === 0) {
-            contenedor.innerHTML = '<div class="empty-state">🎉 No hay jugadores registrados.</div>';
+
+    function renderizarJugadores(lista) {
+        const container = document.getElementById('lista-jugadores');
+        if(!lista.length) {
+            container.innerHTML = '<div class="col-span-full py-20 text-center text-on-surface-variant">🎉 No hay jugadores registrados.</div>';
             return;
         }
         let html = '';
-        for(let j of jugadoresData) {
+        for(let j of lista) {
             const deudaTotal = calcularDeudaTotal(j);
             const isChecked = selectedPlayers.has(j.cedula);
-            const tieneCredito = (j.credito || 0) > 0;
-            // Determinar si tiene formato nuevo (con deudas)
             const tieneConceptos = j.deudas && typeof j.deudas === 'object';
+            // Generar mini badges de conceptos con deuda > 0
+            let conceptosBadges = '';
+            if(tieneConceptos) {
+                for(let c of CONCEPTOS_ORDER) {
+                    if(j.deudas[c] > 0) {
+                        conceptosBadges += `<span class="px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-red-100 text-red-700">${NOMBRES_CONCEPTOS[c].substring(0,4)}</span>`;
+                    }
+                }
+            } else {
+                conceptosBadges = `<span class="px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-orange-100 text-orange-700">Deuda: ${formatearMoneda(deudaTotal)}</span>`;
+            }
             
             html += `
-                <div class="deuda-item ${isChecked ? 'selected' : ''}" data-cedula="${j.cedula}">
-                    <div class="deuda-header">
-                        <div style="display: flex; align-items: center; gap: 10px; flex-wrap:wrap;">
-                            <input type="checkbox" class="player-checkbox" data-cedula="${j.cedula}" ${isChecked ? 'checked' : ''}>
-                            <span class="dorsal-badge">#${j.dorsal || '?'}</span>
-                            <span class="nombre-jugador">${escapeHtml(j.nombreCompleto || j.nombreCamiseta)}</span>
-                            ${deudaTotal > 0 ? `<span class="deuda-monto">${formatearMoneda(deudaTotal)}</span>` : (tieneCredito ? `<span class="credito-monto">${formatearMoneda(j.credito)} a favor</span>` : `<span class="credito-monto">Saldo cero</span>`)}
+                <div class="glass-card p-5 rounded-xl cursor-pointer hover:shadow-lg transition-all duration-300 border ${isChecked ? 'border-primary player-selected' : 'border-transparent'} flex flex-col gap-4 group" data-cedula="${j.cedula}">
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-center gap-4">
+                            <input type="checkbox" class="player-checkbox w-5 h-5 accent-primary" data-cedula="${j.cedula}" ${isChecked ? 'checked' : ''}>
+                            <div class="w-12 h-12 bg-primary-container/20 rounded-full flex items-center justify-center text-primary font-bold text-lg">
+                                ${j.dorsal || '?'}
+                            </div>
+                            <div>
+                                <h4 class="font-headline-md text-on-surface group-hover:text-primary transition-colors">${escapeHtml(j.nombreCompleto || j.nombreCamiseta)}</h4>
+                                <p class="text-label-sm text-on-surface-variant">Deuda total: ${deudaTotal > 0 ? formatearMoneda(deudaTotal) : '<span class="text-green-600">✓ Al día</span>'}</p>
+                            </div>
                         </div>
-                        <button class="btn-pago" data-cedula="${j.cedula}" data-nombre="${escapeHtml(j.nombreCompleto || j.nombreCamiseta)}" data-deuda="${deudaTotal}">
-                            <i class="fa-solid fa-hand-holding-usd"></i> Pagar
-                        </button>
+                        <span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">payments</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2 pt-2">
+                        ${conceptosBadges}
+                        ${(j.credito || 0) > 0 ? `<span class="px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-green-100 text-green-700">Crédito: ${formatearMoneda(j.credito)}</span>` : ''}
                     </div>
                     ${tieneConceptos ? `
-                    <div class="detalle-conceptos" id="detalle-${j.cedula}">
+                    <div class="detalle-conceptos hidden grid-cols-2 gap-2 pt-2 text-xs" id="detalle-${j.cedula}">
                         ${CONCEPTOS_ORDER.map(c => {
                             let val = j.deudas[c] || 0;
-                            if(val > 0) return `<div class="concepto-item"><span class="concepto-nombre">${NOMBRES_CONCEPTOS[c]}</span><span class="concepto-monto">${formatearMoneda(val)}</span></div>`;
+                            if(val > 0) return `<div class="flex justify-between bg-surface-container-low p-2 rounded"><span>${NOMBRES_CONCEPTOS[c]}:</span><span class="font-bold">${formatearMoneda(val)}</span></div>`;
                             return '';
                         }).join('')}
-                        ${(j.credito || 0) > 0 ? `<div class="concepto-item"><span class="concepto-nombre">Crédito a favor</span><span class="concepto-credito">${formatearMoneda(j.credito)}</span></div>` : ''}
                     </div>
-                    ` : '<div class="detalle-conceptos" style="display:none;"></div>'}
+                    ` : ''}
                 </div>
             `;
         }
-        contenedor.innerHTML = html;
+        container.innerHTML = html;
         
-        // Eventos checkboxes
+        // Eventos para checkboxes
         document.querySelectorAll('.player-checkbox').forEach(cb => {
             cb.addEventListener('change', (e) => {
                 e.stopPropagation();
                 const cedula = cb.dataset.cedula;
                 if(cb.checked) selectedPlayers.add(cedula);
                 else selectedPlayers.delete(cedula);
-                const parentDiv = cb.closest('.deuda-item');
-                if(cb.checked) parentDiv.classList.add('selected');
-                else parentDiv.classList.remove('selected');
+                const parentDiv = cb.closest('.glass-card');
+                if(cb.checked) parentDiv.classList.add('player-selected', 'border-primary');
+                else parentDiv.classList.remove('player-selected', 'border-primary');
             });
         });
         
-        // Botones pago individual
-        document.querySelectorAll('.btn-pago').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const cedula = btn.dataset.cedula;
-                const jugador = jugadoresData.find(j => j.cedula === cedula);
-                if(jugador) {
-                    jugadorSeleccionado = {
-                        cedula: jugador.cedula,
-                        nombre: jugador.nombreCompleto || jugador.nombreCamiseta,
-                        deudaTotal: calcularDeudaTotal(jugador)
-                    };
-                    document.getElementById('modalJugadorNombre').innerText = jugadorSeleccionado.nombre;
-                    document.getElementById('modalDeudaActual').innerText = formatearMoneda(jugadorSeleccionado.deudaTotal);
-                    document.getElementById('montoPago').value = '';
-                    document.getElementById('transaccionPago').value = '';
-                    document.getElementById('modalPago').classList.add('open');
-                }
-            });
-        });
-        
-        // Clic en la fila para mostrar/ocultar desglose (solo si tiene conceptos)
-        document.querySelectorAll('.deuda-item').forEach(item => {
-            item.addEventListener('click', (e) => {
-                if(e.target.classList.contains('player-checkbox') || e.target.classList.contains('btn-pago') || e.target.closest('.btn-pago')) return;
-                const cedula = item.dataset.cedula;
-                const detalleDiv = document.getElementById(`detalle-${cedula}`);
-                if(detalleDiv && detalleDiv.children.length > 0) detalleDiv.classList.toggle('visible');
-            });
+        // Clic en la tarjeta para expandir detalles (si tiene conceptos)
+        document.querySelectorAll('.glass-card').forEach(card => {
+            const cedula = card.dataset.cedula;
+            const detalleDiv = document.getElementById(`detalle-${cedula}`);
+            if(detalleDiv) {
+                card.addEventListener('click', (e) => {
+                    if(e.target.classList.contains('player-checkbox') || e.target.closest('.player-checkbox')) return;
+                    detalleDiv.classList.toggle('hidden');
+                });
+            }
+            // Botón de pago directo (ícono)
+            const iconPay = card.querySelector('.material-symbols-outlined');
+            if(iconPay) {
+                iconPay.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const jugador = jugadoresData.find(j => j.cedula === cedula);
+                    if(jugador) abrirModalPagoIndividual(jugador);
+                });
+            }
         });
     }
-    
-    async function registrarPago(cedula, monto, concepto, transaccion) {
-        const params = new URLSearchParams();
-        params.append('action', 'registrarPagoVocalia');
-        params.append('cedula', cedula);
-        params.append('monto', monto);
-        params.append('concepto', concepto);
-        params.append('transaccion', transaccion);
-        const res = await fetch(`${API_URL}?${params.toString()}`);
-        const data = await res.json();
-        if(!data.success) throw new Error(data.error);
-        return data;
+
+    function abrirModalPagoIndividual(jugador) {
+        modoPagoMultiple = false;
+        document.getElementById('modal-titulo').innerText = `Pagar a ${jugador.nombreCompleto || jugador.nombreCamiseta}`;
+        document.getElementById('jugadores-seleccionados-resumen').innerHTML = '';
+        // Guardamos la cédula en un atributo
+        document.getElementById('btn-confirmar-pago').setAttribute('data-cedula', jugador.cedula);
+        document.getElementById('montoPago').value = '';
+        document.getElementById('transaccionPago').value = '';
+        document.getElementById('modalPago').classList.remove('hidden');
+        document.getElementById('modalPago').classList.add('flex');
     }
-    
+
+    function abrirModalPagoMultiple() {
+        if(selectedPlayers.size === 0) {
+            mostrarToast("Selecciona al menos un jugador", "error");
+            return;
+        }
+        modoPagoMultiple = true;
+        const nombres = Array.from(selectedPlayers).map(ced => {
+            const j = jugadoresData.find(j => j.cedula === ced);
+            return j ? (j.nombreCompleto || j.nombreCamiseta) : ced;
+        }).join(', ');
+        document.getElementById('modal-titulo').innerText = `Pagar a ${selectedPlayers.size} jugadores`;
+        document.getElementById('jugadores-seleccionados-resumen').innerHTML = `<p class="mb-2">Jugadores: ${nombres}</p>`;
+        document.getElementById('btn-confirmar-pago').removeAttribute('data-cedula');
+        document.getElementById('montoPago').value = '';
+        document.getElementById('transaccionPago').value = '';
+        document.getElementById('modalPago').classList.remove('hidden');
+        document.getElementById('modalPago').classList.add('flex');
+    }
+
     async function confirmarPago() {
-        if(!jugadorSeleccionado) return;
         let monto = parseFloat(document.getElementById('montoPago').value);
         if(isNaN(monto) || monto <= 0) {
             mostrarToast("Monto inválido", "error");
             return;
         }
-        // Ya no validamos que no supere la deuda total, porque el backend redistribuirá o dejará crédito.
         const concepto = document.getElementById('conceptoPago').value;
         const transaccion = document.getElementById('transaccionPago').value.trim() || "SIN REFERENCIA";
-        try {
-            const result = await registrarPago(jugadorSeleccionado.cedula, monto, concepto, transaccion);
-            mostrarToast(`Pago registrado: ${result.detalle || 'correcto'}`, "success");
-            cerrarModal();
-            cargarDatos();
-        } catch(e) {
-            mostrarToast(e.message, "error");
-        }
-    }
-    
-    async function confirmarPagoMultiple() {
-        if(selectedPlayers.size === 0) {
-            mostrarToast("Selecciona al menos un jugador", "error");
-            return;
-        }
-        let monto = parseFloat(document.getElementById('montoMultiple').value);
-        if(isNaN(monto) || monto <= 0) {
-            mostrarToast("Monto inválido", "error");
-            return;
-        }
-        const concepto = document.getElementById('conceptoMultiple').value;
-        const transaccion = document.getElementById('transaccionMultiple').value.trim() || "PAGO_MULTIPLE";
         
-        mostrarToast(`Procesando pagos para ${selectedPlayers.size} jugadores...`, "info");
-        let exitosos = 0, fallidos = 0;
-        for(let cedula of selectedPlayers) {
+        if(!modoPagoMultiple) {
+            const cedula = document.getElementById('btn-confirmar-pago').getAttribute('data-cedula');
+            if(!cedula) return;
             try {
-                await registrarPago(cedula, monto, concepto, transaccion);
-                exitosos++;
+                const res = await fetch(`${API_URL}?action=registrarPagoVocalia&cedula=${cedula}&monto=${monto}&concepto=${concepto}&transaccion=${encodeURIComponent(transaccion)}`);
+                const data = await res.json();
+                if(data.success) {
+                    mostrarToast(`Pago registrado: ${data.detalle || 'correcto'}`, "success");
+                    cerrarModalPago();
+                    cargarDatos();
+                } else {
+                    throw new Error(data.error);
+                }
             } catch(e) {
-                fallidos++;
-                console.error(e);
+                mostrarToast(e.message, "error");
             }
-        }
-        if(fallidos === 0) {
-            mostrarToast(`✅ ${exitosos} pagos de ${formatearMoneda(monto)} registrados`, "success");
         } else {
-            mostrarToast(`⚠️ ${exitosos} OK, ${fallidos} fallidos`, "error");
+            // Pago múltiple
+            let exitosos = 0, fallidos = 0;
+            for(let cedula of selectedPlayers) {
+                try {
+                    const res = await fetch(`${API_URL}?action=registrarPagoVocalia&cedula=${cedula}&monto=${monto}&concepto=${concepto}&transaccion=${encodeURIComponent(transaccion)}`);
+                    const data = await res.json();
+                    if(data.success) exitosos++;
+                    else fallidos++;
+                } catch(e) { fallidos++; }
+            }
+            if(fallidos === 0) mostrarToast(`${exitosos} pagos registrados correctamente`, "success");
+            else mostrarToast(`${exitosos} OK, ${fallidos} fallidos`, "error");
+            cerrarModalPago();
+            selectedPlayers.clear();
+            cargarDatos();
         }
-        cerrarModalMultiple();
-        selectedPlayers.clear();
-        cargarDatos();
     }
-    
+
     async function abrirHistorial() {
         const modal = document.getElementById('modalHistorial');
-        const contenido = document.getElementById('historialContenido');
-        contenido.innerHTML = '<div class="empty-state">Cargando historial...</div>';
-        modal.classList.add('open');
+        const contenido = document.getElementById('historial-contenido');
+        contenido.innerHTML = '<div class="text-center py-8">Cargando historial...</div>';
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
         try {
             const res = await fetch(`${API_URL}?action=getHistorialVocalia&nocache=${Date.now()}`);
             const data = await res.json();
-            if(data.success && data.historial && data.historial.length > 0) {
-                let html = '';
+            if(data.success && data.historial && data.historial.length) {
+                let html = '<div class="space-y-3">';
                 for(let item of data.historial) {
                     let fecha = new Date(item.fecha).toLocaleString('es-EC');
                     html += `
-                        <div class="historial-item">
-                            <div><strong>${escapeHtml(item.jugador)}</strong> ${item.conceptoAplicado ? `- ${NOMBRES_CONCEPTOS[item.conceptoAplicado] || item.conceptoAplicado}` : ''}</div>
-                            <div class="historial-fecha">${fecha} | Transacción: ${item.transaccion || 'N/A'}</div>
-                            <div>Monto: <span class="historial-monto">${formatearMoneda(item.monto)}</span> | Deuda restante: ${formatearMoneda(item.deudaRestante)}</div>
-                            ${item.detalle ? `<div style="font-size:0.7rem; color:gray;">Detalle: ${item.detalle}</div>` : ''}
+                        <div class="p-4 bg-surface-container-low rounded-xl border-l-4 border-primary">
+                            <div class="flex justify-between items-start flex-wrap gap-2">
+                                <div><strong>${escapeHtml(item.jugador)}</strong> - ${NOMBRES_CONCEPTOS[item.conceptoAplicado] || item.conceptoAplicado}</div>
+                                <div class="text-sm font-bold text-primary">${formatearMoneda(item.monto)}</div>
+                            </div>
+                            <div class="text-xs text-on-surface-variant mt-1">${fecha} | Transacción: ${item.transaccion || 'N/A'}</div>
+                            <div class="text-xs mt-1">Deuda restante: ${formatearMoneda(item.deudaRestante)}</div>
+                            ${item.detalle ? `<div class="text-xs text-gray-500 mt-1">Detalle: ${item.detalle}</div>` : ''}
                         </div>
                     `;
                 }
+                html += '</div>';
                 contenido.innerHTML = html;
             } else {
-                contenido.innerHTML = '<div class="empty-state">📭 No hay pagos registrados aún.</div>';
+                contenido.innerHTML = '<div class="text-center py-8 text-on-surface-variant">📭 No hay pagos registrados aún.</div>';
             }
         } catch(e) {
-            contenido.innerHTML = `<div class="empty-state">❌ Error al cargar historial: ${e.message}</div>`;
+            contenido.innerHTML = `<div class="text-center py-8 text-error">Error: ${e.message}</div>`;
         }
     }
-    
-    function cerrarModal() { document.getElementById('modalPago').classList.remove('open'); }
-    function cerrarModalMultiple() { document.getElementById('modalPagoMultiple').classList.remove('open'); }
-    function cerrarModalHistorial() { document.getElementById('modalHistorial').classList.remove('open'); }
-    
-    function escapeHtml(str) {
-        if(!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if(m === '&') return '&amp;';
-            if(m === '<') return '&lt;';
-            if(m === '>') return '&gt;';
-            return m;
-        });
+
+    function cerrarModalPago() {
+        document.getElementById('modalPago').classList.add('hidden');
+        document.getElementById('modalPago').classList.remove('flex');
     }
+    function cerrarModalHistorial() {
+        document.getElementById('modalHistorial').classList.add('hidden');
+        document.getElementById('modalHistorial').classList.remove('flex');
+    }
+    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
     
+    function filtrarJugadores() {
+        const query = document.getElementById('busqueda').value.toLowerCase();
+        const filtrados = jugadoresData.filter(j => (j.nombreCompleto || j.nombreCamiseta).toLowerCase().includes(query));
+        renderizarJugadores(filtrados);
+    }
+
     // Eventos
-    document.getElementById('btnRefresh').addEventListener('click', cargarDatos);
-    document.getElementById('confirmarPago').addEventListener('click', confirmarPago);
-    document.getElementById('btnHistorial').addEventListener('click', abrirHistorial);
-    document.getElementById('btnPagoMultiple').addEventListener('click', () => {
-        if(selectedPlayers.size === 0) mostrarToast("Selecciona jugadores", "error");
-        else document.getElementById('modalPagoMultiple').classList.add('open');
-    });
-    document.getElementById('confirmarPagoMultiple').addEventListener('click', confirmarPagoMultiple);
-    window.addEventListener('click', (e) => { 
-        if(e.target.classList.contains('modal-overlay')) {
-            cerrarModal();
-            cerrarModalHistorial();
-            cerrarModalMultiple();
-        }
-    });
+    document.getElementById('btn-refresh').addEventListener('click', cargarDatos);
+    document.getElementById('btn-ver-historial').addEventListener('click', abrirHistorial);
+    document.getElementById('btn-pago-multiple').addEventListener('click', abrirModalPagoMultiple);
+    document.getElementById('btn-confirmar-pago').addEventListener('click', confirmarPago);
+    document.getElementById('busqueda').addEventListener('input', filtrarJugadores);
+    window.cerrarModalPago = cerrarModalPago;
+    window.cerrarModalHistorial = cerrarModalHistorial;
     
     cargarDatos();
 </script>
