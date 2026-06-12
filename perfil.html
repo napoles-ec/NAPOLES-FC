@@ -688,21 +688,171 @@ window.cerrarSesion = function() {
     }
 };
 
-// ==================== RULETA Y FLUJO (sin modal de términos) ====================
-function mostrarRuleta() { /* ... mismo código de la ruleta que ya tenías (no se modifica) ... */ }
-async function guardarPartido() { /* ... */ }
-async function verificarConfirmacionPrevia() { /* ... */ }
+// ==================== RULETA COMPLETA ====================
+function mostrarRuleta() {
+    console.log("🎰 Mostrando ruleta para partido:", PROXIMO_PARTIDO);
+    document.body.className = 'ruleta-mode';
+    document.body.style.background = '#0a0c10';
+    const container = document.getElementById('dynamicContent');
+    container.innerHTML = `
+        <main class="h-screen flex flex-col items-center justify-center pt-16 relative">
+            <div class="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-secondary/10 rounded-full blur-[120px]"></div>
+            </div>
+            <div class="text-center px-4 mb-12" id="intro-header">
+                <h2 class="font-display-lg text-[32px] text-secondary tracking-widest mb-2 uppercase" style="color:#e9c349;">Sorteo de Rivales</h2>
+                <p class="font-label-caps text-on-surface-variant text-[10px] tracking-[0.3em] uppercase" style="color:#ccc;">Buscando el próximo desafío...</p>
+            </div>
+            <div class="relative w-full overflow-hidden py-12 flex items-center" id="roulette-window">
+                <div class="absolute left-1/2 top-0 -translate-x-1/2 z-20 flex flex-col items-center h-full justify-between py-4">
+                    <div class="w-1 h-8 bg-secondary/80 rounded-full blur-[2px]"></div>
+                    <div class="w-1 h-8 bg-secondary/80 rounded-full blur-[2px]"></div>
+                </div>
+                <div class="roulette-track px-[50vw]" id="roulette-track"></div>
+            </div>
+            <div class="hidden absolute inset-0 flex flex-col items-center justify-center z-40 bg-black/90 backdrop-blur-md" id="reveal-screen">
+                <div class="reveal-element text-center mb-8">
+                    <p class="font-label-caps text-secondary tracking-[0.4em] mb-4" style="color:#e9c349;">PRÓXIMO ENCUENTRO</p>
+                    <div class="flex items-center justify-center gap-6 md:gap-12">
+                        <div class="flex flex-col items-center gap-4">
+                            <div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-white/30"><span class="text-5xl">⚜️</span></div>
+                            <span class="font-display-lg text-xl tracking-wider text-white">NÁPOLES</span>
+                        </div>
+                        <div class="font-display-lg text-5xl text-secondary cinematic-text italic" style="color:#e9c349;">VS</div>
+                        <div class="flex flex-col items-center gap-4">
+                            <div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-secondary winner-glow"><span class="text-5xl">${PROXIMO_PARTIDO.icono}</span></div>
+                            <span class="font-display-lg text-xl tracking-wider text-white">${PROXIMO_PARTIDO.rival}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="reveal-element match-info-card w-full max-w-md mx-4">
+                    <div class="flex justify-center gap-6 flex-wrap text-white">
+                        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">event</span><span class="text-sm font-bold">${PROXIMO_PARTIDO.fechaLegible}</span></div>
+                        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">schedule</span><span class="text-sm font-bold">${PROXIMO_PARTIDO.hora} HORAS</span></div>
+                        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">stadium</span><span class="text-sm font-bold">${PROXIMO_PARTIDO.lugar}</span></div>
+                    </div>
+                </div>
+                <div class="reveal-element space-y-6 w-full max-w-xs px-6">
+                    <div class="glass-card p-6 rounded-2xl border border-secondary/40">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="font-label-caps text-[10px] text-white uppercase">Nivel de Riesgo</span>
+                            <span class="font-label-caps text-[10px] text-secondary">MÁXIMO</span>
+                        </div>
+                        <div class="w-full bg-white/20 h-1.5 rounded-full overflow-hidden"><div class="bg-secondary h-full rounded-full" style="width: 95%;"></div></div>
+                    </div>
+                    <button id="confirmButton" class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 rounded-lg text-sm uppercase transition-all shadow-lg">Ahí estaré puntual</button>
+                </div>
+            </div>
+            <div class="fixed inset-0 pointer-events-none z-50" id="particles"></div>
+        </main>
+    `;
 
-// Inicialización del flujo (saltamos modal de términos porque ya pasó)
+    const rivals = [
+        { name: "LEONES", icon: "🦁", power: "ALTO" }, { name: "IDEAL", icon: "⚡", power: "MEDIO" }, { name: "BARZA", icon: "🔵🔴", power: "EXTREMO" },
+        { name: "SAN MARTIN", icon: "🏰", power: "MEDIO" }, { name: "INDEPENDIENTE", icon: "🔥", power: "ALTO" }, { name: "VODKILA", icon: "🍺", power: "MEDIO" },
+        { name: "CHELSEA", icon: "💙", power: "ALTO" }, { name: "JUVENTUD DE AMERICA", icon: "🟡🔴", power: "EXTREMO" }, { name: "JUVENTUS", icon: "⚪⚫", power: "ALTO" },
+        { name: "FRANCO CANADIENSE", icon: "🍁", power: "EXTREMO" }
+    ];
+    const track = document.getElementById('roulette-track');
+    const revealScreen = document.getElementById('reveal-screen');
+    const revealElements = document.querySelectorAll('.reveal-element');
+    const introHeader = document.getElementById('intro-header');
+    const rouletteWindow = document.getElementById('roulette-window');
+    function createCard(rival) {
+        const div = document.createElement('div');
+        div.className = 'flex-shrink-0 w-48 h-64 glass-card rounded-xl p-6 flex flex-col items-center justify-center border border-white/30';
+        div.style.background = 'rgba(0,0,0,0.8)';
+        div.style.backdropFilter = 'blur(8px)';
+        div.innerHTML = `<div class="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center mb-4 border border-white/20"><span class="text-5xl">${rival.icon}</span></div><h3 class="font-display-lg text-lg text-white">${rival.name}</h3><p class="font-label-caps text-[10px] text-gray-300 uppercase mt-1">Poder: ${rival.power}</p>`;
+        return div;
+    }
+    for (let i = 0; i < 40; i++) track.appendChild(createCard(rivals[i % rivals.length]));
+    setTimeout(() => {
+        track.classList.add('spinning');
+        setTimeout(() => {
+            track.classList.remove('spinning');
+            track.classList.add('slowing');
+            setTimeout(() => {
+                rouletteWindow.style.opacity = '0';
+                introHeader.style.opacity = '0';
+                setTimeout(() => {
+                    revealScreen.classList.remove('hidden');
+                    setTimeout(() => {
+                        revealElements.forEach((el, idx) => setTimeout(() => el.classList.add('revealed'), idx * 300));
+                        createParticles();
+                        const btn = document.getElementById('confirmButton');
+                        if (btn) { btn.disabled = false; btn.addEventListener('click', guardarPartido); }
+                    }, 100);
+                }, 800);
+            }, 3000);
+        }, 3000);
+    }, 500);
+    function createParticles() {
+        const container = document.getElementById('particles');
+        const colors = ['#e9c349', '#ffffff', '#af8d11'];
+        for (let i = 0; i < 60; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.width = `${Math.random() * 4 + 2}px`;
+            p.style.height = p.style.width;
+            p.style.background = colors[Math.floor(Math.random() * colors.length)];
+            p.style.left = '50%';
+            p.style.top = '50%';
+            p.style.borderRadius = '50%';
+            const angle = Math.random() * Math.PI * 2;
+            const velocity = Math.random() * 300 + 100;
+            const tx = Math.cos(angle) * velocity;
+            const ty = Math.sin(angle) * velocity;
+            container.appendChild(p);
+            p.animate([{ transform: 'translate(-50%, -50%) scale(1)', opacity: 1 }, { transform: `translate(${tx}px, ${ty}px) scale(0)`, opacity: 0 }], { duration: Math.random() * 1500 + 1000, easing: 'cubic-bezier(0, .9, .57, 1)', fill: 'forwards' });
+        }
+    }
+}
+
+async function guardarPartido() {
+    const btn = document.getElementById('confirmButton');
+    if (!btn || btn.disabled) return;
+    btn.disabled = true;
+    btn.innerText = 'GUARDANDO...';
+    const params = new URLSearchParams({
+        action: 'guardarPartido', cedula: cedula, categoria: categoria, nombre: nombreCompleto,
+        rival: PROXIMO_PARTIDO.rival, fecha: PROXIMO_PARTIDO.fecha, hora: PROXIMO_PARTIDO.hora,
+        lugar: PROXIMO_PARTIDO.lugar, amarillas: '0', rojas: '0', goles: '0',
+        valor_vocalia: PROXIMO_PARTIDO.valorVocalia.toString(), estado: 'CONFIRMADO',
+        vocalias_pendientes: '0', puntualidad: '10', companerismo: '10', respeto: '10', humildad: '10'
+    });
+    const url = `${CONFIG.URL_GAS}?${params.toString()}`;
+    try {
+        const response = await fetch(url);
+        const result = await response.json();
+        if (result.success) {
+            alert("✅ Asistencia confirmada para el partido contra FRANCO CANADIENSE");
+            mostrarPerfil();
+        } else {
+            alert("⚠️ Ya habías confirmado este partido. Redirigiendo a tu perfil.");
+            mostrarPerfil();
+        }
+    } catch(error) {
+        alert('❌ Error de conexión. Intenta de nuevo.');
+        if (btn) { btn.disabled = false; btn.innerText = 'Ahí estaré puntual'; }
+    }
+}
+
+async function verificarConfirmacionPrevia() {
+    try {
+        const url = `${CONFIG.URL_GAS}?action=verificarConfirmacionPartido&cedula=${encodeURIComponent(cedula)}&rival=${encodeURIComponent(PROXIMO_PARTIDO.rival)}&fecha=${PROXIMO_PARTIDO.fecha}&t=${Date.now()}`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+        return data.confirmed === true;
+    } catch(e) { return false; }
+}
+
+// ==================== INICIALIZACIÓN DEL FLUJO (sin modal de términos) ====================
 (async function() {
     const yaConfirmo = await verificarConfirmacionPrevia();
     if (yaConfirmo) mostrarPerfil();
     else mostrarRuleta();
 })();
-
-// NOTA: Las funciones mostrarRuleta, guardarPartido y verificarConfirmacionPrevia deben copiarse exactamente
-// de tu versión anterior (la que funcionaba) porque aquí no se incluyeron para no alargar el código.
-// Si las necesitas, te las puedo agregar completo, pero el enfoque era mantener el diseño original y añadir las mejoras.
 </script>
 </body>
 </html>
