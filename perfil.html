@@ -50,7 +50,7 @@
     .perfil-header h1 {
         font-family: 'Outfit', sans-serif;
         color: #D4AF37;
-        font-size: 1.4rem;
+        font-size: 2rem;
         letter-spacing: 2px;
         display: flex;
         align-items: center;
@@ -58,7 +58,7 @@
         gap: 12px;
     }
     .perfil-header h1 img {
-        height: 45px;
+        height: 60px;
     }
 
     /* Tarjetas: izquierda con fondo/borde, derecha solo la camiseta giratoria */
@@ -139,14 +139,14 @@
         transform: rotateY(180deg);
     }
     .jersey-number {
-        font-size: 3rem;
+        font-size: 4rem;
         font-family: 'Outfit';
         font-weight: 900;
         line-height: 1;
         color: #FFD700;
     }
     .jersey-name {
-        font-size: 0.9rem;
+        font-size: 1.2rem;
         font-weight: bold;
         margin-bottom: 5px;
         color: #D4AF37;
@@ -286,12 +286,24 @@
         color: #ccc;
     }
 
-    /* Rendimiento humano */
+    /* Rendimiento humano con íconos */
     .performance-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 12px;
         margin-bottom: 15px;
+    }
+    .metric-card {
+        background: rgba(0,0,0,.35);
+        border-radius: 16px;
+        padding: 14px 10px;
+        text-align: center;
+    }
+    .metric-icon {
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+        display: block;
+        color: #D4AF37;
     }
     .progress-circle {
         position: relative;
@@ -315,6 +327,8 @@
     .stars-container i, .fa-star, .fa-star-half-stroke {
         color: #FFD700;
     }
+
+    /* Estado Administrativo */
     .admin-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -356,6 +370,26 @@
         background: rgba(212,175,55,0.3);
         transform: scale(1.02);
     }
+    .btn-pagar {
+        background: #16a34a;
+        color: white;
+        border: none;
+        border-radius: 40px;
+        padding: 10px 16px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        margin-top: 10px;
+        width: 100%;
+        justify-content: center;
+    }
+    .btn-pagar:hover {
+        background: #15803d;
+        transform: scale(1.02);
+    }
     .soccer-loading-container { text-align: center; margin-top: 140px; }
     .soccer-spinner { font-size: 3.5rem; color: #D4AF37; animation: spinSoccer 1.2s linear infinite; }
     @keyframes spinSoccer { 100% { transform: rotate(360deg); } }
@@ -380,6 +414,22 @@
         <div style="display: flex; gap: 12px; justify-content: flex-end;">
             <button class="btn-submit-report" onclick="enviarReporte()">Enviar</button>
             <button class="btn-submit-report" style="background:#555;" onclick="cerrarReporte()">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para datos bancarios -->
+<div id="bankModal" class="modal-backdrop-report">
+    <div class="modal-report-box">
+        <h3 style="margin-bottom:12px;">Información de pago</h3>
+        <div style="margin: 12px 0;">
+            <p><strong>Banco Pichincha</strong></p>
+            <p><strong>Número de cuenta:</strong> 2209100265</p>
+            <p><strong>Titular:</strong> Darwin Muñoz</p>
+            <p style="margin-top: 12px;">Realice el pago por el valor indicado y notifique al administrador.</p>
+        </div>
+        <div style="display: flex; justify-content: flex-end;">
+            <button class="btn-submit-report" onclick="cerrarBankModal()">Cerrar</button>
         </div>
     </div>
 </div>
@@ -465,6 +515,14 @@ function enviarReporte() {
     document.getElementById('reportText').value = '';
 }
 
+// ==================== MODAL BANCARIO ====================
+function abrirBankModal() {
+    document.getElementById('bankModal').style.display = 'flex';
+}
+function cerrarBankModal() {
+    document.getElementById('bankModal').style.display = 'none';
+}
+
 // ==================== RENDER PERFIL ====================
 async function mostrarPerfil() {
     document.body.className = '';
@@ -544,10 +602,18 @@ async function mostrarPerfil() {
         `<span class="rival-chip ${rival.especial}">${rival.nombre}</span>`
     ).join('');
 
+    // Íconos para rendimiento
+    const metricIcons = {
+        puntualidad: '<i class="fa-solid fa-clock"></i>',
+        companerismo: '<i class="fa-solid fa-handshake"></i>',
+        respeto: '<i class="fa-solid fa-hand-peace"></i>',
+        humildad: '<i class="fa-solid fa-dove"></i>'
+    };
+
     container.innerHTML = `
     <div class="perfil-root">
         <div class="perfil-container">
-            <!-- Header con logo (sin ⚜️) -->
+            <!-- Header con logo (tamaño aumentado) -->
             <div class="perfil-header">
                 <h1><img src="./imagen/logo/napoles_fc.png" alt="Logo"> NÁPOLES F.C.</h1>
             </div>
@@ -612,16 +678,19 @@ async function mostrarPerfil() {
                 <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-square" style="color:#e74c3c;"></i></div><div class="stat-value">${s.rojas}</div><div class="stat-label">ROJAS</div></div>
             </div>
 
-            <!-- Rendimiento -->
+            <!-- Rendimiento Humano con íconos -->
             <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-heart"></i> Rendimiento Humano</div>
                 <div class="performance-grid">
-                    ${['puntualidad','companerismo','respeto','humildad'].map((m,i) => `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:14px 10px; text-align:center;">${renderProgressCircle(s[m], ['#3498db','#2ecc71','#f39c12','#9b59b6'][i])}<div style="margin-top:10px; font-size:.7rem;">${m.toUpperCase()}</div></div>`).join('')}
+                    <div class="metric-card"><div class="metric-icon">${metricIcons.puntualidad}</div>${renderProgressCircle(s.puntualidad, '#3498db')}<div style="margin-top:10px; font-size:.7rem;">PUNTUALIDAD</div></div>
+                    <div class="metric-card"><div class="metric-icon">${metricIcons.companerismo}</div>${renderProgressCircle(s.companerismo, '#2ecc71')}<div style="margin-top:10px; font-size:.7rem;">COMPAÑERISMO</div></div>
+                    <div class="metric-card"><div class="metric-icon">${metricIcons.respeto}</div>${renderProgressCircle(s.respeto, '#f39c12')}<div style="margin-top:10px; font-size:.7rem;">RESPETO</div></div>
+                    <div class="metric-card"><div class="metric-icon">${metricIcons.humildad}</div>${renderProgressCircle(s.humildad, '#9b59b6')}<div style="margin-top:10px; font-size:.7rem;">HUMILDAD</div></div>
                 </div>
                 <div class="average-box"><div class="average-score" style="font-size:2.2rem;">${promedio}/10</div><div class="stars-container">${generarEstrellas(promedio)}</div></div>
             </div>
 
-            <!-- Estado Administrativo -->
+            <!-- Estado Administrativo con botón de pago -->
             <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-chart-line"></i> Estado Administrativo</div>
                 <div class="admin-grid">
@@ -635,6 +704,7 @@ async function mostrarPerfil() {
                     <div class="progress-bar" style="width:100%; height:8px; border-radius:10px; background:rgba(255,255,255,.08); overflow:hidden; margin-top:10px;"><div style="height:100%; width:${Math.min(totalAdmin / 30 * 100, 100)}%; background:linear-gradient(90deg,#e74c3c,#f39c12);"></div></div>
                     <div style="margin-top:10px; font-size:.7rem; padding:8px; border-radius:10px; text-align:center; background:${totalAdmin === 0 ? 'rgba(46,204,113,.1)' : 'rgba(231,76,60,.1)'};">${totalAdmin === 0 ? '✅ ¡Estás al día!' : '⚠️ Regulariza tus pagos'}</div>
                 </div>
+                <button class="btn-pagar" onclick="abrirBankModal()"><i class="fa-solid fa-credit-card"></i> Realizar Pago</button>
             </div>
 
             <button class="btn-logout" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> CERRAR SESIÓN</button>
