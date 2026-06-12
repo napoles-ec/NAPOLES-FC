@@ -15,7 +15,8 @@ content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 <meta name="theme-color" content="#020c1a">
 
-<link rel="icon" href="data:,">
+<!-- Favicon correcto -->
+<link rel="icon" type="image/x-icon" href="./favicon.ico">
 
 <link
 href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap"
@@ -906,6 +907,19 @@ manualDownloadBtn.addEventListener('click', () => {
     );
 
 });
+
+// ==================== REGISTRO DEL SERVICE WORKER (PWA) ====================
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then(registration => {
+                console.log('Service Worker registrado con éxito:', registration);
+            })
+            .catch(error => {
+                console.log('Error al registrar el Service Worker:', error);
+            });
+    });
+}
 
 </script>
 
