@@ -31,7 +31,6 @@ body::after{background:radial-gradient(circle,rgba(111,0,255,.95) 0%,rgba(168,85
 .logo-area p{opacity:.92;font-size:1rem;font-weight:700;color:#d7f7ff;letter-spacing:1px}
 .input-group{margin-bottom:28px}
 .input-group label{display:block;margin-bottom:12px;color:var(--primary);font-size:.82rem;font-weight:700;letter-spacing:1.6px;text-transform:uppercase}
-/* INPUT MÁS GRANDE */
 input{width:100%;min-height:62px;border-radius:18px;border:2px solid rgba(255,255,255,.06);background:rgba(15,23,42,.7);color:#fff;font-size:1.2rem;font-weight:700;padding:0 18px;text-align:center;outline:none;transition:.35s}
 input:focus{border-color:var(--primary);background:rgba(15,23,42,.92);box-shadow:0 0 18px rgba(0,210,255,.35)}
 .btn-submit{width:100%;height:58px;border:none;border-radius:18px;background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;font-size:1rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;margin-top:12px;transition:.35s}
@@ -44,7 +43,48 @@ input:focus{border-color:var(--primary);background:rgba(15,23,42,.92);box-shadow
 #manualDownloadBtn:hover{transform:translateY(-2px)}
 .footer-version{text-align:center;margin-top:20px;font-size:0.7rem;opacity:0.6;color:#ccc}
 .security-note{text-align:center;margin-top:15px;font-size:0.65rem;color:#a0aec0}
-@media(max-width:480px){.login-card{padding:32px 22px}.logo-area h1{font-size:1.7rem}input{min-height:56px;font-size:1.1rem}.btn-submit{height:54px}}
+/* Banner de nueva versión */
+.update-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    border-bottom: 2px solid #D4AF37;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    z-index: 1001;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transform: translateY(-100%);
+    transition: transform 0.3s ease;
+}
+.update-banner.show {
+    transform: translateY(0);
+}
+.update-banner p {
+    margin: 0;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.update-banner button {
+    background: #D4AF37;
+    border: none;
+    padding: 6px 18px;
+    border-radius: 40px;
+    font-weight: bold;
+    color: #000;
+    cursor: pointer;
+}
+.update-banner button:hover {
+    background: #facc15;
+}
+@media(max-width:480px){.login-card{padding:32px 22px}.logo-area h1{font-size:1.7rem}input{min-height:56px;font-size:1.1rem}.btn-submit{height:54px}.update-banner{padding:10px 16px}}
 </style>
 </head>
 <body>
@@ -62,9 +102,42 @@ input:focus{border-color:var(--primary);background:rgba(15,23,42,.92);box-shadow
     <div class="security-note">🔒 Datos encriptados • Conexión segura • By Corporación 360</div>
   </div>
 </div>
+
+<!-- Banner de actualización oculto -->
+<div id="updateBanner" class="update-banner">
+  <p><i class="fa-solid fa-arrow-rotate-right"></i> Nueva versión disponible. Actualiza para obtener las últimas mejoras.</p>
+  <button id="updateBtn">Actualizar ahora</button>
+</div>
+
 <script src="./config.js"></script>
 <script>
-// ==================== VERSIÓN ====================
+// ==================== VERSIÓN Y ACTUALIZACIÓN ====================
+let newVersionWaiting = false;
+let waitingWorker = null;
+
+// Mostrar banner de actualización
+function showUpdateBanner() {
+  const banner = document.getElementById('updateBanner');
+  if (banner) banner.classList.add('show');
+}
+
+// Ocultar banner (opcional)
+function hideUpdateBanner() {
+  const banner = document.getElementById('updateBanner');
+  if (banner) banner.classList.remove('show');
+}
+
+// Forzar actualización de la página
+function updateApp() {
+  if (waitingWorker) {
+    waitingWorker.postMessage({ action: 'skipWaiting' });
+    window.location.reload();
+  } else {
+    window.location.reload();
+  }
+}
+
+// ==================== VERSIÓN MOSTRADA ====================
 (async function() {
   try {
     const res = await fetch('./sw.js');
@@ -77,14 +150,14 @@ input:focus{border-color:var(--primary);background:rgba(15,23,42,.92);box-shadow
   }
 })();
 
-// ==================== INSTALACIÓN PWA MEJORADA ====================
+// ==================== INSTALACIÓN PWA ====================
 let deferredPrompt = null;
 const installBtn = document.getElementById('manualDownloadBtn');
 
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  console.log('✅ beforeinstallprompt capturado. La app se puede instalar.');
+  console.log('✅ beforeinstallprompt capturado');
   installBtn.textContent = '📲 INSTALAR APP (LISTO)';
 });
 
@@ -94,8 +167,6 @@ installBtn.addEventListener('click', async () => {
     const { outcome } = await deferredPrompt.userChoice;
     if (outcome === 'accepted') {
       console.log('Usuario aceptó la instalación');
-    } else {
-      console.log('Usuario rechazó la instalación');
     }
     deferredPrompt = null;
     installBtn.textContent = '📲 INSTALAR APP';
@@ -106,6 +177,50 @@ installBtn.addEventListener('click', async () => {
       alert('⏳ La aplicación aún no está lista para instalarse. Recarga la página e intenta de nuevo.\nSi el problema persiste, verifica que el service worker esté activo.');
     }
   }
+});
+
+// ==================== SERVICE WORKER Y ACTUALIZACIÓN ====================
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').then(registration => {
+    console.log('Service Worker registrado:', registration);
+
+    // Escuchar nuevos service workers que esperan activación
+    if (registration.waiting) {
+      waitingWorker = registration.waiting;
+      showUpdateBanner();
+    }
+
+    registration.addEventListener('updatefound', () => {
+      const newWorker = registration.installing;
+      newWorker.addEventListener('statechange', () => {
+        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+          waitingWorker = newWorker;
+          showUpdateBanner();
+        }
+      });
+    });
+  }).catch(error => console.error('Error al registrar SW:', error));
+
+  // Escuchar mensajes del service worker
+  navigator.serviceWorker.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'NEW_VERSION_AVAILABLE') {
+      waitingWorker = event.data.worker || null;
+      showUpdateBanner();
+    }
+  });
+
+  // Detectar si ya hay un nuevo worker esperando (por si la página se carga con él)
+  navigator.serviceWorker.ready.then(registration => {
+    if (registration.waiting) {
+      waitingWorker = registration.waiting;
+      showUpdateBanner();
+    }
+  });
+}
+
+// Botón de actualizar
+document.getElementById('updateBtn').addEventListener('click', () => {
+  updateApp();
 });
 
 // ==================== LOGIN ====================
@@ -143,21 +258,6 @@ form.addEventListener('submit', async(e)=>{
   }catch(e){ mostrarError('🔌 Error de conexión'); }
   finally{ btn.disabled=false; btn.textContent='Ingresa al Vestuario'; }
 });
-
-// ==================== REGISTRO DEL SERVICE WORKER ====================
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', async () => {
-    try {
-      const registration = await navigator.serviceWorker.register('./sw.js');
-      console.log('Service Worker registrado con éxito:', registration);
-      if (registration.active && !navigator.serviceWorker.controller) {
-        window.location.reload();
-      }
-    } catch (error) {
-      console.error('Error al registrar el Service Worker:', error);
-    }
-  });
-}
 </script>
 </body>
 </html>
