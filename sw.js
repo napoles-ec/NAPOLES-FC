@@ -1,4 +1,4 @@
-const CACHE_NAME = 'napoles-v1.0.45';
+const CACHE_NAME = 'napoles-v1.0.46';
 const urlsToCache = [
   '/NAPOLES-FC/login.html',
   '/NAPOLES-FC/perfil.html',
@@ -23,16 +23,7 @@ self.addEventListener('activate', event => {
       keys.map(key => key !== CACHE_NAME && caches.delete(key))
     ))
   );
-  // Notificar a los clientes que hay una nueva versión activa
-  event.waitUntil(
-    self.clients.claim().then(() => {
-      self.clients.matchAll().then(clients => {
-        clients.forEach(client => {
-          client.postMessage({ type: 'NEW_VERSION_AVAILABLE', version: CACHE_NAME });
-        });
-      });
-    })
-  );
+  self.clients.claim();
 });
 
 self.addEventListener('fetch', event => {
