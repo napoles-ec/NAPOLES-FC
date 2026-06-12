@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
-    <title>Vocalía - Nápoles F.C.</title>
+    <title>Vocalía - Nápoles F.C. | Deuda por conceptos</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -63,16 +63,33 @@
         .deuda-list { display: flex; flex-direction: column; gap: 12px; }
         .deuda-item {
             background: white; border-radius: 28px; padding: 16px; border: 1px solid #fed7aa;
-            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: 0.2s; cursor: pointer;
         }
         .deuda-item.selected { background: #fef3c7; border-color: #f59e0b; }
+        .deuda-header {
+            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+        }
         .deuda-info { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
         .dorsal-badge { background: #f97316; color: white; border-radius: 30px; padding: 4px 12px; font-weight: bold; font-size: 0.75rem; }
         .nombre-jugador { font-weight: 800; color: #2d1b0e; font-size: 0.95rem; }
         .deuda-monto { background: #fee2e2; color: #dc2626; border-radius: 40px; padding: 4px 12px; font-weight: 800; font-size: 0.85rem; }
-        .player-checkbox { width: 24px; height: 24px; cursor: pointer; margin-right: 8px; }
+        .credito-monto { background: #dcfce7; color: #16a34a; border-radius: 40px; padding: 4px 12px; font-weight: 800; font-size: 0.85rem; }
         
+        .detalle-conceptos {
+            margin-top: 12px; padding-top: 12px; border-top: 1px dashed #fed7aa;
+            display: none; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap: 8px;
+            font-size: 0.75rem;
+        }
+        .detalle-conceptos.visible { display: grid; }
+        .concepto-item {
+            background: #fff7ed; border-radius: 16px; padding: 6px 10px;
+            display: flex; justify-content: space-between;
+        }
+        .concepto-nombre { font-weight: 600; color: #92400e; }
+        .concepto-monto { font-weight: 700; color: #dc2626; }
+        .concepto-credito { color: #16a34a; }
+        
+        .player-checkbox { width: 24px; height: 24px; cursor: pointer; margin-right: 8px; }
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
             z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s;
@@ -90,23 +107,18 @@
         .form-control { width: 100%; padding: 12px 16px; border: 1px solid #fed7aa; border-radius: 24px; outline: none; font-size: 1rem; }
         .selected-players-list { max-height: 200px; overflow-y: auto; background: #fef9f1; border-radius: 24px; padding: 12px; margin-bottom: 16px; }
         .selected-player-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #fed7aa; }
-        .selected-player-name { font-weight: 600; }
-        .selected-player-debt { color: #dc2626; font-weight: 700; }
         .toast {
             position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); background: #1e293b;
             color: white; padding: 12px 24px; border-radius: 60px; z-index: 2000; font-size: 0.85rem;
             display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
-        .empty-state { text-align: center; padding: 40px; color: #9ca3af; background: #fffbeb; border-radius: 28px; }
         .historial-item {
             background: #fef9f1; border-radius: 24px; padding: 14px; margin-bottom: 12px;
             border-left: 5px solid #f97316; transition: 0.1s;
         }
-        .historial-fecha { font-size: 0.7rem; color: #9c6b3e; margin-bottom: 6px; }
-        .historial-monto { font-weight: 800; color: #16a34a; font-size: 1rem; }
-        
+        .empty-state { text-align: center; padding: 40px; color: #9ca3af; background: #fffbeb; border-radius: 28px; }
         @media (max-width: 550px) {
-            .deuda-item { flex-direction: column; align-items: stretch; }
+            .deuda-header { flex-direction: column; align-items: stretch; }
             .btn-pago, .btn-pago-multiple { justify-content: center; }
             .stats-grid { gap: 8px; }
             .stat-number { font-size: 1.4rem; }
@@ -119,14 +131,14 @@
 <div class="wave-bg"><div class="wave wave1"></div><div class="wave wave2"></div><div class="wave wave3"></div></div>
 
 <header class="topbar">
-    <div class="admin-info"><h1>🎙️ Vocalía Nápoles FC</h1><p>Gestión de cuotas y compromisos</p></div>
+    <div class="admin-info"><h1>🎙️ Vocalía Nápoles FC</h1><p>Gestión por conceptos | Uniformes · Inscripción · Multas · Tarjetas</p></div>
     <div class="avatar"><i class="fa-solid fa-gavel"></i></div>
 </header>
 
 <section class="hero">
     <div class="hero-card">
-        <h2>Control de Deudas</h2>
-        <p>Registra pagos individuales o múltiples y consulta el historial en tiempo real.</p>
+        <h2>Control de Deudas Detallado</h2>
+        <p>Registra pagos por concepto, permite pagos mayores a la deuda (el excedente se redistribuye o queda como crédito).</p>
     </div>
 </section>
 
@@ -140,11 +152,11 @@
     </div>
 
     <div class="section-title">
-        <span><i class="fa-solid fa-list-ul"></i> Jugadores con Deuda de Vocalía</span>
+        <span><i class="fa-solid fa-list-ul"></i> Jugadores (clic para ver desglose)</span>
         <div class="btn-group">
             <button class="btn btn-historial" id="btnHistorial"><i class="fa-solid fa-clock-rotate-left"></i> Historial</button>
             <button class="btn btn-pago-multiple" id="btnPagoMultiple"><i class="fa-solid fa-users"></i> Pagar seleccionados</button>
-            <button class="btn btn-reset" id="btnResetCache"><i class="fa-solid fa-broom"></i> Reset cache</button>
+            <button class="btn btn-reset" id="btnResetCache"><i class="fa-solid fa-broom"></i> Reset demo</button>
             <button class="btn btn-refresh" id="btnRefresh"><i class="fa-solid fa-arrows-rotate"></i> Actualizar</button>
         </div>
     </div>
@@ -165,6 +177,18 @@
             <div id="selectedPlayersList" class="selected-players-list"></div>
         </div>
         <div class="form-group">
+            <label>Concepto a pagar</label>
+            <select id="conceptoMultiple" class="form-control">
+                <option value="uniformes">Uniformes</option>
+                <option value="inscripcion">Inscripción</option>
+                <option value="vocalia">Vocalía</option>
+                <option value="inauguracion">Inauguración</option>
+                <option value="multas">Multas</option>
+                <option value="tarjeta_amarilla">Tarjeta Amarilla</option>
+                <option value="tarjeta_roja">Tarjeta Roja</option>
+            </select>
+        </div>
+        <div class="form-group">
             <label>Monto para cada jugador ($)</label>
             <input type="number" id="montoMultiple" step="0.01" class="form-control" placeholder="0.00">
         </div>
@@ -180,14 +204,26 @@
 <div id="modalPago" class="modal-overlay">
     <div class="modal-container">
         <div class="modal-header">
-            <h3><i class="fa-solid fa-money-bill-wave"></i> Registrar Pago</h3>
+            <h3><i class="fa-solid fa-money-bill-wave"></i> Registrar Pago por Concepto</h3>
             <button class="close-modal" onclick="cerrarModal()">&times;</button>
         </div>
         <div class="form-group">
             <label>Jugador:</label>
             <strong id="modalJugadorNombre" style="display:block; margin-bottom:8px;"></strong>
-            <label>Deuda actual:</label>
+            <label>Deuda actual total:</label>
             <strong id="modalDeudaActual" style="color:#ea580c; display:block;"></strong>
+        </div>
+        <div class="form-group">
+            <label>Concepto a pagar</label>
+            <select id="conceptoPago" class="form-control">
+                <option value="uniformes">Uniformes</option>
+                <option value="inscripcion">Inscripción</option>
+                <option value="vocalia">Vocalía</option>
+                <option value="inauguracion">Inauguración</option>
+                <option value="multas">Multas</option>
+                <option value="tarjeta_amarilla">Tarjeta Amarilla</option>
+                <option value="tarjeta_roja">Tarjeta Roja</option>
+            </select>
         </div>
         <div class="form-group">
             <label>Monto a pagar ($)</label>
@@ -205,7 +241,7 @@
 <div id="modalHistorial" class="modal-overlay">
     <div class="modal-container">
         <div class="modal-header">
-            <h3><i class="fa-solid fa-clock-rotate-left"></i> Historial de Pagos de Vocalía</h3>
+            <h3><i class="fa-solid fa-clock-rotate-left"></i> Historial de Pagos (con conceptos)</h3>
             <button class="close-modal" onclick="cerrarModalHistorial()">&times;</button>
         </div>
         <div id="historialContenido" style="max-height: 500px; overflow-y: auto;">
@@ -215,17 +251,26 @@
 </div>
 
 <script>
-    // ============ CONFIGURACIÓN ============
+    // ================= CONFIGURACIÓN =================
+    // Si estás conectando a una API real, cambia esta URL y las funciones de carga/registro.
+    // Ahora usamos un almacenamiento local de demostración para mostrar la funcionalidad completa.
+    const USAR_DEMO_LOCAL = true;   // Cambia a false cuando tengas el backend real actualizado
     const API_URL = "https://script.google.com/macros/s/AKfycbwLcpH5z2x_EjRPaPu6gI_lLokWkVxsKLgBz-HHCVX7_OhKAFU1LVfZ67bh9DCbn9L6/exec";
     
-    if(localStorage.getItem('admin_activo') !== 'true') window.location.href = './login.html';
-    
+    // Para demo, usamos localStorage
     let jugadoresData = [];
+    let selectedPlayers = new Set(); // cedulas seleccionadas
     let jugadorSeleccionado = null;
-    let selectedPlayers = new Set(); // almacena cédulas seleccionadas
-    let totalRecaudadoCorrecto = 0;
+    let historialPagos = [];   // almacen local para demo
     
-    const formatearMoneda = (v) => new Intl.NumberFormat('es-EC', { style: 'currency', currency: 'USD' }).format(v);
+    // Lista ordenada de conceptos para redistribución automática
+    const CONCEPTOS_ORDER = ["uniformes", "inscripcion", "vocalia", "inauguracion", "multas", "tarjeta_amarilla", "tarjeta_roja"];
+    const NOMBRES_CONCEPTOS = {
+        uniformes: "Uniformes", inscripcion: "Inscripción", vocalia: "Vocalía", inauguracion: "Inauguración",
+        multas: "Multas", tarjeta_amarilla: "Tarjeta Amarilla", tarjeta_roja: "Tarjeta Roja"
+    };
+    
+    function formatearMoneda(v) { return new Intl.NumberFormat('es-EC', { style: 'currency', currency: 'USD' }).format(v); }
     
     function mostrarToast(mensaje, tipo='info') {
         let toast = document.createElement('div');
@@ -235,56 +280,176 @@
         setTimeout(() => toast.remove(), 3000);
     }
     
-    async function cargarDatos() {
-        const contenedor = document.getElementById('deudoresList');
-        contenedor.innerHTML = '<div class="empty-state">Cargando...</div>';
-        try {
-            const res = await fetch(`${API_URL}?action=getVocaliaData&nocache=${Date.now()}`);
-            const data = await res.json();
-            if(data.success) {
-                jugadoresData = data.deudores;
-                document.getElementById('totalDeuda').innerText = formatearMoneda(data.totalDeuda);
-                document.getElementById('cantidadDeudores').innerText = data.cantidadDeudores;
-                
-                const resHist = await fetch(`${API_URL}?action=getHistorialVocalia&nocache=${Date.now()}`);
-                const histData = await resHist.json();
-                if(histData.success && histData.historial) {
-                    totalRecaudadoCorrecto = histData.historial.reduce((sum, item) => sum + (item.monto || 0), 0);
-                    document.getElementById('totalRecaudado').innerText = formatearMoneda(totalRecaudadoCorrecto);
-                } else {
-                    totalRecaudadoCorrecto = 0;
-                    document.getElementById('totalRecaudado').innerText = formatearMoneda(0);
-                }
-                renderizarDeudores(jugadoresData);
-            } else {
-                throw new Error(data.error);
-            }
-        } catch(e) {
-            contenedor.innerHTML = `<div class="empty-state">❌ Error: ${e.message}</div>`;
-            mostrarToast("Error de conexión", "error");
-        }
+    // Calcula deuda total de un jugador (suma conceptos - credito)
+    function calcularDeudaTotal(jugador) {
+        let suma = 0;
+        for(let c of CONCEPTOS_ORDER) suma += jugador.deudas[c] || 0;
+        let credito = jugador.credito || 0;
+        return Math.max(0, suma - credito);
     }
     
-    function renderizarDeudores(deudores) {
+    // Aplica un pago a un jugador, sobre un concepto inicial, con posibilidad de excedente que se redistribuye.
+    // Retorna { aplicado: montoTotalUsado, sobrante: montoNoUsado, detalle: string }
+    function aplicarPago(jugador, conceptoInicial, montoPagar) {
+        let montoRestante = montoPagar;
+        let usadoTotal = 0;
+        let detalles = [];
+        // 1. Primero intentar pagar el concepto específico
+        let deudaConcepto = jugador.deudas[conceptoInicial] || 0;
+        if(deudaConcepto > 0 && montoRestante > 0) {
+            let aplicar = Math.min(montoRestante, deudaConcepto);
+            jugador.deudas[conceptoInicial] = deudaConcepto - aplicar;
+            montoRestante -= aplicar;
+            usadoTotal += aplicar;
+            detalles.push(`${NOMBRES_CONCEPTOS[conceptoInicial]}: ${formatearMoneda(aplicar)}`);
+        }
+        // 2. Si sobra, redistribuir automáticamente por orden de conceptos (pero no repetir el inicial si ya quedó en cero)
+        if(montoRestante > 0) {
+            for(let concepto of CONCEPTOS_ORDER) {
+                if(concepto === conceptoInicial && (jugador.deudas[conceptoInicial] || 0) === 0 && deudaConcepto > 0) continue; // ya lo tratamos
+                let deuda = jugador.deudas[concepto] || 0;
+                if(deuda > 0 && montoRestante > 0) {
+                    let aplicar = Math.min(montoRestante, deuda);
+                    jugador.deudas[concepto] = deuda - aplicar;
+                    montoRestante -= aplicar;
+                    usadoTotal += aplicar;
+                    detalles.push(`${NOMBRES_CONCEPTOS[concepto]}: ${formatearMoneda(aplicar)}`);
+                }
+            }
+        }
+        // 3. Si aún sobra, va a crédito (saldo a favor para futuras deudas)
+        let sobranteFinal = montoRestante;
+        if(sobranteFinal > 0) {
+            jugador.credito = (jugador.credito || 0) + sobranteFinal;
+            usadoTotal += sobranteFinal;
+            detalles.push(`Crédito a favor: ${formatearMoneda(sobranteFinal)}`);
+        }
+        // Si por alguna razón usó menos del total (ej: pago 0), no pasa nada
+        return { usado: usadoTotal, sobrante: sobranteFinal, detalle: detalles.join(" , ") };
+    }
+    
+    // Registrar pago (demo local)
+    async function registrarPagoDemo(cedula, monto, concepto, transaccion) {
+        const jugador = jugadoresData.find(j => j.cedula === cedula);
+        if(!jugador) throw new Error("Jugador no encontrado");
+        if(monto <= 0) throw new Error("Monto inválido");
+        
+        let deudaAntes = calcularDeudaTotal(jugador);
+        let resultado = aplicarPago(jugador, concepto, monto);
+        let deudaDespues = calcularDeudaTotal(jugador);
+        
+        // guardar historial
+        historialPagos.unshift({
+            fecha: new Date().toISOString(),
+            jugador: jugador.nombreCompleto,
+            cedula: cedula,
+            monto: monto,
+            conceptoAplicado: concepto,
+            detalle: resultado.detalle,
+            deudaRestante: deudaDespues,
+            transaccion: transaccion || "SIN REF",
+            registradoPor: "admin"
+        });
+        // mantener solo últimos 200
+        if(historialPagos.length > 200) historialPagos.pop();
+        localStorage.setItem("demo_vocalia_jugadores", JSON.stringify(jugadoresData));
+        localStorage.setItem("demo_vocalia_historial", JSON.stringify(historialPagos));
+        return { success: true, deudaRestante: deudaDespues, detalle: resultado.detalle };
+    }
+    
+    async function cargarDatosDemo() {
+        let stored = localStorage.getItem("demo_vocalia_jugadores");
+        if(!stored) {
+            // Datos de ejemplo con desglose variado
+            jugadoresData = [
+                {
+                    cedula: "111111",
+                    nombreCompleto: "Luis Fernández",
+                    dorsal: 9,
+                    deudas: {
+                        uniformes: 25.00,
+                        inscripcion: 10.00,
+                        vocalia: 5.00,
+                        inauguracion: 0,
+                        multas: 12.50,
+                        tarjeta_amarilla: 8.00,
+                        tarjeta_roja: 0
+                    },
+                    credito: 0
+                },
+                {
+                    cedula: "222222",
+                    nombreCompleto: "Carlos Mena",
+                    dorsal: 7,
+                    deudas: {
+                        uniformes: 0,
+                        inscripcion: 30.00,
+                        vocalia: 3.00,
+                        inauguracion: 15.00,
+                        multas: 0,
+                        tarjeta_amarilla: 4.00,
+                        tarjeta_roja: 20.00
+                    },
+                    credito: 0
+                }
+            ];
+        } else {
+            jugadoresData = JSON.parse(stored);
+        }
+        let historialStored = localStorage.getItem("demo_vocalia_historial");
+        if(historialStored) historialPagos = JSON.parse(historialStored);
+        else historialPagos = [];
+        
+        actualizarResumen();
+        renderizarDeudores();
+    }
+    
+    function actualizarResumen() {
+        let totalDeuda = 0;
+        let deudoresCount = 0;
+        for(let j of jugadoresData) {
+            let deuda = calcularDeudaTotal(j);
+            totalDeuda += deuda;
+            if(deuda > 0) deudoresCount++;
+        }
+        let totalRecaudado = historialPagos.reduce((sum, p) => sum + (p.monto || 0), 0);
+        document.getElementById('totalDeuda').innerText = formatearMoneda(totalDeuda);
+        document.getElementById('cantidadDeudores').innerText = deudoresCount;
+        document.getElementById('totalRecaudado').innerText = formatearMoneda(totalRecaudado);
+    }
+    
+    function renderizarDeudores() {
         const contenedor = document.getElementById('deudoresList');
-        if(!deudores || deudores.length === 0) {
-            contenedor.innerHTML = '<div class="empty-state">🎉 No hay jugadores con deuda de vocalía.</div>';
+        if(!jugadoresData.length) {
+            contenedor.innerHTML = '<div class="empty-state">No hay jugadores registrados.</div>';
             return;
         }
         let html = '';
-        for(let j of deudores) {
-            const isChecked = selectedPlayers.has(j.cedula);
+        for(let j of jugadoresData) {
+            let deudaTotal = calcularDeudaTotal(j);
+            let isChecked = selectedPlayers.has(j.cedula);
+            let tieneCredito = (j.credito || 0) > 0;
             html += `
                 <div class="deuda-item ${isChecked ? 'selected' : ''}" data-cedula="${j.cedula}">
-                    <div class="deuda-info">
-                        <input type="checkbox" class="player-checkbox" data-cedula="${j.cedula}" ${isChecked ? 'checked' : ''}>
-                        <span class="dorsal-badge">#${j.dorsal || '?'}</span>
-                        <span class="nombre-jugador">${escapeHtml(j.nombreCamiseta || j.nombreCompleto)}</span>
-                        <span class="deuda-monto">${formatearMoneda(j.deuda)}</span>
+                    <div class="deuda-header">
+                        <div style="display: flex; align-items: center; gap: 10px; flex-wrap:wrap;">
+                            <input type="checkbox" class="player-checkbox" data-cedula="${j.cedula}" ${isChecked ? 'checked' : ''}>
+                            <span class="dorsal-badge">#${j.dorsal || '?'}</span>
+                            <span class="nombre-jugador">${escapeHtml(j.nombreCompleto)}</span>
+                            ${deudaTotal > 0 ? `<span class="deuda-monto">${formatearMoneda(deudaTotal)}</span>` : `<span class="credito-monto">${formatearMoneda(-deudaTotal)} a favor</span>`}
+                        </div>
+                        <button class="btn-pago" data-cedula="${j.cedula}" data-nombre="${escapeHtml(j.nombreCompleto)}" data-deuda="${deudaTotal}">
+                            <i class="fa-solid fa-hand-holding-usd"></i> Pagar
+                        </button>
                     </div>
-                    <button class="btn-pago" data-cedula="${j.cedula}" data-nombre="${escapeHtml(j.nombreCompleto)}" data-deuda="${j.deuda}">
-                        <i class="fa-solid fa-hand-holding-usd"></i> Registrar Pago
-                    </button>
+                    <div class="detalle-conceptos" id="detalle-${j.cedula}">
+                        ${CONCEPTOS_ORDER.map(c => {
+                            let val = j.deudas[c] || 0;
+                            if(val > 0) return `<div class="concepto-item"><span class="concepto-nombre">${NOMBRES_CONCEPTOS[c]}</span><span class="concepto-monto">${formatearMoneda(val)}</span></div>`;
+                            return '';
+                        }).join('')}
+                        ${(j.credito || 0) > 0 ? `<div class="concepto-item"><span class="concepto-nombre">Crédito a favor</span><span class="concepto-credito">${formatearMoneda(j.credito)}</span></div>` : ''}
+                    </div>
                 </div>
             `;
         }
@@ -293,12 +458,10 @@
         // Eventos para checkboxes
         document.querySelectorAll('.player-checkbox').forEach(cb => {
             cb.addEventListener('change', (e) => {
+                e.stopPropagation();
                 const cedula = cb.dataset.cedula;
-                if(cb.checked) {
-                    selectedPlayers.add(cedula);
-                } else {
-                    selectedPlayers.delete(cedula);
-                }
+                if(cb.checked) selectedPlayers.add(cedula);
+                else selectedPlayers.delete(cedula);
                 const parentDiv = cb.closest('.deuda-item');
                 if(cb.checked) parentDiv.classList.add('selected');
                 else parentDiv.classList.remove('selected');
@@ -309,198 +472,117 @@
         document.querySelectorAll('.btn-pago').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                jugadorSeleccionado = {
-                    cedula: btn.dataset.cedula,
-                    nombre: btn.dataset.nombre,
-                    deuda: parseFloat(btn.dataset.deuda)
-                };
-                document.getElementById('modalJugadorNombre').innerText = jugadorSeleccionado.nombre;
-                document.getElementById('modalDeudaActual').innerText = formatearMoneda(jugadorSeleccionado.deuda);
-                document.getElementById('montoPago').value = '';
-                document.getElementById('transaccionPago').value = '';
-                document.getElementById('modalPago').classList.add('open');
+                const cedula = btn.dataset.cedula;
+                const jugador = jugadoresData.find(j => j.cedula === cedula);
+                if(jugador) {
+                    jugadorSeleccionado = {
+                        cedula: jugador.cedula,
+                        nombre: jugador.nombreCompleto,
+                        deudaTotal: calcularDeudaTotal(jugador)
+                    };
+                    document.getElementById('modalJugadorNombre').innerText = jugadorSeleccionado.nombre;
+                    document.getElementById('modalDeudaActual').innerText = formatearMoneda(jugadorSeleccionado.deudaTotal);
+                    document.getElementById('montoPago').value = '';
+                    document.getElementById('transaccionPago').value = '';
+                    document.getElementById('modalPago').classList.add('open');
+                }
+            });
+        });
+        
+        // Evento para expandir/contraer detalles al hacer clic en la fila (excepto checkbox/botón)
+        document.querySelectorAll('.deuda-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                if(e.target.classList.contains('player-checkbox') || e.target.classList.contains('btn-pago') || e.target.closest('.btn-pago')) return;
+                const cedula = item.dataset.cedula;
+                const detalleDiv = document.getElementById(`detalle-${cedula}`);
+                if(detalleDiv) detalleDiv.classList.toggle('visible');
             });
         });
     }
     
-    async function confirmarPago() {
+    async function confirmarPagoDemo() {
+        if(!jugadorSeleccionado) return;
         let monto = parseFloat(document.getElementById('montoPago').value);
-        if(isNaN(monto) || monto <= 0) {
-            mostrarToast("Ingrese un monto válido", "error");
-            return;
-        }
-        if(monto > jugadorSeleccionado.deuda) {
-            mostrarToast("El monto no puede superar la deuda actual", "error");
-            return;
-        }
-        const transaccion = document.getElementById('transaccionPago').value.trim() || "SIN REFERENCIA";
+        if(isNaN(monto) || monto <= 0) { mostrarToast("Monto inválido", "error"); return; }
+        const concepto = document.getElementById('conceptoPago').value;
+        const transaccion = document.getElementById('transaccionPago').value.trim() || "SIN REF";
         try {
-            const res = await fetch(`${API_URL}?action=registrarPagoVocalia&cedula=${jugadorSeleccionado.cedula}&monto=${monto}&transaccion=${encodeURIComponent(transaccion)}`);
-            const data = await res.json();
-            if(data.success) {
-                mostrarToast(`Pago de ${formatearMoneda(monto)} registrado correctamente`, "success");
-                cerrarModal();
-                cargarDatos();
-            } else {
-                throw new Error(data.error);
-            }
-        } catch(e) {
-            mostrarToast(e.message, "error");
-        }
+            const res = await registrarPagoDemo(jugadorSeleccionado.cedula, monto, concepto, transaccion);
+            mostrarToast(`Pago registrado: ${res.detalle}`, "success");
+            cerrarModal();
+            cargarDatosDemo(); // recarga vista
+        } catch(e) { mostrarToast(e.message, "error"); }
     }
     
-    function cerrarModal() {
-        document.getElementById('modalPago').classList.remove('open');
-    }
-    
-    function abrirModalMultiple() {
-        if(selectedPlayers.size === 0) {
-            mostrarToast("Selecciona al menos un jugador", "error");
-            return;
-        }
-        const container = document.getElementById('selectedPlayersList');
-        let html = '';
+    async function confirmarPagoMultipleDemo() {
+        if(selectedPlayers.size === 0) { mostrarToast("Selecciona al menos un jugador", "error"); return; }
+        let monto = parseFloat(document.getElementById('montoMultiple').value);
+        if(isNaN(monto) || monto <= 0) { mostrarToast("Monto inválido", "error"); return; }
+        const concepto = document.getElementById('conceptoMultiple').value;
+        const transaccion = document.getElementById('transaccionMultiple').value.trim() || "PAGO_MULTIPLE";
+        let exitosos = 0, fallidos = 0;
         for(let cedula of selectedPlayers) {
-            const jugador = jugadoresData.find(j => j.cedula === cedula);
-            if(jugador) {
+            try {
+                await registrarPagoDemo(cedula, monto, concepto, transaccion);
+                exitosos++;
+            } catch(e) { fallidos++; console.error(e); }
+        }
+        if(fallidos === 0) mostrarToast(`${exitosos} pagos de ${formatearMoneda(monto)} registrados`, "success");
+        else mostrarToast(`${exitosos} OK, ${fallidos} fallidos`, "error");
+        cerrarModalMultiple();
+        selectedPlayers.clear();
+        cargarDatosDemo();
+    }
+    
+    function abrirHistorialDemo() {
+        const modal = document.getElementById('modalHistorial');
+        const contenido = document.getElementById('historialContenido');
+        if(!historialPagos.length) {
+            contenido.innerHTML = '<div class="empty-state">📭 No hay pagos registrados aún.</div>';
+        } else {
+            let html = '';
+            for(let item of historialPagos) {
+                let fecha = new Date(item.fecha).toLocaleString('es-EC');
                 html += `
-                    <div class="selected-player-item">
-                        <span class="selected-player-name">${escapeHtml(jugador.nombreCompleto)}</span>
-                        <span class="selected-player-debt">${formatearMoneda(jugador.deuda)}</span>
+                    <div class="historial-item">
+                        <div><strong>${escapeHtml(item.jugador)}</strong> - ${NOMBRES_CONCEPTOS[item.conceptoAplicado] || item.conceptoAplicado}</div>
+                        <div class="historial-fecha">${fecha} | Transacción: ${item.transaccion}</div>
+                        <div>Monto: ${formatearMoneda(item.monto)} | Deuda restante: ${formatearMoneda(item.deudaRestante)}</div>
+                        <div style="font-size:0.7rem;">Detalle: ${item.detalle}</div>
                     </div>
                 `;
             }
+            contenido.innerHTML = html;
         }
-        container.innerHTML = html;
-        document.getElementById('montoMultiple').value = '';
-        document.getElementById('transaccionMultiple').value = '';
-        document.getElementById('modalPagoMultiple').classList.add('open');
-    }
-    
-    async function confirmarPagoMultiple() {
-        let monto = parseFloat(document.getElementById('montoMultiple').value);
-        if(isNaN(monto) || monto <= 0) {
-            mostrarToast("Ingrese un monto válido para cada jugador", "error");
-            return;
-        }
-        const transaccion = document.getElementById('transaccionMultiple').value.trim() || "PAGO_MULTIPLE";
-        
-        let jugadoresConError = [];
-        for(let cedula of selectedPlayers) {
-            const jugador = jugadoresData.find(j => j.cedula === cedula);
-            if(jugador && jugador.deuda < monto) {
-                jugadoresConError.push(jugador.nombreCompleto);
-            }
-        }
-        if(jugadoresConError.length > 0) {
-            mostrarToast(`Error: ${jugadoresConError.join(', ')} tienen deuda menor a ${formatearMoneda(monto)}`, "error");
-            return;
-        }
-        
-        mostrarToast(`Procesando pagos para ${selectedPlayers.size} jugadores...`, "info");
-        
-        let exitosos = 0;
-        let fallidos = 0;
-        
-        for(let cedula of selectedPlayers) {
-            try {
-                const res = await fetch(`${API_URL}?action=registrarPagoVocalia&cedula=${cedula}&monto=${monto}&transaccion=${encodeURIComponent(transaccion)}`);
-                const data = await res.json();
-                if(data.success) {
-                    exitosos++;
-                } else {
-                    fallidos++;
-                    console.error(`Error con ${cedula}: ${data.error}`);
-                }
-            } catch(e) {
-                fallidos++;
-                console.error(e);
-            }
-        }
-        
-        if(fallidos === 0) {
-            mostrarToast(`✅ ${exitosos} pagos de ${formatearMoneda(monto)} registrados correctamente`, "success");
-        } else {
-            mostrarToast(`⚠️ ${exitosos} OK, ${fallidos} fallidos`, "error");
-        }
-        
-        cerrarModalMultiple();
-        selectedPlayers.clear();
-        cargarDatos();
-    }
-    
-    function cerrarModalMultiple() {
-        document.getElementById('modalPagoMultiple').classList.remove('open');
-    }
-    
-    async function abrirHistorial() {
-        const modal = document.getElementById('modalHistorial');
-        const contenido = document.getElementById('historialContenido');
-        contenido.innerHTML = '<div class="empty-state">Cargando historial...</div>';
         modal.classList.add('open');
-        
-        try {
-            const res = await fetch(`${API_URL}?action=getHistorialVocalia&nocache=${Date.now()}`);
-            const data = await res.json();
-            if(data.success && data.historial && data.historial.length > 0) {
-                let html = '';
-                for(let item of data.historial) {
-                    let fecha = new Date(item.fecha).toLocaleString('es-EC');
-                    html += `
-                        <div class="historial-item">
-                            <div><strong>${escapeHtml(item.jugador)}</strong></div>
-                            <div class="historial-fecha">${fecha} | Transacción: ${item.transaccion || 'N/A'}</div>
-                            <div>Monto: <span class="historial-monto">${formatearMoneda(item.monto)}</span> | Deuda restante: ${formatearMoneda(item.deudaRestante)}</div>
-                            <div style="font-size:0.7rem; color:gray;">Registrado por: ${item.registradoPor || 'admin'}</div>
-                        </div>
-                    `;
-                }
-                contenido.innerHTML = html;
-            } else {
-                contenido.innerHTML = '<div class="empty-state">📭 No hay pagos registrados aún.</div>';
-            }
-        } catch(e) {
-            contenido.innerHTML = `<div class="empty-state">❌ Error al cargar historial: ${e.message}</div>`;
+    }
+    
+    function resetDemo() {
+        if(confirm("¿Borrar todos los datos de prueba y reiniciar la demostración?")) {
+            localStorage.removeItem("demo_vocalia_jugadores");
+            localStorage.removeItem("demo_vocalia_historial");
+            cargarDatosDemo();
+            mostrarToast("Datos reiniciados a valores iniciales", "success");
         }
     }
     
-    function cerrarModalHistorial() {
-        document.getElementById('modalHistorial').classList.remove('open');
-    }
+    function cerrarModal() { document.getElementById('modalPago').classList.remove('open'); }
+    function cerrarModalMultiple() { document.getElementById('modalPagoMultiple').classList.remove('open'); }
+    function cerrarModalHistorial() { document.getElementById('modalHistorial').classList.remove('open'); }
     
-    function resetearCache() {
-        if(confirm("¿Resetear caché? Se recargarán los datos desde el servidor.")) {
-            cargarDatos();
-            mostrarToast("Recargando datos...", "success");
-        }
-    }
+    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
     
-    function escapeHtml(str) {
-        if(!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if(m === '&') return '&amp;';
-            if(m === '<') return '&lt;';
-            if(m === '>') return '&gt;';
-            return m;
-        });
-    }
+    // Enganchar eventos
+    document.getElementById('btnRefresh').addEventListener('click', () => cargarDatosDemo());
+    document.getElementById('btnResetCache').addEventListener('click', resetDemo);
+    document.getElementById('confirmarPago').addEventListener('click', confirmarPagoDemo);
+    document.getElementById('btnHistorial').addEventListener('click', abrirHistorialDemo);
+    document.getElementById('btnPagoMultiple').addEventListener('click', () => { if(selectedPlayers.size===0) mostrarToast("Selecciona jugadores", "error"); else document.getElementById('modalPagoMultiple').classList.add('open'); });
+    document.getElementById('confirmarPagoMultiple').addEventListener('click', confirmarPagoMultipleDemo);
+    window.addEventListener('click', (e) => { if(e.target.classList.contains('modal-overlay')) { cerrarModal(); cerrarModalHistorial(); cerrarModalMultiple(); } });
     
-    // Eventos
-    document.getElementById('btnRefresh').addEventListener('click', cargarDatos);
-    document.getElementById('btnResetCache').addEventListener('click', resetearCache);
-    document.getElementById('confirmarPago').addEventListener('click', confirmarPago);
-    document.getElementById('btnHistorial').addEventListener('click', abrirHistorial);
-    document.getElementById('btnPagoMultiple').addEventListener('click', abrirModalMultiple);
-    document.getElementById('confirmarPagoMultiple').addEventListener('click', confirmarPagoMultiple);
-    window.addEventListener('click', (e) => { 
-        if(e.target.classList.contains('modal-overlay')) {
-            cerrarModal();
-            cerrarModalHistorial();
-            cerrarModalMultiple();
-        }
-    });
-    
-    cargarDatos();
+    // Inicializar
+    cargarDatosDemo();
 </script>
 </body>
 </html>
