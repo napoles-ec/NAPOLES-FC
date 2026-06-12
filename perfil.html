@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta name="theme-color" content="#38bdf8"> <!-- 👈 Barra de estado celeste cardenillo -->
+<meta name="theme-color" content="#D4AF37"> <!-- 👈 Barra de estado dorada -->
 <title>Nápoles F.C. - Panel del Jugador</title>
 <link rel="icon" type="image/x-icon" href="./favicon.ico">
 <script src="https://cdn.tailwindcss.com"></script>
@@ -50,8 +50,8 @@
     }
     .perfil-header h1 {
         font-family: 'Outfit', sans-serif;
-        color: #38bdf8;
-        font-size: 2rem;
+        color: #D4AF37; /* Dorado */
+        font-size: 2.8rem; /* Más grande */
         letter-spacing: 2px;
         display: flex;
         align-items: center;
@@ -59,8 +59,8 @@
         gap: 12px;
     }
     .perfil-header h1 img {
-        height: 60px;
-        filter: drop-shadow(0 0 4px #38bdf8);
+        height: 80px; /* Más grande */
+        filter: drop-shadow(0 0 6px #D4AF37);
     }
 
     /* Tarjetas: izquierda con fondo/borde, derecha solo la camiseta giratoria */
@@ -372,6 +372,8 @@
         background: rgba(212,175,55,0.3);
         transform: scale(1.02);
     }
+
+    /* ========== BOTÓN PAGAR CON ANIMACIÓN DE PALPITACIÓN ========== */
     .btn-pagar {
         background: #16a34a;
         color: white;
@@ -388,14 +390,35 @@
         width: 100%;
         justify-content: center;
         transition: all 0.2s ease;
+        /* Animación de palpitar */
+        animation: pulseSoft 1.8s infinite ease-in-out;
+        box-shadow: 0 0 5px rgba(22, 163, 74, 0.5);
+    }
+    @keyframes pulseSoft {
+        0% {
+            transform: scale(1);
+            box-shadow: 0 0 5px rgba(22, 163, 74, 0.5);
+        }
+        50% {
+            transform: scale(1.03);
+            box-shadow: 0 0 20px rgba(22, 163, 74, 0.8);
+            background: #15803d;
+        }
+        100% {
+            transform: scale(1);
+            box-shadow: 0 0 5px rgba(22, 163, 74, 0.5);
+        }
     }
     .btn-pagar:hover {
-        background: #15803d;
+        animation: none;
         transform: scale(1.02);
+        background: #15803d;
+        box-shadow: 0 0 25px rgba(22, 163, 74, 0.9);
     }
     .btn-pagar:active {
         transform: scale(0.98);
     }
+
     .soccer-loading-container { text-align: center; margin-top: 140px; }
     .soccer-spinner { font-size: 3.5rem; color: #D4AF37; animation: spinSoccer 1.2s linear infinite; }
     @keyframes spinSoccer { 100% { transform: rotate(360deg); } }
