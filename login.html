@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
 <title>Nápoles F.C. - Acceso</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#020c1a">
@@ -13,7 +13,7 @@
 <style>
 :root{--primary:#00d2ff;--primary-dark:#008f9b;--bg-dark:#020c1a}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:'Plus Jakarta Sans',sans-serif;background:#020c1a;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;color:#fff;position:relative;overflow:hidden}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#020c1a;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;color:#fff;position:relative;overflow:hidden;overscroll-behavior:none}
 body::before,body::after{content:'';position:fixed;width:950px;height:950px;border-radius:50%;filter:blur(130px);opacity:.85;z-index:0;animation:moveGlow 14s infinite ease-in-out;pointer-events:none}
 body::before{background:radial-gradient(circle,rgba(0,210,255,.95) 0%,rgba(0,140,255,.55) 40%,transparent 75%);top:-340px;left:-260px}
 body::after{background:radial-gradient(circle,rgba(111,0,255,.95) 0%,rgba(168,85,247,.55) 40%,transparent 75%);bottom:-340px;right:-260px;animation-delay:7s}
@@ -49,20 +49,28 @@ input:focus{border-color:var(--primary);background:rgba(15,23,42,.92);box-shadow
 <div class="login-card" id="loginCard">
   <div class="logo-area"><h1>NÁPOLES F.C.</h1><p>Acceso de Jugadores PRO</p></div>
   <form id="formLogin">
-    <div class="input-group"><label>Ingresa tus credenciales</label><input type="text" id="loginCedula" placeholder="0000000000" autocomplete="off" required></div>
+    <div class="input-group"><label>Ingresa tus credenciales</label><input type="text" id="loginCedula" placeholder="Cédula o clave" autocomplete="off" required></div>
     <button type="submit" id="btnLogin" class="btn-submit" disabled>Ingresa al Vestuario</button>
   </form>
   <div id="errorMsg" class="error-message"></div>
   <div class="footer-links">
     <p style="margin-top:30px;margin-bottom:24px;text-align:center;">¿No tienes cuenta? <a href="./index.html">REGÍSTRATE ✨</a></p>
     <div style="display:flex;justify-content:center;"><button id="manualDownloadBtn" type="button">📲 INSTALAR APP</button></div>
-    <div class="footer-version" id="versionInfo"><span>v1.0.40</span><span> • </span><span>By Corporación 360</span></div>
+    <div class="footer-version" id="versionInfo"></div>
   </div>
 </div>
 <script src="./config.js"></script>
 <script>
-const APP_VERSION = "v1.0.40";
-document.getElementById('versionInfo').innerHTML = `<span>${APP_VERSION}</span><span> • </span><span>bY Corporación 360</span>`;
+// Mostrar versión desde el Service Worker
+(async function() {
+  try {
+    const res = await fetch('./sw.js');
+    const txt = await res.text();
+    const match = txt.match(/CACHE_NAME\s*=\s*['"](?:napoles-)?v?([\d\.]+)['"]/);
+    const version = match ? 'v' + match[1] : 'v1.0.0';
+    document.getElementById('versionInfo').innerHTML = `<span>${version}</span><span> • </span><span>By Corporación 360</span>`;
+  } catch(e) { document.getElementById('versionInfo').innerHTML = `<span>v1.0.0</span><span> • </span><span>By Corporación 360</span>`; }
+})();
 
 // Instalación PWA
 let deferredPrompt = null;
@@ -72,19 +80,14 @@ document.getElementById('manualDownloadBtn').addEventListener('click', () => {
   else alert('Para instalar, abre menú del navegador → "Instalar aplicación"');
 });
 
-// Login
+// Login (igual que antes)
 const form = document.getElementById('formLogin');
 const cedula = document.getElementById('loginCedula');
 const btn = document.getElementById('btnLogin');
 const errorDiv = document.getElementById('errorMsg');
 const loginCard = document.getElementById('loginCard');
-
 function mostrarError(msg){ errorDiv.textContent=msg; errorDiv.style.display='block'; setTimeout(()=>errorDiv.style.display='none',5000); }
-cedula.addEventListener('input',()=>{
-  let val=cedula.value.trim();
-  btn.disabled=!val;
-  loginCard.classList.toggle('admin-mode',val.includes('Gata'));
-});
+cedula.addEventListener('input',()=>{ let val=cedula.value.trim(); btn.disabled=!val; loginCard.classList.toggle('admin-mode',val.includes('Gata')); });
 form.addEventListener('submit', async(e)=>{
   e.preventDefault();
   let valor=cedula.value.trim();
@@ -93,36 +96,27 @@ form.addEventListener('submit', async(e)=>{
   btn.disabled=true; btn.textContent='CONECTANDO...';
   try{
     if(valor==='GataFiera54321'){
-      let params=new URLSearchParams();
-      params.append('action','loginAdmin'); params.append('clave',valor);
-      let res=await fetch(CONFIG.URL_GAS,{method:'POST',mode:'cors',body:params});
-      let data=await res.json();
+      let params=new URLSearchParams(); params.append('action','loginAdmin'); params.append('clave',valor);
+      let res=await fetch(CONFIG.URL_GAS,{method:'POST',mode:'cors',body:params}); let data=await res.json();
       if(data.success && data.acceso){ localStorage.setItem('admin_activo','true'); window.location='./admin.html'; return; }
       mostrarError('❌ Clave admin incorrecta'); return;
     }
     if(!/^\d{10}$/.test(valor)){ mostrarError('❌ Ingresa cédula válida o clave admin'); return; }
-    let params=new URLSearchParams();
-    params.append('action','validarRegistro'); params.append('cedula',valor);
-    let res=await fetch(CONFIG.URL_GAS,{method:'POST',mode:'cors',body:params});
-    let data=await res.json();
+    let params=new URLSearchParams(); params.append('action','validarRegistro'); params.append('cedula',valor);
+    let res=await fetch(CONFIG.URL_GAS,{method:'POST',mode:'cors',body:params}); let data=await res.json();
     if(data.success && data.cedulaExiste && data.estado==='APROBADO'){
-      localStorage.setItem('jugador_actual',JSON.stringify(data.datosJugador));
-      localStorage.setItem('userCedula',valor);
+      localStorage.setItem('jugador_actual',JSON.stringify(data.datosJugador)); localStorage.setItem('userCedula',valor);
       window.location='./perfil.html'; return;
     }
-    if(data.success && data.cedulaExiste) mostrarError(`⏳ Estado: ${data.estado}`);
+    if(data.success && data.cedulaExiste) mostrarError(`⏳ Estado actual: ${data.estado}`);
     else if(data.success && !data.cedulaExiste) mostrarError('❌ Jugador no encontrado');
-    else mostrarError(data.error||'⚠️ Error');
+    else mostrarError(data.error||'⚠️ Error inesperado');
   }catch(e){ mostrarError('🔌 Error de conexión'); }
   finally{ btn.disabled=false; btn.textContent='Ingresa al Vestuario'; }
 });
 
 // Service Worker
-if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('./sw.js').then(reg=>console.log('SW registrado',reg)).catch(err=>console.log('Error SW',err));
-  });
-}
+if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));
 </script>
 </body>
 </html>
