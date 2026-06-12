@@ -1,4 +1,4 @@
-const CACHE_NAME = "napoles-fc-v1.0.44"; // 👈 Incrementa cada vez que subas cambios
+const CACHE_NAME = "napoles-fc-v1.0.45"; // 👈 Incrementa cada vez que subas cambios
 const urlsToCache = [
     "/NAPOLES-FC/login.html",
     "/NAPOLES-FC/perfil.html",
