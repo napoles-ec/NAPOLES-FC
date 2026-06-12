@@ -2,8 +2,8 @@
 <html class="dark" lang="es">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>Nápoles F.C.</title>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nápoles F.C. - Panel del Jugador</title>
 <link rel="icon" type="image/x-icon" href="./favicon.ico">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -45,61 +45,29 @@
     }
     .perfil-header {
         text-align: center;
-        margin-bottom: 15px;
+        margin-bottom: 20px;
     }
     .perfil-header h1 {
         font-family: 'Outfit', sans-serif;
-        font-size: 1.8rem;
-        letter-spacing: 1px;
+        color: #D4AF37;
+        font-size: 1.4rem;
+        letter-spacing: 2px;
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 12px;
     }
     .perfil-header h1 img {
-        height: 48px;
-    }
-    .categoria-text {
-        font-size: 0.7rem;
-        color: #D4AF37;
-        text-align: center;
-        margin-top: -5px;
-        margin-bottom: 20px;
+        height: 45px;
     }
 
-    /* Botones de acción arriba */
-    .action-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 12px;
-        margin-bottom: 20px;
-    }
-    .btn-share, .btn-report, .btn-pdf {
-        background: rgba(212,175,55,0.15);
-        border: 1px solid rgba(212,175,55,0.3);
-        border-radius: 40px;
-        padding: 8px 16px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        transition: 0.2s;
-        color: #FFD700;
-    }
-    .btn-share:hover, .btn-report:hover, .btn-pdf:hover {
-        background: rgba(212,175,55,0.3);
-        transform: scale(1.02);
-    }
-
-    /* Tarjetas igualadas */
+    /* Tarjetas: izquierda con fondo/borde, derecha solo la camiseta giratoria */
     .cards-row {
         display: flex;
         gap: 12px;
         margin-bottom: 15px;
     }
-    .card-identity, .card-jersey {
+    .card-identity {
         flex: 1;
         background: linear-gradient(145deg, rgba(10,20,40,.85), rgba(5,10,20,.95));
         border-radius: 20px;
@@ -110,8 +78,6 @@
         flex-direction: column;
         justify-content: center;
         min-height: 260px;
-    }
-    .card-identity {
         position: relative;
         overflow: hidden;
         box-shadow: 0 0 15px rgba(212,175,55,0.3), inset 0 0 5px rgba(255,215,0,0.2);
@@ -135,10 +101,11 @@
     }
     .avatar-icon-box img { width: 100%; height: 100%; object-fit: cover; }
     
-    /* Jersey - sin doble contenedor */
+    /* Jersey giratorio SIN doble contenedor - solo la caja 3D */
     .jersey-3d {
+        flex: 1;
         perspective: 900px;
-        height: 160px;
+        height: 260px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -162,22 +129,24 @@
         border-radius: 20px;
         backface-visibility: hidden;
         background: linear-gradient(145deg, #0a1428, #000814);
-        border: 2px solid rgba(212,175,55,.6);
+        border: 2px solid rgba(212,175,55,.5);
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
     }
-    .jersey-back { transform: rotateY(180deg); }
+    .jersey-back {
+        transform: rotateY(180deg);
+    }
     .jersey-number {
-        font-size: 3.8rem;
+        font-size: 3rem;
         font-family: 'Outfit';
         font-weight: 900;
         line-height: 1;
         color: #FFD700;
     }
     .jersey-name {
-        font-size: 1.1rem;
+        font-size: 0.9rem;
         font-weight: bold;
         margin-bottom: 5px;
         color: #D4AF37;
@@ -208,8 +177,16 @@
         gap: 10px;
         margin-bottom: 15px;
     }
-    .team-badge { text-align: center; flex: 1; }
-    .team-badge .team-name { font-size: 1.2rem; font-weight: 900; font-family: 'Outfit'; letter-spacing: 1px; }
+    .team-badge {
+        text-align: center;
+        flex: 1;
+    }
+    .team-badge .team-name {
+        font-size: 1.2rem;
+        font-weight: 900;
+        font-family: 'Outfit';
+        letter-spacing: 1px;
+    }
     .vs-circle {
         background: #D4AF37;
         width: 48px;
@@ -233,8 +210,16 @@
         flex-wrap: wrap;
         margin-top: 8px;
     }
-    .match-info-item { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 600; }
-    .match-info-item i { color: #D4AF37; }
+    .match-info-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    .match-info-item i {
+        color: #D4AF37;
+    }
 
     /* Rivales */
     .rivales-scroll {
@@ -248,7 +233,10 @@
         gap: 12px;
         animation: scrollRivales 25s linear infinite;
     }
-    @keyframes scrollRivales { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    @keyframes scrollRivales {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
     .rival-chip {
         display: inline-block;
         background: rgba(212,175,55,0.12);
@@ -272,7 +260,7 @@
         box-shadow: 0 0 8px rgba(46,204,113,0.4);
     }
 
-    /* Estadísticas básicas */
+    /* Estadísticas básicas con iconos */
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -285,27 +273,25 @@
         padding: 10px 5px;
         text-align: center;
     }
-    .stat-icon { font-size: 1.4rem; margin-bottom: 5px; }
-    .stat-value { font-size: 1.2rem; font-weight: 800; }
-    .stat-label { font-size: 0.7rem; color: #ccc; }
+    .stat-icon {
+        font-size: 1.4rem;
+        margin-bottom: 5px;
+    }
+    .stat-value {
+        font-size: 1.2rem;
+        font-weight: 800;
+    }
+    .stat-label {
+        font-size: 0.7rem;
+        color: #ccc;
+    }
 
-    /* Rendimiento humano con iconos */
+    /* Rendimiento humano */
     .performance-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 12px;
         margin-bottom: 15px;
-    }
-    .metric-card {
-        background: rgba(0,0,0,.35);
-        border-radius: 16px;
-        padding: 14px 10px;
-        text-align: center;
-    }
-    .metric-icon {
-        font-size: 1.5rem;
-        margin-bottom: 5px;
-        display: block;
     }
     .progress-circle {
         position: relative;
@@ -326,8 +312,9 @@
         text-align: center;
         margin-top: 15px;
     }
-    .stars-container i, .fa-star, .fa-star-half-stroke { color: #FFD700; }
-
+    .stars-container i, .fa-star, .fa-star-half-stroke {
+        color: #FFD700;
+    }
     .admin-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -345,6 +332,30 @@
         cursor: pointer;
         margin-top: 10px;
     }
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+    .btn-share, .btn-report, .btn-pdf {
+        background: rgba(212,175,55,0.15);
+        border: 1px solid rgba(212,175,55,0.3);
+        border-radius: 40px;
+        padding: 8px 16px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: 0.2s;
+        color: #FFD700;
+    }
+    .btn-share:hover, .btn-report:hover, .btn-pdf:hover {
+        background: rgba(212,175,55,0.3);
+        transform: scale(1.02);
+    }
     .soccer-loading-container { text-align: center; margin-top: 140px; }
     .soccer-spinner { font-size: 3.5rem; color: #D4AF37; animation: spinSoccer 1.2s linear infinite; }
     @keyframes spinSoccer { 100% { transform: rotate(360deg); } }
@@ -361,6 +372,7 @@
 <body id="appBody">
 <div id="dynamicContent"></div>
 
+<!-- Modal reporte incidencia -->
 <div id="reportModal" class="modal-backdrop-report">
     <div class="modal-report-box">
         <h3 style="margin-bottom:12px;">Reportar incidencia</h3>
@@ -392,6 +404,7 @@ console.log("✅ Jugador autenticado:", cedula, nombreCompleto);
 let jugadorData = null;
 let refreshInterval = null;
 
+// ==================== CACHÉ ====================
 function guardarCache(perfil, notificacion) {
     const cache = { timestamp: Date.now(), perfil, notificacion };
     localStorage.setItem('perfilCache_' + cedula, JSON.stringify(cache));
@@ -404,6 +417,7 @@ function obtenerCache() {
     return null;
 }
 
+// ==================== NOTIFICACIONES ====================
 function mostrarNotificacion(notificacion) {
     const container = document.querySelector('.perfil-container');
     if (!container) return;
@@ -421,6 +435,7 @@ function mostrarNotificacion(notificacion) {
     container.insertBefore(banner, container.firstChild);
 }
 
+// ==================== PDF, COMPARTIR, REPORTE ====================
 function descargarPDF() {
     if (!jugadorData) return;
     const { jsPDF } = window.jspdf;
@@ -450,6 +465,7 @@ function enviarReporte() {
     document.getElementById('reportText').value = '';
 }
 
+// ==================== RENDER PERFIL ====================
 async function mostrarPerfil() {
     document.body.className = '';
     document.body.style.background = '';
@@ -490,6 +506,7 @@ async function mostrarPerfil() {
         fechaNacimiento: perfil['fecha de nacimiento'] || '',
         nombreCamiseta: escapeHtml(perfil['nombre en camiseta'] || 'NÁPOLES'),
         dorsal: escapeHtml(perfil['número de dorsal'] || '00'),
+        tallaUni: escapeHtml(perfil['talla uni.'] || 'M'),
         partidosJugados: partidosJugados,
         goles: goles,
         amarillas: amarillas,
@@ -523,22 +540,18 @@ async function mostrarPerfil() {
         { nombre: "JUVENTUS", especial: "" },
         { nombre: "FRANCO CANADIENSE", especial: "next" }
     ];
-    const chipsRivales = [...listaRivales, ...listaRivales].map(rival => `<span class="rival-chip ${rival.especial}">${rival.nombre}</span>`).join('');
-
-    const metricIcons = {
-        puntualidad: '<i class="fa-solid fa-clock"></i>',
-        companerismo: '<i class="fa-solid fa-handshake"></i>',
-        respeto: '<i class="fa-solid fa-hand-peace"></i>',
-        humildad: '<i class="fa-solid fa-dove"></i>'
-    };
+    const chipsRivales = [...listaRivales, ...listaRivales].map(rival => 
+        `<span class="rival-chip ${rival.especial}">${rival.nombre}</span>`
+    ).join('');
 
     container.innerHTML = `
     <div class="perfil-root">
         <div class="perfil-container">
+            <!-- Header con logo (sin ⚜️) -->
             <div class="perfil-header">
                 <h1><img src="./imagen/logo/napoles_fc.png" alt="Logo"> NÁPOLES F.C.</h1>
             </div>
-            <div class="categoria-text">Categoría: ${categoria === 'mujeres' ? 'Femenina ♀' : 'Masculina ♂'}</div>
+            <div style="font-size:0.75rem;color:#D4AF37; text-align:center; margin-bottom:20px;">Categoría: ${categoria === 'mujeres' ? 'Femenina ♀' : 'Masculina ♂'}</div>
             
             <div class="action-buttons">
                 <button class="btn-share" onclick="compartirPerfil()"><i class="fa-solid fa-share-alt"></i> Compartir</button>
@@ -546,6 +559,7 @@ async function mostrarPerfil() {
                 <button class="btn-report" onclick="abrirReporte()"><i class="fa-solid fa-flag"></i> Reportar</button>
             </div>
 
+            <!-- Tarjetas: izquierda con fondo, derecha solo la camiseta giratoria -->
             <div class="cards-row">
                 <div class="card-identity">
                     <div class="avatar-icon-box">
@@ -556,22 +570,21 @@ async function mostrarPerfil() {
                     <div style="font-size:.65rem;"><i class="fa-solid fa-id-card"></i> ${cedula}</div>
                     <div style="margin-top:8px;background:rgba(212,175,55,.2);padding:4px 10px;border-radius:20px; display:inline-block;">${edad} años</div>
                 </div>
-                <div class="card-jersey">
-                    <div class="jersey-3d">
-                        <div class="jersey-rotating">
-                            <div class="jersey-front">
-                                <div class="jersey-name">${s.nombreCamiseta}</div>
-                                <div class="jersey-number">${s.dorsal}</div>
-                            </div>
-                            <div class="jersey-back">
-                                <div class="jersey-name">NÁPOLES FC</div>
-                                <div class="jersey-number">${s.dorsal}</div>
-                            </div>
+                <div class="jersey-3d">
+                    <div class="jersey-rotating">
+                        <div class="jersey-front">
+                            <div class="jersey-name">${s.nombreCamiseta}</div>
+                            <div class="jersey-number">${s.dorsal}</div>
+                        </div>
+                        <div class="jersey-back">
+                            <div class="jersey-name">NÁPOLES FC</div>
+                            <div class="jersey-number">${s.dorsal}</div>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Partido -->
             <div class="match-card-gold match-next">
                 <div class="match-teams">
                     <div class="team-badge"><div class="team-name">⚜️ NÁPOLES F.C.</div></div>
@@ -585,11 +598,13 @@ async function mostrarPerfil() {
                 </div>
             </div>
 
+            <!-- Rivales -->
             <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-people-group"></i> OTROS RIVALES DEL TORNEO</div>
                 <div class="rivales-scroll"><div class="rivales-track">${chipsRivales}</div></div>
             </div>
 
+            <!-- Estadísticas -->
             <div class="stats-grid">
                 <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-shirt"></i></div><div class="stat-value">${s.partidosJugados}</div><div class="stat-label">PARTIDOS</div></div>
                 <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-futbol"></i></div><div class="stat-value">${s.goles}</div><div class="stat-label">GOLES</div></div>
@@ -597,17 +612,16 @@ async function mostrarPerfil() {
                 <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-square" style="color:#e74c3c;"></i></div><div class="stat-value">${s.rojas}</div><div class="stat-label">ROJAS</div></div>
             </div>
 
+            <!-- Rendimiento -->
             <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-heart"></i> Rendimiento Humano</div>
                 <div class="performance-grid">
-                    <div class="metric-card"><div class="metric-icon">${metricIcons.puntualidad}</div>${renderProgressCircle(s.puntualidad, '#3498db')}<div style="margin-top:10px; font-size:.7rem;">PUNTUALIDAD</div></div>
-                    <div class="metric-card"><div class="metric-icon">${metricIcons.companerismo}</div>${renderProgressCircle(s.companerismo, '#2ecc71')}<div style="margin-top:10px; font-size:.7rem;">COMPAÑERISMO</div></div>
-                    <div class="metric-card"><div class="metric-icon">${metricIcons.respeto}</div>${renderProgressCircle(s.respeto, '#f39c12')}<div style="margin-top:10px; font-size:.7rem;">RESPETO</div></div>
-                    <div class="metric-card"><div class="metric-icon">${metricIcons.humildad}</div>${renderProgressCircle(s.humildad, '#9b59b6')}<div style="margin-top:10px; font-size:.7rem;">HUMILDAD</div></div>
+                    ${['puntualidad','companerismo','respeto','humildad'].map((m,i) => `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:14px 10px; text-align:center;">${renderProgressCircle(s[m], ['#3498db','#2ecc71','#f39c12','#9b59b6'][i])}<div style="margin-top:10px; font-size:.7rem;">${m.toUpperCase()}</div></div>`).join('')}
                 </div>
                 <div class="average-box"><div class="average-score" style="font-size:2.2rem;">${promedio}/10</div><div class="stars-container">${generarEstrellas(promedio)}</div></div>
             </div>
 
+            <!-- Estado Administrativo -->
             <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-chart-line"></i> Estado Administrativo</div>
                 <div class="admin-grid">
@@ -630,6 +644,7 @@ async function mostrarPerfil() {
     if (notificacion && notificacion.mensaje) mostrarNotificacion(notificacion);
 }
 
+// Funciones auxiliares
 function escapeHtml(str) { if (!str) return ''; return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function calcularEdad(fechaNacimiento) {
     if (!fechaNacimiento) return '--';
@@ -825,6 +840,7 @@ async function verificarConfirmacionPrevia() {
     } catch(e) { return false; }
 }
 
+// ==================== INICIALIZACIÓN ====================
 (async function() {
     const yaConfirmo = await verificarConfirmacionPrevia();
     if (yaConfirmo) mostrarPerfil();
