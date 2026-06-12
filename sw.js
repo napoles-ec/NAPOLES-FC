@@ -23,7 +23,16 @@ self.addEventListener('activate', event => {
       keys.map(key => key !== CACHE_NAME && caches.delete(key))
     ))
   );
-  self.clients.claim();
+  // Notificar a los clientes que hay una nueva versión activa
+  event.waitUntil(
+    self.clients.claim().then(() => {
+      self.clients.matchAll().then(clients => {
+        clients.forEach(client => {
+          client.postMessage({ type: 'NEW_VERSION_AVAILABLE', version: CACHE_NAME });
+        });
+      });
+    })
+  );
 });
 
 self.addEventListener('fetch', event => {
