@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-    /* ========== ESTILOS DE LA RULETA (sin cambios) ========== */
+    /* ========== ESTILOS DE LA RULETA ========== */
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
     .glass-card { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(233, 195, 73, 0.6); color: white; }
     .premium-glow { box-shadow: 0 0 30px rgba(233, 195, 73, 0.4); }
@@ -29,7 +29,7 @@
     body.ruleta-mode { background: #0a0c10; overflow: hidden; min-height: 100dvh; }
     .match-info-card { background: #1a1c22; border-radius: 40px; padding: 16px 20px; margin: 15px 0; border-left: 5px solid #e9c349; text-align: center; }
 
-    /* ========== ESTILOS DEL PERFIL (CORREGIDOS) ========== */
+    /* ========== ESTILOS DEL PERFIL ========== */
     .perfil-root {
         background: radial-gradient(circle at top, #111a33 0%, #060912 100%);
         font-family: 'Inter', sans-serif;
@@ -61,13 +61,13 @@
         height: 45px;
     }
 
-    /* Tarjetas igualadas (ambas con el mismo aspecto) */
+    /* Tarjetas: izquierda con fondo/borde, derecha solo la camiseta giratoria */
     .cards-row {
         display: flex;
         gap: 12px;
         margin-bottom: 15px;
     }
-    .card-identity, .card-jersey {
+    .card-identity {
         flex: 1;
         background: linear-gradient(145deg, rgba(10,20,40,.85), rgba(5,10,20,.95));
         border-radius: 20px;
@@ -78,8 +78,6 @@
         flex-direction: column;
         justify-content: center;
         min-height: 260px;
-    }
-    .card-identity {
         position: relative;
         overflow: hidden;
         box-shadow: 0 0 15px rgba(212,175,55,0.3), inset 0 0 5px rgba(255,215,0,0.2);
@@ -103,14 +101,14 @@
     }
     .avatar-icon-box img { width: 100%; height: 100%; object-fit: cover; }
     
-    /* Jersey: ahora igual que card-identity (sin envoltura extra) */
+    /* Jersey giratorio SIN doble contenedor - solo la caja 3D */
     .jersey-3d {
+        flex: 1;
         perspective: 900px;
-        height: 150px;
+        height: 260px;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 10px;
     }
     .jersey-rotating {
         width: 100%;
@@ -163,7 +161,6 @@
         margin-bottom: 20px;
         text-align: center;
     }
-    /* Próximo partido (verde) */
     .match-next {
         border-left: 6px solid #2ecc71;
         box-shadow: 0 0 15px rgba(46,204,113,0.4);
@@ -224,7 +221,7 @@
         color: #D4AF37;
     }
 
-    /* Rivales con desplazamiento y colores */
+    /* Rivales */
     .rivales-scroll {
         margin-top: 18px;
         overflow-x: hidden;
@@ -468,7 +465,7 @@ function enviarReporte() {
     document.getElementById('reportText').value = '';
 }
 
-// ==================== RENDER PERFIL (CORREGIDO) ====================
+// ==================== RENDER PERFIL ====================
 async function mostrarPerfil() {
     document.body.className = '';
     document.body.style.background = '';
@@ -498,9 +495,6 @@ async function mostrarPerfil() {
     }
     jugadorData = perfil;
 
-    // NOTA: Si ves 0 en partidos jugados, goles, etc., es porque tu backend no los está calculando.
-    // En la hoja "Partidos Hombres" existen registros con estado CONFIRMADO para esta cédula.
-    // El backend debe sumar las filas donde Cedula coincide y estado = "CONFIRMADO".
     const partidosJugados = Number(perfil.partidosJugados) || 0;
     const goles = Number(perfil.goles) || 0;
     const amarillas = Number(perfil.amarillas) || 0;
@@ -534,7 +528,6 @@ async function mostrarPerfil() {
     let deudaMedias = s.mediasEstado.toUpperCase().includes('PENDIENTE') ? 2 : 0;
     let totalAdmin = deudaInscripcion + deudaUniforme + deudaMedias + s.deudaVocalia;
 
-    // Lista de rivales con colores: LEONES en gris, FRANCO CANADIENSE en verde
     const listaRivales = [
         { nombre: "LEONES", especial: "past" },
         { nombre: "IDEAL", especial: "" },
@@ -547,7 +540,6 @@ async function mostrarPerfil() {
         { nombre: "JUVENTUS", especial: "" },
         { nombre: "FRANCO CANADIENSE", especial: "next" }
     ];
-    // Duplicamos para animación continua
     const chipsRivales = [...listaRivales, ...listaRivales].map(rival => 
         `<span class="rival-chip ${rival.especial}">${rival.nombre}</span>`
     ).join('');
@@ -555,20 +547,19 @@ async function mostrarPerfil() {
     container.innerHTML = `
     <div class="perfil-root">
         <div class="perfil-container">
-            <!-- Header con logo -->
+            <!-- Header con logo (sin ⚜️) -->
             <div class="perfil-header">
                 <h1><img src="./imagen/logo/napoles_fc.png" alt="Logo"> NÁPOLES F.C.</h1>
             </div>
             <div style="font-size:0.75rem;color:#D4AF37; text-align:center; margin-bottom:20px;">Categoría: ${categoria === 'mujeres' ? 'Femenina ♀' : 'Masculina ♂'}</div>
             
-            <!-- Botones centrados -->
             <div class="action-buttons">
                 <button class="btn-share" onclick="compartirPerfil()"><i class="fa-solid fa-share-alt"></i> Compartir</button>
                 <button class="btn-pdf" onclick="descargarPDF()"><i class="fa-solid fa-file-pdf"></i> PDF</button>
                 <button class="btn-report" onclick="abrirReporte()"><i class="fa-solid fa-flag"></i> Reportar</button>
             </div>
 
-            <!-- Tarjetas igualadas (jersey sin doble contenedor) -->
+            <!-- Tarjetas: izquierda con fondo, derecha solo la camiseta giratoria -->
             <div class="cards-row">
                 <div class="card-identity">
                     <div class="avatar-icon-box">
@@ -579,23 +570,21 @@ async function mostrarPerfil() {
                     <div style="font-size:.65rem;"><i class="fa-solid fa-id-card"></i> ${cedula}</div>
                     <div style="margin-top:8px;background:rgba(212,175,55,.2);padding:4px 10px;border-radius:20px; display:inline-block;">${edad} años</div>
                 </div>
-                <div class="card-jersey">
-                    <div class="jersey-3d">
-                        <div class="jersey-rotating">
-                            <div class="jersey-front">
-                                <div class="jersey-name">${s.nombreCamiseta}</div>
-                                <div class="jersey-number">${s.dorsal}</div>
-                            </div>
-                            <div class="jersey-back">
-                                <div class="jersey-name">NÁPOLES FC</div>
-                                <div class="jersey-number">${s.dorsal}</div>
-                            </div>
+                <div class="jersey-3d">
+                    <div class="jersey-rotating">
+                        <div class="jersey-front">
+                            <div class="jersey-name">${s.nombreCamiseta}</div>
+                            <div class="jersey-number">${s.dorsal}</div>
+                        </div>
+                        <div class="jersey-back">
+                            <div class="jersey-name">NÁPOLES FC</div>
+                            <div class="jersey-number">${s.dorsal}</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Tarjeta del partido: Próximo partido (verde) -->
+            <!-- Partido -->
             <div class="match-card-gold match-next">
                 <div class="match-teams">
                     <div class="team-badge"><div class="team-name">⚜️ NÁPOLES F.C.</div></div>
@@ -609,39 +598,21 @@ async function mostrarPerfil() {
                 </div>
             </div>
 
-            <!-- Rivales con animación -->
+            <!-- Rivales -->
             <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-people-group"></i> OTROS RIVALES DEL TORNEO</div>
-                <div class="rivales-scroll">
-                    <div class="rivales-track">${chipsRivales}</div>
-                </div>
+                <div class="rivales-scroll"><div class="rivales-track">${chipsRivales}</div></div>
             </div>
 
-            <!-- Estadísticas básicas con iconos -->
+            <!-- Estadísticas -->
             <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fa-solid fa-shirt"></i></div>
-                    <div class="stat-value">${s.partidosJugados}</div>
-                    <div class="stat-label">PARTIDOS</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fa-solid fa-futbol"></i></div>
-                    <div class="stat-value">${s.goles}</div>
-                    <div class="stat-label">GOLES</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fa-solid fa-square" style="color:#f1c40f;"></i></div>
-                    <div class="stat-value">${s.amarillas}</div>
-                    <div class="stat-label">AMARILLAS</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fa-solid fa-square" style="color:#e74c3c;"></i></div>
-                    <div class="stat-value">${s.rojas}</div>
-                    <div class="stat-label">ROJAS</div>
-                </div>
+                <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-shirt"></i></div><div class="stat-value">${s.partidosJugados}</div><div class="stat-label">PARTIDOS</div></div>
+                <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-futbol"></i></div><div class="stat-value">${s.goles}</div><div class="stat-label">GOLES</div></div>
+                <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-square" style="color:#f1c40f;"></i></div><div class="stat-value">${s.amarillas}</div><div class="stat-label">AMARILLAS</div></div>
+                <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-square" style="color:#e74c3c;"></i></div><div class="stat-value">${s.rojas}</div><div class="stat-label">ROJAS</div></div>
             </div>
 
-            <!-- Rendimiento Humano -->
+            <!-- Rendimiento -->
             <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-heart"></i> Rendimiento Humano</div>
                 <div class="performance-grid">
@@ -719,7 +690,7 @@ window.cerrarSesion = function() {
     }
 };
 
-// ==================== RULETA COMPLETA (incluida) ====================
+// ==================== RULETA COMPLETA ====================
 function mostrarRuleta() {
     console.log("🎰 Mostrando ruleta");
     document.body.className = 'ruleta-mode';
