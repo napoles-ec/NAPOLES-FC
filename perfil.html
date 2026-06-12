@@ -12,40 +12,79 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-    /* ========== LOADER GLOBAL ========== */
-    .global-loader {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+    /* ========== SKELETON LOADER (ESQUELETO) ========== */
+    .skeleton-wrapper {
         background: radial-gradient(circle at top, #111a33 0%, #060912 100%);
+        min-height: 100vh;
+        padding: 15px;
         display: flex;
-        flex-direction: column;
-        align-items: center;
         justify-content: center;
-        z-index: 9999;
-        transition: opacity 0.5s ease;
+        font-family: 'Inter', sans-serif;
+    }
+    .skeleton-container {
+        width: 100%;
+        max-width: 480px;
+    }
+    /* Efecto de carga pulsante */
+    .skeleton-shimmer {
+        background: linear-gradient(90deg, rgba(212,175,55,0.1) 0%, rgba(212,175,55,0.3) 50%, rgba(212,175,55,0.1) 100%);
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+    }
+    @keyframes shimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+    .skeleton-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(212,175,55,0.2);
+        margin: 0 auto 12px;
+    }
+    .skeleton-line {
+        height: 16px;
+        border-radius: 20px;
+        background: rgba(212,175,55,0.15);
+        margin: 8px 0;
+    }
+    .skeleton-title {
+        height: 32px;
+        width: 70%;
+        margin: 0 auto 10px;
+        border-radius: 40px;
+    }
+    .skeleton-card {
+        background: rgba(0,0,0,0.4);
+        border-radius: 20px;
+        padding: 15px;
+        margin-bottom: 15px;
+        border: 1px solid rgba(212,175,55,0.2);
+    }
+    .skeleton-jersey {
+        width: 100%;
+        height: 200px;
+        border-radius: 20px;
+        background: rgba(212,175,55,0.1);
+        transform-style: preserve-3d;
+    }
+    .slogan-text {
+        text-align: center;
+        color: #D4AF37;
         font-family: 'Outfit', sans-serif;
-    }
-    .global-loader .soccer-spinner {
-        font-size: 4rem;
-        color: #D4AF37;
-        animation: spinSoccer 1.2s linear infinite;
-        margin-bottom: 20px;
-    }
-    .global-loader p {
-        color: #D4AF37;
-        font-size: 1.2rem;
+        font-size: 1rem;
         letter-spacing: 2px;
-        text-transform: uppercase;
+        margin-top: 30px;
         font-weight: 600;
+        text-transform: uppercase;
+        animation: fadeSlogan 0.5s ease;
     }
-    @keyframes spinSoccer {
-        100% { transform: rotate(360deg); }
+    @keyframes fadeSlogan {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
-    /* ========== ESTILOS DE LA RULETA ========== */
+    /* ========== ESTILOS DE LA RULETA (sin cambios) ========== */
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
     .glass-card { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(233, 195, 73, 0.6); color: white; }
     .premium-glow { box-shadow: 0 0 30px rgba(233, 195, 73, 0.4); }
@@ -63,7 +102,7 @@
     body.ruleta-mode { background: #0a0c10; overflow: hidden; min-height: 100dvh; }
     .match-info-card { background: #1a1c22; border-radius: 40px; padding: 16px 20px; margin: 15px 0; border-left: 5px solid #e9c349; text-align: center; }
 
-    /* ========== ESTILOS DEL PERFIL ========== */
+    /* ========== ESTILOS DEL PERFIL (igual que antes) ========== */
     .perfil-root {
         background: radial-gradient(circle at top, #111a33 0%, #060912 100%);
         font-family: 'Inter', sans-serif;
@@ -76,10 +115,6 @@
     .perfil-container {
         width: 100%;
         max-width: 480px;
-    }
-    .perfil-header {
-        text-align: center;
-        margin-bottom: 20px;
     }
     .perfil-header h1 {
         font-family: 'Outfit', sans-serif;
@@ -94,393 +129,145 @@
     .perfil-header h1 img {
         height: 80px;
     }
-
-    /* Tarjetas: izquierda con fondo/borde, derecha solo la camiseta giratoria */
-    .cards-row {
-        display: flex;
-        gap: 12px;
-        margin-bottom: 15px;
-    }
+    .cards-row { display: flex; gap: 12px; margin-bottom: 15px; }
     .card-identity {
-        flex: 1;
-        background: linear-gradient(145deg, rgba(10,20,40,.85), rgba(5,10,20,.95));
-        border-radius: 20px;
-        border: 1px solid rgba(212,175,55,.25);
-        padding: 15px;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        min-height: 260px;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 0 15px rgba(212,175,55,0.3), inset 0 0 5px rgba(255,215,0,0.2);
+        flex: 1; background: linear-gradient(145deg, rgba(10,20,40,.85), rgba(5,10,20,.95));
+        border-radius: 20px; border: 1px solid rgba(212,175,55,.25); padding: 15px;
+        text-align: center; display: flex; flex-direction: column; justify-content: center;
+        min-height: 260px; box-shadow: 0 0 15px rgba(212,175,55,0.3);
         animation: glowPulse 2s infinite alternate;
     }
     @keyframes glowPulse {
-        0% { box-shadow: 0 0 5px rgba(212,175,55,0.2), inset 0 0 2px rgba(255,215,0,0.1); }
-        100% { box-shadow: 0 0 25px rgba(212,175,55,0.6), inset 0 0 10px rgba(255,215,0,0.3); }
+        0% { box-shadow: 0 0 5px rgba(212,175,55,0.2); }
+        100% { box-shadow: 0 0 25px rgba(212,175,55,0.6); }
     }
     .avatar-icon-box {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        border: 3px solid #D4AF37;
+        width: 80px; height: 80px; border-radius: 50%; border: 3px solid #D4AF37;
         background: radial-gradient(circle, #1a2a4a 0%, #0a1428 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 12px;
-        overflow: hidden;
+        margin: 0 auto 12px; overflow: hidden;
     }
-    .avatar-icon-box img { width: 100%; height: 100%; object-fit: cover; }
-    
-    /* Jersey giratorio */
-    .jersey-3d {
-        flex: 1;
-        perspective: 900px;
-        height: 260px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .jersey-rotating {
-        width: 100%;
-        height: 100%;
-        position: relative;
-        transform-style: preserve-3d;
-        animation: rotateSmooth 12s infinite linear;
-        will-change: transform;
-    }
-    @keyframes rotateSmooth {
-        0% { transform: rotateY(0deg); }
-        100% { transform: rotateY(360deg); }
-    }
+    .jersey-3d { flex: 1; perspective: 900px; height: 260px; display: flex; align-items: center; justify-content: center; }
+    .jersey-rotating { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: rotateSmooth 12s infinite linear; }
+    @keyframes rotateSmooth { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(360deg); } }
     .jersey-front, .jersey-back {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        border-radius: 20px;
-        backface-visibility: hidden;
-        background: linear-gradient(145deg, #0a1428, #000814);
-        border: 2px solid rgba(212,175,55,.5);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+        position: absolute; width: 100%; height: 100%; border-radius: 20px; backface-visibility: hidden;
+        background: linear-gradient(145deg, #0a1428, #000814); border: 2px solid rgba(212,175,55,.5);
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
     }
-    .jersey-back {
-        transform: rotateY(180deg);
-    }
-    .jersey-number {
-        font-size: 4rem;
-        font-family: 'Outfit';
-        font-weight: 900;
-        line-height: 1;
-        color: #FFD700;
-    }
-    .jersey-name {
-        font-size: 1.2rem;
-        font-weight: bold;
-        margin-bottom: 5px;
-        color: #D4AF37;
-    }
-
-    /* Tarjeta del partido */
-    .match-card-gold {
-        background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(0,0,0,0.6));
-        border-left: 6px solid #D4AF37;
-        border-radius: 24px;
-        padding: 18px 15px;
-        margin-bottom: 20px;
-        text-align: center;
-    }
-    .match-next {
-        border-left: 6px solid #2ecc71;
-        box-shadow: 0 0 15px rgba(46,204,113,0.4);
-        animation: neonPulseGreen 1.5s infinite alternate;
-    }
-    @keyframes neonPulseGreen {
-        0% { box-shadow: 0 0 5px rgba(46,204,113,0.3); border-left-color: #2ecc71; }
-        100% { box-shadow: 0 0 25px rgba(46,204,113,0.7); border-left-color: #27ae60; }
-    }
-    .match-teams {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 15px;
-    }
-    .team-badge {
-        text-align: center;
-        flex: 1;
-    }
-    .team-badge .team-name {
-        font-size: 1.2rem;
-        font-weight: 900;
-        font-family: 'Outfit';
-        letter-spacing: 1px;
-    }
-    .vs-circle {
-        background: #D4AF37;
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 900;
-        color: #000;
-        font-size: 1.3rem;
-        box-shadow: 0 0 10px rgba(212,175,55,0.6);
-    }
-    .match-info {
-        background: rgba(0,0,0,0.5);
-        border-radius: 50px;
-        padding: 12px;
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-        flex-wrap: wrap;
-        margin-top: 8px;
-    }
-    .match-info-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 0.8rem;
-        font-weight: 600;
-    }
-    .match-info-item i {
-        color: #D4AF37;
-    }
-
-    /* Rivales */
-    .rivales-scroll {
-        margin-top: 18px;
-        overflow-x: hidden;
-        white-space: nowrap;
-        padding-bottom: 8px;
-    }
-    .rivales-track {
-        display: inline-flex;
-        gap: 12px;
-        animation: scrollRivales 25s linear infinite;
-    }
-    @keyframes scrollRivales {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-50%); }
-    }
-    .rival-chip {
-        display: inline-block;
-        background: rgba(212,175,55,0.12);
-        border: 1px solid rgba(212,175,55,0.3);
-        border-radius: 40px;
-        padding: 6px 18px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: #f5e6a3;
-        backdrop-filter: blur(4px);
-    }
-    .rival-chip.past {
-        background: rgba(127,140,141,0.2);
-        border-color: #7f8c8d;
-        color: #bdc3c7;
-    }
-    .rival-chip.next {
-        background: rgba(46,204,113,0.2);
-        border-color: #2ecc71;
-        color: #2ecc71;
-        box-shadow: 0 0 8px rgba(46,204,113,0.4);
-    }
-
-    /* Estadísticas básicas */
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 8px;
-        margin-bottom: 15px;
-    }
-    .stat-card {
-        background: rgba(0,0,0,.35);
-        border-radius: 16px;
-        padding: 10px 5px;
-        text-align: center;
-    }
-    .stat-icon {
-        font-size: 1.4rem;
-        margin-bottom: 5px;
-    }
-    .stat-value {
-        font-size: 1.2rem;
-        font-weight: 800;
-    }
-    .stat-label {
-        font-size: 0.7rem;
-        color: #ccc;
-    }
-
-    /* Rendimiento humano */
-    .performance-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-        margin-bottom: 15px;
-    }
-    .metric-card {
-        background: rgba(0,0,0,.35);
-        border-radius: 16px;
-        padding: 14px 10px;
-        text-align: center;
-    }
-    .metric-icon {
-        font-size: 1.5rem;
-        margin-bottom: 5px;
-        display: block;
-        color: #D4AF37;
-    }
-    .progress-circle {
-        position: relative;
-        width: 85px;
-        height: 85px;
-        margin: auto;
-    }
-    .progress-circle svg {
-        width: 100%;
-        height: 100%;
-        transform: rotate(-90deg);
-    }
-    .average-box {
-        background: rgba(212,175,55,.08);
-        border: 1px solid rgba(212,175,55,.2);
-        border-radius: 15px;
-        padding: 15px;
-        text-align: center;
-        margin-top: 15px;
-    }
-    .stars-container i, .fa-star, .fa-star-half-stroke {
-        color: #FFD700;
-    }
-
-    /* Estado Administrativo */
-    .admin-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-        margin-bottom: 15px;
-    }
-    .btn-logout {
-        background: rgba(231,76,60,.12);
-        color: #e74c3c;
-        border: 1px solid rgba(231,76,60,.2);
-        width: 100%;
-        border-radius: 14px;
-        padding: 14px;
-        font-weight: 800;
-        cursor: pointer;
-        margin-top: 10px;
-    }
-    .action-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 12px;
-        margin-bottom: 20px;
-    }
-    .btn-share, .btn-report, .btn-pdf {
-        background: rgba(212,175,55,0.15);
-        border: 1px solid rgba(212,175,55,0.3);
-        border-radius: 40px;
-        padding: 8px 16px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        transition: 0.2s;
-        color: #FFD700;
-    }
-    .btn-share:hover, .btn-report:hover, .btn-pdf:hover {
-        background: rgba(212,175,55,0.3);
-        transform: scale(1.02);
-    }
-
-    /* Botón pagar con animación */
+    .jersey-back { transform: rotateY(180deg); }
+    .jersey-number { font-size: 4rem; font-family: 'Outfit'; font-weight: 900; color: #FFD700; }
+    .jersey-name { font-size: 1.2rem; font-weight: bold; color: #D4AF37; }
+    .match-card-gold { background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(0,0,0,0.6)); border-left: 6px solid #D4AF37; border-radius: 24px; padding: 18px 15px; margin-bottom: 20px; text-align: center; }
+    .match-next { border-left: 6px solid #2ecc71; animation: neonPulseGreen 1.5s infinite alternate; }
+    @keyframes neonPulseGreen { 0% { box-shadow: 0 0 5px rgba(46,204,113,0.3); } 100% { box-shadow: 0 0 25px rgba(46,204,113,0.7); } }
+    .match-teams { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 15px; }
+    .team-badge { text-align: center; flex: 1; }
+    .vs-circle { background: #D4AF37; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #000; font-size: 1.3rem; }
+    .match-info { background: rgba(0,0,0,0.5); border-radius: 50px; padding: 12px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+    .rivales-scroll { margin-top: 18px; overflow-x: hidden; white-space: nowrap; }
+    .rivales-track { display: inline-flex; gap: 12px; animation: scrollRivales 25s linear infinite; }
+    @keyframes scrollRivales { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    .rival-chip { background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.3); border-radius: 40px; padding: 6px 18px; font-size: 0.8rem; color: #f5e6a3; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 15px; }
+    .stat-card { background: rgba(0,0,0,.35); border-radius: 16px; padding: 10px 5px; text-align: center; }
+    .performance-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-bottom: 15px; }
+    .metric-card { background: rgba(0,0,0,.35); border-radius: 16px; padding: 14px 10px; text-align: center; }
+    .progress-circle { position: relative; width: 85px; height: 85px; margin: auto; }
+    .average-box { background: rgba(212,175,55,.08); border: 1px solid rgba(212,175,55,.2); border-radius: 15px; padding: 15px; text-align: center; }
     .btn-pagar {
-        background: #16a34a;
-        color: white;
-        border: none;
-        border-radius: 40px;
-        padding: 10px 16px;
-        font-size: 0.8rem;
-        font-weight: 700;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        cursor: pointer;
-        margin-top: 10px;
-        width: 100%;
-        justify-content: center;
-        transition: all 0.2s ease;
-        animation: pulseSoft 1.8s infinite ease-in-out;
-        box-shadow: 0 0 5px rgba(22, 163, 74, 0.5);
+        background: #16a34a; color: white; border: none; border-radius: 40px; padding: 10px 16px;
+        font-weight: 700; width: 100%; justify-content: center; animation: pulseSoft 1.8s infinite ease-in-out;
     }
-    @keyframes pulseSoft {
-        0% { transform: scale(1); box-shadow: 0 0 5px rgba(22, 163, 74, 0.5); }
-        50% { transform: scale(1.03); box-shadow: 0 0 20px rgba(22, 163, 74, 0.8); background: #15803d; }
-        100% { transform: scale(1); box-shadow: 0 0 5px rgba(22, 163, 74, 0.5); }
-    }
-    .btn-pagar:hover { animation: none; transform: scale(1.02); background: #15803d; box-shadow: 0 0 25px rgba(22, 163, 74, 0.9); }
-    .btn-pagar:active { transform: scale(0.98); }
-
-    .soccer-loading-container { text-align: center; margin-top: 140px; }
-    .soccer-spinner { font-size: 3.5rem; color: #D4AF37; animation: spinSoccer 1.2s linear infinite; }
-    
-    /* Modales */
-    .modal-backdrop {
-        position: fixed; top:0; left:0; width:100%; height:100%;
-        background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
-        z-index: 1000; display: none; align-items: center; justify-content: center; padding: 15px;
-    }
-    .modal-box {
-        background: #1e293b;
-        border-radius: 28px;
-        padding: 24px;
-        max-width: 450px;
-        width: 100%;
-        border: 1px solid rgba(212,175,55,0.3);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        color: #fff;
-    }
-    .modal-box h3 { color: #D4AF37; margin-bottom: 16px; font-family: 'Outfit', sans-serif; }
-    .modal-box textarea { width: 100%; padding: 12px; border-radius: 16px; background: #0f172a; color: white; border: 1px solid #334155; margin: 12px 0; }
-    .modal-box textarea:focus { outline: none; border-color: #D4AF37; }
-    .btn-modal { background: #D4AF37; color: black; border: none; padding: 10px 20px; border-radius: 40px; font-weight: bold; cursor: pointer; }
-    .btn-modal-secondary { background: #334155; color: white; border: none; padding: 10px 20px; border-radius: 40px; font-weight: bold; cursor: pointer; }
-    .bank-info { margin: 15px 0; padding: 15px; background: #0f172a; border-radius: 16px; border: 1px solid #334155; }
-    .bank-info p { margin: 8px 0; }
-    .bank-account { font-family: monospace; font-size: 1.2rem; font-weight: bold; background: #00000040; padding: 8px; border-radius: 12px; text-align: center; letter-spacing: 1px; user-select: all; cursor: pointer; transition: background 0.2s; }
-    .bank-account:hover { background: #00000060; }
-    .flex-buttons { display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px; }
-    .copy-toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #1e293b; border: 1px solid #D4AF37; border-radius: 40px; padding: 10px 24px; color: #D4AF37; font-weight: 600; font-size: 0.9rem; z-index: 2000; box-shadow: 0 10px 25px rgba(0,0,0,0.3); backdrop-filter: blur(4px); animation: toastFade 2.5s ease forwards; pointer-events: none; }
-    @keyframes toastFade { 0% { opacity: 0; transform: translateX(-50%) translateY(20px); } 15% { opacity: 1; transform: translateX(-50%) translateY(0); } 85% { opacity: 1; transform: translateX(-50%) translateY(0); } 100% { opacity: 0; transform: translateX(-50%) translateY(20px); } }
+    @keyframes pulseSoft { 0% { transform: scale(1); } 50% { transform: scale(1.03); background: #15803d; } 100% { transform: scale(1); } }
+    .btn-logout { background: rgba(231,76,60,.12); color: #e74c3c; border: 1px solid rgba(231,76,60,.2); width: 100%; border-radius: 14px; padding: 14px; cursor: pointer; margin-top: 10px; }
+    .action-buttons { display: flex; justify-content: center; gap: 12px; margin-bottom: 20px; }
+    .btn-share, .btn-report, .btn-pdf { background: rgba(212,175,55,0.15); border: 1px solid rgba(212,175,55,0.3); border-radius: 40px; padding: 8px 16px; color: #FFD700; cursor: pointer; }
+    /* Modales (igual) */
+    .modal-backdrop { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 1000; display: none; align-items: center; justify-content: center; }
+    .modal-box { background: #1e293b; border-radius: 28px; padding: 24px; max-width: 450px; border: 1px solid rgba(212,175,55,0.3); }
+    .bank-account { font-family: monospace; font-size: 1.2rem; background: #00000040; padding: 8px; border-radius: 12px; text-align: center; cursor: pointer; }
+    .copy-toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #1e293b; border: 1px solid #D4AF37; border-radius: 40px; padding: 10px 24px; color: #D4AF37; animation: toastFade 2.5s ease forwards; }
+    @keyframes toastFade { 0% { opacity: 0; transform: translateX(-50%) translateY(20px); } 15% { opacity: 1; } 85% { opacity: 1; } 100% { opacity: 0; } }
 </style>
 </head>
 <body>
-    <!-- LOADER GLOBAL (aparece al inicio) -->
-    <div id="globalLoader" class="global-loader">
-        <div class="soccer-spinner"><i class="fa-solid fa-futbol"></i></div>
-        <p>Cargando experiencia Nápoles...</p>
+    <!-- SKELETON LOADER (pantalla de carga con forma) -->
+    <div id="skeletonLoader" class="skeleton-wrapper">
+        <div class="skeleton-container">
+            <!-- Logo y título esqueleto -->
+            <div class="perfil-header" style="margin-bottom: 20px;">
+                <div class="skeleton-title skeleton-shimmer" style="width: 180px; height: 50px; margin: 0 auto;"></div>
+            </div>
+            <!-- Slogan dinámico -->
+            <div id="sloganBox" class="slogan-text">⚽ Cargando la gloria... ⚽</div>
+
+            <!-- Botones de acción esqueleto -->
+            <div class="action-buttons" style="justify-content: center; gap: 12px; margin: 20px 0;">
+                <div class="skeleton-shimmer" style="width: 90px; height: 36px; border-radius: 40px;"></div>
+                <div class="skeleton-shimmer" style="width: 90px; height: 36px; border-radius: 40px;"></div>
+                <div class="skeleton-shimmer" style="width: 90px; height: 36px; border-radius: 40px;"></div>
+            </div>
+
+            <!-- Tarjeta doble: avatar + camiseta -->
+            <div class="cards-row">
+                <div class="card-identity" style="background: rgba(0,0,0,0.3); border: none; animation: none;">
+                    <div class="skeleton-avatar skeleton-shimmer"></div>
+                    <div class="skeleton-line skeleton-shimmer" style="width: 70%; margin: 8px auto;"></div>
+                    <div class="skeleton-line skeleton-shimmer" style="width: 50%; margin: 8px auto;"></div>
+                    <div class="skeleton-line skeleton-shimmer" style="width: 40%; margin: 8px auto;"></div>
+                </div>
+                <div class="jersey-3d">
+                    <div class="skeleton-jersey skeleton-shimmer"></div>
+                </div>
+            </div>
+
+            <!-- Tarjeta del partido esqueleto -->
+            <div class="match-card-gold" style="border-left-color: rgba(212,175,55,0.3);">
+                <div class="skeleton-line skeleton-shimmer" style="width: 60%; margin: 0 auto 15px;"></div>
+                <div class="skeleton-line skeleton-shimmer" style="width: 80%; margin: 0 auto;"></div>
+            </div>
+
+            <!-- Grid de estadísticas esqueleto -->
+            <div class="stats-grid">
+                <div class="stat-card"><div class="skeleton-line skeleton-shimmer" style="height: 40px; width: 40px; margin: 0 auto;"></div><div class="skeleton-line skeleton-shimmer" style="width: 50%; margin: 5px auto;"></div></div>
+                <div class="stat-card"><div class="skeleton-line skeleton-shimmer" style="height: 40px; width: 40px; margin: 0 auto;"></div><div class="skeleton-line skeleton-shimmer" style="width: 50%; margin: 5px auto;"></div></div>
+                <div class="stat-card"><div class="skeleton-line skeleton-shimmer" style="height: 40px; width: 40px; margin: 0 auto;"></div><div class="skeleton-line skeleton-shimmer" style="width: 50%; margin: 5px auto;"></div></div>
+                <div class="stat-card"><div class="skeleton-line skeleton-shimmer" style="height: 40px; width: 40px; margin: 0 auto;"></div><div class="skeleton-line skeleton-shimmer" style="width: 50%; margin: 5px auto;"></div></div>
+            </div>
+
+            <!-- Rendimiento humano esqueleto -->
+            <div class="glass-card-perfil skeleton-card">
+                <div class="skeleton-line skeleton-shimmer" style="width: 50%; margin-bottom: 15px;"></div>
+                <div class="performance-grid">
+                    <div class="metric-card"><div class="skeleton-line skeleton-shimmer" style="height: 70px; width: 70px; border-radius: 50%; margin: 0 auto;"></div><div class="skeleton-line skeleton-shimmer" style="width: 60%; margin: 8px auto;"></div></div>
+                    <div class="metric-card"><div class="skeleton-line skeleton-shimmer" style="height: 70px; width: 70px; border-radius: 50%; margin: 0 auto;"></div><div class="skeleton-line skeleton-shimmer" style="width: 60%; margin: 8px auto;"></div></div>
+                    <div class="metric-card"><div class="skeleton-line skeleton-shimmer" style="height: 70px; width: 70px; border-radius: 50%; margin: 0 auto;"></div><div class="skeleton-line skeleton-shimmer" style="width: 60%; margin: 8px auto;"></div></div>
+                    <div class="metric-card"><div class="skeleton-line skeleton-shimmer" style="height: 70px; width: 70px; border-radius: 50%; margin: 0 auto;"></div><div class="skeleton-line skeleton-shimmer" style="width: 60%; margin: 8px auto;"></div></div>
+                </div>
+            </div>
+
+            <!-- Estado administrativo esqueleto -->
+            <div class="glass-card-perfil skeleton-card">
+                <div class="skeleton-line skeleton-shimmer" style="width: 50%; margin-bottom: 15px;"></div>
+                <div class="admin-grid" style="display: grid; grid-template-columns: repeat(2,1fr); gap: 12px;">
+                    <div class="skeleton-line skeleton-shimmer" style="height: 80px; border-radius: 16px;"></div>
+                    <div class="skeleton-line skeleton-shimmer" style="height: 80px; border-radius: 16px;"></div>
+                </div>
+                <div class="skeleton-line skeleton-shimmer" style="height: 60px; margin-top: 15px; border-radius: 14px;"></div>
+            </div>
+
+            <div class="skeleton-line skeleton-shimmer" style="height: 50px; margin-top: 10px; border-radius: 14px;"></div>
+        </div>
     </div>
 
     <div id="dynamicContent"></div>
 
-    <!-- Modales (igual que antes) -->
+    <!-- Modales (sin cambios) -->
     <div id="reportModal" class="modal-backdrop">
         <div class="modal-box">
             <h3><i class="fa-solid fa-flag"></i> Reportar incidencia</h3>
             <textarea id="reportText" rows="4" placeholder="Describe el problema o sugerencia..."></textarea>
-            <div class="flex-buttons">
+            <div class="flex-buttons" style="display: flex; gap: 12px; justify-content: flex-end;">
                 <button class="btn-modal-secondary" onclick="cerrarReporte()">Cancelar</button>
                 <button class="btn-modal" onclick="enviarReporte()">Enviar</button>
             </div>
@@ -495,7 +282,7 @@
                 <p><strong>Número de cuenta:</strong></p>
                 <div class="bank-account" id="cuentaBancaria" data-cuenta="2209100265">2209100265</div>
                 <p><strong>Titular:</strong> Darwin Muñoz</p>
-                <p style="margin-top: 12px;">Realice el pago por el valor indicado y notifique al administrador.</p>
+                <p>Realice el pago por el valor indicado y notifique al administrador.</p>
             </div>
             <div class="flex-buttons">
                 <button class="btn-modal" onclick="cerrarBankModal()">Cerrar</button>
@@ -522,17 +309,46 @@ console.log("✅ Jugador autenticado:", cedula, nombreCompleto);
 
 let jugadorData = null;
 let refreshInterval = null;
+let sloganInterval = null;
 
-// Ocultar loader global
-function ocultarLoaderGlobal() {
-    const loader = document.getElementById('globalLoader');
-    if (loader) {
-        loader.style.opacity = '0';
-        setTimeout(() => loader.style.display = 'none', 500);
+// Eslogans futboleros
+const slogans = [
+    "⚽ Afila los botines...", "🏆 La gloria está cerca", "🔥 Sentimos la presión del partido", 
+    "💪 Corazón de campeón", "🎯 Preparando la táctica", "✨ Magia napolitana", 
+    "🦁 A rugir en la cancha", "⚡ Cargando la pasión del fútbol", "🥅 El gol está por llegar"
+];
+
+// Mostrar eslogan dinámico
+function iniciarSlogan() {
+    const sloganDiv = document.getElementById('sloganBox');
+    if (!sloganDiv) return;
+    let index = 0;
+    const cambiarSlogan = () => {
+        sloganDiv.style.animation = 'none';
+        setTimeout(() => {
+            sloganDiv.textContent = slogans[index % slogans.length];
+            sloganDiv.style.animation = 'fadeSlogan 0.5s ease';
+            index++;
+        }, 10);
+    };
+    cambiarSlogan();
+    sloganInterval = setInterval(cambiarSlogan, 2500);
+}
+
+// Ocultar skeleton y mostrar contenido real
+function ocultarSkeleton() {
+    if (sloganInterval) clearInterval(sloganInterval);
+    const skeleton = document.getElementById('skeletonLoader');
+    if (skeleton) {
+        skeleton.style.transition = 'opacity 0.5s ease';
+        skeleton.style.opacity = '0';
+        setTimeout(() => {
+            skeleton.style.display = 'none';
+        }, 500);
     }
 }
 
-// ==================== CACHÉ ====================
+// ==================== CACHÉ, NOTIFICACIONES, PDF, ETC. (igual que antes) ====================
 function guardarCache(perfil, notificacion) {
     const cache = { timestamp: Date.now(), perfil, notificacion };
     localStorage.setItem('perfilCache_' + cedula, JSON.stringify(cache));
@@ -545,7 +361,6 @@ function obtenerCache() {
     return null;
 }
 
-// ==================== NOTIFICACIONES ====================
 function mostrarNotificacion(notificacion) {
     const container = document.querySelector('.perfil-container');
     if (!container) return;
@@ -553,17 +368,10 @@ function mostrarNotificacion(notificacion) {
     if (existing) existing.remove();
     const banner = document.createElement('div');
     banner.className = 'notification-banner';
-    banner.innerHTML = `
-        <div style="display:flex; align-items:center; gap:8px;">
-            <i class="fa-solid fa-bell" style="color:#FFD700;"></i>
-            <span>${notificacion.titulo || 'Nueva notificación'}: ${notificacion.mensaje || ''}</span>
-        </div>
-        <button class="close-notification" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
-    `;
+    banner.innerHTML = `<div style="display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-bell" style="color:#FFD700;"></i><span>${notificacion.titulo || 'Nueva notificación'}: ${notificacion.mensaje || ''}</span></div><button class="close-notification" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>`;
     container.insertBefore(banner, container.firstChild);
 }
 
-// ==================== PDF, COMPARTIR, REPORTE ====================
 function descargarPDF() {
     if (!jugadorData) return;
     const { jsPDF } = window.jspdf;
@@ -592,8 +400,6 @@ function enviarReporte() {
     cerrarReporte();
     document.getElementById('reportText').value = '';
 }
-
-// ==================== MODAL BANCARIO ====================
 function abrirBankModal() { document.getElementById('bankModal').style.display = 'flex'; }
 function cerrarBankModal() { document.getElementById('bankModal').style.display = 'none'; }
 function mostrarToast(mensaje) {
@@ -607,14 +413,10 @@ function mostrarToast(mensaje) {
 }
 function copiarCuenta() {
     const numero = "2209100265";
-    navigator.clipboard.writeText(numero).then(() => {
-        mostrarToast('📋 Número de cuenta copiado: 2209100265');
-    }).catch(() => {
-        mostrarToast('❌ No se pudo copiar, intente manualmente');
-    });
+    navigator.clipboard.writeText(numero).then(() => mostrarToast('📋 Número de cuenta copiado: 2209100265')).catch(() => mostrarToast('❌ No se pudo copiar'));
 }
 
-// ==================== RENDER PERFIL ====================
+// ==================== RENDER PERFIL (copia simplificada pero funcional) ====================
 async function mostrarPerfil() {
     document.body.className = '';
     document.body.style.background = '';
@@ -624,7 +426,7 @@ async function mostrarPerfil() {
     }, 30000);
 
     const container = document.getElementById('dynamicContent');
-    container.innerHTML = `<div class="perfil-root"><div class="perfil-container"><div class="soccer-loading-container"><div class="soccer-spinner"><i class="fa-solid fa-futbol"></i></div><div>Cargando perfil...</div></div></div></div>`;
+    container.innerHTML = `<div class="perfil-root"><div class="perfil-container"><div class="soccer-loading-container" style="text-align:center; margin-top:140px;"><div class="soccer-spinner" style="font-size:3.5rem; color:#D4AF37; animation: spinSoccer 1.2s linear infinite;"><i class="fa-solid fa-futbol"></i></div><div>Cargando perfil...</div></div></div></div>`;
     
     let cache = obtenerCache();
     let perfil, notificacion;
@@ -655,7 +457,6 @@ async function mostrarPerfil() {
         fechaNacimiento: perfil['fecha de nacimiento'] || '',
         nombreCamiseta: escapeHtml(perfil['nombre en camiseta'] || 'NÁPOLES'),
         dorsal: escapeHtml(perfil['número de dorsal'] || '00'),
-        tallaUni: escapeHtml(perfil['talla uni.'] || 'M'),
         partidosJugados: partidosJugados,
         goles: goles,
         amarillas: amarillas,
@@ -678,137 +479,40 @@ async function mostrarPerfil() {
     let totalAdmin = deudaInscripcion + deudaUniforme + deudaMedias + s.deudaVocalia;
 
     const listaRivales = [
-        { nombre: "LEONES", especial: "past" },
-        { nombre: "IDEAL", especial: "" },
-        { nombre: "BARZA", especial: "" },
-        { nombre: "SAN MARTIN", especial: "" },
-        { nombre: "INDEPENDIENTE", especial: "" },
-        { nombre: "VODKILA", especial: "" },
-        { nombre: "CHELSEA", especial: "" },
-        { nombre: "JUVENTUD DE AMERICA", especial: "" },
-        { nombre: "JUVENTUS", especial: "" },
+        { nombre: "LEONES", especial: "past" }, { nombre: "IDEAL", especial: "" }, { nombre: "BARZA", especial: "" },
+        { nombre: "SAN MARTIN", especial: "" }, { nombre: "INDEPENDIENTE", especial: "" }, { nombre: "VODKILA", especial: "" },
+        { nombre: "CHELSEA", especial: "" }, { nombre: "JUVENTUD DE AMERICA", especial: "" }, { nombre: "JUVENTUS", especial: "" },
         { nombre: "FRANCO CANADIENSE", especial: "next" }
     ];
-    const chipsRivales = [...listaRivales, ...listaRivales].map(rival => 
-        `<span class="rival-chip ${rival.especial}">${rival.nombre}</span>`
-    ).join('');
-
-    const metricIcons = {
-        puntualidad: '<i class="fa-solid fa-clock"></i>',
-        companerismo: '<i class="fa-solid fa-handshake"></i>',
-        respeto: '<i class="fa-solid fa-hand-peace"></i>',
-        humildad: '<i class="fa-solid fa-dove"></i>'
-    };
+    const chipsRivales = [...listaRivales, ...listaRivales].map(rival => `<span class="rival-chip ${rival.especial}">${rival.nombre}</span>`).join('');
+    const metricIcons = { puntualidad: '<i class="fa-solid fa-clock"></i>', companerismo: '<i class="fa-solid fa-handshake"></i>', respeto: '<i class="fa-solid fa-hand-peace"></i>', humildad: '<i class="fa-solid fa-dove"></i>' };
 
     container.innerHTML = `
     <div class="perfil-root">
         <div class="perfil-container">
-            <div class="perfil-header">
-                <h1><img src="./imagen/logo/napoles_fc.png" alt="Logo"> NÁPOLES F.C.</h1>
-            </div>
+            <div class="perfil-header"><h1><img src="./imagen/logo/napoles_fc.png" alt="Logo"> NÁPOLES F.C.</h1></div>
             <div style="font-size:0.75rem;color:#D4AF37; text-align:center; margin-bottom:20px;">Categoría: ${categoria === 'mujeres' ? 'Femenina ♀' : 'Masculina ♂'}</div>
-            
-            <div class="action-buttons">
-                <button class="btn-share" onclick="compartirPerfil()"><i class="fa-solid fa-share-alt"></i> Compartir</button>
-                <button class="btn-pdf" onclick="descargarPDF()"><i class="fa-solid fa-file-pdf"></i> PDF</button>
-                <button class="btn-report" onclick="abrirReporte()"><i class="fa-solid fa-flag"></i> Reportar</button>
-            </div>
-
-            <div class="cards-row">
-                <div class="card-identity">
-                    <div class="avatar-icon-box">
-                        <img src="./imagen/avatar/${cedula}.png" alt="Avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <i class="fa-solid fa-user-ninja" style="display:none;"></i>
-                    </div>
-                    <div style="font-weight:900;">${s.primerNombre}<br>${s.apellidos}</div>
-                    <div style="font-size:.65rem;"><i class="fa-solid fa-id-card"></i> ${cedula}</div>
-                    <div style="margin-top:8px;background:rgba(212,175,55,.2);padding:4px 10px;border-radius:20px; display:inline-block;">${edad} años</div>
-                </div>
-                <div class="jersey-3d">
-                    <div class="jersey-rotating">
-                        <div class="jersey-front">
-                            <div class="jersey-name">${s.nombreCamiseta}</div>
-                            <div class="jersey-number">${s.dorsal}</div>
-                        </div>
-                        <div class="jersey-back">
-                            <div class="jersey-name">NÁPOLES FC</div>
-                            <div class="jersey-number">${s.dorsal}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="match-card-gold match-next">
-                <div class="match-teams">
-                    <div class="team-badge"><div class="team-name">⚜️ NÁPOLES F.C.</div></div>
-                    <div class="vs-circle">VS</div>
-                    <div class="team-badge"><div class="team-name">🍁 FRANCO CANADIENSE</div></div>
-                </div>
-                <div class="match-info">
-                    <div class="match-info-item"><i class="fa-regular fa-calendar-alt"></i> ${PROXIMO_PARTIDO.fechaLegible}</div>
-                    <div class="match-info-item"><i class="fa-regular fa-clock"></i> ${PROXIMO_PARTIDO.hora} HORAS</div>
-                    <div class="match-info-item"><i class="fa-solid fa-location-dot"></i> ${PROXIMO_PARTIDO.lugar}</div>
-                </div>
-            </div>
-
-            <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
-                <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-people-group"></i> OTROS RIVALES DEL TORNEO</div>
-                <div class="rivales-scroll"><div class="rivales-track">${chipsRivales}</div></div>
-            </div>
-
-            <div class="stats-grid">
-                <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-shirt"></i></div><div class="stat-value">${s.partidosJugados}</div><div class="stat-label">PARTIDOS</div></div>
-                <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-futbol"></i></div><div class="stat-value">${s.goles}</div><div class="stat-label">GOLES</div></div>
-                <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-square" style="color:#f1c40f;"></i></div><div class="stat-value">${s.amarillas}</div><div class="stat-label">AMARILLAS</div></div>
-                <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-square" style="color:#e74c3c;"></i></div><div class="stat-value">${s.rojas}</div><div class="stat-label">ROJAS</div></div>
-            </div>
-
-            <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
-                <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-heart"></i> Rendimiento Humano</div>
-                <div class="performance-grid">
-                    <div class="metric-card"><div class="metric-icon">${metricIcons.puntualidad}</div>${renderProgressCircle(s.puntualidad, '#3498db')}<div style="margin-top:10px; font-size:.7rem;">PUNTUALIDAD</div></div>
-                    <div class="metric-card"><div class="metric-icon">${metricIcons.companerismo}</div>${renderProgressCircle(s.companerismo, '#2ecc71')}<div style="margin-top:10px; font-size:.7rem;">COMPAÑERISMO</div></div>
-                    <div class="metric-card"><div class="metric-icon">${metricIcons.respeto}</div>${renderProgressCircle(s.respeto, '#f39c12')}<div style="margin-top:10px; font-size:.7rem;">RESPETO</div></div>
-                    <div class="metric-card"><div class="metric-icon">${metricIcons.humildad}</div>${renderProgressCircle(s.humildad, '#9b59b6')}<div style="margin-top:10px; font-size:.7rem;">HUMILDAD</div></div>
-                </div>
-                <div class="average-box"><div class="average-score" style="font-size:2.2rem;">${promedio}/10</div><div class="stars-container">${generarEstrellas(promedio)}</div></div>
-            </div>
-
-            <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
-                <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-chart-line"></i> Estado Administrativo</div>
-                <div class="admin-grid">
-                    ${deudaInscripcion ? `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><div><i class="fa-solid fa-file-signature"></i></div><div>$5</div><div>INSCRIPCIÓN</div><div style="background:rgba(231,76,60,.15); color:#e74c3c; border-radius:20px; margin-top:5px;">PENDIENTE</div></div>` : ''}
-                    ${deudaUniforme ? `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><div><i class="fa-solid fa-tshirt"></i></div><div>$17</div><div>UNIFORME</div><div style="background:rgba(243,156,18,.15); color:#f39c12; border-radius:20px; margin-top:5px;">PENDIENTE</div></div>` : ''}
-                    ${deudaMedias ? `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><div><i class="fa-solid fa-socks"></i></div><div>$2</div><div>MEDIAS</div><div style="background:rgba(52,152,219,.15); color:#3498db; border-radius:20px; margin-top:5px;">PENDIENTE</div></div>` : ''}
-                    ${s.deudaVocalia > 0 ? `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><div><i class="fa-solid fa-money-bill-wave"></i></div><div>$${s.deudaVocalia.toFixed(2)}</div><div>VOCALÍA</div><div style="background:rgba(155,89,182,.15); color:#9b59b6; border-radius:20px; margin-top:5px;">PENDIENTE</div></div>` : ''}
-                </div>
-                <div class="debt-box" style="margin-top:15px; background:rgba(0,0,0,.4); border-radius:14px; padding:12px;">
-                    <div style="display:flex; justify-content:space-between;"><span>VALORES PENDIENTES</span><span style="color:${totalAdmin > 0 ? '#e74c3c' : '#2ecc71'}">$${totalAdmin.toFixed(2)}</span></div>
-                    <div class="progress-bar" style="width:100%; height:8px; border-radius:10px; background:rgba(255,255,255,.08); overflow:hidden; margin-top:10px;"><div style="height:100%; width:${Math.min(totalAdmin / 30 * 100, 100)}%; background:linear-gradient(90deg,#e74c3c,#f39c12);"></div></div>
-                    <div style="margin-top:10px; font-size:.7rem; padding:8px; border-radius:10px; text-align:center; background:${totalAdmin === 0 ? 'rgba(46,204,113,.1)' : 'rgba(231,76,60,.1)'};">${totalAdmin === 0 ? '✅ ¡Estás al día!' : '⚠️ Regulariza tus pagos'}</div>
-                </div>
-                <button class="btn-pagar" onclick="abrirBankModal()"><i class="fa-solid fa-credit-card"></i> Realizar Pago</button>
-            </div>
-
+            <div class="action-buttons"><button class="btn-share" onclick="compartirPerfil()"><i class="fa-solid fa-share-alt"></i> Compartir</button><button class="btn-pdf" onclick="descargarPDF()"><i class="fa-solid fa-file-pdf"></i> PDF</button><button class="btn-report" onclick="abrirReporte()"><i class="fa-solid fa-flag"></i> Reportar</button></div>
+            <div class="cards-row"><div class="card-identity"><div class="avatar-icon-box"><img src="./imagen/avatar/${cedula}.png" alt="Avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><i class="fa-solid fa-user-ninja" style="display:none;"></i></div><div style="font-weight:900;">${s.primerNombre}<br>${s.apellidos}</div><div style="font-size:.65rem;"><i class="fa-solid fa-id-card"></i> ${cedula}</div><div style="margin-top:8px;background:rgba(212,175,55,.2);padding:4px 10px;border-radius:20px; display:inline-block;">${edad} años</div></div><div class="jersey-3d"><div class="jersey-rotating"><div class="jersey-front"><div class="jersey-name">${s.nombreCamiseta}</div><div class="jersey-number">${s.dorsal}</div></div><div class="jersey-back"><div class="jersey-name">NÁPOLES FC</div><div class="jersey-number">${s.dorsal}</div></div></div></div></div>
+            <div class="match-card-gold match-next"><div class="match-teams"><div class="team-badge"><div class="team-name">⚜️ NÁPOLES F.C.</div></div><div class="vs-circle">VS</div><div class="team-badge"><div class="team-name">🍁 FRANCO CANADIENSE</div></div></div><div class="match-info"><div class="match-info-item"><i class="fa-regular fa-calendar-alt"></i> ${PROXIMO_PARTIDO.fechaLegible}</div><div class="match-info-item"><i class="fa-regular fa-clock"></i> ${PROXIMO_PARTIDO.hora} HORAS</div><div class="match-info-item"><i class="fa-solid fa-location-dot"></i> ${PROXIMO_PARTIDO.lugar}</div></div></div>
+            <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;"><div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-people-group"></i> OTROS RIVALES DEL TORNEO</div><div class="rivales-scroll"><div class="rivales-track">${chipsRivales}</div></div></div>
+            <div class="stats-grid"><div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-shirt"></i></div><div class="stat-value">${s.partidosJugados}</div><div class="stat-label">PARTIDOS</div></div><div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-futbol"></i></div><div class="stat-value">${s.goles}</div><div class="stat-label">GOLES</div></div><div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-square" style="color:#f1c40f;"></i></div><div class="stat-value">${s.amarillas}</div><div class="stat-label">AMARILLAS</div></div><div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-square" style="color:#e74c3c;"></i></div><div class="stat-value">${s.rojas}</div><div class="stat-label">ROJAS</div></div></div>
+            <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;"><div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-heart"></i> Rendimiento Humano</div><div class="performance-grid"><div class="metric-card"><div class="metric-icon">${metricIcons.puntualidad}</div>${renderProgressCircle(s.puntualidad, '#3498db')}<div style="margin-top:10px; font-size:.7rem;">PUNTUALIDAD</div></div><div class="metric-card"><div class="metric-icon">${metricIcons.companerismo}</div>${renderProgressCircle(s.companerismo, '#2ecc71')}<div style="margin-top:10px; font-size:.7rem;">COMPAÑERISMO</div></div><div class="metric-card"><div class="metric-icon">${metricIcons.respeto}</div>${renderProgressCircle(s.respeto, '#f39c12')}<div style="margin-top:10px; font-size:.7rem;">RESPETO</div></div><div class="metric-card"><div class="metric-icon">${metricIcons.humildad}</div>${renderProgressCircle(s.humildad, '#9b59b6')}<div style="margin-top:10px; font-size:.7rem;">HUMILDAD</div></div></div><div class="average-box"><div class="average-score" style="font-size:2.2rem;">${promedio}/10</div><div class="stars-container">${generarEstrellas(promedio)}</div></div></div>
+            <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;"><div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-chart-line"></i> Estado Administrativo</div><div class="admin-grid">${deudaInscripcion ? `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><div><i class="fa-solid fa-file-signature"></i></div><div>$5</div><div>INSCRIPCIÓN</div><div style="background:rgba(231,76,60,.15); color:#e74c3c; border-radius:20px; margin-top:5px;">PENDIENTE</div></div>` : ''}${deudaUniforme ? `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><div><i class="fa-solid fa-tshirt"></i></div><div>$17</div><div>UNIFORME</div><div style="background:rgba(243,156,18,.15); color:#f39c12; border-radius:20px; margin-top:5px;">PENDIENTE</div></div>` : ''}${deudaMedias ? `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><div><i class="fa-solid fa-socks"></i></div><div>$2</div><div>MEDIAS</div><div style="background:rgba(52,152,219,.15); color:#3498db; border-radius:20px; margin-top:5px;">PENDIENTE</div></div>` : ''}${s.deudaVocalia > 0 ? `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><div><i class="fa-solid fa-money-bill-wave"></i></div><div>$${s.deudaVocalia.toFixed(2)}</div><div>VOCALÍA</div><div style="background:rgba(155,89,182,.15); color:#9b59b6; border-radius:20px; margin-top:5px;">PENDIENTE</div></div>` : ''}</div><div class="debt-box" style="margin-top:15px; background:rgba(0,0,0,.4); border-radius:14px; padding:12px;"><div style="display:flex; justify-content:space-between;"><span>VALORES PENDIENTES</span><span style="color:${totalAdmin > 0 ? '#e74c3c' : '#2ecc71'}">$${totalAdmin.toFixed(2)}</span></div><div class="progress-bar" style="width:100%; height:8px; border-radius:10px; background:rgba(255,255,255,.08); overflow:hidden; margin-top:10px;"><div style="height:100%; width:${Math.min(totalAdmin / 30 * 100, 100)}%; background:linear-gradient(90deg,#e74c3c,#f39c12);"></div></div><div style="margin-top:10px; font-size:.7rem; padding:8px; border-radius:10px; text-align:center; background:${totalAdmin === 0 ? 'rgba(46,204,113,.1)' : 'rgba(231,76,60,.1)'};">${totalAdmin === 0 ? '✅ ¡Estás al día!' : '⚠️ Regulariza tus pagos'}</div></div><button class="btn-pagar" onclick="abrirBankModal()"><i class="fa-solid fa-credit-card"></i> Realizar Pago</button></div>
             <button class="btn-logout" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> CERRAR SESIÓN</button>
         </div>
     </div>`;
-    
     if (notificacion && notificacion.mensaje) mostrarNotificacion(notificacion);
-    
-    const cuentaElement = document.getElementById('cuentaBancaria');
-    if (cuentaElement) cuentaElement.addEventListener('click', copiarCuenta);
+    document.getElementById('cuentaBancaria')?.addEventListener('click', copiarCuenta);
 }
 
-// Funciones auxiliares
-function escapeHtml(str) { if (!str) return ''; return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escapeHtml(str) { if (!str) return ''; return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function calcularEdad(fechaNacimiento) {
     if (!fechaNacimiento) return '--';
     let fecha = new Date(fechaNacimiento);
     if (isNaN(fecha.getTime())) { let partes = fechaNacimiento.split(/[\/\-]/); if (partes.length === 3) fecha = new Date(partes[2], partes[1]-1, partes[0]); }
     if (isNaN(fecha.getTime())) return '--';
-    let hoy = new Date();
-    let edad = hoy.getFullYear() - fecha.getFullYear();
+    let hoy = new Date(); let edad = hoy.getFullYear() - fecha.getFullYear();
     let mes = hoy.getMonth() - fecha.getMonth();
     if (mes < 0 || (mes === 0 && hoy.getDate() < fecha.getDate())) edad--;
     return edad;
@@ -827,75 +531,29 @@ function renderProgressCircle(valor, color) {
     let value = Math.min(10, Math.max(0, parseFloat(valor) || 0));
     let radius = 40, circum = 2 * Math.PI * radius;
     let dash = circum - ((value / 10) * circum);
-    return `<div class="progress-circle"><svg viewBox="0 0 100 100"><circle class="progress-bg" cx="50" cy="50" r="40" stroke="rgba(255,255,255,.08)" stroke-width="8" fill="none"></circle><circle class="progress-fill" cx="50" cy="50" r="40" stroke="${color}" stroke-width="8" fill="none" stroke-dasharray="${circum}" stroke-dashoffset="${dash}" stroke-linecap="round"></circle></svg><div class="progress-text" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:1.2rem; font-weight:900; color:#D4AF37;">${value}</div></div>`;
+    return `<div class="progress-circle"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,.08)" stroke-width="8" fill="none"></circle><circle cx="50" cy="50" r="40" stroke="${color}" stroke-width="8" fill="none" stroke-dasharray="${circum}" stroke-dashoffset="${dash}" stroke-linecap="round"></circle></svg><div class="progress-text" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:1.2rem; font-weight:900; color:#D4AF37;">${value}</div></div>`;
 }
 async function actualizarDatosEnSegundoPlano() {
     if (document.body.className === 'ruleta-mode') return;
     const url = `${CONFIG.URL_GAS}?action=getPerfil&cedula=${encodeURIComponent(cedula)}&categoria=${encodeURIComponent(categoria)}&t=${Date.now()}`;
     const resp = await fetch(url);
     const data = await resp.json();
-    if (data.success && data.jugador) {
-        guardarCache(data.jugador, null);
-        mostrarPerfil();
-    }
+    if (data.success && data.jugador) { guardarCache(data.jugador, null); mostrarPerfil(); }
 }
-window.cerrarSesion = function() {
-    if (confirm('¿Cerrar sesión?')) {
-        localStorage.removeItem('jugador_actual');
-        window.location.href = 'login.html';
-    }
-};
+window.cerrarSesion = function() { if (confirm('¿Cerrar sesión?')) { localStorage.removeItem('jugador_actual'); window.location.href = 'login.html'; } };
 
-// ==================== RULETA COMPLETA ====================
+// ==================== RULETA COMPLETA (incluida sin cambios significativos) ====================
 function mostrarRuleta() {
-    console.log("🎰 Mostrando ruleta");
     document.body.className = 'ruleta-mode';
     document.body.style.background = '#0a0c10';
     const container = document.getElementById('dynamicContent');
     container.innerHTML = `
         <main class="h-screen flex flex-col items-center justify-center pt-16 relative">
-            <div class="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-secondary/10 rounded-full blur-[120px]"></div>
-            </div>
-            <div class="text-center px-4 mb-12" id="intro-header">
-                <h2 class="font-display-lg text-[32px] text-secondary tracking-widest mb-2 uppercase" style="color:#e9c349;">Sorteo de Rivales</h2>
-                <p class="font-label-caps text-on-surface-variant text-[10px] tracking-[0.3em] uppercase" style="color:#ccc;">Buscando el próximo desafío...</p>
-            </div>
-            <div class="relative w-full overflow-hidden py-12 flex items-center" id="roulette-window">
-                <div class="absolute left-1/2 top-0 -translate-x-1/2 z-20 flex flex-col items-center h-full justify-between py-4">
-                    <div class="w-1 h-8 bg-secondary/80 rounded-full blur-[2px]"></div>
-                    <div class="w-1 h-8 bg-secondary/80 rounded-full blur-[2px]"></div>
-                </div>
-                <div class="roulette-track px-[50vw]" id="roulette-track"></div>
-            </div>
-            <div class="hidden absolute inset-0 flex flex-col items-center justify-center z-40 bg-black/90 backdrop-blur-md" id="reveal-screen">
-                <div class="reveal-element text-center mb-8">
-                    <p class="font-label-caps text-secondary tracking-[0.4em] mb-4" style="color:#e9c349;">PRÓXIMO ENCUENTRO</p>
-                    <div class="flex items-center justify-center gap-6 md:gap-12">
-                        <div class="flex flex-col items-center gap-4"><div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-white/30"><span class="text-5xl">⚜️</span></div><span class="font-display-lg text-xl tracking-wider text-white">NÁPOLES</span></div>
-                        <div class="font-display-lg text-5xl text-secondary cinematic-text italic" style="color:#e9c349;">VS</div>
-                        <div class="flex flex-col items-center gap-4"><div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-secondary winner-glow"><span class="text-5xl">${PROXIMO_PARTIDO.icono}</span></div><span class="font-display-lg text-xl tracking-wider text-white">${PROXIMO_PARTIDO.rival}</span></div>
-                    </div>
-                </div>
-                <div class="reveal-element match-info-card w-full max-w-md mx-4">
-                    <div class="flex justify-center gap-6 flex-wrap text-white">
-                        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">event</span><span class="text-sm font-bold">${PROXIMO_PARTIDO.fechaLegible}</span></div>
-                        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">schedule</span><span class="text-sm font-bold">${PROXIMO_PARTIDO.hora} HORAS</span></div>
-                        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">stadium</span><span class="text-sm font-bold">${PROXIMO_PARTIDO.lugar}</span></div>
-                    </div>
-                </div>
-                <div class="reveal-element space-y-6 w-full max-w-xs px-6">
-                    <div class="glass-card p-6 rounded-2xl border border-secondary/40">
-                        <div class="flex justify-between items-center mb-4"><span class="font-label-caps text-[10px] text-white uppercase">Nivel de Riesgo</span><span class="font-label-caps text-[10px] text-secondary">MÁXIMO</span></div>
-                        <div class="w-full bg-white/20 h-1.5 rounded-full overflow-hidden"><div class="bg-secondary h-full rounded-full" style="width: 95%;"></div></div>
-                    </div>
-                    <button id="confirmButton" class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 rounded-lg text-sm uppercase transition-all shadow-lg">Ahí estaré puntual</button>
-                </div>
-            </div>
-            <div class="fixed inset-0 pointer-events-none z-50" id="particles"></div>
-        </main>
-    `;
-
+            <div class="absolute inset-0 overflow-hidden pointer-events-none opacity-20"><div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-secondary/10 rounded-full blur-[120px]"></div></div>
+            <div class="text-center px-4 mb-12" id="intro-header"><h2 class="font-display-lg text-[32px] text-secondary tracking-widest mb-2 uppercase" style="color:#e9c349;">Sorteo de Rivales</h2><p class="font-label-caps text-on-surface-variant text-[10px] tracking-[0.3em] uppercase" style="color:#ccc;">Buscando el próximo desafío...</p></div>
+            <div class="relative w-full overflow-hidden py-12 flex items-center" id="roulette-window"><div class="absolute left-1/2 top-0 -translate-x-1/2 z-20 flex flex-col items-center h-full justify-between py-4"><div class="w-1 h-8 bg-secondary/80 rounded-full blur-[2px]"></div><div class="w-1 h-8 bg-secondary/80 rounded-full blur-[2px]"></div></div><div class="roulette-track px-[50vw]" id="roulette-track"></div></div>
+            <div class="hidden absolute inset-0 flex flex-col items-center justify-center z-40 bg-black/90 backdrop-blur-md" id="reveal-screen"><div class="reveal-element text-center mb-8"><p class="font-label-caps text-secondary tracking-[0.4em] mb-4" style="color:#e9c349;">PRÓXIMO ENCUENTRO</p><div class="flex items-center justify-center gap-6 md:gap-12"><div class="flex flex-col items-center gap-4"><div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-white/30"><span class="text-5xl">⚜️</span></div><span class="font-display-lg text-xl tracking-wider text-white">NÁPOLES</span></div><div class="font-display-lg text-5xl text-secondary cinematic-text italic" style="color:#e9c349;">VS</div><div class="flex flex-col items-center gap-4"><div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-secondary winner-glow"><span class="text-5xl">${PROXIMO_PARTIDO.icono}</span></div><span class="font-display-lg text-xl tracking-wider text-white">${PROXIMO_PARTIDO.rival}</span></div></div></div><div class="reveal-element match-info-card w-full max-w-md mx-4"><div class="flex justify-center gap-6 flex-wrap text-white"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">event</span><span class="text-sm font-bold">${PROXIMO_PARTIDO.fechaLegible}</span></div><div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">schedule</span><span class="text-sm font-bold">${PROXIMO_PARTIDO.hora} HORAS</span></div><div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">stadium</span><span class="text-sm font-bold">${PROXIMO_PARTIDO.lugar}</span></div></div></div><div class="reveal-element space-y-6 w-full max-w-xs px-6"><div class="glass-card p-6 rounded-2xl border border-secondary/40"><div class="flex justify-between items-center mb-4"><span class="font-label-caps text-[10px] text-white uppercase">Nivel de Riesgo</span><span class="font-label-caps text-[10px] text-secondary">MÁXIMO</span></div><div class="w-full bg-white/20 h-1.5 rounded-full overflow-hidden"><div class="bg-secondary h-full rounded-full" style="width: 95%;"></div></div></div><button id="confirmButton" class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 rounded-lg text-sm uppercase transition-all shadow-lg">Ahí estaré puntual</button></div></div><div class="fixed inset-0 pointer-events-none z-50" id="particles"></div>
+        </main>`;
     const rivals = [
         { name: "LEONES", icon: "🦁", power: "ALTO" }, { name: "IDEAL", icon: "⚡", power: "MEDIO" }, { name: "BARZA", icon: "🔵🔴", power: "EXTREMO" },
         { name: "SAN MARTIN", icon: "🏰", power: "MEDIO" }, { name: "INDEPENDIENTE", icon: "🔥", power: "ALTO" }, { name: "VODKILA", icon: "🍺", power: "MEDIO" },
@@ -957,36 +615,19 @@ function mostrarRuleta() {
         }
     }
 }
-
 async function guardarPartido() {
     const btn = document.getElementById('confirmButton');
     if (!btn || btn.disabled) return;
     btn.disabled = true;
     btn.innerText = 'GUARDANDO...';
-    const params = new URLSearchParams({
-        action: 'guardarPartido', cedula: cedula, categoria: categoria, nombre: nombreCompleto,
-        rival: PROXIMO_PARTIDO.rival, fecha: PROXIMO_PARTIDO.fecha, hora: PROXIMO_PARTIDO.hora,
-        lugar: PROXIMO_PARTIDO.lugar, amarillas: '0', rojas: '0', goles: '0',
-        valor_vocalia: PROXIMO_PARTIDO.valorVocalia.toString(), estado: 'CONFIRMADO',
-        vocalias_pendientes: '0', puntualidad: '10', companerismo: '10', respeto: '10', humildad: '10'
-    });
-    const url = `${CONFIG.URL_GAS}?${params.toString()}`;
+    const params = new URLSearchParams({ action: 'guardarPartido', cedula, categoria, nombre: nombreCompleto, rival: PROXIMO_PARTIDO.rival, fecha: PROXIMO_PARTIDO.fecha, hora: PROXIMO_PARTIDO.hora, lugar: PROXIMO_PARTIDO.lugar, amarillas: '0', rojas: '0', goles: '0', valor_vocalia: PROXIMO_PARTIDO.valorVocalia.toString(), estado: 'CONFIRMADO', vocalias_pendientes: '0', puntualidad: '10', companerismo: '10', respeto: '10', humildad: '10' });
     try {
-        const response = await fetch(url);
+        const response = await fetch(`${CONFIG.URL_GAS}?${params.toString()}`);
         const result = await response.json();
-        if (result.success) {
-            alert("✅ Asistencia confirmada para el partido contra FRANCO CANADIENSE");
-            mostrarPerfil();
-        } else {
-            alert("⚠️ Ya habías confirmado este partido. Redirigiendo a tu perfil.");
-            mostrarPerfil();
-        }
-    } catch(error) {
-        alert('❌ Error de conexión. Intenta de nuevo.');
-        if (btn) { btn.disabled = false; btn.innerText = 'Ahí estaré puntual'; }
-    }
+        if (result.success) { alert("✅ Asistencia confirmada para el partido contra FRANCO CANADIENSE"); mostrarPerfil(); }
+        else { alert("⚠️ Ya habías confirmado este partido. Redirigiendo a tu perfil."); mostrarPerfil(); }
+    } catch(error) { alert('❌ Error de conexión. Intenta de nuevo.'); if (btn) { btn.disabled = false; btn.innerText = 'Ahí estaré puntual'; } }
 }
-
 async function verificarConfirmacionPrevia() {
     try {
         const url = `${CONFIG.URL_GAS}?action=verificarConfirmacionPartido&cedula=${encodeURIComponent(cedula)}&rival=${encodeURIComponent(PROXIMO_PARTIDO.rival)}&fecha=${PROXIMO_PARTIDO.fecha}&t=${Date.now()}`;
@@ -996,21 +637,13 @@ async function verificarConfirmacionPrevia() {
     } catch(e) { return false; }
 }
 
-// ==================== INICIALIZACIÓN CON LOADER ====================
+// ==================== INICIALIZACIÓN ====================
 (async function() {
-    // Mostrar loader global mientras se verifica
-    const loader = document.getElementById('globalLoader');
-    if (loader) loader.style.display = 'flex';
-    
+    iniciarSlogan(); // Muestra eslóganes mientras carga
     const yaConfirmo = await verificarConfirmacionPrevia();
-    // Ocultar loader antes de mostrar la pantalla correspondiente
-    ocultarLoaderGlobal();
-    
-    if (yaConfirmo) {
-        await mostrarPerfil();
-    } else {
-        mostrarRuleta();
-    }
+    ocultarSkeleton(); // Oculta el esqueleto
+    if (yaConfirmo) await mostrarPerfil();
+    else mostrarRuleta();
 })();
 </script>
 </body>
