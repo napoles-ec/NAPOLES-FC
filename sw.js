@@ -1,4 +1,4 @@
-const CACHE_NAME = 'napoles-v1.0.50';
+const CACHE_NAME = 'napoles-v1.0.51';
 
 self.addEventListener('install', event => {
   console.log('[SW] Instalando', CACHE_NAME);
