@@ -394,42 +394,102 @@
     .soccer-spinner { font-size: 3.5rem; color: #D4AF37; animation: spinSoccer 1.2s linear infinite; }
     @keyframes spinSoccer { 100% { transform: rotate(360deg); } }
     .error-message { text-align: center; padding: 60px 20px; color: #e74c3c; }
-    .modal-backdrop-report {
-        position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+    
+    /* Modales estilo oscuro (coherentes con la app) */
+    .modal-backdrop {
+        position: fixed; top:0; left:0; width:100%; height:100%;
+        background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
         z-index: 1000; display: none; align-items: center; justify-content: center; padding: 15px;
     }
-    .modal-report-box { background: #1e1e2f; border-radius: 28px; padding: 24px; max-width: 450px; width: 100%; }
-    .modal-report-box textarea { width: 100%; padding: 12px; border-radius: 16px; background: #2a2a3a; color: white; border: none; margin: 12px 0; }
-    .btn-submit-report { background: #D4AF37; color: black; border: none; padding: 10px 20px; border-radius: 40px; font-weight: bold; cursor: pointer; }
+    .modal-box {
+        background: #1e293b;
+        border-radius: 28px;
+        padding: 24px;
+        max-width: 450px;
+        width: 100%;
+        border: 1px solid rgba(212,175,55,0.3);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        color: #fff;
+    }
+    .modal-box h3 {
+        color: #D4AF37;
+        margin-bottom: 16px;
+        font-family: 'Outfit', sans-serif;
+    }
+    .modal-box textarea {
+        width: 100%; padding: 12px; border-radius: 16px; background: #0f172a; color: white; border: 1px solid #334155; margin: 12px 0;
+    }
+    .modal-box textarea:focus {
+        outline: none;
+        border-color: #D4AF37;
+    }
+    .btn-modal {
+        background: #D4AF37; color: black; border: none; padding: 10px 20px; border-radius: 40px; font-weight: bold; cursor: pointer;
+    }
+    .btn-modal-secondary {
+        background: #334155; color: white; border: none; padding: 10px 20px; border-radius: 40px; font-weight: bold; cursor: pointer;
+    }
+    .bank-info {
+        margin: 15px 0;
+        padding: 15px;
+        background: #0f172a;
+        border-radius: 16px;
+        border: 1px solid #334155;
+    }
+    .bank-info p {
+        margin: 8px 0;
+    }
+    .bank-account {
+        font-family: monospace;
+        font-size: 1.2rem;
+        font-weight: bold;
+        background: #00000040;
+        padding: 8px;
+        border-radius: 12px;
+        text-align: center;
+        letter-spacing: 1px;
+        user-select: all;
+        cursor: pointer;
+    }
+    .bank-account:hover {
+        background: #00000060;
+    }
+    .flex-buttons {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-top: 20px;
+    }
 </style>
 </head>
 <body id="appBody">
 <div id="dynamicContent"></div>
 
-<!-- Modal reporte incidencia -->
-<div id="reportModal" class="modal-backdrop-report">
-    <div class="modal-report-box">
-        <h3 style="margin-bottom:12px;">Reportar incidencia</h3>
+<!-- Modal reporte incidencia (nuevo estilo oscuro) -->
+<div id="reportModal" class="modal-backdrop">
+    <div class="modal-box">
+        <h3><i class="fa-solid fa-flag"></i> Reportar incidencia</h3>
         <textarea id="reportText" rows="4" placeholder="Describe el problema o sugerencia..."></textarea>
-        <div style="display: flex; gap: 12px; justify-content: flex-end;">
-            <button class="btn-submit-report" onclick="enviarReporte()">Enviar</button>
-            <button class="btn-submit-report" style="background:#555;" onclick="cerrarReporte()">Cancelar</button>
+        <div class="flex-buttons">
+            <button class="btn-modal-secondary" onclick="cerrarReporte()">Cancelar</button>
+            <button class="btn-modal" onclick="enviarReporte()">Enviar</button>
         </div>
     </div>
 </div>
 
-<!-- Modal para datos bancarios -->
-<div id="bankModal" class="modal-backdrop-report">
-    <div class="modal-report-box">
-        <h3 style="margin-bottom:12px;">Información de pago</h3>
-        <div style="margin: 12px 0;">
-            <p><strong>Banco Pichincha</strong></p>
-            <p><strong>Número de cuenta:</strong> 2209100265</p>
+<!-- Modal datos bancarios (estilo oscuro) -->
+<div id="bankModal" class="modal-backdrop">
+    <div class="modal-box">
+        <h3><i class="fa-solid fa-credit-card"></i> Información de pago</h3>
+        <div class="bank-info">
+            <p><strong>🏦 Banco Pichincha</strong></p>
+            <p><strong>Número de cuenta:</strong></p>
+            <div class="bank-account" onclick="copiarCuenta()" title="Haz clic para copiar">2209100265</div>
             <p><strong>Titular:</strong> Darwin Muñoz</p>
             <p style="margin-top: 12px;">Realice el pago por el valor indicado y notifique al administrador.</p>
         </div>
-        <div style="display: flex; justify-content: flex-end;">
-            <button class="btn-submit-report" onclick="cerrarBankModal()">Cerrar</button>
+        <div class="flex-buttons">
+            <button class="btn-modal" onclick="cerrarBankModal()">Cerrar</button>
         </div>
     </div>
 </div>
@@ -522,6 +582,14 @@ function abrirBankModal() {
 function cerrarBankModal() {
     document.getElementById('bankModal').style.display = 'none';
 }
+function copiarCuenta() {
+    const numero = "2209100265";
+    navigator.clipboard.writeText(numero).then(() => {
+        alert('Número de cuenta copiado: ' + numero);
+    }).catch(() => {
+        alert('No se pudo copiar manualmente');
+    });
+}
 
 // ==================== RENDER PERFIL ====================
 async function mostrarPerfil() {
@@ -602,7 +670,6 @@ async function mostrarPerfil() {
         `<span class="rival-chip ${rival.especial}">${rival.nombre}</span>`
     ).join('');
 
-    // Íconos para rendimiento
     const metricIcons = {
         puntualidad: '<i class="fa-solid fa-clock"></i>',
         companerismo: '<i class="fa-solid fa-handshake"></i>',
