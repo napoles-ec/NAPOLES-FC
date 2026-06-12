@@ -1,39 +1,56 @@
-const CACHE_NAME = 'napoles-v1.0.40'; // Cambia el número cuando modifiques archivos
+const CACHE_NAME = "napoles-fc-v1.0.41";  // 👈 Cambia este número cada vez que subas cambios
 
-const ASSETS = [
-  'login.html',
-  'perfil.html',
-  'config.js',
-  'manifest.json',
-  'imagen/logo/icon-192x192.png',
-  'imagen/logo/icon-512x512.png',
-  'favicon.ico',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@600;800;900&display=swap',
-  'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap'
+const urlsToCache = [
+  "/NAPOLES-FC/",
+  "/NAPOLES-FC/login.html",
+  "/NAPOLES-FC/perfil.html",
+  "/NAPOLES-FC/config.js",
+  "/NAPOLES-FC/manifest.json",
+  "/NAPOLES-FC/favicon.ico",
+  "/NAPOLES-FC/imagen/logo/napoles_fc.png",
+  "https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@600;800;900&display=swap",
+  "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap"
 ];
 
-self.addEventListener('install', (e) => {
-  console.log('[SW] Instalando', CACHE_NAME);
-  self.skipWaiting();
-  e.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+self.addEventListener("install", event => {
+  console.log("SW instalado", CACHE_NAME);
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
   );
+  self.skipWaiting(); // Toma control inmediato
 });
 
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
+self.addEventListener("activate", event => {
+  console.log("SW activado, limpiando viejas cachés");
+  event.waitUntil(
     caches.keys().then(keys => Promise.all(
-      keys.map(key => key !== CACHE_NAME && caches.delete(key))
-    )).then(() => self.clients.claim())
+      keys.map(key => {
+        if (key !== CACHE_NAME) return caches.delete(key);
+      })
+    ))
   );
+  self.clients.claim(); // Hace que el SW controle las páginas ya abiertas
 });
 
-self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    fetch(e.request).then(res => {
-      const clone = res.clone();
-      caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
-      return res;
-    }).catch(() => caches.match(e.request))
+self.addEventListener("fetch", event => {
+  const url = new URL(event.request.url);
+  
+  // 🔥 Para peticiones a Google Apps Script (API) → SIEMPRE RED, sin caché
+  if (url.hostname.includes("script.google.com") || url.pathname.includes("/exec")) {
+    event.respondWith(fetch(event.request, { cache: "no-store" }));
+    return;
+  }
+  
+  // 📦 Para archivos estáticos de la app → Network First, fallback a caché
+  event.respondWith(
+    fetch(event.request)
+      .then(response => {
+        if (response && response.status === 200) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        }
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
