@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* (Mismos estilos que antes, no los repito por brevedad, pero mantenlos) */
+        /* ========== ESTILOS (iguales a los tuyos, solo se agrega .detalle-conceptos) ========== */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
             font-family: 'Inter', sans-serif;
@@ -108,16 +108,21 @@
         .form-control { width: 100%; padding: 12px 16px; border: 1px solid #fed7aa; border-radius: 24px; outline: none; font-size: 1rem; }
         .selected-players-list { max-height: 200px; overflow-y: auto; background: #fef9f1; border-radius: 24px; padding: 12px; margin-bottom: 16px; }
         .selected-player-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #fed7aa; }
+        .selected-player-name { font-weight: 600; }
+        .selected-player-debt { color: #dc2626; font-weight: 700; }
         .toast {
             position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); background: #1e293b;
             color: white; padding: 12px 24px; border-radius: 60px; z-index: 2000; font-size: 0.85rem;
             display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
+        .empty-state { text-align: center; padding: 40px; color: #9ca3af; background: #fffbeb; border-radius: 28px; }
         .historial-item {
             background: #fef9f1; border-radius: 24px; padding: 14px; margin-bottom: 12px;
             border-left: 5px solid #f97316; transition: 0.1s;
         }
-        .empty-state { text-align: center; padding: 40px; color: #9ca3af; background: #fffbeb; border-radius: 28px; }
+        .historial-fecha { font-size: 0.7rem; color: #9c6b3e; margin-bottom: 6px; }
+        .historial-monto { font-weight: 800; color: #16a34a; font-size: 1rem; }
+        
         @media (max-width: 550px) {
             .deuda-header { flex-direction: column; align-items: stretch; }
             .btn-pago, .btn-pago-multiple { justify-content: center; }
@@ -139,7 +144,7 @@
 <section class="hero">
     <div class="hero-card">
         <h2>Control de Deudas Detallado</h2>
-        <p>Registra pagos por concepto, permite pagos mayores a la deuda (el excedente se redistribuye o queda como crédito).</p>
+        <p>Registra pagos por concepto. Si pagas más de lo que debes en un concepto, el excedente se aplica a otros o queda como crédito.</p>
     </div>
 </section>
 
@@ -241,7 +246,7 @@
 <div id="modalHistorial" class="modal-overlay">
     <div class="modal-container">
         <div class="modal-header">
-            <h3><i class="fa-solid fa-clock-rotate-left"></i> Historial de Pagos (con conceptos)</h3>
+            <h3><i class="fa-solid fa-clock-rotate-left"></i> Historial de Pagos de Vocalía</h3>
             <button class="close-modal" onclick="cerrarModalHistorial()">&times;</button>
         </div>
         <div id="historialContenido" style="max-height: 500px; overflow-y: auto;">
@@ -251,24 +256,23 @@
 </div>
 
 <script>
-    // ============ CONEXIÓN REAL CON GOOGLE APPS SCRIPT ============
+    // ============ CONFIGURACIÓN (TU MISMA API) ============
     const API_URL = "https://script.google.com/macros/s/AKfycbwLcpH5z2x_EjRPaPu6gI_lLokWkVxsKLgBz-HHCVX7_OhKAFU1LVfZ67bh9DCbn9L6/exec";
     
-    // Verificación de login (opcional, si usas login.html)
     if(localStorage.getItem('admin_activo') !== 'true') window.location.href = './login.html';
     
     let jugadoresData = [];
-    let selectedPlayers = new Set(); // cédulas seleccionadas
     let jugadorSeleccionado = null;
+    let selectedPlayers = new Set(); // cédulas seleccionadas
     
-    // Lista ordenada de conceptos para redistribución automática (la misma lógica del backend)
+    // Lista de conceptos y sus nombres amigables
     const CONCEPTOS_ORDER = ["uniformes", "inscripcion", "vocalia", "inauguracion", "multas", "tarjeta_amarilla", "tarjeta_roja"];
     const NOMBRES_CONCEPTOS = {
         uniformes: "Uniformes", inscripcion: "Inscripción", vocalia: "Vocalía", inauguracion: "Inauguración",
         multas: "Multas", tarjeta_amarilla: "Tarjeta Amarilla", tarjeta_roja: "Tarjeta Roja"
     };
     
-    function formatearMoneda(v) { return new Intl.NumberFormat('es-EC', { style: 'currency', currency: 'USD' }).format(v); }
+    const formatearMoneda = (v) => new Intl.NumberFormat('es-EC', { style: 'currency', currency: 'USD' }).format(v);
     
     function mostrarToast(mensaje, tipo='info') {
         let toast = document.createElement('div');
@@ -278,25 +282,28 @@
         setTimeout(() => toast.remove(), 3000);
     }
     
-    // Calcula deuda total de un jugador (suma conceptos - crédito)
+    // Calcula deuda total (suma conceptos - crédito)
     function calcularDeudaTotal(jugador) {
+        if(jugador.deuda !== undefined && !jugador.deudas) {
+            // Formato antiguo (solo deuda total) - compatibilidad mientras actualizas el backend
+            return jugador.deuda;
+        }
         let suma = 0;
-        for(let c of CONCEPTOS_ORDER) suma += jugador.deudas[c] || 0;
+        for(let c of CONCEPTOS_ORDER) suma += jugador.deudas?.[c] || 0;
         let credito = jugador.credito || 0;
         return Math.max(0, suma - credito);
     }
     
-    // Cargar datos desde la API (formato nuevo)
     async function cargarDatos() {
         const contenedor = document.getElementById('deudoresList');
         contenedor.innerHTML = '<div class="empty-state">Cargando...</div>';
         try {
-            // Obtener lista de jugadores con deudas desglosadas
             const res = await fetch(`${API_URL}?action=getVocaliaData&nocache=${Date.now()}`);
             const data = await res.json();
             if(data.success) {
-                jugadoresData = data.deudores;  // debe contener: cedula, nombreCompleto, dorsal, deudas { ... }, credito
-                // Calcular totales
+                jugadoresData = data.deudores;
+                
+                // Calcular totales (soporta formato nuevo y antiguo)
                 let totalDeuda = 0, deudoresCount = 0;
                 for(let j of jugadoresData) {
                     let deuda = calcularDeudaTotal(j);
@@ -306,7 +313,6 @@
                 document.getElementById('totalDeuda').innerText = formatearMoneda(totalDeuda);
                 document.getElementById('cantidadDeudores').innerText = deudoresCount;
                 
-                // Obtener total recaudado desde historial
                 const resHist = await fetch(`${API_URL}?action=getHistorialVocalia&nocache=${Date.now()}`);
                 const histData = await resHist.json();
                 if(histData.success && histData.historial) {
@@ -317,11 +323,11 @@
                 }
                 renderizarDeudores();
             } else {
-                throw new Error(data.error || "Error al cargar datos");
+                throw new Error(data.error);
             }
         } catch(e) {
             contenedor.innerHTML = `<div class="empty-state">❌ Error: ${e.message}</div>`;
-            mostrarToast("Error de conexión con el servidor", "error");
+            mostrarToast("Error de conexión", "error");
         }
     }
     
@@ -333,21 +339,26 @@
         }
         let html = '';
         for(let j of jugadoresData) {
-            let deudaTotal = calcularDeudaTotal(j);
-            let isChecked = selectedPlayers.has(j.cedula);
+            const deudaTotal = calcularDeudaTotal(j);
+            const isChecked = selectedPlayers.has(j.cedula);
+            const tieneCredito = (j.credito || 0) > 0;
+            // Determinar si tiene formato nuevo (con deudas)
+            const tieneConceptos = j.deudas && typeof j.deudas === 'object';
+            
             html += `
                 <div class="deuda-item ${isChecked ? 'selected' : ''}" data-cedula="${j.cedula}">
                     <div class="deuda-header">
                         <div style="display: flex; align-items: center; gap: 10px; flex-wrap:wrap;">
                             <input type="checkbox" class="player-checkbox" data-cedula="${j.cedula}" ${isChecked ? 'checked' : ''}>
                             <span class="dorsal-badge">#${j.dorsal || '?'}</span>
-                            <span class="nombre-jugador">${escapeHtml(j.nombreCompleto)}</span>
-                            ${deudaTotal > 0 ? `<span class="deuda-monto">${formatearMoneda(deudaTotal)}</span>` : `<span class="credito-monto">${formatearMoneda(-deudaTotal)} a favor</span>`}
+                            <span class="nombre-jugador">${escapeHtml(j.nombreCompleto || j.nombreCamiseta)}</span>
+                            ${deudaTotal > 0 ? `<span class="deuda-monto">${formatearMoneda(deudaTotal)}</span>` : (tieneCredito ? `<span class="credito-monto">${formatearMoneda(j.credito)} a favor</span>` : `<span class="credito-monto">Saldo cero</span>`)}
                         </div>
-                        <button class="btn-pago" data-cedula="${j.cedula}" data-nombre="${escapeHtml(j.nombreCompleto)}" data-deuda="${deudaTotal}">
+                        <button class="btn-pago" data-cedula="${j.cedula}" data-nombre="${escapeHtml(j.nombreCompleto || j.nombreCamiseta)}" data-deuda="${deudaTotal}">
                             <i class="fa-solid fa-hand-holding-usd"></i> Pagar
                         </button>
                     </div>
+                    ${tieneConceptos ? `
                     <div class="detalle-conceptos" id="detalle-${j.cedula}">
                         ${CONCEPTOS_ORDER.map(c => {
                             let val = j.deudas[c] || 0;
@@ -356,6 +367,7 @@
                         }).join('')}
                         ${(j.credito || 0) > 0 ? `<div class="concepto-item"><span class="concepto-nombre">Crédito a favor</span><span class="concepto-credito">${formatearMoneda(j.credito)}</span></div>` : ''}
                     </div>
+                    ` : '<div class="detalle-conceptos" style="display:none;"></div>'}
                 </div>
             `;
         }
@@ -383,7 +395,7 @@
                 if(jugador) {
                     jugadorSeleccionado = {
                         cedula: jugador.cedula,
-                        nombre: jugador.nombreCompleto,
+                        nombre: jugador.nombreCompleto || jugador.nombreCamiseta,
                         deudaTotal: calcularDeudaTotal(jugador)
                     };
                     document.getElementById('modalJugadorNombre').innerText = jugadorSeleccionado.nombre;
@@ -395,18 +407,17 @@
             });
         });
         
-        // Expandir/contraer detalles al hacer clic en la fila
+        // Clic en la fila para mostrar/ocultar desglose (solo si tiene conceptos)
         document.querySelectorAll('.deuda-item').forEach(item => {
             item.addEventListener('click', (e) => {
                 if(e.target.classList.contains('player-checkbox') || e.target.classList.contains('btn-pago') || e.target.closest('.btn-pago')) return;
                 const cedula = item.dataset.cedula;
                 const detalleDiv = document.getElementById(`detalle-${cedula}`);
-                if(detalleDiv) detalleDiv.classList.toggle('visible');
+                if(detalleDiv && detalleDiv.children.length > 0) detalleDiv.classList.toggle('visible');
             });
         });
     }
     
-    // Registrar pago individual (llamada real a la API)
     async function registrarPago(cedula, monto, concepto, transaccion) {
         const params = new URLSearchParams();
         params.append('action', 'registrarPagoVocalia');
@@ -423,26 +434,37 @@
     async function confirmarPago() {
         if(!jugadorSeleccionado) return;
         let monto = parseFloat(document.getElementById('montoPago').value);
-        if(isNaN(monto) || monto <= 0) { mostrarToast("Monto inválido", "error"); return; }
+        if(isNaN(monto) || monto <= 0) {
+            mostrarToast("Monto inválido", "error");
+            return;
+        }
+        // Ya no validamos que no supere la deuda total, porque el backend redistribuirá o dejará crédito.
         const concepto = document.getElementById('conceptoPago').value;
         const transaccion = document.getElementById('transaccionPago').value.trim() || "SIN REFERENCIA";
         try {
             const result = await registrarPago(jugadorSeleccionado.cedula, monto, concepto, transaccion);
             mostrarToast(`Pago registrado: ${result.detalle || 'correcto'}`, "success");
             cerrarModal();
-            cargarDatos();  // recargar todo
+            cargarDatos();
         } catch(e) {
             mostrarToast(e.message, "error");
         }
     }
     
-    // Pago múltiple (llama secuencialmente a registrarPago)
     async function confirmarPagoMultiple() {
-        if(selectedPlayers.size === 0) { mostrarToast("Selecciona al menos un jugador", "error"); return; }
+        if(selectedPlayers.size === 0) {
+            mostrarToast("Selecciona al menos un jugador", "error");
+            return;
+        }
         let monto = parseFloat(document.getElementById('montoMultiple').value);
-        if(isNaN(monto) || monto <= 0) { mostrarToast("Monto inválido", "error"); return; }
+        if(isNaN(monto) || monto <= 0) {
+            mostrarToast("Monto inválido", "error");
+            return;
+        }
         const concepto = document.getElementById('conceptoMultiple').value;
         const transaccion = document.getElementById('transaccionMultiple').value.trim() || "PAGO_MULTIPLE";
+        
+        mostrarToast(`Procesando pagos para ${selectedPlayers.size} jugadores...`, "info");
         let exitosos = 0, fallidos = 0;
         for(let cedula of selectedPlayers) {
             try {
@@ -453,14 +475,16 @@
                 console.error(e);
             }
         }
-        if(fallidos === 0) mostrarToast(`${exitosos} pagos de ${formatearMoneda(monto)} registrados`, "success");
-        else mostrarToast(`${exitosos} OK, ${fallidos} fallidos`, "error");
+        if(fallidos === 0) {
+            mostrarToast(`✅ ${exitosos} pagos de ${formatearMoneda(monto)} registrados`, "success");
+        } else {
+            mostrarToast(`⚠️ ${exitosos} OK, ${fallidos} fallidos`, "error");
+        }
         cerrarModalMultiple();
         selectedPlayers.clear();
         cargarDatos();
     }
     
-    // Historial
     async function abrirHistorial() {
         const modal = document.getElementById('modalHistorial');
         const contenido = document.getElementById('historialContenido');
@@ -475,10 +499,10 @@
                     let fecha = new Date(item.fecha).toLocaleString('es-EC');
                     html += `
                         <div class="historial-item">
-                            <div><strong>${escapeHtml(item.jugador)}</strong> - ${NOMBRES_CONCEPTOS[item.conceptoAplicado] || item.conceptoAplicado}</div>
+                            <div><strong>${escapeHtml(item.jugador)}</strong> ${item.conceptoAplicado ? `- ${NOMBRES_CONCEPTOS[item.conceptoAplicado] || item.conceptoAplicado}` : ''}</div>
                             <div class="historial-fecha">${fecha} | Transacción: ${item.transaccion || 'N/A'}</div>
-                            <div>Monto: ${formatearMoneda(item.monto)} | Deuda restante: ${formatearMoneda(item.deudaRestante)}</div>
-                            <div style="font-size:0.7rem;">Detalle: ${item.detalle || ''}</div>
+                            <div>Monto: <span class="historial-monto">${formatearMoneda(item.monto)}</span> | Deuda restante: ${formatearMoneda(item.deudaRestante)}</div>
+                            ${item.detalle ? `<div style="font-size:0.7rem; color:gray;">Detalle: ${item.detalle}</div>` : ''}
                         </div>
                     `;
                 }
@@ -491,12 +515,19 @@
         }
     }
     
-    // Funciones de cierre de modales
     function cerrarModal() { document.getElementById('modalPago').classList.remove('open'); }
     function cerrarModalMultiple() { document.getElementById('modalPagoMultiple').classList.remove('open'); }
     function cerrarModalHistorial() { document.getElementById('modalHistorial').classList.remove('open'); }
     
-    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
+    function escapeHtml(str) {
+        if(!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if(m === '&') return '&amp;';
+            if(m === '<') return '&lt;';
+            if(m === '>') return '&gt;';
+            return m;
+        });
+    }
     
     // Eventos
     document.getElementById('btnRefresh').addEventListener('click', cargarDatos);
@@ -507,13 +538,14 @@
         else document.getElementById('modalPagoMultiple').classList.add('open');
     });
     document.getElementById('confirmarPagoMultiple').addEventListener('click', confirmarPagoMultiple);
-    window.addEventListener('click', (e) => {
+    window.addEventListener('click', (e) => { 
         if(e.target.classList.contains('modal-overlay')) {
-            cerrarModal(); cerrarModalHistorial(); cerrarModalMultiple();
+            cerrarModal();
+            cerrarModalHistorial();
+            cerrarModalMultiple();
         }
     });
     
-    // Iniciar
     cargarDatos();
 </script>
 </body>
