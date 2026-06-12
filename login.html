@@ -50,7 +50,7 @@ input:focus{border-color:var(--primary);background:rgba(15,23,42,.92);box-shadow
 <div class="login-card" id="loginCard">
   <div class="logo-area"><h1>NÁPOLES F.C.</h1><p>Acceso de Jugadores PRO</p></div>
   <form id="formLogin">
-    <div class="input-group"><label>Ingresa tus credenciales</label><input type="text" id="loginCedula" placeholder="Cédula o clave" autocomplete="off" inputmode="numeric" required></div>
+    <div class="input-group"><label>Ingresa tus credenciales</label><input type="text" id="loginCedula" placeholder="0000000000" autocomplete="off" required></div>
     <button type="submit" id="btnLogin" class="btn-submit" disabled>Ingresa al Vestuario</button>
   </form>
   <div id="errorMsg" class="error-message"></div>
@@ -58,7 +58,7 @@ input:focus{border-color:var(--primary);background:rgba(15,23,42,.92);box-shadow
     <p style="margin-top:30px;margin-bottom:24px;text-align:center;">¿No tienes cuenta? <a href="./index.html">REGÍSTRATE ✨</a></p>
     <div style="display:flex;justify-content:center;"><button id="manualDownloadBtn" type="button">📲 INSTALAR APP</button></div>
     <div class="footer-version" id="versionInfo"></div>
-    <div class="security-note">🔒 Datos encriptados • Conexión segura con Google</div>
+    <div class="security-note">🔒 Datos encriptados • Conexión segura con bY Corporación 360</div>
   </div>
 </div>
 <script src="./config.js"></script>
@@ -69,10 +69,10 @@ input:focus{border-color:var(--primary);background:rgba(15,23,42,.92);box-shadow
     const res = await fetch('./sw.js');
     const txt = await res.text();
     const match = txt.match(/CACHE_NAME\s*=\s*['"](?:napoles-)?v?([\d\.]+)['"]/);
-    const version = match ? 'v' + match[1] : 'v1.0.43';
-    document.getElementById('versionInfo').innerHTML = `<span>${version}</span><span> • </span><span>By Corporación 360</span>`;
+    const version = match ? 'v' + match[1] : 'v1.0.42';
+    document.getElementById('versionInfo').innerHTML = `<span>${version}</span><span> • </span><span>bY Corporación 360</span>`;
   } catch(e) {
-    document.getElementById('versionInfo').innerHTML = `<span>v1.0.42</span><span> • </span><span>By Corporación 360</span>`;
+    document.getElementById('versionInfo').innerHTML = `<span>v1.0.42</span><span> • </span><span>bY Corporación 360</span>`;
   }
 })();
 
@@ -100,13 +100,15 @@ form.addEventListener('submit', async(e)=>{
   if(typeof CONFIG==='undefined' || !CONFIG.URL_GAS) return mostrarError('❌ Error de configuración');
   btn.disabled=true; btn.textContent='CONECTANDO...';
   try{
+    // ADMIN (clave alfanumérica)
     if(valor==='GataFiera54321'){
       let params=new URLSearchParams(); params.append('action','loginAdmin'); params.append('clave',valor);
       let res=await fetch(CONFIG.URL_GAS,{method:'POST',mode:'cors',body:params}); let data=await res.json();
       if(data.success && data.acceso){ localStorage.setItem('admin_activo','true'); window.location='./admin.html'; return; }
       mostrarError('❌ Clave admin incorrecta'); return;
     }
-    if(!/^\d{10}$/.test(valor)){ mostrarError('❌ Ingresa cédula válida o clave admin'); return; }
+    // JUGADOR (solo números, 10 dígitos)
+    if(!/^\d{10}$/.test(valor)){ mostrarError('❌ Ingresa una cédula válida (10 dígitos) o la clave admin'); return; }
     let params=new URLSearchParams(); params.append('action','validarRegistro'); params.append('cedula',valor);
     let res=await fetch(CONFIG.URL_GAS,{method:'POST',mode:'cors',body:params}); let data=await res.json();
     if(data.success && data.cedulaExiste && data.estado==='APROBADO'){
