@@ -1,702 +1,722 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Uniformes y Control - Nápoles F.C.</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Uniformes y Control - Nápoles F.C.</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-<style>
-:root {
-    --gold: #D4AF37;
-    --purple: #7c3aed;
-    --purple-light: #c084fc;
-    --bg: #f1f5f9;
-    --card: #ffffff;
-    --text: #0f172a;
-    --muted: #64748b;
-    --success: #10b981;
-    --danger: #ef4444;
-    --border: #e2e8f0;
-    --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
-}
+  <style>
+    :root {
+      --gold: #D4AF37;
+      --purple: #7c3aed;
+      --purple-light: #c084fc;
+      --slate-dark: #0f172a;
+      --muted: #64748b;
+      --success: #10b981;
+      --danger: #ef4444;
+      --border: rgba(226, 232, 240, 0.6);
+    }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-body {
-    font-family: 'Inter', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-}
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 50%, #f1f4f9 100%);
+      color: var(--slate-dark);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
 
-/* Header */
-.topbar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(14px);
-    border-bottom: 1px solid var(--border);
-    padding: 12px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
+    /* ILUMINACIÓN AMBIENTAL */
+    .ambient-glow {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .glow-sphere {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(130px);
+      opacity: 0.25;
+    }
+    .glow-1 { width: 320px; height: 320px; background: #c084fc; top: -5%; left: -10%; }
+    .glow-2 { width: 380px; height: 380px; background: #e0f2fe; top: 45%; right: -15%; }
 
-.top-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
+    /* BARRA SUPERIOR CRISTALINA */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.01);
+    }
 
-.admin-info h1 {
-    font-family: 'Outfit', sans-serif;
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: var(--text);
-}
+    .top-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-.admin-info p {
-    font-size: 0.75rem;
-    color: var(--muted);
-    margin-top: 2px;
-    font-weight: 500;
-}
+    .admin-info h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: var(--slate-dark);
+      letter-spacing: -0.3px;
+    }
 
-.avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, var(--purple), var(--purple-light));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: 800;
-    font-size: 1rem;
-    box-shadow: 0 4px 10px rgba(124,58,237,0.2);
-}
+    .admin-info p {
+      font-size: .7rem;
+      color: #78716c;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-top: 2px;
+    }
 
-/* Stats */
-.stats {
-    padding: 20px 20px 10px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-    max-width: 700px;
-    margin: 0 auto;
-}
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--slate-dark);
+      border: 1px solid var(--border);
+    }
 
-.stat-card {
-    background: var(--card);
-    border-radius: 24px;
-    padding: 20px;
-    box-shadow: var(--shadow);
-    border: 1px solid rgba(0,0,0,0.02);
-}
-
-.stat-card h3 {
-    font-family: 'Outfit', sans-serif;
-    font-size: 2rem;
-    font-weight: 800;
-    margin-bottom: 6px;
-}
-
-.stat-card.total h3 { color: var(--purple); }
-.stat-card.pending h3 { color: var(--danger); }
-
-.stat-card p {
-    color: var(--muted);
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-}
-
-/* Uniform card */
-.uniforms {
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 16px 20px 80px;
-}
-
-.uniform-card {
-    background: var(--card);
-    border-radius: 32px;
-    padding: 24px;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border);
-    transition: transform 0.2s;
-}
-
-.uniform-card:hover {
-    transform: translateY(-2px);
-}
-
-.uniform-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-    gap: 12px;
-}
-
-.uniform-left {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.uniform-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 20px;
-    background: linear-gradient(145deg, #0f172a, #1e293b);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--gold);
-    font-size: 1.8rem;
-}
-
-.uniform-info h3 {
-    font-family: 'Outfit', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: var(--text);
-}
-
-.uniform-info p {
-    color: var(--muted);
-    font-size: 0.85rem;
-    margin-top: 2px;
-}
-
-.stock {
-    background: #ede9fe;
-    color: var(--purple);
-    padding: 8px 16px;
-    border-radius: 40px;
-    font-size: 0.8rem;
-    font-weight: 700;
-}
-
-.sizes {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    padding-top: 20px;
-    border-top: 1px solid var(--border);
-}
-
-.size {
-    background: #f8fafc;
-    padding: 8px 16px;
-    border-radius: 40px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #334155;
-    border: 1px solid var(--border);
-}
-
-/* Loader */
-.soccer-loading-container {
-    text-align: center;
-    padding: 80px 20px;
-    max-width: 700px;
-    margin: 0 auto;
-}
-
-.soccer-spinner {
-    font-size: 3rem;
-    color: var(--purple);
-    animation: spinSoccer 1s linear infinite;
-}
-
-.soccer-loading-text {
-    margin-top: 16px;
-    font-family: 'Outfit', sans-serif;
-    color: var(--purple);
-    font-weight: 600;
-    letter-spacing: 1px;
-}
-
-@keyframes spinSoccer {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* FAB */
-.fab {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    width: 60px;
-    height: 60px;
-    border: none;
-    border-radius: 24px;
-    background: linear-gradient(135deg, var(--purple), var(--purple-light));
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 10px 25px rgba(124,58,237,0.4);
-    font-size: 1.6rem;
-    transition: transform 0.2s, background 0.2s;
-    z-index: 100;
-}
-
-.fab:hover {
-    transform: scale(1.05);
-    background: linear-gradient(135deg, #6d28d9, #a855f7);
-}
-
-/* Modal */
-.modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(15, 23, 42, 0.7);
-    backdrop-filter: blur(8px);
-    z-index: 1000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-}
-
-.modal-box {
-    background: white;
-    border-radius: 32px;
-    width: 100%;
-    max-width: 500px;
-    max-height: 90vh;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
-    animation: modalFadeIn 0.2s ease;
-}
-
-@keyframes modalFadeIn {
-    from { opacity: 0; transform: scale(0.98); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 24px 0 24px;
-}
-
-.modal-header h2 {
-    font-family: 'Outfit', sans-serif;
-    font-size: 1.3rem;
-    font-weight: 800;
-    color: var(--text);
-}
-
-.btn-close-modal {
-    background: #f1f5f9;
-    border: none;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 1.1rem;
-    color: var(--muted);
-    transition: background 0.2s;
-}
-
-.btn-close-modal:hover {
-    background: #e2e8f0;
-}
-
-.search-box-wrap {
-    position: relative;
-    margin: 16px 24px;
-}
-
-.search-box-wrap i {
-    position: absolute;
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--muted);
-}
-
-.search-input {
-    width: 100%;
-    padding: 12px 12px 12px 42px;
-    border: 1px solid var(--border);
-    border-radius: 28px;
-    font-family: inherit;
-    font-size: 0.9rem;
-    outline: none;
-    background: #f9fafb;
-}
-
-.search-input:focus {
-    border-color: var(--purple);
-    background: white;
-}
-
-.players-list {
-    overflow-y: auto;
-    flex: 1;
-    padding: 0 24px 24px 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.player-item-card {
-    background: #f8fafc;
-    border-radius: 20px;
-    padding: 16px;
-    border: 1px solid var(--border);
-    transition: all 0.2s;
-}
-
-.player-item-card:hover {
-    background: white;
-    border-color: var(--purple-light);
-}
-
-.player-name {
-    font-weight: 800;
-    font-size: 1rem;
-    color: var(--text);
-    margin-bottom: 4px;
-}
-
-.player-meta {
-    font-size: 0.75rem;
-    color: var(--muted);
-    margin-bottom: 14px;
-}
-
-.toggle-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 10px;
-    border-top: 1px solid var(--border);
-    margin-top: 8px;
-}
-
-.toggle-label {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #334155;
-}
-
-.status-badge {
-    padding: 6px 14px;
-    border-radius: 40px;
-    font-size: 0.75rem;
-    font-weight: 800;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.2s;
-}
-
-.badge-pagado {
-    background: rgba(16,185,129,0.15);
-    color: var(--success);
-    border: 1px solid rgba(16,185,129,0.3);
-}
-
-.badge-pendiente {
-    background: rgba(239,68,68,0.12);
-    color: var(--danger);
-    border: 1px solid rgba(239,68,68,0.25);
-}
-
-.status-badge:hover {
-    transform: scale(1.02);
-    filter: brightness(0.98);
-}
-
-@media (max-width: 640px) {
+    /* CONTENEDOR DE TARJETAS DE ESTADÍSTICAS */
     .stats {
-        gap: 12px;
-        padding: 16px;
+      padding: 20px 18px 5px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      max-width: 700px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
     }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.01);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+    }
+
     .stat-card h3 {
-        font-size: 1.6rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 2rem;
+      font-weight: 900;
+      margin-bottom: 4px;
+      letter-spacing: -0.5px;
     }
+
+    .stat-card.total h3 { color: var(--purple); }
+    .stat-card.pending h3 { color: var(--danger); }
+
+    .stat-card p {
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* CONTROL DE CONTENEDOR DE UNIFORMES */
+    .uniforms {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 12px 18px 80px;
+      position: relative;
+      z-index: 2;
+    }
+
     .uniform-card {
-        padding: 18px;
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.01);
+      border: 1px solid rgba(255, 255, 255, 0.7);
     }
+
+    .uniform-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .uniform-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .uniform-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      background: linear-gradient(145deg, #0f172a, #1e293b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      font-size: 1.5rem;
+    }
+
+    .uniform-info h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--slate-dark);
+    }
+
+    .uniform-info p {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-top: 2px;
+    }
+
+    .stock {
+      background: #ede9fe;
+      color: var(--purple);
+      padding: 6px 14px;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .sizes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(226, 232, 240, 0.6);
+    }
+
+    .size {
+      background: #ffffff;
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #334155;
+      border: 1px solid var(--border);
+    }
+
+    /* CONTENEDORES DE CARGA SHIMMER EFFECT (SKELETONS) */
+    .shimmer-stats {
+      padding: 20px 18px 5px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .shimmer-card { height: 98px; background: rgba(255,255,255,0.5); border-radius: 24px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.5); }
+    .shimmer-unif { height: 180px; background: rgba(255,255,255,0.5); border-radius: 28px; max-width: 700px; margin: 12px auto; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.5); }
+    
+    .shimmer-card::after, .shimmer-unif::after {
+      content: ""; position: absolute; top:0; right:0; bottom:0; left:0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+      transform: translateX(-100%); animation: shimmerMove 1.6s infinite;
+    }
+    @keyframes shimmerMove { 100% { transform: translateX(100%); } }
+
+    /* FLOATING ACTION BUTTON (FAB) */
+    .fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 54px;
+      height: 54px;
+      border: none;
+      border-radius: 16px;
+      background: var(--slate-dark);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(15,23,42,0.2);
+      font-size: 1.15rem;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 100;
+    }
+
+    .fab:hover {
+      transform: scale(1.05) translateY(-2px);
+      background: var(--purple);
+      box-shadow: 0 10px 25px rgba(124,58,237,0.3);
+    }
+
+    /* VENTANA MODAL CRISTALINA */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.3);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
     .modal-box {
-        max-width: 95%;
+      background: white;
+      border-radius: 24px;
+      width: 100%;
+      max-width: 480px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+      animation: modalDesplegar 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
-}
-</style>
+
+    @keyframes modalDesplegar {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 24px 0 24px;
+    }
+
+    .modal-header h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--slate-dark);
+    }
+
+    .btn-close-modal {
+      background: #f1f5f9;
+      border: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      color: var(--slate-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .btn-close-modal:hover { background: #e2e8f0; }
+
+    .search-box-wrap {
+      position: relative;
+      margin: 16px 24px;
+    }
+
+    .search-box-wrap i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 14px 12px 40px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 0.92rem;
+      outline: none;
+      background: #ffffff;
+      color: var(--slate-dark);
+      transition: all 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: rgba(124, 58, 237, 0.4);
+      box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.06);
+    }
+
+    .players-list {
+      overflow-y: auto;
+      flex: 1;
+      padding: 0 24px 24px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .player-item-card {
+      background: #f8fafc;
+      border-radius: 18px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+
+    .player-item-card:hover {
+      background: white;
+      border-color: var(--purple-light);
+    }
+
+    .player-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--slate-dark);
+      margin-bottom: 4px;
+    }
+
+    .player-meta {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(226, 232, 240, 0.8);
+      margin-top: 8px;
+    }
+
+    .toggle-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #475569;
+    }
+
+    .status-badge {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+      letter-spacing: 0.2px;
+    }
+
+    .badge-pagado {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .badge-pendiente {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .status-badge:hover {
+      transform: translateY(-1px);
+      filter: brightness(0.96);
+    }
+
+    @media (max-width: 640px) {
+      .stats { gap: 12px; padding: 16px 14px 5px; }
+      .stat-card h3 { font-size: 1.7rem; }
+      .uniforms { padding: 10px 14px 80px; }
+      .uniform-card { padding: 18px; }
+      .modal-box { max-width: 95%; max-height: 90vh; }
+    }
+  </style>
 </head>
 <body>
 
+<div class="ambient-glow">
+  <div class="glow-sphere glow-1"></div>
+  <div class="glow-sphere glow-2"></div>
+</div>
+
 <header class="topbar">
-    <div class="top-left">
-        <div class="admin-info">
-            <h1>⚡ Gestión de Uniformes</h1>
-            <p>Nápoles F.C. · Control de pagos</p>
-        </div>
+  <div class="top-left">
+    <div class="admin-info">
+      <h1>Gestión de Uniformes</h1>
+      <p>Nápoles F.C. · Control de pagos</p>
     </div>
-    <div class="avatar"><i class="fa-solid fa-shirt"></i></div>
+  </div>
+  <div class="avatar"><i class="fa-solid fa-shirt"></i></div>
 </header>
 
 <main id="mainContainer">
-    <div class="soccer-loading-container">
-        <div class="soccer-spinner"><i class="fa-solid fa-futbol"></i></div>
-        <div class="soccer-loading-text">Cargando datos del club...</div>
-    </div>
+  <!-- Skeletons Premium de Carga Inicial -->
+  <div class="shimmer-stats">
+    <div class="shimmer-card"></div>
+    <div class="shimmer-card"></div>
+  </div>
+  <div class="shimmer-unif"></div>
 </main>
 
 <button class="fab" onclick="abrirModalGestion()" title="Actualizar estados de pago">
-    <i class="fa-solid fa-cash-register"></i>
+  <i class="fa-solid fa-cash-register"></i>
 </button>
 
-<div class="modal-backdrop" id="modalGestion">
-    <div class="modal-box">
-        <div class="modal-header">
-            <h2><i class="fa-solid fa-credit-card"></i> Registrar pagos</h2>
-            <button class="btn-close-modal" onclick="cerrarModalGestion()"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="search-box-wrap">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" class="search-input" id="inputBuscar" placeholder="Buscar jugador (nombre o cédula)" oninput="filtrarJugadores()">
-        </div>
-        <div class="players-list" id="listaJugadoresModal">
-            <!-- dinámico -->
-        </div>
+<div class="modal-backdrop" id="modalGestion" onclick="cerrarModalExterno(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2><i class="fa-solid fa-credit-card" style="color: var(--purple);"></i> Registrar Pagos</h2>
+      <button class="btn-close-modal" onclick="cerrarModalGestion()"><i class="fa-solid fa-xmark"></i></button>
     </div>
+    <div class="search-box-wrap">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" class="search-input" id="inputBuscar" placeholder="Buscar jugador por nombre o cédula" oninput="filtrarJugadores()">
+    </div>
+    <div class="players-list" id="listaJugadoresModal">
+      <!-- Dinámico -->
+    </div>
+  </div>
 </div>
 
 <script>
 // ==================== CONFIGURACIÓN ====================
 const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxRpu3Fhxmws9eFwBxh6XR8zLydNvHGu6EiYV2fjLEdxpw2r4zYJbbqapE8V-ij6nRU/exec';
 
-// Validar admin
 if (localStorage.getItem('admin_activo') !== 'true') {
-    window.location.href = './login.html';
+  window.location.href = './login.html';
 }
 
 let BD_JUGADORES = [];
 
 // ==================== CARGA INICIAL ====================
 async function inicializarModulo() {
-    const mainContainer = document.getElementById('mainContainer');
-    try {
-        const url = `${WEBAPP_URL}?action=getUniformesData&t=${Date.now()}`;
-        const resp = await fetch(url);
-        const data = await resp.json();
+  const mainContainer = document.getElementById('mainContainer');
+  try {
+    const url = `${WEBAPP_URL}?action=getUniformesData&t=${Date.now()}`;
+    const resp = await fetch(url);
+    const data = await resp.json();
 
-        if (data.success && data.jugadores) {
-            BD_JUGADORES = data.jugadores;
-            procesarYRenderizar(BD_JUGADORES);
-        } else {
-            mainContainer.innerHTML = `<div style="text-align:center; padding:50px; color:var(--danger);">Error en la respuesta del servidor.</div>`;
-        }
-    } catch (error) {
-        mainContainer.innerHTML = `<div style="text-align:center; padding:50px; color:var(--danger);">❌ No se pudo conectar con la base de datos.</div>`;
-        console.error(error);
+    if (data.success && data.jugadores) {
+      BD_JUGADORES = data.jugadores;
+      procesarYRenderizar(BD_JUGADORES);
+    } else {
+      mainContainer.innerHTML = `<div style="text-align:center; padding:50px; color:var(--danger); font-weight:700;">Error en la respuesta del servidor.</div>`;
     }
+  } catch (error) {
+    mainContainer.innerHTML = `<div style="text-align:center; padding:50px; color:var(--danger); font-weight:700;">❌ No se pudo conectar con la base de datos.</div>`;
+    console.error(error);
+  }
 }
 
 // ==================== RENDER PRINCIPAL ====================
 function procesarYRenderizar(jugadores) {
-    const pendientes = jugadores.filter(j => (j.unif_estado || '').toUpperCase() === 'PENDIENTE').length;
-    const total = jugadores.length;
+  const pendientes = jugadores.filter(j => (j.unif_estado || '').toUpperCase() === 'PENDIENTE').length;
+  const total = jugadores.length;
 
-    // Distribución de tallas
-    let tallas = { S: 0, M: 0, L: 0, XL: 0, undefined: 0 };
-    jugadores.forEach(j => {
-        let t = String(j.talla || '').toUpperCase().trim();
-        if (t === 'S') tallas.S++;
-        else if (t === 'M') tallas.M++;
-        else if (t === 'L') tallas.L++;
-        else if (t === 'XL' || t === 'X L') tallas.XL++;
-        else tallas.undefined++;
-    });
+  let tallas = { S: 0, M: 0, L: 0, XL: 0, undefined: 0 };
+  jugadores.forEach(j => {
+    let t = String(j.talla || '').toUpperCase().trim();
+    if (t === 'S') tallas.S++;
+    else if (t === 'M') tallas.M++;
+    else if (t === 'L') tallas.L++;
+    else if (t === 'XL' || t === 'X L') tallas.XL++;
+    else tallas.undefined++;
+  });
 
-    document.getElementById('mainContainer').innerHTML = `
-        <section class="stats">
-            <div class="stat-card total">
-                <h3>${total}</h3>
-                <p>📦 Uniformes planificados</p>
+  document.getElementById('mainContainer').innerHTML = `
+    <section class="stats">
+      <div class="stat-card total">
+        <h3>${total}</h3>
+        <p>📦 Kits Planificados</p>
+      </div>
+      <div class="stat-card pending">
+        <h3>${pendientes}</h3>
+        <p>⏳ Por Liquidar</p>
+      </div>
+    </section>
+    <section class="uniforms">
+      <div class="uniform-card">
+        <div class="uniform-top">
+          <div class="uniform-left">
+            <div class="uniform-icon"><i class="fa-solid fa-shirt"></i></div>
+            <div class="uniform-info">
+              <h3>Kits Asignados</h3>
+              <p>Temporada 2026</p>
             </div>
-            <div class="stat-card pending">
-                <h3>${pendientes}</h3>
-                <p>⏳ Pendientes de pago</p>
-            </div>
-        </section>
-        <section class="uniforms">
-            <div class="uniform-card">
-                <div class="uniform-top">
-                    <div class="uniform-left">
-                        <div class="uniform-icon"><i class="fa-solid fa-shirt"></i></div>
-                        <div class="uniform-info">
-                            <h3>Kits asignados</h3>
-                            <p>Temporada 2026</p>
-                        </div>
-                    </div>
-                    <div class="stock">Fichados: ${total}</div>
-                </div>
-                <div class="sizes">
-                    <div class="size">🟣 S • ${tallas.S}</div>
-                    <div class="size">🔵 M • ${tallas.M}</div>
-                    <div class="size">🟢 L • ${tallas.L}</div>
-                    <div class="size">🟠 XL • ${tallas.XL}</div>
-                    ${tallas.undefined > 0 ? `<div class="size">⚪ Sin definir • ${tallas.undefined}</div>` : ''}
-                </div>
-            </div>
-        </section>
-    `;
+          </div>
+          <div class="stock">Fichados: ${total}</div>
+        </div>
+        <div class="sizes">
+          <div class="size">🟣 S • ${tallas.S}</div>
+          <div class="size">🔵 M • ${tallas.M}</div>
+          <div class="size">🟢 L • ${tallas.L}</div>
+          <div class="size">🟠 XL • ${tallas.XL}</div>
+          ${tallas.undefined > 0 ? `<div class="size">⚪ Sin definir • ${tallas.undefined}</div>` : ''}
+        </div>
+      </div>
+    </section>
+  `;
 }
 
-// ==================== MODAL Y LISTA ====================
+// ==================== MODAL Y FILTROS ====================
 function abrirModalGestion() {
-    document.getElementById('modalGestion').style.display = 'flex';
-    document.getElementById('inputBuscar').value = '';
-    renderListaJugadoresModal(BD_JUGADORES);
+  document.getElementById('modalGestion').style.display = 'flex';
+  document.getElementById('inputBuscar').value = '';
+  renderListaJugadoresModal(BD_JUGADORES);
 }
 
 function cerrarModalGestion() {
-    document.getElementById('modalGestion').style.display = 'none';
+  document.getElementById('modalGestion').style.display = 'none';
+}
+
+function cerrarModalExterno(e) {
+  if (e.target.id === 'modalGestion') cerrarModalGestion();
 }
 
 function renderListaJugadoresModal(lista) {
-    const contenedor = document.getElementById('listaJugadoresModal');
-    if (lista.length === 0) {
-        contenedor.innerHTML = `<div style="text-align:center; padding:20px; color:var(--muted);">No hay jugadores que coincidan.</div>`;
-        return;
-    }
-    contenedor.innerHTML = lista.map(j => {
-        const inscripPagado = (j.inscrip_estado || '').toUpperCase() === 'PAGADO';
-        const unifPagado = (j.unif_estado || '').toUpperCase() === 'PAGADO';
-        return `
-            <div class="player-item-card">
-                <div class="player-name">${escapeHtml(j.nombre)}</div>
-                <div class="player-meta"><i class="fa-regular fa-id-card"></i> ${j.cedula} | Talla: ${j.talla || 'N/A'}</div>
-                <div class="toggle-row">
-                    <span class="toggle-label"><i class="fa-solid fa-file-invoice"></i> Inscripción</span>
-                    <span class="status-badge ${inscripPagado ? 'badge-pagado' : 'badge-pendiente'}"
-                          onclick="alternarEstado('${j.cedula}', 'inscrip', '${j.inscrip_estado || 'PENDIENTE'}')">
-                        <i class="fa-solid ${inscripPagado ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i>
-                        ${j.inscrip_estado || 'PENDIENTE'}
-                    </span>
-                </div>
-                <div class="toggle-row">
-                    <span class="toggle-label"><i class="fa-solid fa-shirt"></i> Uniforme</span>
-                    <span class="status-badge ${unifPagado ? 'badge-pagado' : 'badge-pendiente'}"
-                          onclick="alternarEstado('${j.cedula}', 'unif', '${j.unif_estado || 'PENDIENTE'}')">
-                        <i class="fa-solid ${unifPagado ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i>
-                        ${j.unif_estado || 'PENDIENTE'}
-                    </span>
-                </div>
-            </div>
-        `;
-    }).join('');
+  const contenedor = document.getElementById('listaJugadoresModal');
+  if (lista.length === 0) {
+    contenedor.innerHTML = `<div style="text-align:center; padding:20px; color:var(--muted); font-size:0.9rem;">No hay jugadores que coincidan.</div>`;
+    return;
+  }
+  contenedor.innerHTML = lista.map(j => {
+    const inscripPagado = (j.inscrip_estado || '').toUpperCase() === 'PAGADO';
+    const unifPagado = (j.unif_estado || '').toUpperCase() === 'PAGADO';
+    return `
+      <div class="player-item-card">
+        <div class="player-name">${escapeHtml(j.nombre)}</div>
+        <div class="player-meta"><i class="fa-regular fa-id-card"></i> ${j.cedula} | Talla: ${j.talla || 'N/A'}</div>
+        <div class="toggle-row">
+          <span class="toggle-label"><i class="fa-solid fa-file-invoice" style="margin-right:4px; opacity:0.7;"></i> Inscripción</span>
+          <span class="status-badge ${inscripPagado ? 'badge-pagado' : 'badge-pendiente'}"
+                onclick="alternarEstado('${j.cedula}', 'inscrip', '${j.inscrip_estado || 'PENDIENTE'}')">
+            <i class="fa-solid ${inscripPagado ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i>
+            ${j.inscrip_estado || 'PENDIENTE'}
+          </span>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label"><i class="fa-solid fa-shirt" style="margin-right:4px; opacity:0.7;"></i> Uniforme</span>
+          <span class="status-badge ${unifPagado ? 'badge-pagado' : 'badge-pendiente'}"
+                onclick="alternarEstado('${j.cedula}', 'unif', '${j.unif_estado || 'PENDIENTE'}')">
+            <i class="fa-solid ${unifPagado ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i>
+            ${j.unif_estado || 'PENDIENTE'}
+          </span>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 function filtrarJugadores() {
-    const texto = document.getElementById('inputBuscar').value.toLowerCase().trim();
-    const filtrados = BD_JUGADORES.filter(j =>
-        j.nombre.toLowerCase().includes(texto) ||
-        j.cedula.toString().includes(texto)
-    );
-    renderListaJugadoresModal(filtrados);
+  const texto = document.getElementById('inputBuscar').value.toLowerCase().trim();
+  const filtrados = BD_JUGADORES.filter(j =>
+    j.nombre.toLowerCase().includes(texto) ||
+    j.cedula.toString().includes(texto)
+  );
+  renderListaJugadoresModal(filtrados);
 }
 
 // ==================== ACTUALIZAR ESTADO VÍA POST ====================
 async function alternarEstado(cedula, campo, estadoActual) {
-    const jugador = BD_JUGADORES.find(j => j.cedula === cedula);
-    if (!jugador) return;
+  const jugador = BD_JUGADORES.find(j => j.cedula === cedula);
+  if (!jugador) return;
 
-    const nuevoEstado = estadoActual.toUpperCase() === 'PAGADO' ? 'PENDIENTE' : 'PAGADO';
-    let inscripEnvio = (campo === 'inscrip') ? nuevoEstado : jugador.inscrip_estado;
-    let unifEnvio = (campo === 'unif') ? nuevoEstado : jugador.unif_estado;
+  const nuevoEstado = estadoActual.toUpperCase() === 'PAGADO' ? 'PENDIENTE' : 'PAGADO';
+  let inscripEnvio = (campo === 'inscrip') ? nuevoEstado : jugador.inscrip_estado;
+  let unifEnvio = (campo === 'unif') ? nuevoEstado : jugador.unif_estado;
 
-    const modalList = document.getElementById('listaJugadoresModal');
-    modalList.style.opacity = '0.5';
-    modalList.style.pointerEvents = 'none';
+  const modalList = document.getElementById('listaJugadoresModal');
+  modalList.style.opacity = '0.5';
+  modalList.style.pointerEvents = 'none';
 
-    try {
-        // POST con datos urlencoded (la forma más compatible)
-        const formData = new URLSearchParams();
-        formData.append('action', 'updateEstados');
-        formData.append('cedula', cedula);
-        formData.append('inscrip', inscripEnvio || '');
-        formData.append('unif', unifEnvio || '');
+  try {
+    const formData = new URLSearchParams();
+    formData.append('action', 'updateEstados');
+    formData.append('cedula', cedula);
+    formData.append('inscrip', inscripEnvio || '');
+    formData.append('unif', unifEnvio || '');
 
-        const respuesta = await fetch(WEBAPP_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: formData.toString()
-        });
-        const data = await respuesta.json();
+    const respuesta = await fetch(WEBAPP_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formData.toString()
+    });
+    const data = await respuesta.json();
 
-        if (data.success) {
-            // Actualizar datos locales
-            jugador.inscrip_estado = inscripEnvio;
-            jugador.unif_estado = unifEnvio;
-            // Refrescar vista principal y modal
-            procesarYRenderizar(BD_JUGADORES);
-            filtrarJugadores();  // mantiene el filtro actual
-            // Pequeño toast visual (opcional)
-            const toast = document.createElement('div');
-            toast.textContent = '✅ Estado actualizado';
-            toast.style.position = 'fixed';
-            toast.style.bottom = '100px';
-            toast.style.left = '50%';
-            toast.style.transform = 'translateX(-50%)';
-            toast.style.background = '#0f172a';
-            toast.style.color = 'white';
-            toast.style.padding = '10px 20px';
-            toast.style.borderRadius = '40px';
-            toast.style.fontSize = '0.85rem';
-            toast.style.zIndex = '2000';
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2000);
-        } else {
-            alert('❌ No se pudo actualizar: ' + (data.error || 'Error desconocido'));
-        }
-    } catch (error) {
-        console.error(error);
-        alert('Error de red. Revisa tu conexión o la URL del backend.');
-    } finally {
-        modalList.style.opacity = '1';
-        modalList.style.pointerEvents = 'auto';
+    if (data.success) {
+      jugador.inscrip_estado = inscripEnvio;
+      jugador.unif_estado = unifEnvio;
+      
+      procesarYRenderizar(BD_JUGADORES);
+      filtrarJugadores();
+
+      const toast = document.createElement('div');
+      toast.textContent = '✅ Cambios sincronizados';
+      toast.style.position = 'fixed';
+      toast.style.bottom = '100px';
+      toast.style.left = '50%';
+      toast.style.transform = 'translateX(-50%)';
+      toast.style.background = '#0f172a';
+      toast.style.color = 'white';
+      toast.style.padding = '10px 20px';
+      toast.style.borderRadius = '14px';
+      toast.style.fontSize = '0.85rem';
+      toast.style.fontWeight = '700';
+      toast.style.zIndex = '2000';
+      toast.style.boxShadow = '0 10px 25px rgba(0,0,0,0.1)';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2000);
+    } else {
+      alert('❌ Error al actualizar: ' + (data.error || 'Intente nuevamente.'));
     }
+  } catch (error) {
+    console.error(error);
+    alert('Error de red al actualizar los estados.');
+  } finally {
+    modalList.style.opacity = '1';
+    modalList.style.pointerEvents = 'auto';
+  }
 }
 
 function escapeHtml(str) {
-    if (!str) return '';
-    return str.replace(/[&<>]/g, function(m) {
-        if (m === '&') return '&amp;';
-        if (m === '<') return '&lt;';
-        if (m === '>') return '&gt;';
-        return m;
-    });
+  if (!str) return '';
+  return str.replace(/[&<>]/g, function(m) {
+    if (m === '&') return '&amp;';
+    if (m === '<') return '&lt;';
+    if (m === '>') return '&gt;';
+    return m;
+  });
 }
 
-// Iniciar
 inicializarModulo();
 </script>
 </body>
