@@ -1,325 +1,410 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Rivales - Nápoles F.C.</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-<style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Rivales · Nápoles F.C.</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-body {
-  font-family: 'Inter', sans-serif;
-  background: #f3f6fb;
-  color: #111827;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 50%, #f1f4f9 100%);
+      color: #111827;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      padding-bottom: 80px;
+    }
 
-/* HEADER */
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: rgba(255,255,255,.92);
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid #e5e7eb;
-  padding: 16px 18px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.top-left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.admin-info h1 {
-  font-size: 1.1rem;
-  font-weight: 800;
-}
-.admin-info p {
-  font-size: .85rem;
-  color: #6b7280;
-  margin-top: 2px;
-}
-.avatar {
-  width: 46px;
-  height: 46px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #ea580c, #fb923c);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-weight: 800;
-  font-size: 1rem;
-  cursor: pointer;
-}
-.avatar:hover {
-  transform: scale(1.02);
-}
+    /* Iluminación ambiental premium de fondo */
+    .ambient-glow {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .glow-sphere {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.35;
+    }
+    .glow-1 { width: 350px; height: 350px; background: #e0a899; top: -5%; left: -10%; }
+    .glow-2 { width: 400px; height: 400px; background: #e0f2fe; top: 40%; right: -15%; }
 
-/* SEARCH */
-.search-box {
-  padding: 20px 18px 10px;
-}
-.search {
-  background: #fff;
-  border-radius: 18px;
-  padding: 14px 16px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  box-shadow: 0 10px 30px rgba(15,23,42,.05);
-}
-.search input {
-  border: none;
-  outline: none;
-  width: 100%;
-  background: none;
-  font-size: .95rem;
-  font-family: 'Inter', sans-serif;
-}
-.search .material-symbols-outlined {
-  color: #6b7280;
-}
+    /* BARRA SUPERIOR CRISTALINA */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(243, 244, 246, 0.8);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.01);
+    }
+    .top-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .admin-info h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #111827;
+      letter-spacing: -0.2px;
+    }
+    .admin-info p {
+      font-size: 0.7rem;
+      color: #e0a899;
+      margin-top: 2px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .icon-btn {
+      background: #ffffff;
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      color: #4b5563;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    }
+    .icon-btn:hover {
+      background: #111827;
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(17, 24, 39, 0.15);
+    }
 
-/* RIVALS */
-.rivals {
-  padding: 14px 18px 40px;
-}
-.rival-card {
-  background: #fff;
-  border-radius: 24px;
-  padding: 18px;
-  margin-bottom: 16px;
-  box-shadow: 0 10px 30px rgba(15,23,42,.05);
-  transition: transform 0.2s;
-}
-.rival-card:hover {
-  transform: translateY(-2px);
-}
-.rival-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 18px;
-}
-.rival-left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.rival-logo {
-  width: 64px;
-  height: 64px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, #ea580c, #fb923c);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-size: 1.1rem;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-.rival-info h3 {
-  font-size: 1rem;
-  font-weight: 800;
-  margin-bottom: 4px;
-}
-.rival-info p {
-  color: #6b7280;
-  font-size: .88rem;
-}
-.stats {
-  display: flex;
-  justify-content: space-between;
-  padding-top: 14px;
-  border-top: 1px solid #e5e7eb;
-}
-.stat {
-  text-align: center;
-  flex: 1;
-}
-.stat h4 {
-  font-size: 1.1rem;
-  font-weight: 800;
-  margin-bottom: 4px;
-}
-.stat p {
-  color: #6b7280;
-  font-size: .8rem;
-}
-.actions {
-  display: flex;
-  gap: 10px;
-}
-.action-btn {
-  width: 42px;
-  height: 42px;
-  border: none;
-  border-radius: 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  transition: 0.2s;
-}
-.action-btn:hover {
-  transform: scale(1.05);
-}
-.edit { background: #2563eb; }
-.delete { background: #ef4444; }
+    /* BUSCADOR ESTILIZADO */
+    .search-box {
+      padding: 24px 16px 10px;
+      position: relative;
+      z-index: 2;
+    }
+    .search {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .search span {
+      color: #94a3b8;
+      font-size: 20px;
+    }
+    .search input {
+      border: none;
+      outline: none;
+      width: 100%;
+      background: none;
+      padding: 12px 0;
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      color: #1f2937;
+    }
+    .search input::placeholder {
+      color: #94a3b8;
+    }
 
-/* FAB */
-.fab {
-  position: fixed;
-  right: 20px;
-  bottom: 20px;
-  width: 64px;
-  height: 64px;
-  border: none;
-  border-radius: 22px;
-  background: linear-gradient(135deg, #ea580c, #fb923c);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 15px 35px rgba(234,88,12,.35);
-  transition: 0.2s;
-  z-index: 200;
-}
-.fab:hover {
-  transform: scale(1.07);
-}
-.fab .material-symbols-outlined { font-size: 34px; }
+    /* FICHAS TÉCNICAS DE RIVALES */
+    .rivals {
+      padding: 14px 16px 40px;
+      position: relative;
+      z-index: 2;
+      max-width: 632px;
+      margin: 0 auto;
+    }
+    .rival-card {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 20px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.02);
+    }
+    .rival-card:hover {
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.85);
+      border-color: rgba(0, 148, 214, 0.15);
+      box-shadow: 0 12px 35px rgba(0, 148, 214, 0.05);
+    }
+    .rival-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .rival-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .rival-logo {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+      color: #475569;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      border: 1px solid rgba(255,255,255,0.6);
+    }
+    .rival-info h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #111827;
+      line-height: 1.2;
+    }
+    .rival-info p {
+      color: #6b7280;
+      font-size: 0.75rem;
+      margin-top: 2px;
+    }
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
+    .action-btn {
+      width: 36px;
+      height: 36px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .action-btn .material-symbols-outlined {
+      font-size: 18px;
+    }
+    .action-btn.edit { background: #f1f5f9; color: #475569; }
+    .action-btn.delete { background: #fee2e2; color: #b91c1c; }
+    .action-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(0.96);
+    }
 
-/* MODAL */
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(8px);
-  z-index: 1000;
-  align-items: center;
-  justify-content: center;
-}
-.modal.active {
-  display: flex;
-}
-.modal-content {
-  background: white;
-  width: 90%;
-  max-width: 450px;
-  border-radius: 32px;
-  padding: 28px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-}
-.modal-content h2 {
-  font-size: 1.6rem;
-  font-weight: 800;
-  margin-bottom: 24px;
-  background: linear-gradient(135deg, #ea580c, #fb923c);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-.modal-content label {
-  font-weight: 600;
-  font-size: 0.85rem;
-  display: block;
-  margin-bottom: 8px;
-  color: #374151;
-}
-.modal-content input {
-  width: 100%;
-  padding: 14px 16px;
-  border-radius: 28px;
-  border: 1.5px solid #e2e8f0;
-  background: #fff;
-  font-family: 'Inter', sans-serif;
-  margin-bottom: 20px;
-  transition: 0.2s;
-}
-.modal-content input:focus {
-  border-color: #ea580c;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(234,88,12,0.2);
-}
-.modal-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-  margin-top: 10px;
-}
-.btn-save {
-  background: linear-gradient(135deg, #ea580c, #fb923c);
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 40px;
-  font-weight: 700;
-  cursor: pointer;
-}
-.btn-cancel {
-  background: #e5e7eb;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 40px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.toast {
-  position: fixed;
-  bottom: 100px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #1e293b;
-  color: white;
-  padding: 12px 24px;
-  border-radius: 60px;
-  font-size: 0.85rem;
-  z-index: 300;
-  animation: fadeUp 0.25s ease;
-}
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateX(-50%) translateY(15px); }
-  to { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
-.loading {
-  text-align: center;
-  padding: 60px;
-  color: #6b7280;
-}
-@media(min-width:700px) {
-  .rivals, .search-box { max-width: 700px; margin: auto; }
-}
-</style>
+    /* CONTADORES HISTÓRICOS */
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 14px;
+      border-top: 1px dashed rgba(0, 0, 0, 0.06);
+    }
+    .stat {
+      text-align: center;
+      flex: 1;
+    }
+    .stat h4 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #111827;
+      line-height: 1;
+    }
+    .stat p {
+      color: #94a3b8;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* BOTÓN FLOTANTE (FAB) ACCESIBLE */
+    .fab {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      width: 56px;
+      height: 56px;
+      border: none;
+      border-radius: 18px;
+      background: #111827;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(17, 24, 39, 0.2);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 200;
+    }
+    .fab:hover {
+      transform: scale(1.05) translateY(-2px);
+      background: #0094d6;
+      box-shadow: 0 12px 30px rgba(0, 148, 214, 0.3);
+    }
+    .fab .material-symbols-outlined { font-size: 26px; }
+
+    /* MODAL DE ENTRADA */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal.active {
+      display: flex;
+    }
+    .modal-content {
+      background: #ffffff;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+      border: 1px solid rgba(0,0,0,0.02);
+    }
+    .modal-content h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin-bottom: 20px;
+      color: #111827;
+    }
+    .modal-content label {
+      font-weight: 700;
+      font-size: 0.75rem;
+      display: block;
+      margin-bottom: 6px;
+      color: #4b5563;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .modal-content input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      background: #fff;
+      font-family: 'Inter', sans-serif;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+      color: #1f2937;
+      transition: all 0.2s ease;
+    }
+    .modal-content input:focus {
+      border-color: rgba(0, 148, 214, 0.4);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(0, 148, 214, 0.08);
+    }
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+    .btn-save {
+      background: #111827;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-save:hover { background: #0094d6; }
+    .btn-cancel {
+      background: #f1f5f9;
+      color: #475569;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+
+    /* MENSAJES TOAST */
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #111827;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      z-index: 300;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      animation: fadeUp 0.25s ease;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateX(-50%) translateY(15px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+    .loading {
+      text-align: center;
+      padding: 60px;
+      color: #94a3b8;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+  </style>
 </head>
 <body>
+
+<div class="ambient-glow">
+  <div class="glow-sphere glow-1"></div>
+  <div class="glow-sphere glow-2"></div>
+</div>
 
 <header class="topbar">
   <div class="top-left">
     <div class="admin-info">
       <h1>⚔️ Rivales</h1>
-      <p>Nápoles F.C. · Gestión de equipos</p>
+      <p>Gestión de Equipos · Nápoles F.C.</p>
     </div>
   </div>
-  <div class="avatar" id="btnRefrescar">
+  <div class="icon-btn" id="btnRefrescar" title="Sincronizar datos">
     <span class="material-symbols-outlined">sync</span>
   </div>
 </header>
@@ -327,23 +412,23 @@ body {
 <section class="search-box">
   <div class="search">
     <span class="material-symbols-outlined">search</span>
-    <input type="text" id="searchInput" placeholder="Buscar rival...">
+    <input type="text" id="searchInput" placeholder="Buscar rival por nombre...">
   </div>
 </section>
 
 <section class="rivals" id="rivalsContainer">
-  <div class="loading">Cargando rivales...</div>
+  <div class="loading">Cargando base de rivales...</div>
 </section>
 
-<button class="fab" id="btnAgregar">
+<button class="fab" id="btnAgregar" title="Agregar nuevo rival">
   <span class="material-symbols-outlined">add</span>
 </button>
 
 <div class="modal" id="modal">
   <div class="modal-content">
     <h2 id="modalTitle">➕ Nuevo Rival</h2>
-    <label>🏷️ Nombre del equipo</label>
-    <input type="text" id="inputNombre" placeholder="Ej: LEONES, BARZA, ..." autocomplete="off">
+    <label>🏷️ Nombre de la escuadra</label>
+    <input type="text" id="inputNombre" placeholder="Ej: LEONES, BARZA, ATLÉTICO..." autocomplete="off">
     <div class="modal-actions">
       <button class="btn-cancel" id="btnCancelar">Cancelar</button>
       <button class="btn-save" id="btnGuardar">Guardar</button>
@@ -360,12 +445,12 @@ let editandoId = null;
 let editandoFila = null;
 let guardando = false;
 
-// Validar admin
+// Validar credencial administrativa
 if (localStorage.getItem('admin_activo') !== 'true') {
   window.location.href = './login.html';
 }
 
-// ================= API =================
+// ================= API GATEWAY =================
 async function cargarDatosGET(accion) {
   try {
     const url = `${WEBAPP_URL}?accion=${accion}&t=${Date.now()}`;
@@ -385,16 +470,16 @@ async function enviarDatosPOST(accion, datos) {
   } catch(e) { console.error(e); return { success: false, error: e.message }; }
 }
 
-// Cargar rivales con estadísticas
+// Cargar catálogo de rivales
 async function cargarRivales() {
   const container = document.getElementById('rivalsContainer');
-  container.innerHTML = '<div class="loading">Cargando rivales...</div>';
+  container.innerHTML = '<div class="loading">Cargando base de rivales...</div>';
   const data = await cargarDatosGET('getRivalesCompleto');
   if (data && data.success && data.data) {
     rivalesList = data.data;
     renderRivales(rivalesList);
   } else {
-    container.innerHTML = '<div class="loading">⚠️ No se pudieron cargar los rivales</div>';
+    container.innerHTML = '<div class="loading">⚠️ Error de conexión con la base de datos</div>';
     rivalesList = [];
   }
 }
@@ -407,7 +492,7 @@ function renderRivales(lista) {
     filtrados = lista.filter(r => r.nombre.toLowerCase().includes(textoBusqueda));
   }
   if (filtrados.length === 0) {
-    container.innerHTML = '<div class="loading">🏆 No hay rivales registrados</div>';
+    container.innerHTML = '<div class="loading">🏆 No se encontraron rivales registrados</div>';
     return;
   }
   container.innerHTML = '';
@@ -421,28 +506,29 @@ function renderRivales(lista) {
           <div class="rival-logo">${iniciales}</div>
           <div class="rival-info">
             <h3>${rival.nombre}</h3>
-            <p>📊 Estadísticas históricas</p>
+            <p>📊 Historial de enfrentamientos</p>
           </div>
         </div>
         <div class="actions">
-          <button class="action-btn edit" data-id="${rival.id}" data-fila="${rival.fila}" data-nombre="${rival.nombre}">
+          <button class="action-btn edit" data-id="${rival.id}" data-fila="${rival.fila}" data-nombre="${rival.nombre}" title="Editar">
             <span class="material-symbols-outlined">edit</span>
           </button>
-          <button class="action-btn delete" data-id="${rival.id}" data-fila="${rival.fila}">
+          <button class="action-btn delete" data-id="${rival.id}" data-fila="${rival.fila}" title="Eliminar">
             <span class="material-symbols-outlined">delete</span>
           </button>
         </div>
       </div>
       <div class="stats">
-        <div class="stat"><h4>${rival.partidos}</h4><p>Partidos</p></div>
-        <div class="stat"><h4>${rival.victorias}</h4><p>Victorias</p></div>
-        <div class="stat"><h4>${rival.empates}</h4><p>Empates</p></div>
-        <div class="stat"><h4>${rival.derrotas}</h4><p>Derrotas</p></div>
+        <div class="stat"><h4>${rival.partidos}</h4><p>PJ</p></div>
+        <div class="stat" style="color: #16803d;"><h4>${rival.victorias}</h4><p>PG</p></div>
+        <div class="stat" style="color: #b45309;"><h4>${rival.empates}</h4><p>PE</p></div>
+        <div class="stat" style="color: #b91c1c;"><h4>${rival.derrotas}</h4><p>PP</p></div>
       </div>
     `;
     container.appendChild(card);
   });
-  // Eventos de botones después de renderizar
+
+  // Delegación de eventos internos
   document.querySelectorAll('.edit').forEach(btn => {
     btn.addEventListener('click', () => {
       const id = parseInt(btn.dataset.id);
@@ -454,7 +540,7 @@ function renderRivales(lista) {
   document.querySelectorAll('.delete').forEach(btn => {
     btn.addEventListener('click', () => {
       const fila = parseInt(btn.dataset.fila);
-      if (confirm('⚠️ ¿Eliminar este rival? Se perderá su historial de partidos asociado.')) {
+      if (confirm('⚠️ ¿Seguro que deseas eliminar este rival? Se desvinculará de su historial estadístico histórico.')) {
         eliminarRival(fila);
       }
     });
@@ -477,11 +563,11 @@ function abrirModalEditar(id, fila, nombre) {
   document.getElementById('inputNombre').value = nombre;
   document.getElementById('modal').classList.add('active');
 }
-// Guardar (nuevo o edición)
+// Guardar (creación o actualización)
 async function guardarRival() {
-  if (guardando) { mostrarToast('⏳ Espera...'); return; }
+  if (guardando) { mostrarToast('⏳ Procesando solicitud anterior...'); return; }
   const nombre = document.getElementById('inputNombre').value.trim().toUpperCase();
-  if (!nombre) { alert('El nombre del rival es obligatorio'); return; }
+  if (!nombre) { alert('El nombre del equipo rival es requerido'); return; }
   guardando = true;
   const btn = document.getElementById('btnGuardar');
   const originalText = btn.textContent;
@@ -489,17 +575,15 @@ async function guardarRival() {
   btn.disabled = true;
   try {
     if (editandoFila !== null) {
-      // Editar
       await enviarDatosPOST('actualizarRival', { fila: editandoFila, nombre: nombre });
-      mostrarToast('✅ Rival actualizado');
+      mostrarToast('✅ Rival actualizado con éxito');
     } else {
-      // Agregar
       await enviarDatosPOST('agregarRival', { nombre: nombre });
-      mostrarToast('✅ Rival agregado');
+      mostrarToast('✅ Nuevo rival agregado al sistema');
     }
     cerrarModal();
     setTimeout(() => cargarRivales(), 1000);
-  } catch(e) { mostrarToast('❌ Error al guardar'); }
+  } catch(e) { mostrarToast('❌ Error de sincronización al guardar'); }
   finally {
     setTimeout(() => {
       btn.textContent = originalText;
@@ -509,10 +593,10 @@ async function guardarRival() {
   }
 }
 async function eliminarRival(fila) {
-  if (guardando) { mostrarToast('⏳ Espera operación anterior'); return; }
+  if (guardando) { mostrarToast('⏳ Servidor ocupado, espera un momento'); return; }
   guardando = true;
   await enviarDatosPOST('eliminarRival', { fila: fila });
-  mostrarToast('🗑️ Rival eliminado');
+  mostrarToast('🗑️ Registro eliminado correctamente');
   setTimeout(() => { cargarRivales(); guardando = false; }, 1100);
 }
 function mostrarToast(msg) {
@@ -527,18 +611,18 @@ function mostrarToast(msg) {
 function cerrarModal() {
   document.getElementById('modal').classList.remove('active');
 }
-// Búsqueda en tiempo real
+
+// Event Listeners integrados
 document.getElementById('searchInput').addEventListener('input', () => renderRivales(rivalesList));
-// Refrescar
 document.getElementById('btnRefrescar').addEventListener('click', () => cargarRivales());
-// Eventos modales
 document.getElementById('btnAgregar').addEventListener('click', abrirModalNuevo);
 document.getElementById('btnGuardar').addEventListener('click', guardarRival);
 document.getElementById('btnCancelar').addEventListener('click', cerrarModal);
 document.getElementById('modal').addEventListener('click', (e) => {
   if (e.target === document.getElementById('modal')) cerrarModal();
 });
-// Inicializar
+
+// Lanzamiento inicial
 cargarRivales();
 </script>
 </body>
