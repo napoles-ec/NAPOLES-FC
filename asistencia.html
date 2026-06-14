@@ -1,12 +1,3 @@
-Aquí tienes el módulo de **Asistencia y Control de WhatsApp** optimizado, unificado con la línea de diseño premium (cristal esmerilado, variables semánticas, tipografía `Outfit` para títulos y degradados sutiles) y con varias correcciones estructurales.
-
-### Mejoras clave e Inyecciones aplicadas:
-
-* **Manejo Dinámico de Alturas (`max-height`):** El script original usaba `max-height: 0 !important` en CSS, lo que rompía la transición fluida al expandir. Se eliminó el `!important` y se recalculan dinámicamente las alturas por JavaScript para una animación nativa y suave de la persiana.
-* **Normalización de Nombres de Propiedades:** He corregido las variables dentro de los bucles para prevenir errores de tipo `undefined`. Por ejemplo, `nombreCompleto` ahora tiene salvaguarda si falta el dato, y el enlace de WhatsApp limpia caracteres extraños en los prefijos telefónicos mediante `.replace(/\D/g, '')`.
-* **Skeletons Shimmer:** Reemplacé el aviso de carga en texto plano por un contenedor animado que simula las tarjetas de los partidos antes de renderizar la respuesta del Google Apps Script.
-
-```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
