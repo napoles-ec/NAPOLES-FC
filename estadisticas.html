@@ -283,4 +283,237 @@
     .shimmer-container { padding: 20px 18px; max-width: 700px; margin: 0 auto; }
     .shimmer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 24px; }
     .shimmer-box { height: 82px; background: rgba(255,255,255,0.5); border-radius: 24px; position: relative; overflow: hidden; }
-    .shimmer-strip { height: 74px; background: rgba(255,255,255,0.5); border-radius: 22px; margin-bottom: 12px; position:
+    .shimmer-strip { height: 74px; background: rgba(255,255,255,0.5); border-radius: 22px; margin-bottom: 12px; position: relative; overflow: hidden; }
+    .shimmer-box::after, .shimmer-strip::after {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+      transform: translateX(-100%); animation: skeletonAnim 1.6s infinite;
+    }
+    @keyframes skeletonAnim { 100% { transform: translateX(100%); } }
+
+    .error-msg {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--danger);
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    @media(max-width: 640px) {
+      .summary { gap: 12px; padding: 16px 14px 5px; }
+      .players { padding: 10px 14px 60px; }
+      .bar { width: 32px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="ambient-glow">
+  <div class="glow-sphere glow-1"></div>
+  <div class="glow-sphere glow-2"></div>
+</div>
+
+<header class="topbar">
+  <div class="top-left">
+    <div class="admin-info">
+      <h1>Estadísticas</h1>
+      <p>Nápoles F.C. · Rendimiento Real</p>
+    </div>
+  </div>
+  <div class="avatar"><i class="fa-solid fa-chart-simple"></i></div>
+</header>
+
+<main id="mainContent">
+  <div class="shimmer-container">
+    <div class="shimmer-grid">
+      <div class="shimmer-box"></div>
+      <div class="shimmer-box"></div>
+      <div class="shimmer-box"></div>
+      <div class="shimmer-box"></div>
+    </div>
+    <div class="shimmer-strip"></div>
+    <div class="shimmer-strip"></div>
+  </div>
+</main>
+
+<script>
+// ==================== CONFIGURACIÓN ====================
+const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycby1hZoGzUNJU5qQW8nZJk3HQ7m1zzRpMC6Cwe6oPhYnCcqO_vXFJccphDoeQJpz7CEO/exec';
+
+if (localStorage.getItem('admin_activo') !== 'true') {
+  window.location.href = './login.html';
+}
+
+// ==================== AUXILIARES DE PROCESAMIENTO ====================
+async function fetchData(action) {
+  const url = `${WEBAPP_URL}?action=${action}&t=${Date.now()}`;
+  const resp = await fetch(url);
+  return await resp.json();
+}
+
+function getGolesNapoles(resultado) {
+  if (!resultado || resultado === 'VS') return 0;
+  const partes = resultado.toString().split('-');
+  if (partes.length === 2) {
+    const goles = parseInt(partes[0], 10);
+    return isNaN(goles) ? 0 : goles;
+  }
+  return 0;
+}
+
+function getNombreCompleto(j) {
+  let nombre = '';
+  if (j.primerNombre) nombre += j.primerNombre;
+  if (j.segundoNombre) nombre += ' ' + j.segundoNombre;
+  if (j.apellidos) nombre += ' ' + j.apellidos;
+  return nombre.trim() || 'Sin nombre';
+}
+
+function getIniciales(nombre) {
+  if (!nombre) return '??';
+  const partes = nombre.trim().split(' ');
+  if (partes.length >= 2) {
+    return (partes[0][0] + partes[1][0]).toUpperCase();
+  }
+  return nombre.substring(0, 2).toUpperCase();
+}
+
+// ==================== CARGA Y CONSTRUCCIÓN FINAL ====================
+async function cargarEstadisticas() {
+  const container = document.getElementById('mainContent');
+  try {
+    const [partidosData, jugadoresData] = await Promise.all([
+      fetchData('getPartidos'),
+      fetchData('getJugadores')
+    ]);
+
+    if (!partidosData.success && !jugadoresData.success) {
+      throw new Error('No se recuperaron las colecciones de la BD');
+    }
+
+    const partidos = partidosData.data || [];
+    const jugadores = jugadoresData.jugadores || [];
+
+    let totalGoles = 0;
+    let partidosJugados = 0;
+    let victorias = 0;
+    let empates = 0;
+    let derrotas = 0;
+
+    const golesPorMes = {};
+
+    partidos.forEach(p => {
+      const resultado = p.resultado || '';
+      const golesNap = getGolesNapoles(resultado);
+      totalGoles += golesNap;
+
+      if (resultado && resultado !== 'VS' && resultado.includes('-')) {
+        partidosJugados++;
+        const golesRival = parseInt(resultado.split('-')[1], 10) || 0;
+        if (golesNap > golesRival) victorias++;
+        else if (golesNap < golesRival) derrotas++;
+        else empates++;
+      }
+
+      if (p.fecha && golesNap > 0) {
+        let fechaObj = (typeof p.fecha === 'string') ? new Date(p.fecha) : p.fecha;
+        if (fechaObj instanceof Date && !isNaN(fechaObj.getTime())) {
+          const mes = fechaObj.toLocaleString('es-ES', { month: 'short' }).toUpperCase().replace('.', '');
+          golesPorMes[mes] = (golesPorMes[mes] || 0) + golesNap;
+        }
+      }
+    });
+
+    const topGoleadores = [...jugadores]
+      .filter(j => (j.goles || 0) > 0)
+      .sort((a, b) => (b.goles || 0) - (a.goles || 0))
+      .slice(0, 5);
+
+    const mesesOrden = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+    let mesesConDatos = Object.keys(golesPorMes);
+    if (mesesConDatos.length === 0) {
+      mesesConDatos = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY'];
+    }
+    const mesesMostrar = mesesOrden.filter(m => mesesConDatos.includes(m)).slice(-5);
+    if (mesesMostrar.length === 0) mesesMostrar.push('JUN');
+
+    const maxGoles = Math.max(...mesesMostrar.map(m => golesPorMes[m] || 0), 1);
+    const alturaMaxima = 130; 
+
+    container.innerHTML = `
+      <section class="summary">
+        <div class="summary-card">
+          <h3>${totalGoles}</h3>
+          <p>⚽ Goles Club</p>
+        </div>
+        <div class="summary-card">
+          <h3>${partidosJugados}</h3>
+          <p>📅 Partidos</p>
+        </div>
+        <div class="summary-card">
+          <h3 style="color: var(--success);">${victorias}</h3>
+          <p>🏆 Victorias</p>
+        </div>
+        <div class="summary-card">
+          <h3 style="color: var(--danger);">${derrotas}</h3>
+          <p>❌ Derrotas</p>
+        </div>
+      </section>
+
+      <section class="players">
+        <h2 class="section-title"><i class="fa-solid fa-crown" style="color: var(--gold)"></i> Máximos Goleadores</h2>
+        ${topGoleadores.length === 0 ? '<div style="text-align:center; padding:30px; color:var(--muted); font-size:0.9rem;">No hay registros de goles asignados a jugadores.</div>' : ''}
+        
+        ${topGoleadores.map(j => `
+          <div class="player-card">
+            <div class="player-left">
+              <div class="player-avatar">${getIniciales(getNombreCompleto(j))}</div>
+              <div class="player-info">
+                <h3>${escapeHtml(getNombreCompleto(j))}</h3>
+                <p>${j.dorsal ? `Dorsal ${j.dorsal}` : 'Sin Dorsal'}</p>
+              </div>
+            </div>
+            <div class="player-stats">
+              <h4>${j.goles || 0}</h4>
+              <p>Goles</p>
+            </div>
+          </div>
+        `).join('')}
+
+        <div class="chart-card">
+          <h2 class="section-title" style="margin:0;"><i class="fa-solid fa-chart-bar" style="color:var(--purple);"></i> Goles Mensuales</h2>
+          <div class="chart-bars">
+            ${mesesMostrar.map(mes => {
+              const goles = golesPorMes[mes] || 0;
+              const altura = (goles / maxGoles) * alturaMaxima;
+              return `
+                <div class="bar" style="height: ${altura}px;">
+                  <span class="bar-value">${goles}</span>
+                  <span class="bar-label">${mes}</span>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      </section>
+    `;
+  } catch (error) {
+    console.error(error);
+    container.innerHTML = `<div class="error-msg">❌ No se pudo compilar la tabla de estadísticas. Verifica tu conexión de red o backend.</div>`;
+  }
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>]/g, function(m) {
+    if (m === '&') return '&amp;';
+    if (m === '<') return '&lt;';
+    if (m === '>') return '&gt;';
+    return m;
+  });
+}
+
+cargarEstadisticas();
+</script>
+</body>
+</html>
