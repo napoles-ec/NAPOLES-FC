@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes" name="viewport"/>
-    <title>Nápoles FC - Táctica Elite (conectada a Google Sheets)</title>
+    <title>Nápoles FC - Táctica Elite Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -32,12 +32,10 @@
             touch-action: pan-y pinch-zoom; 
         }
         
-        /* Efecto Estadio e Iluminación */
         .pitch-perspective { perspective: 1000px; }
         .pitch-surface { 
             transform: rotateX(12deg); 
             transform-origin: center bottom; 
-            /* Césped Profesional con Franjas */
             background: repeating-linear-gradient(
                 180deg,
                 #0d2b18 0px,
@@ -53,7 +51,6 @@
             aspect-ratio: 3.4/4.6; 
         }
         
-        /* Reflector de Estadio */
         .pitch-surface::before {
             content: '';
             position: absolute;
@@ -67,43 +64,42 @@
         .pitch-center-circle { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 84px; height: 84px; border: 1.5px solid rgba(255,255,255,0.25); border-radius: 50%; pointer-events: none; }
         .pitch-center-line { position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background: rgba(255,255,255,0.25); pointer-events: none; }
         
-        /* 👕 Diseño de Camiseta en CSS Puro */
+        /* 👕 Camiseta Reducida un 15% para evitar amontonamiento */
         .football-shirt {
             position: relative;
-            width: 46px;
-            height: 42px;
+            width: 39px;
+            height: 35px;
             background: #0094d6;
-            border-radius: 4px 4px 0 0;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            border-radius: 3px 3px 0 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
             will-change: transform;
         }
-        /* Mangas */
+        /* Mangas adaptadas al nuevo tamaño */
         .football-shirt::before, .football-shirt::after {
             content: '';
             position: absolute;
             top: 0;
-            width: 14px;
-            height: 18px;
+            width: 12px;
+            height: 15px;
             background: #0094d6;
             border-top: 1px solid rgba(255,255,255,0.1);
         }
-        .football-shirt::before { left: -12px; border-radius: 4px 0 0 6px; transform: rotate(-25deg); transform-origin: top right; }
-        .football-shirt::after { right: -12px; border-radius: 0 4px 6px 0; transform: rotate(25deg); transform-origin: top left; }
+        .football-shirt::before { left: -10px; border-radius: 3px 0 0 5px; transform: rotate(-25deg); transform-origin: top right; }
+        .football-shirt::after { right: -10px; border-radius: 0 3px 5px 0; transform: rotate(25deg); transform-origin: top left; }
         
-        /* Cuello Dorado de la camiseta */
         .shirt-neck {
             position: absolute;
             top: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 16px;
-            height: 7px;
+            width: 14px;
+            height: 6px;
             background: #d4af37;
-            border-radius: 0 0 12px 12px;
+            border-radius: 0 0 10px 10px;
             z-index: 3;
         }
 
-        /* Jugador en el campo */
+        /* Jugador */
         .player-node {
             position: absolute;
             transform: translate(-50%, -50%);
@@ -115,7 +111,6 @@
         .player-node:active { cursor: grabbing; z-index: 100; }
         .player-node:active .football-shirt { transform: scale(1.15); box-shadow: 0 12px 24px rgba(0,0,0,0.6); }
         
-        /* Arrastre en Móvil Clor clonado */
         .dragging-touch-shirt { 
             position: fixed; 
             z-index: 9999; 
@@ -132,7 +127,6 @@
 </head>
 <body class="font-body text-slate-200 antialiased selection:bg-blue-500/30">
 
-<!-- Header Superior -->
 <header class="fixed top-0 w-full h-16 bg-napoles-dark/50 backdrop-blur-xl border-b border-white/5 flex justify-between items-center px-6 z-50">
     <div class="flex items-center gap-3">
         <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-napoles-blue to-blue-700 flex items-center justify-center shadow-lg shadow-blue-500/20">
@@ -148,14 +142,13 @@
 </header>
 
 <main class="pt-20 pb-40 px-4 max-w-md mx-auto">
-    <!-- Marcador de Info Partido -->
     <div class="flex justify-between items-center mb-5 bg-gradient-to-r from-napoles-dark/80 to-slate-950/80 border border-white/10 p-4 rounded-2xl backdrop-blur-md shadow-2xl">
         <div>
             <h2 class="font-headline text-lg font-bold text-white tracking-wide flex items-center gap-2">
                 Nápoles FC <span class="text-gold-accent text-xs">⚜️</span>
             </h2>
             <p class="text-[11px] font-medium text-slate-400 uppercase tracking-wider mt-0.5 flex items-center gap-1.5">
-                <span class="inline-block w-2 h-2 rounded-full bg-napoles-blue animate-pulse"></span> vs Franco Canadiense · 13/06
+                <span class="inline-block w-2 h-2 rounded-full bg-napoles-blue animate-pulse"></span> vs Franco Canadiense
             </p>
         </div>
         <div class="bg-gradient-to-b from-napoles-blue/10 to-transparent px-3 py-1.5 rounded-xl border border-napoles-blue/30 text-center min-w-[85px]">
@@ -164,7 +157,6 @@
         </div>
     </div>
 
-    <!-- Contenedor Campo de Juego -->
     <div class="pitch-perspective w-full mb-6">
         <div id="pitch-container" class="pitch-surface relative w-full rounded-2xl overflow-hidden transition-all duration-300">
             <div class="pitch-glow-lines rounded-xl"></div>
@@ -173,20 +165,18 @@
             <div class="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-14 border-b border-x border-white/20"></div>
             <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-14 border-t border-x border-white/20"></div>
             
-            <!-- Lienzo de Jugadores -->
             <div id="formation-container" class="absolute inset-0 z-10"></div>
         </div>
     </div>
 
-    <!-- Selectores de Formación -->
+    <!-- Selectores de Formación (Actualizado con tu 4-1-3-2) -->
     <div class="flex justify-center gap-2 bg-slate-950/60 p-1.5 rounded-xl border border-white/5 backdrop-blur-md shadow-xl">
+        <button class="flex-1 py-2 px-3 rounded-lg bg-napoles-blue text-white text-xs font-semibold shadow-lg shadow-blue-500/20 hover:bg-blue-600 transition-all active:scale-95" onclick="aplicarFormacion('4-1-3-2')">4-1-3-2</button>
         <button class="flex-1 py-2 px-3 rounded-lg bg-white/[0.02] border border-white/5 text-slate-400 text-xs font-semibold hover:text-white transition-all active:scale-95" onclick="aplicarFormacion('4-4-2')">4-4-2</button>
-        <button class="flex-1 py-2 px-3 rounded-lg bg-napoles-blue text-white text-xs font-semibold shadow-lg shadow-blue-500/20 hover:bg-blue-600 transition-all active:scale-95" onclick="aplicarFormacion('4-3-3')">4-3-3</button>
         <button class="flex-1 py-2 px-3 rounded-lg bg-white/[0.02] border border-white/5 text-slate-400 text-xs font-semibold hover:text-white transition-all active:scale-95" onclick="aplicarFormacion('3-5-2')">3-5-2</button>
     </div>
 </main>
 
-<!-- Panel de Botones Flotantes -->
 <div class="fixed bottom-36 right-4 flex flex-col gap-3 z-50">
     <button class="w-11 h-11 rounded-full flex items-center justify-center bg-slate-900/80 text-slate-400 hover:text-white border border-white/10 backdrop-blur-md shadow-lg transition-all active:rotate-180" onclick="location.reload()">
         <span class="material-symbols-outlined text-[20px]">restart_alt</span>
@@ -199,7 +189,6 @@
     </button>
 </div>
 
-<!-- Sección de Suplentes Rediseñada Premium -->
 <section id="bench-section" class="fixed bottom-0 left-0 w-full z-40 bg-gradient-to-b from-slate-950 via-slate-950/95 to-slate-950 border-t border-white/10 pt-4 rounded-t-[24px] bench-expanded transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_-15px_40px_rgba(0,0,0,0.8)]">
     <div class="px-6 flex items-center justify-between mb-3">
         <div class="flex items-center gap-2">
@@ -219,7 +208,6 @@
     let jugadoresConfirmados = [];
     let jugadoresEnCampo = [];
     let jugadoresEnBanca = [];
-
     let dragActive = false, dragType = null, dragIndex = -1, dragJugador = null, clone = null;
 
     const pitchContainer = document.getElementById('pitch-container');
@@ -247,8 +235,7 @@
     async function cargarJugadoresDesdeGoogleSheets() {
         try {
             const params = new URLSearchParams({ action: 'getPartidoHombres', fecha: FECHA_PARTIDO, rival: RIVAL, t: Date.now() });
-            const url = `${API_URL}?${params.toString()}`;
-            const res = await fetch(url);
+            const res = await fetch(`${API_URL}?${params.toString()}`);
             const data = await res.json();
             if (data.success && data.jugadores && data.jugadores.length) {
                 jugadoresConfirmados = data.jugadores.map(j => ({
@@ -346,16 +333,27 @@
             node.style.left = `${item.x}%`;
             node.style.top = `${item.y}%`;
             
+            // Generador de insignias de eventos (Goles/Tarjetas) estilo Badge claro y nítido
+            let badgesHtml = '';
+            if (item.jugador.goles > 0 || item.jugador.amarillas > 0 || item.jugador.rojas > 0) {
+                badgesHtml = `
+                    <div class="absolute -top-2 -right-3 bg-slate-900/90 border border-white/20 rounded-md px-1 py-0.5 flex items-center gap-0.5 shadow-md z-30 scale-90">
+                        ${item.jugador.goles > 0 ? `<span class="text-[9px] font-bold text-white">⚽${item.jugador.goles}</span>` : ''}
+                        ${item.jugador.amarillas > 0 ? `<span class="text-[9px]">🟨</span>` : ''}
+                        ${item.jugador.rojas > 0 ? `<span class="text-[9px]">🟥</span>` : ''}
+                    </div>
+                `;
+            }
+            
             node.innerHTML = `
-                <div class="football-shirt flex items-center justify-center">
-                    <div class="shirt-neck"></div>
-                    <span class="font-headline font-bold text-gold-accent text-sm tracking-tighter z-10 mt-1">${item.jugador.number}</span>
+                <div class="relative">
+                    <div class="football-shirt flex items-center justify-center">
+                        <div class="shirt-neck"></div>
+                        <span class="font-headline font-bold text-gold-accent text-xs z-10 mt-0.5">${item.jugador.number}</span>
+                    </div>
+                    ${badgesHtml}
                 </div>
-                <p class="text-[10px] font-bold text-white bg-slate-950/80 px-2 py-0.5 rounded-md mt-1.5 border border-white/10 shadow-md whitespace-nowrap">${item.jugador.name.split(' ')[0]}</p>
-                <div class="flex gap-1 mt-0.5 text-[7px] font-bold text-amber-400 bg-slate-950/90 px-1 rounded-full border border-amber-500/20">
-                    ${item.jugador.goles > 0 ? `<span>⚽${item.jugador.goles}</span>` : ''}
-                    ${item.jugador.amarillas > 0 ? `<span>🟨</span>` : ''}
-                </div>
+                <p class="text-[9px] font-bold text-white bg-slate-950/85 px-1.5 py-0.5 rounded-md mt-1 border border-white/10 shadow-md whitespace-nowrap">${item.jugador.name.split(' ')[0]}</p>
             `;
             
             node.addEventListener('touchstart', (e) => iniciarArrastre(e, 'campo', idx, item.jugador), {passive: false});
@@ -377,7 +375,7 @@
             card.innerHTML = `
                 <div class="football-shirt flex items-center justify-center scale-90 mb-1">
                     <div class="shirt-neck"></div>
-                    <span class="font-headline font-bold text-gold-accent text-xs z-10 mt-1">${j.number}</span>
+                    <span class="font-headline font-bold text-gold-accent text-xs z-10 mt-0.5">${j.number}</span>
                 </div>
                 <p class="font-semibold text-[10px] text-slate-200 truncate w-16 text-center">${j.name.split(' ')[0]}</p>
                 <span class="text-[8px] text-slate-400 mt-0.5">${j.goles > 0 ? '⚽ ' + j.goles : 'Suplente'}</span>
@@ -404,11 +402,11 @@
         clone.innerHTML = `
             <div class="football-shirt flex items-center justify-center">
                 <div class="shirt-neck"></div>
-                <span class="font-headline font-bold text-gold-accent text-sm z-10 mt-1">${jugador.number}</span>
+                <span class="font-headline font-bold text-gold-accent text-xs z-10 mt-0.5">${jugador.number}</span>
             </div>
         `;
-        clone.style.left = `${cx - 23}px`;
-        clone.style.top = `${cy - 21}px`;
+        clone.style.left = `${cx - 20}px`;
+        clone.style.top = `${cy - 17}px`;
         document.body.appendChild(clone);
         
         document.addEventListener('touchmove', onMove, {passive: false});
@@ -422,7 +420,7 @@
         if (e.cancelable) e.preventDefault();
         let cx = e.touches ? e.touches[0].clientX : e.clientX;
         let cy = e.touches ? e.touches[0].clientY : e.clientY;
-        if (clone) { clone.style.left = `${cx - 23}px`; clone.style.top = `${cy - 21}px`; }
+        if (clone) { clone.style.left = `${cx - 20}px`; clone.style.top = `${cy - 17}px`; }
         
         const rect = pitchContainer.getBoundingClientRect();
         if (cx >= rect.left && cx <= rect.right && cy >= rect.top && cy <= rect.bottom) pitchContainer.classList.add('drop-over');
@@ -484,7 +482,14 @@
 
     function aplicarFormacion(tipo) {
         const formaciones = {
-            '4-3-3': [{x:50,y:88},{x:80,y:70},{x:62,y:72},{x:38,y:72},{x:20,y:70},{x:70,y:52},{x:50,y:56},{x:30,y:52},{x:80,y:32},{x:50,y:22},{x:20,y:32}],
+            // Reajustado con el 4-1-3-2 exacto basado en la referencia de tu imagen
+            '4-1-3-2': [
+                {x:50, y:88}, // James (Arquero)
+                {x:18, y:70}, {x:38, y:75}, {x:62, y:75}, {x:82, y:70}, // Miguel, Bryan, Gabriel, Jorge
+                {x:50, y:58}, // Michael (Pivote único por detrás del círculo central)
+                {x:22, y:38}, {x:50, y:43}, {x:78, y:38}, // Anthony, Darwin, Luis
+                {x:35, y:15}, {x:65, y:15}  // Andres, Marco (Delanteros)
+            ],
             '4-4-2': [{x:50,y:88},{x:80,y:70},{x:62,y:72},{x:38,y:72},{x:20,y:70},{x:76,y:52},{x:58,y:54},{x:42,y:54},{x:24,y:52},{x:58,y:28},{x:42,y:28}],
             '3-5-2': [{x:50,y:88},{x:70,y:72},{x:50,y:76},{x:30,y:72},{x:86,y:56},{x:68,y:52},{x:50,y:56},{x:32,y:52},{x:14,y:56},{x:60,y:28},{x:40,y:28}]
         };
