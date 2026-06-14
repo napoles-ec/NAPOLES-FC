@@ -1,34 +1,36 @@
 <!DOCTYPE html>
 <html class="light" lang="es">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>Vocalía | Nápoles FC - Gestión de deudas por conceptos</title>
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+    <title>Vocalía | Nápoles FC - Gestión de deudas por conceptos</title>
+    
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#9d4300",
-                        "primary-container": "#f97316",
+                        "primary": "#7c3aed",
+                        "primary-container": "#c084fc",
                         "secondary": "#565e74",
-                        "secondary-container": "#dae2fd",
+                        "secondary-container": "#e2e8f0",
                         "surface": "#faf9f6",
                         "surface-dim": "#dbdad7",
                         "surface-container": "#efeeeb",
                         "surface-container-high": "#e9e8e5",
                         "surface-container-low": "#f4f3f1",
-                        "on-surface": "#1a1c1a",
-                        "on-surface-variant": "#584237",
-                        "outline-variant": "#e0c0b1",
-                        "error": "#ba1a1a",
-                        "error-container": "#ffdad6",
+                        "on-surface": "#0f172a",
+                        "on-surface-variant": "#64748b",
+                        "outline-variant": "#cbd5e1",
+                        "error": "#ef4444",
+                        "error-container": "#fee2e2",
                     },
                     fontFamily: {
                         "headline-md": ["Outfit", "sans-serif"],
@@ -40,195 +42,217 @@
             }
         }
     </script>
-<style>
+    
+    <style>
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
         .glass-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 4px 30px rgba(86, 94, 116, 0.04);
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 30px rgba(15, 23, 42, 0.01);
         }
         .athletic-bg {
-            background: radial-gradient(circle at 0% 0%, rgba(249, 115, 22, 0.05) 0%, transparent 50%),
-                        radial-gradient(circle at 100% 100%, rgba(86, 94, 116, 0.05) 0%, transparent 50%),
-                        #faf9f6;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 40%, #f1f5f9 100%);
             background-attachment: fixed;
         }
-        .stat-card-gradient { background: linear-gradient(135deg, #9d4300 0%, #f97316 100%); }
+        .stat-card-gradient { background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%); }
+        
         .player-selected {
-            border: 2px solid #9d4300 !important;
-            background: rgba(249, 115, 22, 0.08) !important;
-            transform: scale(1.02);
+            border: 2px solid #7c3aed !important;
+            background: rgba(124, 58, 237, 0.05) !important;
+            transform: translateY(-2px);
         }
         .filter-chip, .filter-estado {
             transition: all 0.2s ease;
             cursor: pointer;
         }
         .filter-chip.active, .filter-estado.active {
-            background-color: #9d4300 !important;
+            background-color: #7c3aed !important;
             color: white !important;
-            border-color: #9d4300 !important;
+            border-color: #7c3aed !important;
         }
         .toast-notify {
             position: fixed;
             bottom: 24px;
             left: 50%;
             transform: translateX(-50%);
-            background: #1e293b;
+            background: #0f172a;
             color: white;
             padding: 12px 24px;
             border-radius: 60px;
             z-index: 2000;
             font-size: 0.85rem;
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 8px;
             white-space: nowrap;
-            backdrop-filter: blur(8px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
         }
         .deuda-item-concepto {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.75rem;
-            padding: 4px 8px;
-            background: #f4f3f1;
+            font-size: 0.78rem;
+            padding: 6px 10px;
+            background: rgba(241, 245, 249, 0.8);
             border-radius: 12px;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
+            border: 1px solid rgba(226, 232, 240, 0.5);
         }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
+
+        /* SHIMMER EFFECT LOADER */
+        .shimmer-card { height: 160px; background: rgba(255,255,255,0.6); border-radius: 20px; position: relative; overflow: hidden; }
+        .shimmer-card::after {
+            content: ""; position: absolute; inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+            transform: translateX(-100%); animation: loadingShimmer 1.5s infinite;
+        }
+        @keyframes loadingShimmer { 100% { transform: translateX(100%); } }
     </style>
 </head>
 <body class="athletic-bg font-body-md text-on-surface min-h-screen pb-32">
 
-<header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl border-b border-white/30 flex justify-between items-center px-gutter h-16 shadow-sm">
-    <div class="flex items-center gap-3 px-4 md:px-6">
-        <span class="material-symbols-outlined text-primary text-3xl">sports_soccer</span>
-        <h1 class="text-headline-md font-headline-md font-bold tracking-tighter text-primary">VOCALÍA NÁPOLES FC</h1>
+<header class="fixed top-0 w-full z-50 bg-white/75 backdrop-blur-xl border-b border-slate-200/80 flex justify-between items-center px-4 md:px-8 h-16 shadow-sm">
+    <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-primary text-3xl font-bold">sports_soccer</span>
+        <h1 class="text-headline-md font-headline-md font-black tracking-tighter bg-gradient-to-r from-primary to-primary-container bg-clip-text text-transparent">VOCALÍA NÁPOLES FC</h1>
     </div>
-    <div class="flex items-center gap-4 px-4 md:px-6">
-        <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden border-2 border-primary/20">
-            <span class="material-symbols-outlined text-primary">gavel</span>
+    <div class="flex items-center gap-4">
+        <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+            <span class="material-symbols-outlined text-primary font-semibold">gavel</span>
         </div>
     </div>
 </header>
 
-<main class="pt-24 px-4 md:px-gutter max-w-container-max mx-auto">
+<main class="pt-24 px-4 md:px-8 max-w-7xl mx-auto">
     <!-- Stats Dashboard -->
     <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <div class="stat-card-gradient p-6 rounded-xl shadow-xl text-white relative overflow-hidden group">
+        <div class="stat-card-gradient p-6 rounded-3xl shadow-xl text-white relative overflow-hidden group border border-white/10">
             <div class="relative z-10">
-                <p class="text-label-sm uppercase tracking-wider opacity-80 mb-1">Total Recaudado</p>
-                <h2 class="text-headline-lg font-headline-lg mb-4" id="total-recaudado">$0</h2>
-                <div class="flex items-center gap-2 text-sm bg-white/20 w-fit px-3 py-1 rounded-full">
+                <p class="text-xs uppercase tracking-wider opacity-70 font-semibold mb-1">Total Recaudado</p>
+                <h2 class="text-3xl font-headline-lg font-black mb-4" id="total-recaudado">$0.00</h2>
+                <div class="flex items-center gap-2 text-xs bg-white/10 backdrop-blur-md w-fit px-3 py-1.5 rounded-full border border-white/10">
                     <span class="material-symbols-outlined text-sm">payments</span>
-                    <span>Historial real</span>
+                    <span class="font-medium">Historial consolidado</span>
                 </div>
             </div>
-            <span class="material-symbols-outlined absolute -right-4 -bottom-4 text-9xl opacity-10 group-hover:scale-110 transition-transform">account_balance_wallet</span>
+            <span class="material-symbols-outlined absolute -right-4 -bottom-4 text-9xl opacity-5 group-hover:scale-110 transition-transform duration-300">account_balance_wallet</span>
         </div>
-        <div class="glass-card p-6 rounded-xl border-l-4 border-primary">
-            <p class="text-on-surface-variant text-label-sm uppercase tracking-wider mb-1">Jugadores Activos</p>
-            <h2 class="text-headline-lg font-headline-lg text-on-surface mb-4" id="jugadores-activos">0</h2>
-            <div class="w-full bg-surface-container-high rounded-full h-1.5">
-                <div class="bg-primary h-1.5 rounded-full" style="width: 75%"></div>
+        
+        <div class="glass-card p-6 rounded-3xl border-l-4 border-primary flex flex-col justify-between">
+            <div>
+                <p class="text-on-surface-variant text-xs uppercase tracking-wider font-bold mb-1">Jugadores Activos</p>
+                <h2 class="text-3xl font-headline-lg font-black text-on-surface mb-4" id="jugadores-activos">0</h2>
+            </div>
+            <div class="w-full bg-slate-200 rounded-full h-1.5">
+                <div class="bg-primary h-1.5 rounded-full transition-all duration-500" style="width: 100%"></div>
             </div>
         </div>
-        <div class="glass-card p-6 rounded-xl border-l-4 border-secondary">
-            <p class="text-on-surface-variant text-label-sm uppercase tracking-wider mb-1">Pendientes de Pago</p>
-            <h2 class="text-headline-lg font-headline-lg text-on-surface mb-4" id="pendientes-pago">0</h2>
-            <button id="btn-ver-historial" class="text-primary font-label-md flex items-center gap-1 hover:underline">
-                Ver historial <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        
+        <div class="glass-card p-6 rounded-3xl border-l-4 border-error flex flex-col justify-between">
+            <div>
+                <p class="text-on-surface-variant text-xs uppercase tracking-wider font-bold mb-1">Pendientes de Pago</p>
+                <h2 class="text-3xl font-headline-lg font-black text-on-surface mb-4" id="pendientes-pago">0</h2>
+            </div>
+            <button id="btn-ver-historial" class="text-primary font-semibold text-sm flex items-center gap-1 hover:text-primary/80 transition-colors w-fit">
+                Ver historial de caja <span class="material-symbols-outlined text-sm">arrow_forward</span>
             </button>
         </div>
     </section>
 
-    <!-- Filtros mejorados -->
-    <section class="glass-card p-5 rounded-xl mb-6">
-        <div class="flex flex-col gap-4">
-            <!-- Filtro por concepto (deuda específica) -->
+    <!-- Filtros avanzados -->
+    <section class="glass-card p-6 rounded-3xl mb-6 space-y-5">
+        <div>
+            <p class="text-sm font-bold text-on-surface/80 mb-2.5 flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-base text-primary">filter_list</span> Filtrar por tipo de deuda:
+            </p>
+            <div class="flex flex-wrap gap-2">
+                <button data-filtro-concepto="todos" class="filter-chip active px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Todos</button>
+                <button data-filtro-concepto="vocalia" class="filter-chip px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Vocalía</button>
+                <button data-filtro-concepto="uniformes" class="filter-chip px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Uniformes</button>
+                <button data-filtro-concepto="inscripcion" class="filter-chip px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Inscripción</button>
+                <button data-filtro-concepto="inauguracion" class="filter-chip px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Inauguración</button>
+                <button data-filtro-concepto="multas" class="filter-chip px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Multas</button>
+                <button data-filtro-concepto="tarjeta_amarilla" class="filter-chip px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Tarj. Amarilla</button>
+                <button data-filtro-concepto="tarjeta_roja" class="filter-chip px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Tarj. Roja</button>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-slate-200/50">
             <div>
-                <p class="text-label-md font-semibold text-on-surface-variant mb-2">🔍 Filtrar por tipo de deuda:</p>
+                <p class="text-sm font-bold text-on-surface/80 mb-2.5 flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-base text-primary">monitoring</span> Estado financiero:
+                </p>
                 <div class="flex flex-wrap gap-2">
-                    <button data-filtro-concepto="todos" class="filter-chip active px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">Todos</button>
-                    <button data-filtro-concepto="vocalia" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">Vocalía</button>
-                    <button data-filtro-concepto="uniformes" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">Uniformes</button>
-                    <button data-filtro-concepto="inscripcion" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">Inscripción</button>
-                    <button data-filtro-concepto="inauguracion" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">Inauguración</button>
-                    <button data-filtro-concepto="multas" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">Multas</button>
-                    <button data-filtro-concepto="tarjeta_amarilla" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">Tarj. Amarilla</button>
-                    <button data-filtro-concepto="tarjeta_roja" class="filter-chip px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">Tarj. Roja</button>
+                    <button data-filtro-estado="todos" class="filter-estado active px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Todos</button>
+                    <button data-filtro-estado="morosos" class="filter-estado px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Con deuda</button>
+                    <button data-filtro-estado="aldia" class="filter-estado px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Al día</button>
+                    <button data-filtro-estado="credito" class="filter-estado px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Con saldo a favor</button>
                 </div>
             </div>
-            <!-- Filtro por estado -->
             <div>
-                <p class="text-label-md font-semibold text-on-surface-variant mb-2">📊 Estado financiero:</p>
-                <div class="flex flex-wrap gap-2">
-                    <button data-filtro-estado="todos" class="filter-estado active px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">Todos</button>
-                    <button data-filtro-estado="morosos" class="filter-estado px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">Con deuda (morosos)</button>
-                    <button data-filtro-estado="aldia" class="filter-estado px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">Al día (sin deuda)</button>
-                    <button data-filtro-estado="credito" class="filter-estado px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">Con crédito a favor</button>
-                </div>
-            </div>
-            <!-- Filtro por rango de deuda total -->
-            <div>
-                <p class="text-label-md font-semibold text-on-surface-variant mb-2">💰 Deuda total (rango):</p>
-                <div class="flex flex-wrap gap-3 items-center">
-                    <select id="filtro-rango-deuda" class="px-4 py-1.5 rounded-full bg-white border border-gray-300 text-sm">
-                        <option value="todos">Todos</option>
-                        <option value="mayor0">Mayor a $0</option>
-                        <option value="mayor50">Mayor a $50</option>
-                        <option value="mayor100">Mayor a $100</option>
-                        <option value="menor50">Menor o igual a $50</option>
-                    </select>
-                </div>
+                <p class="text-sm font-bold text-on-surface/80 mb-2.5 flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-base text-primary">payments</span> Rango de deuda total:
+                </p>
+                <select id="filtro-rango-deuda" class="w-full max-w-xs text-xs font-semibold text-on-surface-variant bg-slate-100 border border-slate-200 rounded-full py-2 px-4 focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                    <option value="todos">Mostrar todos los montos</option>
+                    <option value="mayor0">Mayor a $0.00</option>
+                    <option value="mayor50">Mayor a $50.00</option>
+                    <option value="mayor100">Mayor a $100.00</option>
+                    <option value="menor50">Menor o igual a $50.00</option>
+                </select>
             </div>
         </div>
     </section>
 
-    <!-- Search & Actions -->
-    <section class="glass-card p-6 rounded-xl mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
+    <!-- Barra de búsqueda y acciones grupales -->
+    <section class="glass-card p-4 rounded-3xl mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
         <div class="relative w-full md:w-96">
             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-            <input class="w-full pl-12 pr-4 py-3 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary/20" id="busqueda" placeholder="Buscar jugador por nombre...">
+            <input class="w-full pl-11 pr-4 py-2.5 bg-slate-100 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 text-sm placeholder:text-slate-400 font-medium" id="busqueda" placeholder="Buscar jugador por nombre...">
         </div>
-        <div class="flex gap-3 w-full md:w-auto">
-            <button id="btn-pago-multiple" class="flex-1 md:flex-none px-6 py-3 bg-primary text-white font-label-md rounded-xl shadow-lg hover:brightness-110 active:scale-95 flex items-center justify-center gap-2">
-                <span class="material-symbols-outlined">groups</span>
-                Pagar seleccionados
+        <div class="flex gap-2 w-full md:w-auto">
+            <button id="btn-pago-multiple" class="flex-1 md:flex-none px-5 py-2.5 bg-primary text-white text-xs font-bold rounded-2xl shadow-lg shadow-primary/20 hover:bg-primary/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-lg">groups</span>
+                Abono Colectivo
             </button>
-            <button id="btn-refresh" class="px-4 py-3 bg-secondary-container text-on-secondary-container rounded-xl hover:bg-secondary-container/80">
-                <span class="material-symbols-outlined">refresh</span>
+            <button id="btn-refresh" class="px-3 py-2.5 bg-secondary-container text-on-surface rounded-2xl hover:bg-slate-200 transition-colors flex items-center justify-center">
+                <span class="material-symbols-outlined text-xl">refresh</span>
             </button>
         </div>
     </section>
 
-    <div class="text-right text-label-sm text-on-surface-variant mb-3" id="resultados-contador">Mostrando todos los jugadores</div>
+    <div class="text-right text-xs font-bold text-on-surface-variant mb-4 mr-1" id="resultados-contador">Sincronizando registros...</div>
 
+    <!-- Grid de Plantilla -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="lista-jugadores">
-        <div class="col-span-full py-20 text-center">
-            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent mb-4"></div>
-            <p class="text-on-surface-variant">Cargando plantilla...</p>
-        </div>
+        <div class="shimmer-card"></div>
+        <div class="shimmer-card"></div>
+        <div class="shimmer-card"></div>
     </div>
 </main>
 
-<!-- Modal Pago -->
+<!-- Modal Registro Pago -->
 <div id="modalPago" class="fixed inset-0 z-[60] hidden items-center justify-center p-4">
-    <div class="absolute inset-0 bg-on-surface/40 backdrop-blur-sm" onclick="cerrarModalPago()"></div>
-    <div class="relative glass-card w-full max-w-md rounded-2xl overflow-hidden">
-        <div class="p-6 border-b border-outline-variant/20 flex justify-between items-center">
-            <h3 class="text-headline-md font-headline-md text-primary" id="modal-titulo">Registrar Pago</h3>
-            <button class="p-2 hover:bg-surface-container-high rounded-full" onclick="cerrarModalPago()"><span class="material-symbols-outlined">close</span></button>
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-md" onclick="cerrarModalPago()"></div>
+    <div class="relative glass-card w-full max-w-md rounded-3xl overflow-hidden shadow-2xl border border-white/20">
+        <div class="p-6 border-b border-slate-200/60 flex justify-between items-center">
+            <h3 class="text-lg font-headline-md font-black text-on-surface" id="modal-titulo">Registrar Recaudo</h3>
+            <button class="p-1.5 hover:bg-slate-100 rounded-full transition-colors flex items-center justify-center" onclick="cerrarModalPago()">
+                <span class="material-symbols-outlined text-xl">close</span>
+            </button>
         </div>
         <div class="p-6 space-y-4">
-            <div id="jugadores-seleccionados-resumen" class="text-sm text-on-surface-variant"></div>
+            <div id="jugadores-seleccionados-resumen" class="text-xs bg-primary/5 border border-primary/10 p-3 rounded-xl font-medium text-primary hidden"></div>
             <div>
-                <label class="block text-label-md font-medium mb-1">Concepto a pagar</label>
-                <select id="conceptoPago" class="w-full p-3 bg-surface-container-low rounded-xl border-none">
+                <label class="block text-xs font-bold text-on-surface-variant mb-1.5">Concepto del Pago</label>
+                <select id="conceptoPago" class="w-full p-3 bg-slate-100 rounded-xl border-none text-sm font-medium focus:ring-2 focus:ring-primary/20">
+                    <option value="vocalia">Vocalía</option>
                     <option value="uniformes">Uniformes</option>
                     <option value="inscripcion">Inscripción</option>
-                    <option value="vocalia">Vocalía</option>
                     <option value="inauguracion">Inauguración</option>
                     <option value="multas">Multas</option>
                     <option value="tarjeta_amarilla">Tarjeta Amarilla</option>
@@ -236,30 +260,34 @@
                 </select>
             </div>
             <div>
-                <label class="block text-label-md font-medium mb-1">Monto (USD)</label>
-                <input type="number" id="montoPago" step="0.01" class="w-full p-3 bg-surface-container-low rounded-xl border-none" placeholder="0.00">
+                <label class="block text-xs font-bold text-on-surface-variant mb-1.5">Valor Recibido (USD)</label>
+                <input type="number" id="montoPago" step="0.01" class="w-full p-3 bg-slate-100 rounded-xl border-none text-sm font-semibold focus:ring-2 focus:ring-primary/20" placeholder="0.00">
             </div>
             <div>
-                <label class="block text-label-md font-medium mb-1">Transacción (opcional)</label>
-                <input type="text" id="transaccionPago" class="w-full p-3 bg-surface-container-low rounded-xl border-none" placeholder="Referencia">
+                <label class="block text-xs font-bold text-on-surface-variant mb-1.5">Código de Referencia / Transacción (Opcional)</label>
+                <input type="text" id="transaccionPago" class="w-full p-3 bg-slate-100 rounded-xl border-none text-sm font-medium focus:ring-2 focus:ring-primary/20" placeholder="Ej. Depósito o número de recibo">
             </div>
         </div>
-        <div class="p-6 bg-surface-container-low flex justify-end gap-3">
-            <button class="px-6 py-2 text-secondary font-label-md hover:bg-surface-container-high rounded-lg" onclick="cerrarModalPago()">Cancelar</button>
-            <button id="btn-confirmar-pago" class="px-6 py-2 bg-primary text-white font-label-md rounded-lg shadow-md hover:brightness-110">Registrar</button>
+        <div class="p-4 bg-slate-50 border-t border-slate-200/60 flex justify-end gap-2.5">
+            <button class="px-4 py-2 text-xs font-bold text-slate-500 hover:bg-slate-100 rounded-xl transition-colors" onclick="cerrarModalPago()">Cancelar</button>
+            <button id="btn-confirmar-pago" class="px-5 py-2 bg-primary text-white text-xs font-bold rounded-xl shadow-md hover:bg-primary/90 transition-colors">Asentar Pago</button>
         </div>
     </div>
 </div>
 
-<!-- Modal Historial -->
+<!-- Modal Historial de Transacciones -->
 <div id="modalHistorial" class="fixed inset-0 z-[60] hidden items-center justify-center p-4">
-    <div class="absolute inset-0 bg-on-surface/40 backdrop-blur-sm" onclick="cerrarModalHistorial()"></div>
-    <div class="relative glass-card w-full max-w-2xl max-h-[80vh] rounded-2xl overflow-hidden flex flex-col">
-        <div class="p-6 border-b border-outline-variant/20 flex justify-between items-center">
-            <h3 class="text-headline-md font-headline-md text-primary">Historial de Pagos</h3>
-            <button class="p-2 hover:bg-surface-container-high rounded-full" onclick="cerrarModalHistorial()"><span class="material-symbols-outlined">close</span></button>
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-md" onclick="cerrarModalHistorial()"></div>
+    <div class="relative glass-card w-full max-w-2xl max-h-[80vh] rounded-3xl overflow-hidden flex flex-col shadow-2xl">
+        <div class="p-6 border-b border-slate-200/60 flex justify-between items-center bg-white/50">
+            <h3 class="text-lg font-headline-md font-black text-on-surface">Historial de Caja Recaudada</h3>
+            <button class="p-1.5 hover:bg-slate-100 rounded-full transition-colors flex items-center justify-center" onclick="cerrarModalHistorial()">
+                <span class="material-symbols-outlined text-xl">close</span>
+            </button>
         </div>
-        <div class="p-6 overflow-y-auto scrollbar-hide" id="historial-contenido">Cargando...</div>
+        <div class="p-6 overflow-y-auto scrollbar-hide space-y-3" id="historial-contenido">
+            <div class="text-center py-8 font-medium text-sm text-slate-400">Procesando transacciones...</div>
+        </div>
     </div>
 </div>
 
@@ -276,13 +304,14 @@
     let busquedaTexto = "";
 
     const CONCEPTOS = ["uniformes", "inscripcion", "vocalia", "inauguracion", "multas", "tarjeta_amarilla", "tarjeta_roja"];
-    const NOMBRES = { uniformes:"Uniformes", inscripcion:"Inscripción", vocalia:"Vocalía", inauguracion:"Inauguración", multas:"Multas", tarjeta_amarilla:"Tarj.Amarilla", tarjeta_roja:"Tarj.Roja" };
+    const NOMBRES = { vocalia:"Vocalía", uniformes:"Uniformes", inscripcion:"Inscripción", inauguracion:"Inauguración", multas:"Multas", tarjeta_amarilla:"Tarj. Amarilla", tarjeta_roja:"Tarj. Roja" };
 
     function formatMoney(v) { return new Intl.NumberFormat('es-EC', { style:'currency', currency:'USD' }).format(v); }
+    
     function toast(msg, type='info') {
         let t = document.createElement('div');
         t.className = 'toast-notify';
-        t.innerHTML = `<span>${type==='error'?'❌':'✅'}</span> ${msg}`;
+        t.innerHTML = `<span>${type==='error'?'❌':'📋'}</span> ${msg}`;
         document.body.appendChild(t);
         setTimeout(()=>t.remove(),3000);
     }
@@ -296,23 +325,22 @@
     }
 
     function cumpleFiltros(j) {
-        // nombre
         let nom = (j.nombreCompleto || j.nombreCamiseta || "").toLowerCase();
         if(busquedaTexto && !nom.includes(busquedaTexto.toLowerCase())) return false;
-        // estado
+        
         let deuda = deudaTotal(j);
         let cred = (j.credito||0)>0;
         if(filtroEstado==="morosos" && deuda===0) return false;
         if(filtroEstado==="aldia" && deuda>0) return false;
         if(filtroEstado==="credito" && !cred) return false;
-        // rango deuda
+        
         if(filtroRangoDeuda !== "todos") {
             if(filtroRangoDeuda === "mayor0" && deuda === 0) return false;
             if(filtroRangoDeuda === "mayor50" && deuda <= 50) return false;
             if(filtroRangoDeuda === "mayor100" && deuda <= 100) return false;
             if(filtroRangoDeuda === "menor50" && deuda > 50) return false;
         }
-        // concepto específico (debe tener deuda >0 en ese concepto)
+        
         if(filtroConcepto !== "todos") {
             if(!j.deudas || (j.deudas[filtroConcepto] || 0) <= 0) return false;
         }
@@ -321,7 +349,7 @@
 
     async function cargarDatos() {
         const container = document.getElementById('lista-jugadores');
-        container.innerHTML = `<div class="col-span-full py-20 text-center"><div class="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent mb-4"></div><p>Cargando...</p></div>`;
+        container.innerHTML = '<div class="shimmer-card"></div><div class="shimmer-card"></div><div class="shimmer-card"></div>';
         try {
             const res = await fetch(`${API_URL}?action=getVocaliaData&nocache=${Date.now()}`);
             const data = await res.json();
@@ -331,6 +359,7 @@
                 for(let j of jugadoresData) { let d=deudaTotal(j); totalDeuda+=d; if(d>0) deudores++; }
                 document.getElementById('jugadores-activos').innerText = jugadoresData.length;
                 document.getElementById('pendientes-pago').innerText = deudores;
+                
                 const hist = await fetch(`${API_URL}?action=getHistorialVocalia&nocache=${Date.now()}`);
                 const histData = await hist.json();
                 let recaudado = 0;
@@ -339,21 +368,21 @@
                 aplicarFiltros();
             } else throw new Error(data.error);
         } catch(e) {
-            container.innerHTML = `<div class="col-span-full py-20 text-center text-error">❌ ${e.message}</div>`;
+            container.innerHTML = `<div class="col-span-full py-16 text-center text-sm font-bold text-error bg-error-container/30 border border-error/10 rounded-2xl">❌ Sincronización fallida: ${e.message}</div>`;
             toast("Error de conexión","error");
         }
     }
 
     function aplicarFiltros() {
         const filtrados = jugadoresData.filter(cumpleFiltros);
-        document.getElementById('resultados-contador').innerHTML = `Mostrando ${filtrados.length} de ${jugadoresData.length} jugadores`;
+        document.getElementById('resultados-contador').innerHTML = `Mostrando ${filtrados.length} de ${jugadoresData.length} fichas`;
         renderizarJugadores(filtrados);
     }
 
     function renderizarJugadores(lista) {
         const container = document.getElementById('lista-jugadores');
         if(!lista.length) {
-            container.innerHTML = '<div class="col-span-full py-20 text-center">🎯 No hay jugadores con esos filtros.</div>';
+            container.innerHTML = '<div class="col-span-full py-16 text-center text-sm font-semibold text-slate-400 bg-slate-50 border border-slate-200/60 rounded-2xl">🎯 Ningún registro coincide con la búsqueda.</div>';
             return;
         }
         let html = '';
@@ -361,43 +390,51 @@
             const deudaTot = deudaTotal(j);
             const selec = selectedPlayers.has(j.cedula);
             const tieneDetalle = j.deudas && typeof j.deudas === 'object';
-            // Construir desglose visible de cada concepto adeudado
+            
             let desgloseHtml = '';
             if(tieneDetalle) {
                 for(let c of CONCEPTOS) {
                     let val = j.deudas[c] || 0;
                     if(val > 0) {
-                        desgloseHtml += `<div class="deuda-item-concepto"><span>${NOMBRES[c]}</span><span class="font-bold text-primary">${formatMoney(val)}</span></div>`;
+                        const esFiltroActivo = filtroConcepto === c;
+                        desgloseHtml += `
+                            <div class="deuda-item-concepto ${esFiltroActivo ? 'bg-primary/5 border-primary/20' : ''}">
+                                <span class="${esFiltroActivo ? 'font-bold text-primary' : 'font-medium text-on-surface-variant'}">${NOMBRES[c]}</span>
+                                <span class="font-bold text-primary">${formatMoney(val)}</span>
+                            </div>`;
                     }
                 }
             } else {
-                desgloseHtml = `<div class="deuda-item-concepto"><span>Deuda total</span><span class="font-bold">${formatMoney(deudaTot)}</span></div>`;
+                desgloseHtml = `<div class="deuda-item-concepto"><span>Saldo Adeudado</span><span class="font-bold">${formatMoney(deudaTot)}</span></div>`;
             }
             if((j.credito||0)>0) {
-                desgloseHtml += `<div class="deuda-item-concepto text-green-700"><span>💰 Crédito a favor</span><span>${formatMoney(j.credito)}</span></div>`;
+                desgloseHtml += `<div class="deuda-item-concepto bg-emerald-50 text-emerald-700 border-emerald-200/50"><span>💰 Abono a favor</span><span class="font-bold">${formatMoney(j.credito)}</span></div>`;
             }
+            
             html += `
-                <div class="glass-card p-5 rounded-xl cursor-pointer hover:shadow-lg transition-all duration-300 border ${selec ? 'border-primary player-selected' : 'border-transparent'} flex flex-col gap-3 group" data-cedula="${j.cedula}">
+                <div class="glass-card p-5 rounded-2xl cursor-pointer hover:shadow-lg hover:border-slate-300 transition-all duration-300 border ${selec ? 'player-selected' : 'border-transparent'} flex flex-col gap-3.5 group" data-cedula="${j.cedula}">
                     <div class="flex items-start justify-between">
                         <div class="flex items-center gap-3">
-                            <input type="checkbox" class="player-checkbox w-5 h-5 accent-primary" data-cedula="${j.cedula}" ${selec ? 'checked' : ''}>
-                            <div class="w-12 h-12 bg-primary-container/20 rounded-full flex items-center justify-center text-primary font-bold text-lg">${j.dorsal || '?'}</div>
+                            <input type="checkbox" class="player-checkbox w-4.5 h-4.5 rounded border-slate-300 text-primary focus:ring-primary/20 accent-primary" data-cedula="${j.cedula}" ${selec ? 'checked' : ''}>
+                            <div class="w-11 h-11 bg-slate-100 rounded-xl flex items-center justify-center text-on-surface font-black text-sm border border-slate-200">${j.dorsal || '?'}</div>
                             <div>
-                                <h4 class="font-headline-md text-on-surface group-hover:text-primary">${escapeHtml(j.nombreCompleto || j.nombreCamiseta)}</h4>
-                                <p class="text-label-sm text-on-surface-variant">Total adeudado: <span class="font-bold ${deudaTot>0?'text-red-600':'text-green-600'}">${deudaTot>0?formatMoney(deudaTot):'✓ Al día'}</span></p>
+                                <h4 class="font-headline-md font-bold text-sm text-on-surface group-hover:text-primary transition-colors">${escapeHtml(j.nombreCompleto || j.nombreCamiseta)}</h4>
+                                <p class="text-xs text-on-surface-variant font-medium mt-0.5">Cartera total: <span class="font-bold ${deudaTot>0?'text-error':'text-emerald-600'}">${deudaTot>0?formatMoney(deudaTot):'✓ Al día'}</span></p>
                             </div>
                         </div>
-                        <span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" data-pagar="${j.cedula}">payments</span>
+                        <button class="p-1.5 hover:bg-primary/10 rounded-xl text-slate-400 hover:text-primary transition-all md:opacity-0 group-hover:opacity-100 flex items-center justify-center" data-pagar="${j.cedula}">
+                            <span class="material-symbols-outlined text-xl font-medium">payments</span>
+                        </button>
                     </div>
-                    <div class="border-t border-outline-variant/30 pt-2">
-                        <p class="text-xs font-semibold text-on-surface-variant mb-1">📋 Desglose de deudas:</p>
-                        ${desgloseHtml || '<div class="text-xs text-gray-400">Sin deudas pendientes</div>'}
+                    <div class="border-t border-slate-200/60 pt-3">
+                        <p class="text-[0.7rem] font-bold text-on-surface-variant uppercase tracking-wider mb-2">Detalle de Cartera</p>
+                        ${desgloseHtml || '<div class="text-xs font-semibold text-slate-400 bg-slate-50 py-2 text-center rounded-xl border border-slate-200/40">Sin saldos pendientes</div>'}
                     </div>
                 </div>
             `;
         }
         container.innerHTML = html;
-        // Checkboxes
+
         document.querySelectorAll('.player-checkbox').forEach(cb => {
             cb.addEventListener('change', (e) => {
                 e.stopPropagation();
@@ -405,11 +442,11 @@
                 if(cb.checked) selectedPlayers.add(ced);
                 else selectedPlayers.delete(ced);
                 let parent = cb.closest('.glass-card');
-                if(cb.checked) parent.classList.add('player-selected','border-primary');
-                else parent.classList.remove('player-selected','border-primary');
+                if(cb.checked) parent.classList.add('player-selected');
+                else parent.classList.remove('player-selected');
             });
         });
-        // Botón de pagar ícono
+
         document.querySelectorAll('[data-pagar]').forEach(icon => {
             icon.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -418,13 +455,14 @@
                 if(jug) abrirModalPagoIndividual(jug);
             });
         });
-        // Clic en la tarjeta (opcional: mostrar más detalles? ya se ven todos)
     }
 
     function abrirModalPagoIndividual(jug) {
         modoPagoMultiple = false;
-        document.getElementById('modal-titulo').innerText = `Pagar a ${jug.nombreCompleto || jug.nombreCamiseta}`;
-        document.getElementById('jugadores-seleccionados-resumen').innerHTML = '';
+        document.getElementById('modal-titulo').innerText = `Abono: ${jug.nombreCompleto || jug.nombreCamiseta}`;
+        const resEl = document.getElementById('jugadores-seleccionados-resumen');
+        resEl.classList.add('hidden');
+        resEl.innerHTML = '';
         document.getElementById('btn-confirmar-pago').setAttribute('data-cedula', jug.cedula);
         document.getElementById('montoPago').value = '';
         document.getElementById('transaccionPago').value = '';
@@ -433,11 +471,13 @@
     }
 
     function abrirModalMultiple() {
-        if(selectedPlayers.size===0) { toast("Selecciona al menos un jugador","error"); return; }
+        if(selectedPlayers.size===0) { toast("Selecciona al menos un jugador de la lista","error"); return; }
         modoPagoMultiple = true;
         let nombres = Array.from(selectedPlayers).map(c=>{let j=jugadoresData.find(j=>j.cedula===c); return j?(j.nombreCompleto||j.nombreCamiseta):c;}).join(', ');
-        document.getElementById('modal-titulo').innerText = `Pagar a ${selectedPlayers.size} jugadores`;
-        document.getElementById('jugadores-seleccionados-resumen').innerHTML = `<p>Jugadores: ${nombres}</p>`;
+        document.getElementById('modal-titulo').innerText = `Abono Colectivo (${selectedPlayers.size})`;
+        const resEl = document.getElementById('jugadores-seleccionados-resumen');
+        resEl.classList.remove('hidden');
+        resEl.innerHTML = `<p class="line-clamp-2">Destinatarios: ${nombres}</p>`;
         document.getElementById('btn-confirmar-pago').removeAttribute('data-cedula');
         document.getElementById('montoPago').value = '';
         document.getElementById('transaccionPago').value = '';
@@ -447,16 +487,17 @@
 
     async function confirmarPago() {
         let monto = parseFloat(document.getElementById('montoPago').value);
-        if(isNaN(monto) || monto<=0) { toast("Monto inválido","error"); return; }
+        if(isNaN(monto) || monto<=0) { toast("Monto ingresado no es válido","error"); return; }
         const concepto = document.getElementById('conceptoPago').value;
         const transaccion = document.getElementById('transaccionPago').value.trim() || "SIN_REF";
+        
         if(!modoPagoMultiple) {
             let cedula = document.getElementById('btn-confirmar-pago').getAttribute('data-cedula');
             if(!cedula) return;
             try {
                 let res = await fetch(`${API_URL}?action=registrarPagoVocalia&cedula=${cedula}&monto=${monto}&concepto=${concepto}&transaccion=${encodeURIComponent(transaccion)}`);
                 let data = await res.json();
-                if(data.success) { toast(`Pago registrado: ${data.detalle||''}`); cerrarModalPago(); cargarDatos(); }
+                if(data.success) { toast(`Pago asentado con éxito`); cerrarModalPago(); cargarDatos(); }
                 else throw new Error(data.error);
             } catch(e) { toast(e.message,"error"); }
         } else {
@@ -468,7 +509,8 @@
                     if(data.success) ok++; else fail++;
                 } catch(e) { fail++; }
             }
-            if(fail===0) toast(`${ok} pagos registrados correctamente`); else toast(`${ok} OK, ${fail} fallidos`,"error");
+            if(fail===0) toast(`${ok} pagos asentados correctamente`); 
+            else toast(`${ok} procesados con éxito, ${fail} errores`,"error");
             cerrarModalPago();
             selectedPlayers.clear();
             cargarDatos();
@@ -478,39 +520,44 @@
     async function abrirHistorial() {
         const modal = document.getElementById('modalHistorial');
         const cont = document.getElementById('historial-contenido');
-        cont.innerHTML = '<div class="text-center py-8">Cargando...</div>';
+        cont.innerHTML = '<div class="text-center py-8 text-sm font-semibold text-slate-400">Consultando libro diario...</div>';
         modal.classList.remove('hidden'); modal.classList.add('flex');
         try {
             let res = await fetch(`${API_URL}?action=getHistorialVocalia&nocache=${Date.now()}`);
             let data = await res.json();
             if(data.success && data.historial?.length) {
-                let html = '<div class="space-y-3">';
+                let html = '<div class="space-y-2.5">';
                 for(let it of data.historial) {
-                    let fecha = new Date(it.fecha).toLocaleString('es-EC');
-                    html += `<div class="p-4 bg-surface-container-low rounded-xl border-l-4 border-primary">
-                        <div class="flex justify-between flex-wrap"><strong>${escapeHtml(it.jugador)}</strong> <span class="text-primary font-bold">${formatMoney(it.monto)}</span></div>
-                        <div class="text-xs text-on-surface-variant">${fecha} | Transacción: ${it.transaccion||'N/A'}</div>
-                        <div class="text-xs">Deuda restante: ${formatMoney(it.deudaRestante)}</div>
-                        ${it.detalle ? `<div class="text-xs text-gray-500 mt-1">Detalle: ${it.detalle}</div>` : ''}
+                    let fecha = new Date(it.fecha).toLocaleString('es-EC', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute:'2-digit'});
+                    html += `
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200/60 flex flex-col gap-1.5 shadow-sm">
+                        <div class="flex justify-between items-center flex-wrap gap-2">
+                            <strong class="text-sm text-on-surface font-bold">${escapeHtml(it.jugador)}</strong> 
+                            <span class="text-sm text-primary font-black bg-primary/5 px-2.5 py-1 rounded-lg border border-primary/10">${formatMoney(it.monto)}</span>
+                        </div>
+                        <div class="text-xs text-on-surface-variant font-medium">${fecha} &bull; Transacción: <span class="font-semibold text-on-surface">${it.transaccion||'N/A'}</span></div>
+                        <div class="text-[0.72rem] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Saldo remanente: ${formatMoney(it.deudaRestante)}</div>
+                        ${it.detalle ? `<div class="text-xs text-slate-500 bg-white border border-slate-100 p-2 rounded-xl mt-1 font-medium">Nota: ${it.detalle}</div>` : ''}
                     </div>`;
                 }
                 html += '</div>';
                 cont.innerHTML = html;
-            } else cont.innerHTML = '<div class="text-center py-8">📭 No hay pagos registrados</div>';
-        } catch(e) { cont.innerHTML = `<div class="text-center py-8 text-error">Error: ${e.message}</div>`; }
+            } else cont.innerHTML = '<div class="text-center py-8 text-sm font-semibold text-slate-400">📭 Libro de caja vacío.</div>';
+        } catch(e) { cont.innerHTML = `<div class="text-center py-8 text-sm font-bold text-error">Error al consultar el registro: ${e.message}</div>`; }
     }
 
     function cerrarModalPago() { document.getElementById('modalPago').classList.add('hidden'); document.getElementById('modalPago').classList.remove('flex'); }
     function cerrarModalHistorial() { document.getElementById('modalHistorial').classList.add('hidden'); document.getElementById('modalHistorial').classList.remove('flex'); }
     function escapeHtml(s) { if(!s) return ''; return s.replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
 
-    // Eventos
+    // Manejo de Eventos
     document.getElementById('btn-refresh').addEventListener('click', cargarDatos);
     document.getElementById('btn-ver-historial').addEventListener('click', abrirHistorial);
     document.getElementById('btn-pago-multiple').addEventListener('click', abrirModalMultiple);
     document.getElementById('btn-confirmar-pago').addEventListener('click', confirmarPago);
     document.getElementById('busqueda').addEventListener('input', (e)=>{ busquedaTexto=e.target.value; aplicarFiltros(); });
     document.getElementById('filtro-rango-deuda').addEventListener('change', (e)=>{ filtroRangoDeuda=e.target.value; aplicarFiltros(); });
+    
     document.querySelectorAll('[data-filtro-concepto]').forEach(btn=>{
         btn.addEventListener('click',()=>{
             document.querySelectorAll('[data-filtro-concepto]').forEach(b=>b.classList.remove('active'));
@@ -519,14 +566,16 @@
             aplicarFiltros();
         });
     });
-    document.querySelectorAll('.filter-estado').forEach(btn=>{
+    
+    document.querySelectorAll('[data-filtro-estado]').forEach(btn=>{
         btn.addEventListener('click',()=>{
-            document.querySelectorAll('.filter-estado').forEach(b=>b.classList.remove('active'));
+            document.querySelectorAll('[data-filtro-estado]').forEach(b=>b.classList.remove('active'));
             btn.classList.add('active');
             filtroEstado = btn.getAttribute('data-filtro-estado');
             aplicarFiltros();
         });
     });
+    
     window.cerrarModalPago = cerrarModalPago;
     window.cerrarModalHistorial = cerrarModalHistorial;
     cargarDatos();
