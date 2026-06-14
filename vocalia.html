@@ -57,6 +57,7 @@
             background-attachment: fixed;
         }
         .stat-card-gradient { background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%); }
+        .stat-card-error { background: linear-gradient(135deg, #450a0a 0%, #7f1d1d 100%); }
         
         .player-selected {
             border: 2px solid #7c3aed !important;
@@ -94,17 +95,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.78rem;
-            padding: 6px 10px;
+            font-size: 0.8rem;
+            padding: 7px 12px;
             background: rgba(241, 245, 249, 0.8);
             border-radius: 12px;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
             border: 1px solid rgba(226, 232, 240, 0.5);
         }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
 
-        /* SHIMMER EFFECT LOADER */
-        .shimmer-card { height: 160px; background: rgba(255,255,255,0.6); border-radius: 20px; position: relative; overflow: hidden; }
+        .shimmer-card { height: 220px; background: rgba(255,255,255,0.6); border-radius: 20px; position: relative; overflow: hidden; }
         .shimmer-card::after {
             content: ""; position: absolute; inset: 0;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
@@ -128,81 +128,85 @@
 </header>
 
 <main class="pt-24 px-4 md:px-8 max-w-7xl mx-auto">
-    <!-- Stats Dashboard -->
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <div class="stat-card-gradient p-6 rounded-3xl shadow-xl text-white relative overflow-hidden group border border-white/10">
+    <!-- Stats Dashboard con Deuda Total General -->
+    <section class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
+        <div class="stat-card-gradient p-5 rounded-2xl shadow-xl text-white relative overflow-hidden group border border-white/10">
             <div class="relative z-10">
-                <p class="text-xs uppercase tracking-wider opacity-70 font-semibold mb-1">Total Recaudado</p>
-                <h2 class="text-3xl font-headline-lg font-black mb-4" id="total-recaudado">$0.00</h2>
-                <div class="flex items-center gap-2 text-xs bg-white/10 backdrop-blur-md w-fit px-3 py-1.5 rounded-full border border-white/10">
-                    <span class="material-symbols-outlined text-sm">payments</span>
-                    <span class="font-medium">Historial consolidado</span>
+                <p class="text-[10px] uppercase tracking-wider opacity-70 font-bold mb-1">Total Recaudado (Caja)</p>
+                <h2 class="text-2xl font-headline-lg font-black mb-2" id="total-recaudado">$0.00</h2>
+                <button id="btn-ver-historial" class="text-xs bg-white/10 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10 flex items-center gap-1 hover:bg-white/20 transition-all">
+                    <span class="material-symbols-outlined text-xs">history</span> Ver libro diario
+                </button>
+            </div>
+            <span class="material-symbols-outlined absolute -right-4 -bottom-4 text-8xl opacity-5">account_balance_wallet</span>
+        </div>
+
+        <div class="stat-card-error p-5 rounded-2xl shadow-xl text-white relative overflow-hidden group border border-white/10">
+            <div class="relative z-10">
+                <p class="text-[10px] uppercase tracking-wider opacity-70 font-bold mb-1">Total Pendiente por Cobrar</p>
+                <h2 class="text-2xl font-headline-lg font-black mb-2" id="total-pendiente-global">$0.00</h2>
+                <div class="text-[11px] opacity-80 font-medium flex items-center gap-1">
+                    <span class="material-symbols-outlined text-xs text-error-container">warning</span> Cartera total por recuperar
                 </div>
             </div>
-            <span class="material-symbols-outlined absolute -right-4 -bottom-4 text-9xl opacity-5 group-hover:scale-110 transition-transform duration-300">account_balance_wallet</span>
+            <span class="material-symbols-outlined absolute -right-4 -bottom-4 text-8xl opacity-5">money_off</span>
         </div>
         
-        <div class="glass-card p-6 rounded-3xl border-l-4 border-primary flex flex-col justify-between">
+        <div class="glass-card p-5 rounded-2xl border-l-4 border-primary flex flex-col justify-between">
             <div>
-                <p class="text-on-surface-variant text-xs uppercase tracking-wider font-bold mb-1">Jugadores Activos</p>
-                <h2 class="text-3xl font-headline-lg font-black text-on-surface mb-4" id="jugadores-activos">0</h2>
+                <p class="text-on-surface-variant text-[10px] uppercase tracking-wider font-bold mb-1">Jugadores Registrados</p>
+                <h2 class="text-2xl font-headline-lg font-black text-on-surface" id="jugadores-activos">0</h2>
             </div>
-            <div class="w-full bg-slate-200 rounded-full h-1.5">
-                <div class="bg-primary h-1.5 rounded-full transition-all duration-500" style="width: 100%"></div>
-            </div>
+            <p class="text-[11px] text-on-surface-variant font-medium">Plantilla Nápoles FC</p>
         </div>
         
-        <div class="glass-card p-6 rounded-3xl border-l-4 border-error flex flex-col justify-between">
+        <div class="glass-card p-5 rounded-2xl border-l-4 border-amber-500 flex flex-col justify-between">
             <div>
-                <p class="text-on-surface-variant text-xs uppercase tracking-wider font-bold mb-1">Pendientes de Pago</p>
-                <h2 class="text-3xl font-headline-lg font-black text-on-surface mb-4" id="pendientes-pago">0</h2>
+                <p class="text-on-surface-variant text-[10px] uppercase tracking-wider font-bold mb-1">Jugadores con Deuda</p>
+                <h2 class="text-2xl font-headline-lg font-black text-on-surface" id="pendientes-pago">0</h2>
             </div>
-            <button id="btn-ver-historial" class="text-primary font-semibold text-sm flex items-center gap-1 hover:text-primary/80 transition-colors w-fit">
-                Ver historial de caja <span class="material-symbols-outlined text-sm">arrow_forward</span>
-            </button>
+            <p class="text-[11px] text-amber-600 font-bold">Requieren gestión de cobro</p>
         </div>
     </section>
 
-    <!-- Filtros avanzados -->
+    <!-- Filtros de deudas por conceptos corregidos -->
     <section class="glass-card p-6 rounded-3xl mb-6 space-y-5">
         <div>
             <p class="text-sm font-bold text-on-surface/80 mb-2.5 flex items-center gap-1.5">
-                <span class="material-symbols-outlined text-base text-primary">filter_list</span> Filtrar por tipo de deuda:
+                <span class="material-symbols-outlined text-base text-primary">filter_list</span> Filtrar específicamente quienes deben:
             </p>
             <div class="flex flex-wrap gap-2">
-                <button data-filtro-concepto="todos" class="filter-chip active px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Todos</button>
+                <button data-filtro-concepto="todos" class="filter-chip active px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Todos los conceptos</button>
                 <button data-filtro-concepto="vocalia" class="filter-chip px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Vocalía</button>
-                <button data-filtro-concepto="uniformes" class="filter-chip px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Uniformes</button>
-                <button data-filtro-concepto="inscripcion" class="filter-chip px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Inscripción</button>
-                <button data-filtro-concepto="inauguracion" class="filter-chip px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Inauguración</button>
                 <button data-filtro-concepto="multas" class="filter-chip px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Multas</button>
                 <button data-filtro-concepto="tarjeta_amarilla" class="filter-chip px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Tarj. Amarilla</button>
                 <button data-filtro-concepto="tarjeta_roja" class="filter-chip px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Tarj. Roja</button>
+                <button data-filtro-concepto="uniformes" class="filter-chip px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Uniformes</button>
+                <button data-filtro-concepto="inscripcion" class="filter-chip px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Inscripción</button>
+                <button data-filtro-concepto="inauguracion" class="filter-chip px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Inauguración</button>
             </div>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-slate-200/50">
             <div>
                 <p class="text-sm font-bold text-on-surface/80 mb-2.5 flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-base text-primary">monitoring</span> Estado financiero:
+                    <span class="material-symbols-outlined text-base text-primary">monitoring</span> Estado de cuenta general:
                 </p>
                 <div class="flex flex-wrap gap-2">
                     <button data-filtro-estado="todos" class="filter-estado active px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Todos</button>
-                    <button data-filtro-estado="morosos" class="filter-estado px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Con deuda</button>
-                    <button data-filtro-estado="aldia" class="filter-estado px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Al día</button>
-                    <button data-filtro-estado="credito" class="filter-estado px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Con saldo a favor</button>
+                    <button data-filtro-estado="morosos" class="filter-estado px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Con saldo pendiente</button>
+                    <button data-filtro-estado="aldia" class="filter-estado px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-on-surface-variant hover:bg-slate-200">Al día (Saldo $0)</button>
                 </div>
             </div>
             <div>
                 <p class="text-sm font-bold text-on-surface/80 mb-2.5 flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-base text-primary">payments</span> Rango de deuda total:
+                    <span class="material-symbols-outlined text-base text-primary">payments</span> Volumen de Deuda Total:
                 </p>
-                <select id="filtro-rango-deuda" class="w-full max-w-xs text-xs font-semibold text-on-surface-variant bg-slate-100 border border-slate-200 rounded-full py-2 px-4 focus:ring-2 focus:ring-primary/20 focus:border-primary">
-                    <option value="todos">Mostrar todos los montos</option>
-                    <option value="mayor0">Mayor a $0.00</option>
-                    <option value="mayor50">Mayor a $50.00</option>
-                    <option value="mayor100">Mayor a $100.00</option>
-                    <option value="menor50">Menor o igual a $50.00</option>
+                <select id="filtro-rango-deuda" class="w-full max-w-xs text-xs font-semibold text-on-surface-variant bg-slate-100 border border-slate-200 rounded-full py-2 px-4 focus:ring-2 focus:ring-primary/20">
+                    <option value="todos">Cualquier cantidad adeudada</option>
+                    <option value="mayor0">Deuda mayor a $0.00</option>
+                    <option value="mayor20">Deuda mayor a $20.00</option>
+                    <option value="mayor50">Deuda mayor a $50.00</option>
                 </select>
             </div>
         </div>
@@ -251,12 +255,12 @@
                 <label class="block text-xs font-bold text-on-surface-variant mb-1.5">Concepto del Pago</label>
                 <select id="conceptoPago" class="w-full p-3 bg-slate-100 rounded-xl border-none text-sm font-medium focus:ring-2 focus:ring-primary/20">
                     <option value="vocalia">Vocalía</option>
-                    <option value="uniformes">Uniformes</option>
-                    <option value="inscripcion">Inscripción</option>
-                    <option value="inauguracion">Inauguración</option>
                     <option value="multas">Multas</option>
                     <option value="tarjeta_amarilla">Tarjeta Amarilla</option>
                     <option value="tarjeta_roja">Tarjeta Roja</option>
+                    <option value="uniformes">Uniformes</option>
+                    <option value="inscripcion">Inscripción</option>
+                    <option value="inauguracion">Inauguración</option>
                 </select>
             </div>
             <div>
@@ -293,7 +297,6 @@
 
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwLcpH5z2x_EjRPaPu6gI_lLokWkVxsKLgBz-HHCVX7_OhKAFU1LVfZ67bh9DCbn9L6/exec";
-    if(localStorage.getItem('admin_activo') !== 'true') { /* window.location.href = './login.html'; */ }
 
     let jugadoresData = [];
     let selectedPlayers = new Set();
@@ -303,8 +306,8 @@
     let filtroRangoDeuda = "todos";
     let busquedaTexto = "";
 
-    const CONCEPTOS = ["uniformes", "inscripcion", "vocalia", "inauguracion", "multas", "tarjeta_amarilla", "tarjeta_roja"];
-    const NOMBRES = { vocalia:"Vocalía", uniformes:"Uniformes", inscripcion:"Inscripción", inauguracion:"Inauguración", multas:"Multas", tarjeta_amarilla:"Tarj. Amarilla", tarjeta_roja:"Tarj. Roja" };
+    const CONCEPTOS = ["vocalia", "multas", "tarjeta_amarilla", "tarjeta_roja", "uniformes", "inscripcion", "inauguracion"];
+    const NOMBRES = { vocalia:"Vocalía", multas:"Multas", tarjeta_amarilla:"Tarj. Amarilla", tarjeta_roja:"Tarj. Roja", uniformes:"Uniformes", inscripcion:"Inscripción", inauguracion:"Inauguración" };
 
     function formatMoney(v) { return new Intl.NumberFormat('es-EC', { style:'currency', currency:'USD' }).format(v); }
     
@@ -317,9 +320,10 @@
     }
 
     function deudaTotal(j) {
-        if(j.deuda!==undefined && !j.deudas) return j.deuda;
         let suma = 0;
-        for(let c of CONCEPTOS) suma += j.deudas?.[c] || 0;
+        for(let c of CONCEPTOS) {
+            suma += j.deudas?.[c] || 0;
+        }
         let cred = j.credito || 0;
         return Math.max(0, suma - cred);
     }
@@ -328,22 +332,25 @@
         let nom = (j.nombreCompleto || j.nombreCamiseta || "").toLowerCase();
         if(busquedaTexto && !nom.includes(busquedaTexto.toLowerCase())) return false;
         
-        let deuda = deudaTotal(j);
-        let cred = (j.credito||0)>0;
-        if(filtroEstado==="morosos" && deuda===0) return false;
-        if(filtroEstado==="aldia" && deuda>0) return false;
-        if(filtroEstado==="credito" && !cred) return false;
+        let deudaTot = deudaTotal(j);
         
-        if(filtroRangoDeuda !== "todos") {
-            if(filtroRangoDeuda === "mayor0" && deuda === 0) return false;
-            if(filtroRangoDeuda === "mayor50" && deuda <= 50) return false;
-            if(filtroRangoDeuda === "mayor100" && deuda <= 100) return false;
-            if(filtroRangoDeuda === "menor50" && deuda > 50) return false;
-        }
-        
+        // Corrección del Filtro de Conceptos Específicos
         if(filtroConcepto !== "todos") {
-            if(!j.deudas || (j.deudas[filtroConcepto] || 0) <= 0) return false;
+            let valorConcepto = j.deudas?.[filtroConcepto] || 0;
+            if(valorConcepto <= 0) return false;
         }
+
+        // Filtro por Estado de cuenta
+        if(filtroEstado === "morosos" && deudaTot <= 0) return false;
+        if(filtroEstado === "aldia" && deudaTot > 0) return false;
+        
+        // Filtro por Volumen de Rango de Deuda
+        if(filtroRangoDeuda !== "todos") {
+            if(filtroRangoDeuda === "mayor0" && deudaTot <= 0) return false;
+            if(filtroRangoDeuda === "mayor20" && deudaTot <= 20) return false;
+            if(filtroRangoDeuda === "mayor50" && deudaTot <= 50) return false;
+        }
+        
         return true;
     }
 
@@ -355,60 +362,67 @@
             const data = await res.json();
             if(data.success) {
                 jugadoresData = data.deudores;
-                let totalDeuda=0, deudores=0;
-                for(let j of jugadoresData) { let d=deudaTotal(j); totalDeuda+=d; if(d>0) deudores++; }
+                
+                let totalPendienteGlobal = 0;
+                let deudoresContador = 0;
+                
+                for(let j of jugadoresData) { 
+                    let d = deudaTotal(j); 
+                    totalPendienteGlobal += d; 
+                    if(d > 0) deudoresContador++; 
+                }
+                
                 document.getElementById('jugadores-activos').innerText = jugadoresData.length;
-                document.getElementById('pendientes-pago').innerText = deudores;
+                document.getElementById('pendientes-pago').innerText = deudoresContador;
+                document.getElementById('total-pendiente-global').innerText = formatMoney(totalPendienteGlobal);
                 
                 const hist = await fetch(`${API_URL}?action=getHistorialVocalia&nocache=${Date.now()}`);
                 const histData = await hist.json();
                 let recaudado = 0;
                 if(histData.success && histData.historial) recaudado = histData.historial.reduce((s,i)=>s+(i.monto||0),0);
                 document.getElementById('total-recaudado').innerText = formatMoney(recaudado);
+                
                 aplicarFiltros();
             } else throw new Error(data.error);
         } catch(e) {
             container.innerHTML = `<div class="col-span-full py-16 text-center text-sm font-bold text-error bg-error-container/30 border border-error/10 rounded-2xl">❌ Sincronización fallida: ${e.message}</div>`;
-            toast("Error de conexión","error");
+            toast("Error de conexión al servidor","error");
         }
     }
 
     function aplicarFiltros() {
         const filtrados = jugadoresData.filter(cumpleFiltros);
-        document.getElementById('resultados-contador').innerHTML = `Mostrando ${filtrados.length} de ${jugadoresData.length} fichas`;
+        document.getElementById('resultados-contador').innerHTML = `Mostrando ${filtrados.length} de ${jugadoresData.length} jugadores`;
         renderizarJugadores(filtrados);
     }
 
     function renderizarJugadores(lista) {
         const container = document.getElementById('lista-jugadores');
         if(!lista.length) {
-            container.innerHTML = '<div class="col-span-full py-16 text-center text-sm font-semibold text-slate-400 bg-slate-50 border border-slate-200/60 rounded-2xl">🎯 Ningún registro coincide con la búsqueda.</div>';
+            container.innerHTML = '<div class="col-span-full py-16 text-center text-sm font-semibold text-slate-400 bg-slate-50 border border-slate-200/60 rounded-2xl">🎯 Ningún jugador coincide con los filtros aplicados.</div>';
             return;
         }
         let html = '';
         for(let j of lista) {
             const deudaTot = deudaTotal(j);
             const selec = selectedPlayers.has(j.cedula);
-            const tieneDetalle = j.deudas && typeof j.deudas === 'object';
             
             let desgloseHtml = '';
-            if(tieneDetalle) {
-                for(let c of CONCEPTOS) {
-                    let val = j.deudas[c] || 0;
-                    if(val > 0) {
-                        const esFiltroActivo = filtroConcepto === c;
-                        desgloseHtml += `
-                            <div class="deuda-item-concepto ${esFiltroActivo ? 'bg-primary/5 border-primary/20' : ''}">
-                                <span class="${esFiltroActivo ? 'font-bold text-primary' : 'font-medium text-on-surface-variant'}">${NOMBRES[c]}</span>
-                                <span class="font-bold text-primary">${formatMoney(val)}</span>
-                            </div>`;
-                    }
-                }
-            } else {
-                desgloseHtml = `<div class="deuda-item-concepto"><span>Saldo Adeudado</span><span class="font-bold">${formatMoney(deudaTot)}</span></div>`;
+            // Forzar visualización completa de conceptos para que el administrador audite todo lo que se debe
+            for(let c of CONCEPTOS) {
+                let val = j.deudas?.[c] || 0;
+                const esFiltroActivo = filtroConcepto === c;
+                
+                // Muestra el concepto si tiene deuda, resaltando si es el filtro activo
+                desgloseHtml += `
+                    <div class="deuda-item-concepto ${val > 0 ? 'bg-slate-100/90' : 'bg-slate-50/40 opacity-50'} ${esFiltroActivo && val > 0 ? 'bg-primary/5 border-primary/30 ring-1 ring-primary/20' : ''}">
+                        <span class="${esFiltroActivo && val > 0 ? 'font-bold text-primary' : 'font-medium text-on-surface-variant'}">${NOMBRES[c]}</span>
+                        <span class="font-bold ${val > 0 ? 'text-slate-900' : 'text-slate-400'}">${formatMoney(val)}</span>
+                    </div>`;
             }
+            
             if((j.credito||0)>0) {
-                desgloseHtml += `<div class="deuda-item-concepto bg-emerald-50 text-emerald-700 border-emerald-200/50"><span>💰 Abono a favor</span><span class="font-bold">${formatMoney(j.credito)}</span></div>`;
+                desgloseHtml += `<div class="deuda-item-concepto bg-emerald-50 text-emerald-700 border-emerald-200/50"><span>💰 Abono de saldo a favor</span><span class="font-bold">${formatMoney(j.credito)}</span></div>`;
             }
             
             html += `
@@ -416,25 +430,37 @@
                     <div class="flex items-start justify-between">
                         <div class="flex items-center gap-3">
                             <input type="checkbox" class="player-checkbox w-4.5 h-4.5 rounded border-slate-300 text-primary focus:ring-primary/20 accent-primary" data-cedula="${j.cedula}" ${selec ? 'checked' : ''}>
-                            <div class="w-11 h-11 bg-slate-100 rounded-xl flex items-center justify-center text-on-surface font-black text-sm border border-slate-200">${j.dorsal || '?'}</div>
+                            <div class="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center text-on-surface font-black text-xs border border-slate-200">${j.dorsal || '?'}</div>
                             <div>
                                 <h4 class="font-headline-md font-bold text-sm text-on-surface group-hover:text-primary transition-colors">${escapeHtml(j.nombreCompleto || j.nombreCamiseta)}</h4>
-                                <p class="text-xs text-on-surface-variant font-medium mt-0.5">Cartera total: <span class="font-bold ${deudaTot>0?'text-error':'text-emerald-600'}">${deudaTot>0?formatMoney(deudaTot):'✓ Al día'}</span></p>
+                                <p class="text-[11px] text-on-surface-variant font-medium mt-0.5">Cédula: ${j.cedula || 'N/A'}</p>
                             </div>
                         </div>
-                        <button class="p-1.5 hover:bg-primary/10 rounded-xl text-slate-400 hover:text-primary transition-all md:opacity-0 group-hover:opacity-100 flex items-center justify-center" data-pagar="${j.cedula}">
-                            <span class="material-symbols-outlined text-xl font-medium">payments</span>
-                        </button>
+                        
+                        <div class="text-right">
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-full ${deudaTot > 0 ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-emerald-50 text-emerald-600 border border-emerald-100'}">
+                                Total: ${formatMoney(deudaTot)}
+                            </span>
+                        </div>
                     </div>
+                    
                     <div class="border-t border-slate-200/60 pt-3">
-                        <p class="text-[0.7rem] font-bold text-on-surface-variant uppercase tracking-wider mb-2">Detalle de Cartera</p>
-                        ${desgloseHtml || '<div class="text-xs font-semibold text-slate-400 bg-slate-50 py-2 text-center rounded-xl border border-slate-200/40">Sin saldos pendientes</div>'}
+                        <div class="flex justify-between items-center mb-2">
+                            <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Estado Detallado por Concepto</p>
+                            <button class="text-[11px] font-bold text-primary hover:underline flex items-center gap-0.5" data-pagar="${j.cedula}">
+                                <span class="material-symbols-outlined text-xs">add_card</span> Abonar
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 gap-1">
+                            ${desgloseHtml}
+                        </div>
                     </div>
                 </div>
             `;
         }
         container.innerHTML = html;
 
+        // Listeners internos del Grid
         document.querySelectorAll('.player-checkbox').forEach(cb => {
             cb.addEventListener('change', (e) => {
                 e.stopPropagation();
@@ -447,10 +473,10 @@
             });
         });
 
-        document.querySelectorAll('[data-pagar]').forEach(icon => {
-            icon.addEventListener('click', (e) => {
+        document.querySelectorAll('[data-pagar]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                let ced = icon.getAttribute('data-pagar');
+                let ced = btn.getAttribute('data-pagar');
                 let jug = jugadoresData.find(j=>j.cedula===ced);
                 if(jug) abrirModalPagoIndividual(jug);
             });
@@ -459,10 +485,9 @@
 
     function abrirModalPagoIndividual(jug) {
         modoPagoMultiple = false;
-        document.getElementById('modal-titulo').innerText = `Abono: ${jug.nombreCompleto || jug.nombreCamiseta}`;
+        document.getElementById('modal-titulo').innerText = `Asentar Abono: ${jug.nombreCompleto || jug.nombreCamiseta}`;
         const resEl = document.getElementById('jugadores-seleccionados-resumen');
         resEl.classList.add('hidden');
-        resEl.innerHTML = '';
         document.getElementById('btn-confirmar-pago').setAttribute('data-cedula', jug.cedula);
         document.getElementById('montoPago').value = '';
         document.getElementById('transaccionPago').value = '';
@@ -471,13 +496,13 @@
     }
 
     function abrirModalMultiple() {
-        if(selectedPlayers.size===0) { toast("Selecciona al menos un jugador de la lista","error"); return; }
+        if(selectedPlayers.size===0) { toast("Selecciona al menos un casillero de jugador para abono grupal","error"); return; }
         modoPagoMultiple = true;
         let nombres = Array.from(selectedPlayers).map(c=>{let j=jugadoresData.find(j=>j.cedula===c); return j?(j.nombreCompleto||j.nombreCamiseta):c;}).join(', ');
-        document.getElementById('modal-titulo').innerText = `Abono Colectivo (${selectedPlayers.size})`;
+        document.getElementById('modal-titulo').innerText = `Abono Colectivo (${selectedPlayers.size} Seleccionados)`;
         const resEl = document.getElementById('jugadores-seleccionados-resumen');
         resEl.classList.remove('hidden');
-        resEl.innerHTML = `<p class="line-clamp-2">Destinatarios: ${nombres}</p>`;
+        resEl.innerHTML = `<p class="line-clamp-2">Aplicar saldo a: ${nombres}</p>`;
         document.getElementById('btn-confirmar-pago').removeAttribute('data-cedula');
         document.getElementById('montoPago').value = '';
         document.getElementById('transaccionPago').value = '';
@@ -487,9 +512,9 @@
 
     async function confirmarPago() {
         let monto = parseFloat(document.getElementById('montoPago').value);
-        if(isNaN(monto) || monto<=0) { toast("Monto ingresado no es válido","error"); return; }
+        if(isNaN(monto) || monto<=0) { toast("Ingrese un monto numérico válido superior a 0","error"); return; }
         const concepto = document.getElementById('conceptoPago').value;
-        const transaccion = document.getElementById('transaccionPago').value.trim() || "SIN_REF";
+        const transaccion = document.getElementById('transaccionPago').value.trim() || "REF_MANUAL_VOCALIA";
         
         if(!modoPagoMultiple) {
             let cedula = document.getElementById('btn-confirmar-pago').getAttribute('data-cedula');
@@ -497,7 +522,7 @@
             try {
                 let res = await fetch(`${API_URL}?action=registrarPagoVocalia&cedula=${cedula}&monto=${monto}&concepto=${concepto}&transaccion=${encodeURIComponent(transaccion)}`);
                 let data = await res.json();
-                if(data.success) { toast(`Pago asentado con éxito`); cerrarModalPago(); cargarDatos(); }
+                if(data.success) { toast(`Pago asentado con éxito al jugador`); cerrarModalPago(); cargarDatos(); }
                 else throw new Error(data.error);
             } catch(e) { toast(e.message,"error"); }
         } else {
@@ -509,8 +534,8 @@
                     if(data.success) ok++; else fail++;
                 } catch(e) { fail++; }
             }
-            if(fail===0) toast(`${ok} pagos asentados correctamente`); 
-            else toast(`${ok} procesados con éxito, ${fail} errores`,"error");
+            if(fail===0) toast(`${ok} Pagos cargados colectivamente sin novedades`); 
+            else toast(`${ok} Procesados correctamente, ${fail} Fallidos`,"error");
             cerrarModalPago();
             selectedPlayers.clear();
             cargarDatos();
@@ -536,13 +561,12 @@
                             <span class="text-sm text-primary font-black bg-primary/5 px-2.5 py-1 rounded-lg border border-primary/10">${formatMoney(it.monto)}</span>
                         </div>
                         <div class="text-xs text-on-surface-variant font-medium">${fecha} &bull; Transacción: <span class="font-semibold text-on-surface">${it.transaccion||'N/A'}</span></div>
-                        <div class="text-[0.72rem] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Saldo remanente: ${formatMoney(it.deudaRestante)}</div>
-                        ${it.detalle ? `<div class="text-xs text-slate-500 bg-white border border-slate-100 p-2 rounded-xl mt-1 font-medium">Nota: ${it.detalle}</div>` : ''}
+                        <div class="text-[0.72rem] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Saldo remanente tras abono: ${formatMoney(it.deudaRestante)}</div>
                     </div>`;
                 }
                 html += '</div>';
                 cont.innerHTML = html;
-            } else cont.innerHTML = '<div class="text-center py-8 text-sm font-semibold text-slate-400">📭 Libro de caja vacío.</div>';
+            } else cont.innerHTML = '<div class="text-center py-8 text-sm font-semibold text-slate-400">📭 Libro de caja vacío sin transacciones registradas.</div>';
         } catch(e) { cont.innerHTML = `<div class="text-center py-8 text-sm font-bold text-error">Error al consultar el registro: ${e.message}</div>`; }
     }
 
@@ -550,7 +574,7 @@
     function cerrarModalHistorial() { document.getElementById('modalHistorial').classList.add('hidden'); document.getElementById('modalHistorial').classList.remove('flex'); }
     function escapeHtml(s) { if(!s) return ''; return s.replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
 
-    // Manejo de Eventos
+    // Controladores de eventos de la App
     document.getElementById('btn-refresh').addEventListener('click', cargarDatos);
     document.getElementById('btn-ver-historial').addEventListener('click', abrirHistorial);
     document.getElementById('btn-pago-multiple').addEventListener('click', abrirModalMultiple);
@@ -582,3 +606,5 @@
 </script>
 </body>
 </html>
+
+```
