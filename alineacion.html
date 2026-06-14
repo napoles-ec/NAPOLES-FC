@@ -4,9 +4,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes" name="viewport"/>
 <title>Nápoles FC - Táctica Elite (conectada a Google Sheets)</title>
-<!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Outfit:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
-<!-- Material Icons -->
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script>
@@ -26,64 +24,18 @@
       }
     </script>
 <style>
-        body {
-            background-color: #04090f;
-            background-image: radial-gradient(circle at 50% 50%, rgba(249,115,22,0.05) 0%, transparent 50%),
-                              linear-gradient(rgba(13,28,47,0.4) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(13,28,47,0.4) 1px, transparent 1px);
-            background-size: 100% 100%, 20px 20px, 20px 20px;
-            font-family: 'Inter', sans-serif;
-            touch-action: pan-y pinch-zoom;
-        }
+        body { background-color: #04090f; background-image: radial-gradient(circle at 50% 50%, rgba(249,115,22,0.05) 0%, transparent 50%), linear-gradient(rgba(13,28,47,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(13,28,47,0.4) 1px, transparent 1px); background-size: 100% 100%, 20px 20px, 20px 20px; font-family: 'Inter', sans-serif; touch-action: pan-y pinch-zoom; }
         .pitch-perspective { perspective: 1500px; }
-        .pitch-surface {
-            transform: rotateX(20deg);
-            transform-origin: center bottom;
-            background: linear-gradient(180deg, #0a1b0f 0%, #112d1a 100%);
-            border: 2px solid rgba(59,130,246,0.3);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 40px rgba(59,130,246,0.1);
-            aspect-ratio: 3.5/5;
-        }
+        .pitch-surface { transform: rotateX(20deg); transform-origin: center bottom; background: linear-gradient(180deg, #0a1b0f 0%, #112d1a 100%); border: 2px solid rgba(59,130,246,0.3); box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 40px rgba(59,130,246,0.1); aspect-ratio: 3.5/5; }
         .pitch-glow-lines { position: absolute; inset: 0; border: 1px solid rgba(255,255,255,0.2); margin: 12px; }
         .pitch-center-circle { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 100px; height: 100px; border: 1px solid rgba(59,130,246,0.4); border-radius: 50%; }
         .pitch-center-line { position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(59,130,246,0.5), transparent); }
-        .glass-player {
-            background: rgba(255,255,255,0.03);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.2s;
-            cursor: grab;
-            touch-action: none;
-        }
+        .glass-player { background: rgba(255,255,255,0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); transition: all 0.2s; cursor: grab; touch-action: none; }
         .glass-player:active { cursor: grabbing; transform: scale(1.05); border-color: #f97316; }
-        .bench-card {
-            background: rgba(255,255,255,0.03);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: 0.2s;
-            cursor: grab;
-            touch-action: none;
-        }
+        .bench-card { background: rgba(255,255,255,0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); transition: 0.2s; cursor: grab; touch-action: none; }
         .bench-card:active { cursor: grabbing; transform: scale(0.98); }
         .drop-over { background: rgba(249,115,22,0.3); border: 2px dashed #f97316; }
-        .dragging-touch {
-            position: fixed;
-            z-index: 2000;
-            pointer-events: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: #f97316;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-            font-size: 1.2rem;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            opacity: 0.8;
-            transform: scale(1.1);
-        }
+        .dragging-touch { position: fixed; z-index: 2000; pointer-events: none; width: 50px; height: 50px; border-radius: 50%; background: #f97316; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; font-size: 1.2rem; box-shadow: 0 0 20px rgba(0,0,0,0.5); opacity: 0.8; transform: scale(1.1); }
         .bench-side-scroller::-webkit-scrollbar { display: none; }
         .bench-side-scroller { -ms-overflow-style: none; scrollbar-width: none; }
         .fab-blur { background: rgba(255,255,255,0.08); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
@@ -92,7 +44,6 @@
 </head>
 <body class="font-body-md">
 
-<!-- TopAppBar -->
 <header class="fixed top-0 w-full h-16 bg-background/60 backdrop-blur-2xl border-b border-white/5 flex justify-between items-center px-gutter z-50">
     <div class="flex items-center gap-base">
         <div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center shadow-[0_0_15px_rgba(249,115,22,0.4)]">
@@ -119,7 +70,6 @@
         </div>
     </div>
 
-    <!-- Pitch Area -->
     <div class="pitch-perspective w-full max-w-md mx-auto">
         <div id="pitch-container" class="pitch-surface relative w-full rounded-2xl p-4 overflow-hidden">
             <div class="pitch-glow-lines rounded-xl"></div>
@@ -131,7 +81,6 @@
         </div>
     </div>
 
-    <!-- Quick Formation Switcher (opcional, pero se mantiene) -->
     <div class="mt-10 flex justify-center gap-2 overflow-x-auto pb-2">
         <button class="flex-shrink-0 px-5 py-2 rounded-xl bg-white/5 border border-white/10 text-white/60 font-label-md hover:border-primary-container/50 transition-all active:scale-95" onclick="aplicarFormacion('4-4-2')">4-4-2</button>
         <button class="flex-shrink-0 px-5 py-2 rounded-xl bg-primary-container text-white font-label-md shadow-lg shadow-primary-container/20 active:scale-95" onclick="aplicarFormacion('4-3-3')">4-3-3</button>
@@ -139,7 +88,6 @@
     </div>
 </main>
 
-<!-- Floating Action Buttons -->
 <div class="fixed bottom-24 right-6 flex flex-col gap-3 z-50">
     <button class="fab-blur w-12 h-12 rounded-full flex items-center justify-center text-white/70 hover:text-white shadow-xl transition-all active:rotate-180" onclick="location.reload()">
         <span class="material-symbols-outlined">restart_alt</span>
@@ -149,7 +97,6 @@
     </button>
 </div>
 
-<!-- Bench / Bottom Side-Scroller -->
 <section class="fixed bottom-0 left-0 w-full z-40 bg-background/80 backdrop-blur-2xl border-t border-white/5 pt-5 pb-24 rounded-t-[32px]">
     <div class="px-gutter flex items-center justify-between mb-4">
         <h3 class="font-headline-md text-lg text-white">Suplentes disponibles</h3>
@@ -158,7 +105,6 @@
     <div id="bench-list" class="bench-side-scroller flex gap-3 overflow-x-auto px-gutter pb-4"></div>
 </section>
 
-<!-- Bottom Navigation (estético) -->
 <nav class="fixed bottom-0 left-0 w-full h-20 bg-background/40 backdrop-blur-3xl flex justify-around items-center px-4 border-t border-white/5 z-40">
     <div class="flex flex-col items-center justify-center text-white/40"><span class="material-symbols-outlined">grid_view</span><span class="font-label-sm text-[10px] mt-1">Panel</span></div>
     <div class="flex flex-col items-center justify-center text-primary-container"><span class="material-symbols-outlined active-icon">sports_soccer</span><span class="font-label-sm text-[10px] mt-1">Táctica</span></div>
@@ -167,31 +113,30 @@
 </nav>
 
 <script>
-    // ================= CONFIGURACIÓN API REAL =================
     const API_URL = "https://script.google.com/macros/s/AKfycbzJ9eY-2mqidYMlxf1pEFOEUkG2FsKr99KYdMvI_d0qqn-kfN2c5tqgaDXha4wugGTo/exec";
     const FECHA_PARTIDO = "2026-06-13";
     const RIVAL = "FRANCO CANADIENSE";
 
-    let jugadoresConfirmados = [];   // { id, name, number, position, goles, amarillas, rojas }
-    let jugadoresEnCampo = [];       // { jugador, x, y }
+    let jugadoresConfirmados = [];
+    let jugadoresEnCampo = [];
     let jugadoresEnBanca = [];
 
-    // Arrastre táctil/ratón
     let dragActive = false, dragType = null, dragIndex = -1, dragJugador = null, clone = null;
 
-    // Elementos DOM
     const pitchContainer = document.getElementById('pitch-container');
     const formationContainer = document.getElementById('formation-container');
     const benchListDiv = document.getElementById('bench-list');
     const suplentesSpan = document.getElementById('suplentes-count');
     const campoCountSpan = document.getElementById('jugadores-campo-count');
 
-    // ========== FUNCIONES DE RED ==========
     async function cargarJugadoresDesdeGoogleSheets() {
         try {
             const params = new URLSearchParams({ action: 'getPartidoHombres', fecha: FECHA_PARTIDO, rival: RIVAL, t: Date.now() });
-            const res = await fetch(`${API_URL}?${params.toString()}`);
+            const url = `${API_URL}?${params.toString()}`;
+            console.log("📡 Llamando a:", url);
+            const res = await fetch(url);
             const data = await res.json();
+            console.log("📦 Respuesta completa de la API:", data);
             if (data.success && data.jugadores && data.jugadores.length) {
                 jugadoresConfirmados = data.jugadores.map(j => ({
                     id: j.cedula,
@@ -202,20 +147,20 @@
                     amarillas: j.amarillas || 0,
                     rojas: j.rojas || 0
                 }));
+                console.log(`✅ ${jugadoresConfirmados.length} jugadores cargados. Ejemplo:`, jugadoresConfirmados[0]);
             } else {
-                throw new Error("No se encontraron jugadores confirmados");
+                console.error("❌ No se encontraron jugadores:", data);
+                throw new Error("No se encontraron jugadores confirmados. Revisa la consola para más detalles.");
             }
-            // Inicializar: todos en banca
             jugadoresEnCampo = [];
             jugadoresEnBanca = [...jugadoresConfirmados];
             renderizarCampo();
             renderizarBanca();
             actualizarContadores();
-            // Cargar última alineación guardada (si existe)
             await cargarUltimaAlineacion();
         } catch (err) {
-            console.error(err);
-            alert("Error al cargar jugadores: " + err.message);
+            console.error("🔥 Error en cargarJugadoresDesdeGoogleSheets:", err);
+            alert("Error al cargar jugadores: " + err.message + " (mira la consola F12)");
         }
     }
 
@@ -233,9 +178,9 @@
             }))
         };
         try {
-            const res = await fetch(API_URL, {
+            await fetch(API_URL, {
                 method: 'POST',
-                mode: 'no-cors', // Si tu API no soporta CORS, usamos no-cors (no podremos leer respuesta)
+                mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dataToSend)
             });
@@ -267,7 +212,6 @@
                     actualizarContadores();
                 }
             } else {
-                // intentar backup local
                 const local = localStorage.getItem('alineacion_napoles_backup');
                 if (local) {
                     const backup = JSON.parse(local);
@@ -288,7 +232,6 @@
         } catch(e) { console.warn(e); }
     }
 
-    // ========== RENDER ==========
     function renderizarCampo() {
         formationContainer.innerHTML = '';
         jugadoresEnCampo.forEach((item, idx) => {
@@ -298,13 +241,7 @@
             token.style.top = `${item.y}%`;
             token.setAttribute('data-idx', idx);
             token.setAttribute('data-id', item.jugador.id);
-            token.innerHTML = `
-                <div class="flex flex-col items-center justify-center w-full h-full">
-                    <span class="font-headline-md text-white text-lg">${item.jugador.number}</span>
-                    <span class="text-[9px] text-white/80 bg-black/40 px-1 rounded-full">${item.jugador.name.split(' ')[0]}</span>
-                </div>
-            `;
-            // Eventos arrastre
+            token.innerHTML = `<div class="flex flex-col items-center justify-center w-full h-full"><span class="font-headline-md text-white text-lg">${item.jugador.number}</span><span class="text-[9px] text-white/80 bg-black/40 px-1 rounded-full">${item.jugador.name.split(' ')[0]}</span></div>`;
             token.addEventListener('touchstart', (e) => iniciarArrastre(e, 'campo', idx, item.jugador));
             token.addEventListener('mousedown', (e) => iniciarArrastre(e, 'campo', idx, item.jugador));
             formationContainer.appendChild(token);
@@ -322,11 +259,7 @@
             const card = document.createElement('div');
             card.className = 'bench-card flex-shrink-0 w-24 h-24 rounded-2xl flex flex-col items-center justify-center gap-1 cursor-grab';
             card.setAttribute('data-id', j.id);
-            card.innerHTML = `
-                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center font-headline-md text-white border border-white/20">${j.number}</div>
-                <p class="font-headline-md text-[10px] text-white/80 uppercase truncate w-20 text-center">${j.name.split(' ')[0]}</p>
-                <p class="font-label-sm text-[8px] text-primary-container font-bold">JUG</p>
-            `;
+            card.innerHTML = `<div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center font-headline-md text-white border border-white/20">${j.number}</div><p class="font-headline-md text-[10px] text-white/80 uppercase truncate w-20 text-center">${j.name.split(' ')[0]}</p><p class="font-label-sm text-[8px] text-primary-container font-bold">JUG</p>`;
             card.addEventListener('touchstart', (e) => iniciarArrastre(e, 'banca', -1, j));
             card.addEventListener('mousedown', (e) => iniciarArrastre(e, 'banca', -1, j));
             benchListDiv.appendChild(card);
@@ -338,7 +271,7 @@
         suplentesSpan.innerText = jugadoresEnBanca.length;
     }
 
-    // ========== ARRASTRE TÁCTIL/RATÓN ==========
+    // Funciones de arrastre (igual que antes, sin cambios)
     function iniciarArrastre(e, type, idx, jugador) {
         e.preventDefault();
         dragActive = true;
@@ -364,15 +297,10 @@
         e.preventDefault();
         let cx = e.touches ? e.touches[0].clientX : e.clientX;
         let cy = e.touches ? e.touches[0].clientY : e.clientY;
-        if (clone) {
-            clone.style.left = `${cx - 25}px`;
-            clone.style.top = `${cy - 25}px`;
-        }
+        if (clone) { clone.style.left = `${cx - 25}px`; clone.style.top = `${cy - 25}px`; }
         const rect = pitchContainer.getBoundingClientRect();
-        if (cx >= rect.left && cx <= rect.right && cy >= rect.top && cy <= rect.bottom)
-            pitchContainer.classList.add('drop-over');
-        else
-            pitchContainer.classList.remove('drop-over');
+        if (cx >= rect.left && cx <= rect.right && cy >= rect.top && cy <= rect.bottom) pitchContainer.classList.add('drop-over');
+        else pitchContainer.classList.remove('drop-over');
     }
 
     function onEnd(e) {
@@ -413,15 +341,12 @@
         if (jugadoresEnCampo.some(i => i.jugador.id === jugador.id)) return;
         jugadoresEnCampo.push({ jugador, x, y });
         jugadoresEnBanca = jugadoresEnBanca.filter(j => j.id !== jugador.id);
-        renderizarCampo();
-        renderizarBanca();
-        actualizarContadores();
+        renderizarCampo(); renderizarBanca(); actualizarContadores();
     }
 
     function moverEnCampo(idx, x, y) {
         if (idx >= 0 && idx < jugadoresEnCampo.length) {
             jugadoresEnCampo[idx].x = x;
-            jugadoresEnCampo[idx].y = y;
             renderizarCampo();
         }
     }
@@ -431,30 +356,15 @@
             const jug = jugadoresEnCampo[idx].jugador;
             jugadoresEnCampo.splice(idx, 1);
             jugadoresEnBanca.push(jug);
-            renderizarCampo();
-            renderizarBanca();
-            actualizarContadores();
+            renderizarCampo(); renderizarBanca(); actualizarContadores();
         }
     }
 
-    // ========== FORMACIONES PREDEFINIDAS (opcional) ==========
     function aplicarFormacion(tipo) {
         const formaciones = {
-            '4-3-3': [
-                { x: 50, y: 88 }, { x: 80, y: 70 }, { x: 62, y: 72 }, { x: 38, y: 72 }, { x: 20, y: 70 },
-                { x: 70, y: 52 }, { x: 50, y: 56 }, { x: 30, y: 52 },
-                { x: 80, y: 32 }, { x: 50, y: 22 }, { x: 20, y: 32 }
-            ],
-            '4-4-2': [
-                { x: 50, y: 88 }, { x: 80, y: 70 }, { x: 62, y: 72 }, { x: 38, y: 72 }, { x: 20, y: 70 },
-                { x: 76, y: 52 }, { x: 58, y: 54 }, { x: 42, y: 54 }, { x: 24, y: 52 },
-                { x: 58, y: 28 }, { x: 42, y: 28 }
-            ],
-            '3-5-2': [
-                { x: 50, y: 88 }, { x: 70, y: 72 }, { x: 50, y: 76 }, { x: 30, y: 72 },
-                { x: 86, y: 56 }, { x: 68, y: 52 }, { x: 50, y: 56 }, { x: 32, y: 52 }, { x: 14, y: 56 },
-                { x: 60, y: 28 }, { x: 40, y: 28 }
-            ]
+            '4-3-3': [{x:50,y:88},{x:80,y:70},{x:62,y:72},{x:38,y:72},{x:20,y:70},{x:70,y:52},{x:50,y:56},{x:30,y:52},{x:80,y:32},{x:50,y:22},{x:20,y:32}],
+            '4-4-2': [{x:50,y:88},{x:80,y:70},{x:62,y:72},{x:38,y:72},{x:20,y:70},{x:76,y:52},{x:58,y:54},{x:42,y:54},{x:24,y:52},{x:58,y:28},{x:42,y:28}],
+            '3-5-2': [{x:50,y:88},{x:70,y:72},{x:50,y:76},{x:30,y:72},{x:86,y:56},{x:68,y:52},{x:50,y:56},{x:32,y:52},{x:14,y:56},{x:60,y:28},{x:40,y:28}]
         };
         const posiciones = formaciones[tipo];
         if (!posiciones) return;
@@ -468,10 +378,7 @@
         actualizarContadores();
     }
 
-    // ========== EVENTOS BOTONES ==========
     document.getElementById('guardar-alineacion-btn').addEventListener('click', guardarAlineacionEnCloud);
-
-    // Inicializar
     cargarJugadoresDesdeGoogleSheets();
 </script>
 </body>
