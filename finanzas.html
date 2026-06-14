@@ -1,499 +1,312 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Finanzas - Nápoles F.C.</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<style>
-:root {
-    --amber-dark: #b45309;
-    --amber-light: #facc15;
-    --success: #10b981;
-    --danger: #ef4444;
-    --slate-dark: #0f172a;
-    --muted: #6b7280;
-    --bg: #f8fafc;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Finanzas - Nápoles F.C.</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --amber-dark: #b45309;
+      --amber-light: #facc15;
+      --success: #10b981;
+      --danger: #ef4444;
+      --slate-dark: #0f172a;
+      --muted: #64748b;
+      --bg: #f8fafc;
+    }
 
-*{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-body{ font-family:'Inter',sans-serif; background:var(--bg); color:#111827; min-height:100vh; padding-bottom: 60px; }
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+      -webkit-tap-highlight-color: transparent; 
+    }
+    
+    body { 
+      font-family: 'Inter', sans-serif; 
+      background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 50%, #f1f4f9 100%); 
+      color: #111827; 
+      min-height: 100vh; 
+      padding-bottom: 90px; 
+      position: relative;
+      overflow-x: hidden;
+    }
 
-.topbar{
-    position:sticky; top:0; z-index:100; background:rgba(255,255,255,.92); backdrop-filter:blur(14px);
-    border-bottom:1px solid #e2e8f0; padding:16px 18px; display:flex; align-items:center; justify-content:space-between;
-}
-.admin-info h1{ font-family: 'Outfit', sans-serif; font-size:1.25rem; font-weight:900; color: var(--slate-dark); }
-.admin-info p{ font-size:.8rem; color:var(--muted); font-weight: 600; text-transform: uppercase; }
+    /* ILUMINACIÓN AMBIENTAL */
+    .ambient-glow {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .glow-sphere {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(130px);
+      opacity: 0.3;
+    }
+    .glow-1 { width: 320px; height: 320px; background: #e0a899; top: -5%; left: -10%; }
+    .glow-2 { width: 380px; height: 380px; background: #e0f2fe; top: 45%; right: -15%; }
 
-.avatar{ width:42px; height:42px; border-radius:12px; background: #f1f5f9; display:flex; align-items:center; justify-content:center; color:var(--slate-dark); font-size:1.1rem; }
+    /* BARRA SUPERIOR CRISTALINA */
+    .topbar {
+      position: sticky; 
+      top: 0; 
+      z-index: 100; 
+      background: rgba(255, 255, 255, 0.7); 
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.6); 
+      padding: 16px 20px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.01);
+    }
+    .admin-info h1 { font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 900; color: var(--slate-dark); letter-spacing: -0.3px; }
+    .admin-info p { font-size: .7rem; color: #78716c; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-top: 2px; }
+    .avatar { width: 42px; height: 42px; border-radius: 14px; background: #ffffff; display: flex; align-items: center; justify-content: center; color: var(--slate-dark); border: 1px solid rgba(226, 232, 240, 0.8); }
 
-.summary{ padding:20px 18px 5px; }
-.summary-card{ background:linear-gradient(135deg, #1e293b, var(--slate-dark)); border-radius:24px; padding:24px; color:#fff; box-shadow: 0 10px 30px rgba(15,23,42,0.08); }
-.balance-label { font-size: .75rem; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; font-weight: 700; }
-.balance{ font-family: 'Outfit', sans-serif; font-size: 2.5rem; font-weight: 900; margin: 4px 0 20px 0; }
-.summary-stats{ display:grid; grid-template-columns: 1fr 1fr; gap: 16px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 18px; }
-.summary-item p{ font-size:.72rem; color: #94a3b8; text-transform: uppercase; }
-.summary-item h3{ font-size: 1.15rem; font-weight: 800; font-family: 'Outfit', sans-serif; }
+    /* TARJETA DE BALANCE PRINCIPAL */
+    .summary { padding: 20px 18px 5px; position: relative; z-index: 2; }
+    .summary-card { background: linear-gradient(135deg, #1e293b, var(--slate-dark)); border-radius: 24px; padding: 24px; color: #fff; box-shadow: 0 12px 35px rgba(15,23,42,0.12); }
+    .balance-label { font-size: .72rem; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; font-weight: 700; }
+    .balance { font-family: 'Outfit', sans-serif; font-size: 2.4rem; font-weight: 900; margin: 4px 0 20px 0; letter-spacing: -0.5px; }
+    .summary-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 18px; }
+    .summary-item p { font-size: .68rem; color: #94a3b8; text-transform: uppercase; font-weight: 700; }
+    .summary-item h3 { font-size: 1.15rem; font-weight: 800; font-family: 'Outfit', sans-serif; margin-top: 2px; }
 
-.por-cobrar-alert-box {
-    margin: 12px 18px 5px; padding: 16px; border-radius: 18px;
-    background: #fff; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;
-    transition: all 0.3s ease; cursor: pointer;
-}
-.por-cobrar-alert-box.tiene-deuda {
-    background: linear-gradient(135deg, #fef2f2, #fee2e2);
-    border: 1px solid #fca5a5;
-    color: var(--danger);
-    animation: pulsarAlerta 2s infinite ease-in-out;
-}
-@keyframes pulsarAlerta {
-    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.2); }
-    50% { transform: scale(1.02); box-shadow: 0 4px 15px 5px rgba(239, 68, 68, 0.12); }
-    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-}
-.alert-left { display: flex; align-items: center; gap: 12px; }
-.alert-icon { width: 38px; height: 38px; border-radius: 10px; background: rgba(239,68,68,0.1); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--danger); }
-.alert-text h4 { font-size: .75rem; text-transform: uppercase; color: #7f1d1d; font-weight: 700; }
-.alert-text p { font-family: 'Outfit', sans-serif; font-size: 1.3rem; font-weight: 900; color: #991b1b; }
+    /* WIDGET ALERTAS CUENTAS PENDIENTES */
+    .por-cobrar-alert-box {
+      margin: 12px 18px 5px; padding: 16px; border-radius: 20px;
+      background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.7); display: flex; align-items: center; justify-content: space-between;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; position: relative; z-index: 2;
+    }
+    .por-cobrar-alert-box.tiene-deuda {
+      background: linear-gradient(135deg, rgba(254,242,242,0.7), rgba(254,226,226,0.7));
+      border: 1px solid #fca5a5;
+      color: var(--danger);
+      animation: pulsarAlerta 2.5s infinite ease-in-out;
+    }
+    @keyframes pulsarAlerta {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.15); }
+      50% { transform: scale(1.015); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.08); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    .alert-left { display: flex; align-items: center; gap: 12px; }
+    .alert-icon { width: 38px; height: 38px; border-radius: 12px; background: rgba(239,68,68,0.08); display: flex; align-items: center; justify-content: center; font-size: 1rem; color: var(--danger); }
+    .alert-text h4 { font-size: .72rem; text-transform: uppercase; color: #7f1d1d; font-weight: 700; letter-spacing: 0.2px; }
+    .alert-text p { font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 900; color: #991b1b; }
 
-.tab-selector-wrapper { padding: 15px 18px 5px; }
-.tab-selector { display: flex; background: #e2e8f0; padding: 5px; border-radius: 14px; gap: 4px; }
-.tab-btn {
-    flex: 1; border: none; padding: 10px 4px; border-radius: 10px; font-size: 0.76rem;
-    font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; color: #475569;
-    background: transparent; transition: all 0.25s ease; text-align: center;
-}
-.tab-btn.active { background: #fff; color: var(--slate-dark); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    /* NAVEGADOR DE PESTAÑAS (TABS) */
+    .tab-selector-wrapper { padding: 15px 18px 5px; position: relative; z-index: 2; }
+    .tab-selector { display: flex; background: #e2e8f0; padding: 5px; border-radius: 16px; gap: 4px; }
+    .tab-btn {
+      flex: 1; border: none; padding: 11px 4px; border-radius: 12px; font-size: 0.78rem;
+      font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; color: #475569;
+      background: transparent; transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); text-align: center;
+    }
+    .tab-btn.active { background: #fff; color: var(--slate-dark); box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
 
-.form-card {
-    background: #fff; margin: 12px 18px; padding: 20px; border-radius: 22px;
-    box-shadow: 0 4px 16px rgba(15,23,42,0.02); border: 1px solid #e2e8f0; display: none;
-}
-.form-card.active { display: block; animation: desplegar 0.3s ease-out; }
-@keyframes desplegar { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    /* TARJETAS DE FORMULARIOS */
+    .form-card {
+      background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      margin: 12px 18px; padding: 22px; border-radius: 24px; position: relative; z-index: 2;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.01); border: 1px solid rgba(255, 255, 255, 0.7); display: none;
+    }
+    .form-card.active { display: block; animation: desplegar 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes desplegar { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-.form-card h2 { font-family: 'Outfit', sans-serif; font-size: 1.05rem; margin-bottom: 16px; color: var(--slate-dark); display: flex; align-items: center; gap: 8px; }
-.form-group { margin-bottom: 14px; }
-.form-group label { display: block; font-size: 0.75rem; font-weight: 700; margin-bottom: 5px; color: #475569; text-transform: uppercase; }
-.form-control { width: 100%; padding: 11px 14px; font-size: 0.9rem; border: 1px solid #cbd5e1; border-radius: 12px; outline: none; font-family: inherit; color: var(--slate-dark); }
+    .form-card h2 { font-family: 'Outfit', sans-serif; font-size: 1.05rem; margin-bottom: 18px; color: var(--slate-dark); display: flex; align-items: center; gap: 8px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 0.75rem; font-weight: 700; margin-bottom: 6px; color: #4b5563; text-transform: uppercase; letter-spacing: 0.3px; }
+    .form-control { width: 100%; padding: 12px 14px; font-size: 0.92rem; border: 1px solid #cbd5e1; border-radius: 12px; outline: none; font-family: inherit; color: var(--slate-dark); background: #ffffff; transition: all 0.2s; }
+    .form-control:focus { border-color: rgba(37, 99, 235, 0.4); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.06); }
 
-.btn-action { width: 100%; color: white; border: none; padding: 13px; border-radius: 12px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: block; }
-.btn-green { background: var(--success); }
-.btn-green:hover { background: #059669; }
-.btn-red { background: var(--danger); }
-.btn-red:hover { background: #dc2626; }
-.btn-blue { background: #2563eb; }
+    /* BOTONES */
+    .btn-action { width: 100%; color: white; border: none; padding: 14px; border-radius: 12px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: block; transition: all 0.2s; }
+    .btn-action:hover { filter: brightness(0.94); transform: translateY(-1px); }
+    .btn-green { background: var(--success); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15); }
+    .btn-red { background: var(--danger); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15); }
+    .btn-blue { background: #2563eb; }
 
-.jugador-buscado-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 16px; margin-top: 14px; display: none; }
-.jugador-buscado-card p { font-size: 0.9rem; font-weight: 700; color: var(--slate-dark); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #e2e8f0; }
-.grid-cobros { display: grid; grid-template-columns: 1fr; gap: 8px; }
-.btn-cobro-opcion {
-    display: flex; align-items: center; justify-content: space-between; padding: 11px 14px;
-    border: 1px solid #cbd5e1; border-radius: 10px; background: white; font-size: 0.82rem;
-    font-weight: 700; cursor: pointer; color: var(--slate-dark);
-}
-.btn-cobro-opcion.pay-active { border-color: var(--success); color: var(--success); background: #f0fdf4; }
-.badge-precio { background: #e2e8f0; padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; }
-.pay-active .badge-precio { background: var(--success); color: white; }
+    /* TARJETA INTERNA BÚSQUEDA JUGADOR */
+    .jugador-buscado-card { background: rgba(255,255,255,0.5); border: 1px solid #e2e8f0; padding: 16px; border-radius: 18px; margin-top: 16px; display: none; }
+    .jugador-buscado-card p { font-size: 0.92rem; font-weight: 700; color: var(--slate-dark); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed #e2e8f0; }
+    .grid-cobros { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    .btn-cobro-opcion {
+      display: flex; align-items: center; justify-content: space-between; padding: 12px 14px;
+      border: 1px solid #cbd5e1; border-radius: 12px; background: white; font-size: 0.85rem;
+      font-weight: 700; cursor: pointer; color: var(--slate-dark); transition: all 0.2s;
+    }
+    .btn-cobro-opcion.pay-active { border-color: var(--success); color: var(--success); background: #f0fdf4; cursor: default; }
+    .badge-precio { background: #e2e8f0; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-family: 'Outfit', sans-serif; font-weight: 800; }
+    .pay-active .badge-precio { background: var(--success); color: white; }
 
-.movements-title { padding: 16px 20px 2px; font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--slate-dark); }
-.movements{ padding:0 18px 40px; }
-.movement-card{ background:#fff; border-radius:16px; padding:14px; margin-top:10px; display:flex; align-items:center; justify-content:space-between; border: 1px solid #edf2f7; }
-.movement-left{ display:flex; align-items:center; gap:12px; }
-.movement-icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size: 0.95rem; }
-.income{ background: #ecfdf5; color: var(--success); }
-.expense{ background: #fef2f2; color: var(--danger); }
-.movement-info h3{ font-size:.85rem; font-weight:700; color: var(--slate-dark); }
-.movement-info p{ color:var(--muted); font-size:0.72rem; }
-.badge-status { font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-left: 5px; }
-.status-pagado { background: #d1fae5; color: #065f46; }
-.status-pendiente { background: #fee2e2; color: #991b1b; }
-.amount{ font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 800; }
-.positive { color: var(--success); }
-.negative { color: var(--danger); }
+    /* SECCIÓN AUDITORÍA / MOVIMIENTOS */
+    .movements-title { padding: 20px 20px 4px; font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 800; color: var(--slate-dark); position: relative; z-index: 2; }
+    .movements { padding: 0 18px 40px; position: relative; z-index: 2; }
+    .movement-card {
+      background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-radius: 18px; padding: 14px; margin-top: 10px; display: flex; align-items: center; justify-content: space-between; 
+      border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 4px 20px rgba(0,0,0,0.005);
+    }
+    .movement-left { display: flex; align-items: center; gap: 14px; }
+    .movement-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; }
+    .income { background: #ecfdf5; color: var(--success); }
+    .expense { background: #fef2f2; color: var(--danger); }
+    .movement-info h3 { font-size: .88rem; font-weight: 700; color: var(--slate-dark); }
+    .movement-info p { color: var(--muted); font-size: 0.72rem; margin-top: 2px; }
+    .badge-status { font-size: 0.65rem; padding: 2px 7px; border-radius: 5px; font-weight: 800; margin-left: 5px; letter-spacing: 0.2px; }
+    .status-pagado { background: #d1fae5; color: #065f46; }
+    .status-pendiente { background: #fee2e2; color: #991b1b; }
+    .amount { font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 800; }
+    .positive { color: var(--success); }
+    .negative { color: var(--danger); }
 
-.modal-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
-    z-index: 1000; display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-}
-.modal-overlay.open { opacity: 1; pointer-events: auto; }
-.modal-container {
-    background: #fff; width: 90%; max-width: 500px; border-radius: 24px;
-    padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-    transform: translateY(20px); transition: transform 0.3s ease;
-}
-.modal-overlay.open .modal-container { transform: translateY(0); }
-.modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-.modal-header h3 { font-family: 'Outfit', sans-serif; font-size: 1.2rem; color: var(--slate-dark); }
-.btn-close-modal { background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 5px; cursor: pointer; color: var(--slate-dark); font-weight: bold; }
-.modal-body { max-height: 300px; overflow-y: auto; }
-.deuda-item-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.88rem; }
-.deuda-item-row span.concepto-d { color: var(--slate-dark); font-weight: 600; }
-.deuda-item-row span.monto-d { color: var(--danger); font-weight: 800; font-family: 'Outfit', sans-serif; }
+    /* OVERLAY Y VENTANA MODAL */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.3); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      z-index: 1000; display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
+    .modal-container {
+      background: #fff; width: 90%; max-width: 480px; border-radius: 24px;
+      padding: 26px; box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+      transform: translateY(15px); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .modal-overlay.open .modal-container { transform: translateY(0); }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+    .modal-header h3 { font-family: 'Outfit', sans-serif; font-size: 1.25rem; color: var(--slate-dark); }
+    .btn-close-modal { background: #f1f5f9; border: none; width: 34px; height: 34px; border-radius: 10px; cursor: pointer; color: var(--slate-dark); font-size: 1.1rem; display: flex; align-items: center; justify-content: center; }
+    .modal-body { max-height: 320px; overflow-y: auto; padding-right: 4px; }
+    .deuda-item-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed #f1f5f9; font-size: 0.9rem; }
+    .deuda-item-row span.concepto-d { color: var(--slate-dark); font-weight: 600; }
+    .deuda-item-row span.monto-d { color: var(--danger); font-weight: 800; font-family: 'Outfit', sans-serif; }
 
-.fab { position: fixed; bottom: 18px; right: 18px; width: 50px; height: 50px; border: none; border-radius: 14px; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; background: var(--slate-dark); cursor: pointer; z-index: 100; }
-.loading-box { text-align: center; padding: 50px 20px; color: var(--muted); }
-.spinner-icon { font-size: 2rem; color: #cbd5e1; animation: rotar 1s linear infinite; margin-bottom: 8px; }
-@keyframes rotar { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    /* SYNC FLOATING BUTTON (FAB) */
+    .fab { position: fixed; bottom: 24px; right: 24px; width: 54px; height: 54px; border: none; border-radius: 16px; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; background: var(--slate-dark); cursor: pointer; z-index: 100; box-shadow: 0 8px 25px rgba(15,23,42,0.2); transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+    .fab:hover { transform: scale(1.05) translateY(-2px); background: #2563eb; box-shadow: 0 10px 25px rgba(37,99,235,0.25); }
 
-@media(min-width:700px){ .summary, .movements, .movements-title, .form-card, .tab-selector-wrapper, .por-cobrar-alert-box { max-width:650px; margin-left:auto; margin-right:auto; } }
-</style>
+    /* CONTENEDORES DE CARGA SHIMMER EFFECT */
+    .shimmer-balance { height: 165px; background: rgba(255,255,255,0.5); border-radius: 24px; margin: 20px 18px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.5); }
+    .shimmer-row { height: 72px; background: rgba(255,255,255,0.4); border-radius: 18px; margin: 10px 18px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.5); }
+    .shimmer-balance::after, .shimmer-row::after {
+      content: ""; position: absolute; top:0; right:0; bottom:0; left:0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+      transform: translateX(-100%); animation: shimmerMove 1.6s infinite;
+    }
+    @keyframes shimmerMove { 100% { transform: translateX(100%); } }
+
+    @media(min-width:700px){ .summary, .movements, .movements-title, .form-card, .tab-selector-wrapper, .por-cobrar-alert-box { max-width:600px; margin-left:auto; margin-right:auto; } }
+  </style>
 </head>
 <body>
 
+<div class="ambient-glow">
+  <div class="glow-sphere glow-1"></div>
+  <div class="glow-sphere glow-2"></div>
+</div>
+
 <header class="topbar">
-    <div class="top-left">
-        <div class="admin-info">
-            <h1>Finanzas Club</h1>
-            <p>Nápoles F.C. • Panel Contable</p>
-        </div>
+  <div class="top-left">
+    <div class="admin-info">
+      <h1>Finanzas Club</h1>
+      <p>Nápoles F.C. • Panel Contable</p>
     </div>
-    <div class="avatar"><i class="fa-solid fa-chart-pie"></i></div>
+  </div>
+  <div class="avatar"><i class="fa-solid fa-chart-pie"></i></div>
 </header>
 
 <main id="financialApp">
-    <div class="loading-box">
-        <div class="spinner-icon"><i class="fa-solid fa-circle-notch"></i></div>
-        <p>Sincronizando caja real con Google Sheets...</p>
-    </div>
+  <div class="shimmer-balance"></div>
+  <div class="shimmer-row"></div>
+  <div class="shimmer-row"></div>
 </main>
 
 <section id="porCobrarWidget" class="por-cobrar-alert-box" onclick="abrirModalDeudas()">
-    <div class="alert-left">
-        <div class="alert-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
-        <div class="alert-text">
-            <h4>Cuentas Pendientes por Cobrar</h4>
-            <p id="lblPorCobrarDinámico">$0.00</p>
-        </div>
+  <div class="alert-left">
+    <div class="alert-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+    <div class="alert-text">
+      <h4>Cuentas Pendientes por Cobrar</h4>
+      <p id="lblPorCobrarDinámico">$0.00</p>
     </div>
-    <i class="fa-solid fa-chevron-right" style="font-size: 0.8rem; opacity: 0.5;"></i>
+  </div>
+  <i class="fa-solid fa-chevron-right" style="font-size: 0.8rem; opacity: 0.5;"></i>
 </section>
 
 <div class="tab-selector-wrapper">
-    <div class="tab-selector">
-        <button class="tab-btn active" onclick="switchForm('jugadorTab', this)">Cobro Jugador</button>
-        <button class="tab-btn" onclick="switchForm('extraTab', this)">Ingreso Extra</button>
-        <button class="tab-btn" onclick="switchForm('gastoTab', this)">Registrar Gasto</button>
-    </div>
+  <div class="tab-selector">
+    <button class="tab-btn active" onclick="switchForm('jugadorTab', this)">Cobro Jugador</button>
+    <button class="tab-btn" onclick="switchForm('extraTab', this)">Ingreso Extra</button>
+    <button class="tab-btn" onclick="switchForm('gastoTab', this)">Registrar Gasto</button>
+  </div>
 </div>
 
-<!-- FORMULARIO COBRO POR NOMBRE -->
 <section id="jugadorTab" class="form-card active">
-    <h2><i class="fa-solid fa-id-card" style="color: #2563eb"></i> Buscar Jugador por Nombre</h2>
-    <div class="form-group">
-        <label>Nombre del Jugador</label>
-        <div style="display: flex; gap: 8px;">
-            <input type="text" id="buscarNombre" class="form-control" placeholder="Ej. Juan Pérez">
-            <button onclick="buscarJugadorParaCobro()" class="btn-action btn-blue" style="width: auto; padding: 0 18px;"><i class="fa-solid fa-magnifying-glass"></i></button>
-        </div>
+  <h2><i class="fa-solid fa-id-card" style="color: #2563eb"></i> Buscar Jugador por Nombre</h2>
+  <div class="form-group">
+    <label>Nombre del Jugador</label>
+    <div style="display: flex; gap: 8px;">
+      <input type="text" id="buscarNombre" class="form-control" placeholder="Ej. Juan Pérez">
+      <button onclick="buscarJugadorParaCobro()" class="btn-action btn-blue" style="width: auto; padding: 0 18px;"><i class="fa-solid fa-magnifying-glass"></i></button>
     </div>
-    
-    <div id="resultadoJugadorCard" class="jugador-buscado-card">
-        <p id="lblNombreJugador">Cargando...</p>
-        <div class="grid-cobros">
-            <button id="btnCobrarInscrip" class="btn-cobro-opcion" onclick="procesarCobro('inscripcion')">
-                <span><i class="fa-solid fa-file-invoice-dollar" style="color: var(--success); margin-right:6px;"></i> Liquidar Inscripción</span>
-                <span class="badge-precio">$5.00</span>
-            </button>
-            <button id="btnCobrarUnif" class="btn-cobro-opcion" onclick="procesarCobro('uniforme')">
-                <span><i class="fa-solid fa-shirt" style="color: #0284c7; margin-right:6px;"></i> Liquidar Uniforme Oficial</span>
-                <span class="badge-precio">$17.00</span>
-            </button>
-        </div>
+  </div>
+  
+  <div id="resultadoJugadorCard" class="jugador-buscado-card">
+    <p id="lblNombreJugador">Cargando...</p>
+    <div class="grid-cobros">
+      <button id="btnCobrarInscrip" class="btn-cobro-opcion" onclick="procesarCobro('inscripcion')">
+        <span><i class="fa-solid fa-file-invoice-dollar" style="color: var(--success); margin-right:6px;"></i> Liquidar Inscripción</span>
+        <span class="badge-precio">$5.00</span>
+      </button>
+      <button id="btnCobrarUnif" class="btn-cobro-opcion" onclick="procesarCobro('uniforme')">
+        <span><i class="fa-solid fa-shirt" style="color: #0284c7; margin-right:6px;"></i> Liquidar Uniforme Oficial</span>
+        <span class="badge-precio">$17.00</span>
+      </button>
     </div>
+  </div>
 </section>
 
 <section id="extraTab" class="form-card">
-    <h2><i class="fa-solid fa-coins" style="color: var(--success)"></i> Registrar Ingreso Externo / Extras</h2>
-    <form id="ingresoExtraForm" onsubmit="enviarIngresoExtra(event)">
-        <div class="form-group">
-            <label>Concepto del Ingreso</label>
-            <input type="text" id="extraConcepto" class="form-control" placeholder="Ej. Auspicio, Medias Extras, Mascotas..." required>
-        </div>
-        <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-            <div>
-                <label>Categoría</label>
-                <select id="extraCategoria" class="form-control">
-                    <option value="Auspicios">Auspicios</option>
-                    <option value="Mascotas">Mascotas</option>
-                    <option value="Rifas">Rifas / Eventos</option>
-                    <option value="Medias Extras">Medias Extras</option>
-                    <option value="Otros">Otros Ingresos</option>
-                </select>
-            </div>
-            <div>
-                <label>Monto Recaudado ($)</label>
-                <input type="number" id="extraMonto" step="0.01" class="form-control" placeholder="0.00" required>
-            </div>
-        </div>
-        <div class="form-group">
-            <label>Estado de este Ingreso</label>
-            <select id="extraEstado" class="form-control" style="font-weight: 700;">
-                <option value="PAGADO" style="color: var(--success);">PAGADO (Suma inmediatamente a Caja Disponible)</option>
-                <option value="PENDIENTE" style="color: var(--danger);">PENDIENTE (No suma a caja, va a Cuentas por Cobrar)</option>
-            </select>
-        </div>
-        <button type="submit" class="btn-action btn-green">Procesar Ingreso de Caja</button>
-    </form>
+  <h2><i class="fa-solid fa-coins" style="color: var(--success)"></i> Registrar Ingreso Externo / Extras</h2>
+  <form id="ingresoExtraForm" onsubmit="enviarIngresoExtra(event)">
+    <div class="form-group">
+      <label>Concepto del Ingreso</label>
+      <input type="text" id="extraConcepto" class="form-control" placeholder="Ej. Auspicio, Medias Extras, Mascotas..." required>
+    </div>
+    <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+      <div>
+        <label>Categoría</label>
+        <select id="extraCategoria" class="form-control">
+          <option value="Auspicios">Auspicios</option>
+          <option value="Mascotas">Mascotas</option>
+          <option value="Rifas">Rifas / Eventos</option>
+          <option value="Medias Extras">Medias Extras</option>
+          <option value="Otros">Otros Ingresos</option>
+        </select>
+      </div>
+      <div>
+        <label>Monto Recaudado ($)</label>
+        <input type="number" id="extraMonto" step="0.01" class="form-control" placeholder="0.00" required>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Estado de este Ingreso</label>
+      <select id="extraEstado" class="form-control" style="font-weight: 700;">
+        <option value="PAGADO" style="color: var(--success);">PAGADO (Suma inmediatamente a Caja Disponible)</option>
+        <option value="PENDIENTE" style="color: var(--danger);">PENDIENTE (No suma a caja, va a Cuentas por Cobrar)</option>
+      </select>
+    </div>
+    <button type="submit" class="btn-action btn-green">Procesar Ingreso de Caja</button>
+  </form>
 </section>
 
 <section id="gastoTab" class="form-card">
-    <h2><i class="fa-solid fa-money-bill-transfer" style="color: var(--danger)"></i> Registrar Salida / Gasto Directo</h2>
-    <form id="gastoForm" onsubmit="enviarGasto(event)">
-        <div class="form-group">
-            <label>Concepto o Motivo del Gasto</label>
-            <input type="text" id="gastoConcepto" class="form-control" placeholder="Ej. Arbitraje fecha 3, Agua..." required>
-        </div>
-        <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-            <div>
-                <label>Categoría Egreso</label>
-                <select id="gastoCategoria" class="form-control">
-                    <option value="Canchas">Canchas</option>
-                    <option value="Arbitraje">Arbitraje</option>
-                    <option value="Logística">Logística</option>
-                    <option value="Implementos">Implementos</option>
-                    <option value="Otros">Otros Gastos</option>
-                </select>
-            </div>
-            <div>
-                <label>Monto del Gasto ($)</label>
-                <input type="number" id="gastoMonto" step="0.01" class="form-control" placeholder="0.00" required>
-            </div>
-        </div>
-        <button type="submit" class="btn-action btn-red">Descontar Salida de Caja</button>
-    </form>
-</section>
-
-<h2 class="movements-title">Auditoría General de Caja</h2>
-<section id="contenedorMovimientos" class="movements">
-    <div style="text-align: center; padding: 20px; color: var(--muted);">Esperando datos contables...</div>
-</section>
-
-<div id="modalDeudas" class="modal-overlay" onclick="cerrarModalDeudas(event)">
-    <div class="modal-container">
-        <div class="modal-header">
-            <h3><i class="fa-solid fa-list-ol" style="color: var(--danger)"></i> Desglose de Cuentas Pendientes</h3>
-            <button class="btn-close-modal" onclick="document.getElementById('modalDeudas').classList.remove('open')">×</button>
-        </div>
-        <div id="modalBodyDeudas" class="modal-body">
-        </div>
-    </div>
-</div>
-
-<button class="fab" onclick="cargarContabilidad()"><i class="fa-solid fa-arrows-rotate"></i></button>
-
-<script>
-// ==================== CONFIGURACIÓN ====================
-const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwOyGohFCLEqF23Ge-aN7Z-Z5m511_ER07ce503Hw-YtmayL4u-r9Gi0Kf0WX2NfFOy/exec';
-
-if(localStorage.getItem('admin_activo') !== 'true') window.location.href = './login.html';
-
-const formatearMoneda = (v) => new Intl.NumberFormat('es-EC', { style: 'currency', currency: 'USD' }).format(v);
-let jugadorSeleccionadoCedula = "";
-let movimientosLocales = [];
-
-function switchForm(tabId, el) {
-    document.querySelectorAll('.form-card').forEach(card => card.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById(tabId).classList.add('active');
-    el.classList.add('active');
-}
-
-async function cargarContabilidad() {
-    try {
-        const res = await fetch(`${WEBAPP_URL}?action=getFinanzasData&nocache=${Date.now()}`);
-        const data = await res.json();
-        if (data.success) {
-            movimientosLocales = data.movements;
-            renderizarApp(data.resumen, data.movements);
-        }
-    } catch (e) {
-        console.error(e);
-        document.getElementById('financialApp').innerHTML = '<div class="summary"><div class="summary-card"><p>Error de conexión</p></div></div>';
-    }
-}
-
-function renderizarApp(resumen, movimientos) {
-    document.getElementById('financialApp').innerHTML = `
-        <section class="summary">
-            <div class="summary-card">
-                <p class="balance-label">Caja Real Disponible</p>
-                <div class="balance">${formatearMoneda(resumen.balanceReal)}</div>
-                <div class="summary-stats">
-                    <div class="summary-item"><p>Total Ingresos</p><h3 style="color:#34d399">+ ${formatearMoneda(resumen.ingresosTotales)}</h3></div>
-                    <div class="summary-item"><p>Total Gastos</p><h3 style="color:#f87171">- ${formatearMoneda(resumen.gastosTotales)}</h3></div>
-                </div>
-            </div>
-        </section>
-    `;
-
-    const widgetCobrar = document.getElementById('porCobrarWidget');
-    document.getElementById('lblPorCobrarDinámico').innerText = formatearMoneda(resumen.porCobrar);
-
-    if (resumen.porCobrar > 0) {
-        widgetCobrar.classList.add('tiene-deuda');
-    } else {
-        widgetCobrar.classList.remove('tiene-deuda');
-    }
-
-    let htmlMovs = movimientos.map(m => {
-        let labelEstado = m.tipo === 'ingreso' ? `<span class="badge-status ${m.estado === 'PAGADO' ? 'status-pagado' : 'status-pendiente'}">${m.estado}</span>` : '';
-        return `
-            <div class="movement-card">
-                <div class="movement-left">
-                    <div class="movement-icon ${m.tipo === 'ingreso' ? 'income' : 'expense'}">
-                        <i class="fa-solid ${m.tipo === 'ingreso' ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'}"></i>
-                    </div>
-                    <div class="movement-info">
-                        <h3>${m.concepto} ${labelEstado}</h3>
-                        <p>${m.fecha}</p>
-                    </div>
-                </div>
-                <div class="amount ${m.tipo === 'ingreso' ? 'positive' : 'negative'}">
-                    ${m.tipo === 'ingreso' ? '+' : '-'} ${formatearMoneda(m.monto)}
-                </div>
-            </div>
-        `;
-    }).join('');
-
-    document.getElementById('contenedorMovimientos').innerHTML = htmlMovs || '<p style="text-align:center;padding:20px;color:var(--muted);">Sin transacciones asentadas.</p>';
-}
-
-function abrirModalDeudas() {
-    const modalBody = document.getElementById('modalBodyDeudas');
-    let pendientesExtras = movimientosLocales.filter(m => m.estado === 'PENDIENTE');
-    
-    let html = `<h5>Deudas por Ingresos Externos Registrados:</h5><br>`;
-    
-    if (pendientesExtras.length === 0) {
-        html += `<p style="color:var(--muted); font-size:0.85rem;">No hay registros externos pendientes. El resto del valor acumulado pertenece a las Inscripciones y Uniformes no liquidados de la pestaña "Jugadores" en Google Sheets.</p>`;
-    } else {
-        pendientesExtras.forEach(p => {
-            html += `
-                <div class="deuda-item-row">
-                    <span class="concepto-d">${p.concepto} <small style="display:block; color:gray; font-weight:normal;">${p.fecha}</small></span>
-                    <span class="monto-d">${formatearMoneda(p.monto)}</span>
-                </div>
-            `;
-        });
-        html += `<br><p style="color:gray; font-size:0.75rem; text-align:center;">Nota: Las deudas de jugadores individuales se liquidan directamente buscando su nombre en la pestaña principal.</p>`;
-    }
-    
-    modalBody.innerHTML = html;
-    document.getElementById('modalDeudas').classList.add('open');
-}
-
-function cerrarModalDeudas(e) {
-    if(e.target.classList.contains('modal-overlay')) {
-        document.getElementById('modalDeudas').classList.remove('open');
-    }
-}
-
-async function buscarJugadorParaCobro() {
-    const nombre = document.getElementById('buscarNombre').value.trim();
-    if(!nombre) return;
-    document.getElementById('lblNombreJugador').innerText = "Buscando en Google Sheets...";
-    document.getElementById('resultadoJugadorCard').style.display = 'block';
-
-    const res = await fetch(`${WEBAPP_URL}?action=buscarJugadorPorNombre&nombre=${encodeURIComponent(nombre)}`);
-    const data = await res.json();
-    
-    if(data.success && data.jugador) {
-        jugadorSeleccionadoCedula = data.jugador.cedula;
-        document.getElementById('lblNombreJugador').innerHTML = `<i class="fa-solid fa-user"></i> ${data.jugador['primer nombre']} ${data.jugador['apellidos']}`;
-        
-        const btnInsc = document.getElementById('btnCobrarInscrip');
-        const btnUnif = document.getElementById('btnCobrarUnif');
-
-        if(data.jugador['inscrip_estado'] === 'PAGADO') {
-            btnInsc.disabled = true;
-            btnInsc.classList.add('pay-active');
-            btnInsc.innerHTML = `<span><i class="fa-solid fa-circle-check"></i> Inscripción (PAGADA)</span>`;
-        } else {
-            btnInsc.disabled = false;
-            btnInsc.classList.remove('pay-active');
-            btnInsc.innerHTML = `<span><i class="fa-solid fa-file-invoice-dollar" style="color:var(--success)"></i> Liquidar Inscripción</span><span class="badge-precio">$5.00</span>`;
-        }
-
-        if(data.jugador['unif_estado'] === 'PAGADO') {
-            btnUnif.disabled = true;
-            btnUnif.classList.add('pay-active');
-            btnUnif.innerHTML = `<span><i class="fa-solid fa-circle-check"></i> Uniforme (PAGADO)</span>`;
-        } else {
-            btnUnif.disabled = false;
-            btnUnif.classList.remove('pay-active');
-            btnUnif.innerHTML = `<span><i class="fa-solid fa-shirt" style="color:#0284c7"></i> Liquidar Uniforme Oficial</span><span class="badge-precio">$17.00</span>`;
-        }
-    } else {
-        alert("No se encontró ningún jugador con ese nombre.");
-        document.getElementById('resultadoJugadorCard').style.display = 'none';
-    }
-}
-
-async function procesarCobro(tipo) {
-    if(!confirm("¿Confirmar cobro?")) return;
-    const check = await fetch(`${WEBAPP_URL}?action=getPerfil&cedula=${jugadorSeleccionadoCedula}`);
-    const currentData = await check.json();
-    let estInscrip = currentData.jugador['inscrip_estado'];
-    let estUnif = currentData.jugador['unif_estado'];
-    
-    if(tipo === 'inscripcion') estInscrip = "PAGADO";
-    if(tipo === 'uniforme') estUnif = "PAGADO";
-
-    const ejecutado = await fetch(`${WEBAPP_URL}?action=updateEstados&cedula=${jugadorSeleccionadoCedula}&inscrip=${estInscrip}&unif=${estUnif}`);
-    const res = await ejecutado.json();
-    if(res.success) {
-        alert("¡Cobro aplicado!");
-        document.getElementById('resultadoJugadorCard').style.display = 'none';
-        document.getElementById('buscarNombre').value = "";
-        cargarContabilidad();
-    } else {
-        alert("Error al aplicar el cobro.");
-    }
-}
-
-async function enviarIngresoExtra(e) {
-    e.preventDefault();
-    const concepto = document.getElementById('extraConcepto').value;
-    const categoria = document.getElementById('extraCategoria').value;
-    const monto = document.getElementById('extraMonto').value;
-    const estado = document.getElementById('extraEstado').value;
-    
-    const url = `${WEBAPP_URL}?action=registrarOtrosIngresos&concepto=${encodeURIComponent(concepto)}&categoria=${encodeURIComponent(categoria)}&monto=${monto}&estado=${estado}`;
-    const res = await fetch(url, { method: 'POST' });
-    const data = await res.json();
-    if(data.success) {
-        alert("Registro guardado con éxito.");
-        document.getElementById('ingresoExtraForm').reset();
-        cargarContabilidad();
-    } else {
-        alert("Error al registrar ingreso.");
-    }
-}
-
-async function enviarGasto(e) {
-    e.preventDefault();
-    const concepto = document.getElementById('gastoConcepto').value;
-    const categoria = document.getElementById('gastoCategoria').value;
-    const monto = document.getElementById('gastoMonto').value;
-    
-    const url = `${WEBAPP_URL}?action=registrarGasto&concepto=${encodeURIComponent(concepto)}&categoria=${encodeURIComponent(categoria)}&monto=${monto}`;
-    const res = await fetch(url, { method: 'POST' });
-    const data = await res.json();
-    if(data.success) {
-        alert("Egreso registrado.");
-        document.getElementById('gastoForm').reset();
-        cargarContabilidad();
-    } else {
-        alert("Error al registrar gasto.");
-    }
-}
-
-cargarContabilidad();
-</script>
-</body>
-</html>
+  <h2>
