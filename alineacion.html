@@ -1,154 +1,214 @@
 <!DOCTYPE html>
 <html class="dark" lang="es">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes" name="viewport"/>
-<title>Nápoles FC - Táctica Elite (conectada a Google Sheets)</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Outfit:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script>
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              "primary": "#9d4300",
-              "primary-container": "#f97316",
-              "surface": "#faf9f6",
-              "background": "#0d1c2f"
-            },
-            fontFamily: { "headline-md": ["Outfit"], "body-md": ["Inter"] }
-          }
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes" name="viewport"/>
+    <title>Nápoles FC - Táctica Elite (conectada a Google Sheets)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "napoles-blue": "#0094d6",
+                        "napoles-dark": "#031124",
+                        "gold-accent": "#d4af37"
+                    },
+                    fontFamily: { "headline": ["Outfit"], "body": ["Inter"] }
+                }
+            }
         }
-      }
     </script>
-<style>
-        body { background-color: #04090f; background-image: radial-gradient(circle at 50% 50%, rgba(249,115,22,0.05) 0%, transparent 50%), linear-gradient(rgba(13,28,47,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(13,28,47,0.4) 1px, transparent 1px); background-size: 100% 100%, 20px 20px, 20px 20px; font-family: 'Inter', sans-serif; touch-action: pan-y pinch-zoom; }
-        .pitch-perspective { perspective: 1500px; }
-        .pitch-surface { transform: rotateX(20deg); transform-origin: center bottom; background: linear-gradient(180deg, #0a1b0f 0%, #112d1a 100%); border: 2px solid rgba(59,130,246,0.3); box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 40px rgba(59,130,246,0.1); aspect-ratio: 3.5/5; }
-        .pitch-glow-lines { position: absolute; inset: 0; border: 1px solid rgba(255,255,255,0.2); margin: 12px; }
-        .pitch-center-circle { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 100px; height: 100px; border: 1px solid rgba(59,130,246,0.4); border-radius: 50%; }
-        .pitch-center-line { position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(59,130,246,0.5), transparent); }
-        .glass-player { background: rgba(255,255,255,0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); transition: all 0.2s; cursor: grab; touch-action: none; }
-        .glass-player:active { cursor: grabbing; transform: scale(1.05); border-color: #f97316; }
-        .bench-card { background: rgba(255,255,255,0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); transition: 0.2s; cursor: grab; touch-action: none; }
-        .bench-card:active { cursor: grabbing; transform: scale(0.98); }
-        .drop-over { background: rgba(249,115,22,0.3); border: 2px dashed #f97316; }
-        .dragging-touch { position: fixed; z-index: 2000; pointer-events: none; width: 50px; height: 50px; border-radius: 50%; background: #f97316; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; font-size: 1.2rem; box-shadow: 0 0 20px rgba(0,0,0,0.5); opacity: 0.8; transform: scale(1.1); }
+    <style>
+        body { 
+            background-color: #020813; 
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(0, 148, 214, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 0% 100%, rgba(212, 175, 55, 0.05) 0%, transparent 40%);
+            font-family: 'Inter', sans-serif; 
+            touch-action: pan-y pinch-zoom; 
+        }
+        
+        /* Efecto Estadio e Iluminación */
+        .pitch-perspective { perspective: 1000px; }
+        .pitch-surface { 
+            transform: rotateX(12deg); 
+            transform-origin: center bottom; 
+            /* Césped Profesional con Franjas */
+            background: repeating-linear-gradient(
+                180deg,
+                #0d2b18 0px,
+                #0d2b18 30px,
+                #11361e 30px,
+                #11361e 60px
+            );
+            border: 2px solid rgba(255,255,255,0.15); 
+            box-shadow: 
+                0 0 40px rgba(0, 148, 214, 0.2),
+                0 30px 70px -10px rgba(0,0,0,0.9), 
+                inset 0 0 60px rgba(0,0,0,0.6); 
+            aspect-ratio: 3.4/4.6; 
+        }
+        
+        /* Reflector de Estadio */
+        .pitch-surface::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% -20%, rgba(255, 255, 255, 0.12) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .pitch-glow-lines { position: absolute; inset: 0; border: 1.5px solid rgba(255,255,255,0.25); margin: 12px; pointer-events: none; }
+        .pitch-center-circle { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 84px; height: 84px; border: 1.5px solid rgba(255,255,255,0.25); border-radius: 50%; pointer-events: none; }
+        .pitch-center-line { position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background: rgba(255,255,255,0.25); pointer-events: none; }
+        
+        /* 👕 Diseño de Camiseta en CSS Puro */
+        .football-shirt {
+            position: relative;
+            width: 46px;
+            height: 42px;
+            background: #0094d6;
+            border-radius: 4px 4px 0 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            will-change: transform;
+        }
+        /* Mangas */
+        .football-shirt::before, .football-shirt::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 14px;
+            height: 18px;
+            background: #0094d6;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .football-shirt::before { left: -12px; border-radius: 4px 0 0 6px; transform: rotate(-25deg); transform-origin: top right; }
+        .football-shirt::after { right: -12px; border-radius: 0 4px 6px 0; transform: rotate(25deg); transform-origin: top left; }
+        
+        /* Cuello Dorado de la camiseta */
+        .shirt-neck {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 7px;
+            background: #d4af37;
+            border-radius: 0 0 12px 12px;
+            z-index: 3;
+        }
+
+        /* Jugador en el campo */
+        .player-node {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease-out;
+            z-index: 20;
+            cursor: grab;
+            user-select: none;
+        }
+        .player-node:active { cursor: grabbing; z-index: 100; }
+        .player-node:active .football-shirt { transform: scale(1.15); box-shadow: 0 12px 24px rgba(0,0,0,0.6); }
+        
+        /* Arrastre en Móvil Clor clonado */
+        .dragging-touch-shirt { 
+            position: fixed; 
+            z-index: 9999; 
+            pointer-events: none; 
+            opacity: 0.95;
+            transform: scale(1.2);
+        }
+
+        .drop-over { border-color: #0094d6 !important; box-shadow: 0 0 30px rgba(0, 148, 214, 0.4), inset 0 0 40px rgba(0,0,0,0.6); }
         .bench-side-scroller::-webkit-scrollbar { display: none; }
-        .bench-side-scroller { -ms-overflow-style: none; scrollbar-width: none; }
-        .fab-blur { background: rgba(255,255,255,0.08); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        .bench-collapsed { transform: translateY(calc(100% - 48px)); transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1); }
+        .bench-collapsed { transform: translateY(calc(100% - 54px)); }
         .bench-expanded { transform: translateY(0); }
-        /* ESTADÍSTICAS LEGIBLES: fondo semitransparente y texto claro */
-        .stats-icons {
-            display: flex;
-            gap: 6px;
-            justify-content: center;
-            font-size: 0.65rem;
-            margin-top: 2px;
-            background: rgba(0,0,0,0.5);
-            padding: 2px 6px;
-            border-radius: 20px;
-            backdrop-filter: blur(2px);
-        }
-        .stats-icons span {
-            display: inline-flex;
-            align-items: center;
-            gap: 2px;
-            color: #FFD700;
-            font-weight: 600;
-            text-shadow: 0 0 2px black;
-        }
-        /* Para la banca también mejoramos contraste */
-        .bench-card .stats-icons {
-            background: rgba(0,0,0,0.6);
-            font-size: 0.6rem;
-            padding: 2px 5px;
-        }
-        .bench-card .stats-icons span {
-            color: #FFD700;
-        }
-        /* Ajuste del tamaño de las fichas en campo */
-        .glass-player {
-            width: 60px !important;
-            height: 60px !important;
-        }
-        .glass-player .stats-icons {
-            font-size: 0.55rem;
-            gap: 4px;
-            padding: 1px 4px;
-            margin-top: 1px;
-        }
     </style>
 </head>
-<body class="font-body-md">
+<body class="font-body text-slate-200 antialiased selection:bg-blue-500/30">
 
-<header class="fixed top-0 w-full h-16 bg-background/60 backdrop-blur-2xl border-b border-white/5 flex justify-between items-center px-gutter z-50">
-    <div class="flex items-center gap-base">
-        <div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center shadow-[0_0_15px_rgba(249,115,22,0.4)]">
-            <span class="material-symbols-outlined text-white text-[20px]">bolt</span>
+<!-- Header Superior -->
+<header class="fixed top-0 w-full h-16 bg-napoles-dark/50 backdrop-blur-xl border-b border-white/5 flex justify-between items-center px-6 z-50">
+    <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-napoles-blue to-blue-700 flex items-center justify-center shadow-lg shadow-blue-500/20">
+            <span class="material-symbols-outlined text-white text-[18px] font-bold">shield</span>
         </div>
-        <h1 class="font-headline-md text-xl font-bold tracking-tight text-white uppercase italic">Elite Táctica</h1>
+        <h1 class="font-headline text-base font-bold tracking-widest uppercase italic bg-gradient-to-r from-white via-slate-200 to-gold-accent bg-clip-text text-transparent">Nápoles FC Pro</h1>
     </div>
-    <div class="flex items-center gap-sm">
-        <div class="w-9 h-9 rounded-full overflow-hidden border-2 border-primary-container p-0.5">
+    <div class="flex items-center">
+        <div class="w-9 h-9 rounded-full overflow-hidden border border-gold-accent/40 p-0.5 bg-slate-900 shadow-lg">
             <img alt="Napoles FC" class="w-full h-full object-cover rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKnzZBKgj-tIsZIANm539n2Qnx1B96Zv7y-woqjXbFcyw3W-n1CYhamu-jubz9cEXAqt01I2lBzbs9hMD_bEqD_AU1xsen-OWCsIO7FA7Fq5s8LRdtrX0GvDAVcB_TzCM9pqWaKaa08rIH7gz-4s8cddQdOzRT6AdBBOq_e_XMNtyxGlcJup7ErJl-ZnS8fwzTr_As4A6IttvBSWGCvCq2XaTi3Z9PDI9ckr9CJHza0IoDSjHsPyBKK6KgugXzmEprMjflIBvKOS4"/>
         </div>
     </div>
 </header>
 
-<main class="pt-20 pb-6 px-4" style="padding-bottom: 20px;">
-    <div class="flex justify-between items-end mb-6">
+<main class="pt-20 pb-40 px-4 max-w-md mx-auto">
+    <!-- Marcador de Info Partido -->
+    <div class="flex justify-between items-center mb-5 bg-gradient-to-r from-napoles-dark/80 to-slate-950/80 border border-white/10 p-4 rounded-2xl backdrop-blur-md shadow-2xl">
         <div>
-            <h2 class="font-headline-lg-mobile text-2xl text-white">Nápoles FC</h2>
-            <p class="font-label-sm text-white/40 uppercase tracking-widest mt-1">vs Franco Canadiense · 13/06</p>
+            <h2 class="font-headline text-lg font-bold text-white tracking-wide flex items-center gap-2">
+                Nápoles FC <span class="text-gold-accent text-xs">⚜️</span>
+            </h2>
+            <p class="text-[11px] font-medium text-slate-400 uppercase tracking-wider mt-0.5 flex items-center gap-1.5">
+                <span class="inline-block w-2 h-2 rounded-full bg-napoles-blue animate-pulse"></span> vs Franco Canadiense · 13/06
+            </p>
         </div>
-        <div class="bg-white/5 px-3 py-1.5 rounded-lg border border-white/10">
-            <span class="text-primary-container font-bold" id="jugadores-campo-count">0</span>
-            <span class="text-white/60 text-xs"> en campo</span>
+        <div class="bg-gradient-to-b from-napoles-blue/10 to-transparent px-3 py-1.5 rounded-xl border border-napoles-blue/30 text-center min-w-[85px]">
+            <span class="text-napoles-blue font-headline text-lg font-bold block leading-none" id="jugadores-campo-count">0</span>
+            <span class="text-slate-400 text-[9px] uppercase font-bold tracking-tight">Titulares</span>
         </div>
     </div>
 
-    <div class="pitch-perspective w-full max-w-md mx-auto">
-        <div id="pitch-container" class="pitch-surface relative w-full rounded-2xl p-4 overflow-hidden">
+    <!-- Contenedor Campo de Juego -->
+    <div class="pitch-perspective w-full mb-6">
+        <div id="pitch-container" class="pitch-surface relative w-full rounded-2xl overflow-hidden transition-all duration-300">
             <div class="pitch-glow-lines rounded-xl"></div>
             <div class="pitch-center-line"></div>
             <div class="pitch-center-circle"></div>
-            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-12 border-b border-x border-white/20"></div>
-            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-12 border-t border-x border-white/20"></div>
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-14 border-b border-x border-white/20"></div>
+            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-14 border-t border-x border-white/20"></div>
+            
+            <!-- Lienzo de Jugadores -->
             <div id="formation-container" class="absolute inset-0 z-10"></div>
         </div>
     </div>
 
-    <div class="mt-10 flex justify-center gap-2 overflow-x-auto pb-2">
-        <button class="flex-shrink-0 px-5 py-2 rounded-xl bg-white/5 border border-white/10 text-white/60 font-label-md hover:border-primary-container/50 transition-all active:scale-95" onclick="aplicarFormacion('4-4-2')">4-4-2</button>
-        <button class="flex-shrink-0 px-5 py-2 rounded-xl bg-primary-container text-white font-label-md shadow-lg shadow-primary-container/20 active:scale-95" onclick="aplicarFormacion('4-3-3')">4-3-3</button>
-        <button class="flex-shrink-0 px-5 py-2 rounded-xl bg-white/5 border border-white/10 text-white/60 font-label-md hover:border-primary-container/50 transition-all active:scale-95" onclick="aplicarFormacion('3-5-2')">3-5-2</button>
+    <!-- Selectores de Formación -->
+    <div class="flex justify-center gap-2 bg-slate-950/60 p-1.5 rounded-xl border border-white/5 backdrop-blur-md shadow-xl">
+        <button class="flex-1 py-2 px-3 rounded-lg bg-white/[0.02] border border-white/5 text-slate-400 text-xs font-semibold hover:text-white transition-all active:scale-95" onclick="aplicarFormacion('4-4-2')">4-4-2</button>
+        <button class="flex-1 py-2 px-3 rounded-lg bg-napoles-blue text-white text-xs font-semibold shadow-lg shadow-blue-500/20 hover:bg-blue-600 transition-all active:scale-95" onclick="aplicarFormacion('4-3-3')">4-3-3</button>
+        <button class="flex-1 py-2 px-3 rounded-lg bg-white/[0.02] border border-white/5 text-slate-400 text-xs font-semibold hover:text-white transition-all active:scale-95" onclick="aplicarFormacion('3-5-2')">3-5-2</button>
     </div>
 </main>
 
-<div class="fixed bottom-24 right-6 flex flex-col gap-3 z-50">
-    <button class="fab-blur w-12 h-12 rounded-full flex items-center justify-center text-white/70 hover:text-white shadow-xl transition-all active:rotate-180" onclick="location.reload()">
-        <span class="material-symbols-outlined">restart_alt</span>
+<!-- Panel de Botones Flotantes -->
+<div class="fixed bottom-36 right-4 flex flex-col gap-3 z-50">
+    <button class="w-11 h-11 rounded-full flex items-center justify-center bg-slate-900/80 text-slate-400 hover:text-white border border-white/10 backdrop-blur-md shadow-lg transition-all active:rotate-180" onclick="location.reload()">
+        <span class="material-symbols-outlined text-[20px]">restart_alt</span>
     </button>
-    <button id="guardar-alineacion-btn" class="w-14 h-14 rounded-full bg-primary-container flex items-center justify-center text-white shadow-[0_0_20px_rgba(249,115,22,0.4)] transition-all active:scale-90">
-        <span class="material-symbols-outlined text-[28px]">save</span>
+    <button id="guardar-alineacion-btn" class="w-12 h-12 rounded-full bg-gradient-to-b from-amber-400 to-amber-600 flex items-center justify-center text-slate-950 shadow-xl shadow-amber-500/20 transition-all active:scale-90 border border-gold-accent/50">
+        <span class="material-symbols-outlined text-[22px] font-bold">save</span>
     </button>
-    <button id="toggle-bench-btn" class="fab-blur w-12 h-12 rounded-full flex items-center justify-center text-white/70 hover:text-white">
-        <span class="material-symbols-outlined">keyboard_arrow_down</span>
+    <button id="toggle-bench-btn" class="w-11 h-11 rounded-full flex items-center justify-center bg-slate-900/80 text-slate-400 hover:text-white border border-white/10 backdrop-blur-md shadow-lg">
+        <span class="material-symbols-outlined text-[20px]">keyboard_arrow_down</span>
     </button>
 </div>
 
-<!-- Sección de suplentes colapsable -->
-<section id="bench-section" class="fixed bottom-0 left-0 w-full z-40 bg-background/80 backdrop-blur-2xl border-t border-white/5 pt-5 rounded-t-[32px] bench-expanded transition-transform duration-300">
-    <div class="px-gutter flex items-center justify-between mb-4">
-        <h3 class="font-headline-md text-lg text-white">Suplentes disponibles</h3>
-        <span class="text-[10px] font-bold text-primary-container bg-primary-container/10 px-2 py-0.5 rounded uppercase" id="suplentes-count">0</span>
+<!-- Sección de Suplentes Rediseñada Premium -->
+<section id="bench-section" class="fixed bottom-0 left-0 w-full z-40 bg-gradient-to-b from-slate-950 via-slate-950/95 to-slate-950 border-t border-white/10 pt-4 rounded-t-[24px] bench-expanded transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_-15px_40px_rgba(0,0,0,0.8)]">
+    <div class="px-6 flex items-center justify-between mb-3">
+        <div class="flex items-center gap-2">
+            <h3 class="font-headline font-semibold text-xs tracking-wider uppercase text-slate-400">Banca de Suplentes</h3>
+            <span class="text-[10px] font-bold text-gold-accent bg-gold-accent/10 px-2 py-0.5 rounded-full border border-gold-accent/20" id="suplentes-count">0</span>
+        </div>
+        <div class="w-12 h-1 bg-white/10 rounded-full"></div>
     </div>
-    <div id="bench-list" class="bench-side-scroller flex gap-3 overflow-x-auto px-gutter pb-6"></div>
+    <div id="bench-list" class="bench-side-scroller flex gap-3.5 overflow-x-auto px-6 pb-5 pt-1"></div>
 </section>
 
 <script>
@@ -188,10 +248,8 @@
         try {
             const params = new URLSearchParams({ action: 'getPartidoHombres', fecha: FECHA_PARTIDO, rival: RIVAL, t: Date.now() });
             const url = `${API_URL}?${params.toString()}`;
-            console.log("📡 Llamando a:", url);
             const res = await fetch(url);
             const data = await res.json();
-            console.log("📦 Respuesta completa de la API:", data);
             if (data.success && data.jugadores && data.jugadores.length) {
                 jugadoresConfirmados = data.jugadores.map(j => ({
                     id: j.cedula,
@@ -202,10 +260,8 @@
                     amarillas: j.amarillas || 0,
                     rojas: j.rojas || 0
                 }));
-                console.log(`✅ ${jugadoresConfirmados.length} jugadores cargados. Ejemplo:`, jugadoresConfirmados[0]);
             } else {
-                console.error("❌ No se encontraron jugadores:", data);
-                throw new Error("No se encontraron jugadores confirmados. Revisa la consola para más detalles.");
+                throw new Error("No se encontraron jugadores.");
             }
             jugadoresEnCampo = [];
             jugadoresEnBanca = [...jugadoresConfirmados];
@@ -214,8 +270,7 @@
             actualizarContadores();
             await cargarUltimaAlineacion();
         } catch (err) {
-            console.error("🔥 Error en cargarJugadoresDesdeGoogleSheets:", err);
-            alert("Error al cargar jugadores: " + err.message + " (mira la consola F12)");
+            console.error(err);
         }
     }
 
@@ -242,7 +297,7 @@
             alert("✅ Alineación guardada en la nube");
             localStorage.setItem('alineacion_napoles_backup', JSON.stringify(dataToSend.alineacion));
         } catch (err) {
-            alert("⚠️ Error al guardar en la nube, se guardó localmente");
+            alert("⚠️ Guardado localmente en el dispositivo");
             localStorage.setItem('alineacion_napoles_backup', JSON.stringify(dataToSend.alineacion));
         }
     }
@@ -262,9 +317,7 @@
                     jugadoresEnCampo = nuevosCampo;
                     const idsCampo = new Set(jugadoresEnCampo.map(i => i.jugador.id));
                     jugadoresEnBanca = jugadoresConfirmados.filter(j => !idsCampo.has(j.id));
-                    renderizarCampo();
-                    renderizarBanca();
-                    actualizarContadores();
+                    renderizarCampo(); renderizarBanca(); actualizarContadores();
                 }
             } else {
                 const local = localStorage.getItem('alineacion_napoles_backup');
@@ -278,9 +331,7 @@
                     if (nuevosCampo.length) {
                         jugadoresEnCampo = nuevosCampo;
                         jugadoresEnBanca = jugadoresConfirmados.filter(j => !new Set(jugadoresEnCampo.map(i=>i.jugador.id)).has(j.id));
-                        renderizarCampo();
-                        renderizarBanca();
-                        actualizarContadores();
+                        renderizarCampo(); renderizarBanca(); actualizarContadores();
                     }
                 }
             }
@@ -290,26 +341,26 @@
     function renderizarCampo() {
         formationContainer.innerHTML = '';
         jugadoresEnCampo.forEach((item, idx) => {
-            const token = document.createElement('div');
-            token.className = 'glass-player absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 z-20 rounded-full';
-            token.style.left = `${item.x}%`;
-            token.style.top = `${item.y}%`;
-            token.setAttribute('data-idx', idx);
-            token.setAttribute('data-id', item.jugador.id);
-            token.innerHTML = `
-                <div class="flex flex-col items-center justify-center w-full h-full">
-                    <span class="font-headline-md text-white text-lg">${item.jugador.number}</span>
-                    <span class="text-[9px] text-white/80 bg-black/40 px-1 rounded-full">${item.jugador.name.split(' ')[0]}</span>
-                    <div class="stats-icons">
-                        <span>⚽${item.jugador.goles}</span>
-                        <span>🟨${item.jugador.amarillas}</span>
-                        <span>🟥${item.jugador.rojas}</span>
-                    </div>
+            const node = document.createElement('div');
+            node.className = 'player-node flex flex-col items-center justify-center';
+            node.style.left = `${item.x}%`;
+            node.style.top = `${item.y}%`;
+            
+            node.innerHTML = `
+                <div class="football-shirt flex items-center justify-center">
+                    <div class="shirt-neck"></div>
+                    <span class="font-headline font-bold text-gold-accent text-sm tracking-tighter z-10 mt-1">${item.jugador.number}</span>
+                </div>
+                <p class="text-[10px] font-bold text-white bg-slate-950/80 px-2 py-0.5 rounded-md mt-1.5 border border-white/10 shadow-md whitespace-nowrap">${item.jugador.name.split(' ')[0]}</p>
+                <div class="flex gap-1 mt-0.5 text-[7px] font-bold text-amber-400 bg-slate-950/90 px-1 rounded-full border border-amber-500/20">
+                    ${item.jugador.goles > 0 ? `<span>⚽${item.jugador.goles}</span>` : ''}
+                    ${item.jugador.amarillas > 0 ? `<span>🟨</span>` : ''}
                 </div>
             `;
-            token.addEventListener('touchstart', (e) => iniciarArrastre(e, 'campo', idx, item.jugador));
-            token.addEventListener('mousedown', (e) => iniciarArrastre(e, 'campo', idx, item.jugador));
-            formationContainer.appendChild(token);
+            
+            node.addEventListener('touchstart', (e) => iniciarArrastre(e, 'campo', idx, item.jugador), {passive: false});
+            node.addEventListener('mousedown', (e) => iniciarArrastre(e, 'campo', idx, item.jugador));
+            formationContainer.appendChild(node);
         });
     }
 
@@ -317,23 +368,21 @@
         benchListDiv.innerHTML = '';
         suplentesSpan.innerText = `${jugadoresEnBanca.length}`;
         if (jugadoresEnBanca.length === 0) {
-            benchListDiv.innerHTML = '<div class="text-white/50 text-sm px-4 py-8 text-center w-full">No hay más jugadores</div>';
+            benchListDiv.innerHTML = '<div class="text-slate-500 text-xs py-4 text-center w-full font-medium">Banca vacía · Todos en cancha</div>';
             return;
         }
         jugadoresEnBanca.forEach(j => {
             const card = document.createElement('div');
-            card.className = 'bench-card flex-shrink-0 w-28 h-28 rounded-2xl flex flex-col items-center justify-center gap-1 cursor-grab';
-            card.setAttribute('data-id', j.id);
+            card.className = 'flex-shrink-0 w-20 h-24 bg-white/[0.02] border border-white/5 hover:border-napoles-blue/40 rounded-xl flex flex-col items-center justify-center p-2 transition-all active:scale-95 cursor-grab';
             card.innerHTML = `
-                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center font-headline-md text-white border border-white/20">${j.number}</div>
-                <p class="font-headline-md text-[10px] text-white/80 uppercase truncate w-24 text-center">${j.name.split(' ')[0]}</p>
-                <div class="stats-icons">
-                    <span>⚽${j.goles}</span>
-                    <span>🟨${j.amarillas}</span>
-                    <span>🟥${j.rojas}</span>
+                <div class="football-shirt flex items-center justify-center scale-90 mb-1">
+                    <div class="shirt-neck"></div>
+                    <span class="font-headline font-bold text-gold-accent text-xs z-10 mt-1">${j.number}</span>
                 </div>
+                <p class="font-semibold text-[10px] text-slate-200 truncate w-16 text-center">${j.name.split(' ')[0]}</p>
+                <span class="text-[8px] text-slate-400 mt-0.5">${j.goles > 0 ? '⚽ ' + j.goles : 'Suplente'}</span>
             `;
-            card.addEventListener('touchstart', (e) => iniciarArrastre(e, 'banca', -1, j));
+            card.addEventListener('touchstart', (e) => iniciarArrastre(e, 'banca', -1, j), {passive: false});
             card.addEventListener('mousedown', (e) => iniciarArrastre(e, 'banca', -1, j));
             benchListDiv.appendChild(card);
         });
@@ -344,22 +393,25 @@
         suplentesSpan.innerText = jugadoresEnBanca.length;
     }
 
-    // Funciones de arrastre (sin cambios)
     function iniciarArrastre(e, type, idx, jugador) {
-        e.preventDefault();
-        dragActive = true;
-        dragType = type;
-        dragIndex = idx;
-        dragJugador = jugador;
+        if (e.cancelable) e.preventDefault();
+        dragActive = true; dragType = type; dragIndex = idx; dragJugador = jugador;
         let cx = e.touches ? e.touches[0].clientX : e.clientX;
         let cy = e.touches ? e.touches[0].clientY : e.clientY;
+        
         clone = document.createElement('div');
-        clone.className = 'dragging-touch';
-        clone.innerText = jugador.number;
-        clone.style.left = `${cx - 25}px`;
-        clone.style.top = `${cy - 25}px`;
+        clone.className = 'dragging-touch-shirt';
+        clone.innerHTML = `
+            <div class="football-shirt flex items-center justify-center">
+                <div class="shirt-neck"></div>
+                <span class="font-headline font-bold text-gold-accent text-sm z-10 mt-1">${jugador.number}</span>
+            </div>
+        `;
+        clone.style.left = `${cx - 23}px`;
+        clone.style.top = `${cy - 21}px`;
         document.body.appendChild(clone);
-        document.addEventListener('touchmove', onMove);
+        
+        document.addEventListener('touchmove', onMove, {passive: false});
         document.addEventListener('mousemove', onMove);
         document.addEventListener('touchend', onEnd);
         document.addEventListener('mouseup', onEnd);
@@ -367,10 +419,11 @@
 
     function onMove(e) {
         if (!dragActive) return;
-        e.preventDefault();
+        if (e.cancelable) e.preventDefault();
         let cx = e.touches ? e.touches[0].clientX : e.clientX;
         let cy = e.touches ? e.touches[0].clientY : e.clientY;
-        if (clone) { clone.style.left = `${cx - 25}px`; clone.style.top = `${cy - 25}px`; }
+        if (clone) { clone.style.left = `${cx - 23}px`; clone.style.top = `${cy - 21}px`; }
+        
         const rect = pitchContainer.getBoundingClientRect();
         if (cx >= rect.left && cx <= rect.right && cy >= rect.top && cy <= rect.bottom) pitchContainer.classList.add('drop-over');
         else pitchContainer.classList.remove('drop-over');
@@ -381,25 +434,21 @@
         dragActive = false;
         if (clone) clone.remove();
         pitchContainer.classList.remove('drop-over');
+        
         let cx = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
         let cy = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
         const rect = pitchContainer.getBoundingClientRect();
         const dentro = cx >= rect.left && cx <= rect.right && cy >= rect.top && cy <= rect.bottom;
-        if (dragType === 'banca') {
-            if (dentro) {
-                let x = ((cx - rect.left) / rect.width) * 100;
-                let y = ((cy - rect.top) / rect.height) * 100;
-                x = Math.min(100, Math.max(0, x));
-                y = Math.min(100, Math.max(0, y));
-                agregarAlCampo(dragJugador, x, y);
-            }
+        
+        if (dragType === 'banca' && dentro) {
+            let x = ((cx - rect.left) / rect.width) * 100;
+            let y = ((cy - rect.top) / rect.height) * 100;
+            agregarAlCampo(dragJugador, Math.min(100, Math.max(0, x)), Math.min(100, Math.max(0, y)));
         } else if (dragType === 'campo') {
             if (dentro) {
                 let x = ((cx - rect.left) / rect.width) * 100;
                 let y = ((cy - rect.top) / rect.height) * 100;
-                x = Math.min(100, Math.max(0, x));
-                y = Math.min(100, Math.max(0, y));
-                moverEnCampo(dragIndex, x, y);
+                moverEnCampo(dragIndex, Math.min(100, Math.max(0, x)), Math.min(100, Math.max(0, y)));
             } else {
                 eliminarDelCampo(dragIndex);
             }
@@ -419,8 +468,7 @@
 
     function moverEnCampo(idx, x, y) {
         if (idx >= 0 && idx < jugadoresEnCampo.length) {
-            jugadoresEnCampo[idx].x = x;
-            jugadoresEnCampo[idx].y = y;
+            jugadoresEnCampo[idx].x = x; jugadoresEnCampo[idx].y = y;
             renderizarCampo();
         }
     }
@@ -444,12 +492,11 @@
         if (!posiciones) return;
         const jugadoresActuales = jugadoresEnCampo.map(i => i.jugador);
         if (jugadoresActuales.length !== posiciones.length) {
-            alert(`La formación ${tipo} necesita ${posiciones.length} jugadores. Actualmente tienes ${jugadoresActuales.length}. Arrastra más jugadores al campo.`);
+            alert(`La formación ${tipo} necesita ${posiciones.length} jugadores en el campo. Tienes ${jugadoresActuales.length}.`);
             return;
         }
         jugadoresEnCampo = jugadoresActuales.map((jug, idx) => ({ jugador: jug, x: posiciones[idx].x, y: posiciones[idx].y }));
-        renderizarCampo();
-        actualizarContadores();
+        renderizarCampo(); actualizarContadores();
     }
 
     document.getElementById('guardar-alineacion-btn').addEventListener('click', guardarAlineacionEnCloud);
