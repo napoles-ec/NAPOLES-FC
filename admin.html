@@ -3,126 +3,260 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Panel Admin - Nápoles F.C.</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <title>Panel Admin - Nápoles F.C. Elegance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "napoles-blue": "#0094d6",
+                        "rose-gold": "#e0a899",
+                        "soft-bg": "#fcfbfe"
+                    },
+                    fontFamily: { "headline": ["Outfit"], "body": ["Inter"] }
+                }
+            }
+        }
+    </script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Inter', sans-serif; background: linear-gradient(180deg, #ffffff 0%, #faf7ff 45%, #f5f3ff 100%); color: #111827; min-height: 100vh; overflow-x: hidden; position: relative; }
-        .wave-bg { position: fixed; inset: 0; overflow: hidden; z-index: -1; pointer-events: none; }
-        .wave { position: absolute; width: 220%; height: 280px; left: -60%; border-radius: 45%; opacity: .18; filter: blur(8px); }
-        .wave1 { background: linear-gradient(90deg, #a855f7, #c084fc, #e9d5ff); bottom: -140px; animation: waveMove 18s linear infinite; }
-        .wave2 { background: linear-gradient(90deg, #7c3aed, #d8b4fe, #ede9fe); bottom: -170px; opacity: .12; animation: waveMoveReverse 26s linear infinite; }
-        .wave3 { background: linear-gradient(90deg, #c084fc, #f3e8ff, #ffffff); bottom: -200px; opacity: .08; animation: waveMove 34s linear infinite; }
-        @keyframes waveMove { 0% { transform: translateX(0) rotate(0deg); } 100% { transform: translateX(-12%) rotate(360deg); } }
-        @keyframes waveMoveReverse { 0% { transform: translateX(0) rotate(0deg); } 100% { transform: translateX(12%) rotate(-360deg); } }
-        .topbar { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,.75); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(168,85,247,.08); padding: 16px 18px; display: flex; align-items: center; justify-content: space-between; }
-        .top-left { display: flex; align-items: center; gap: 14px; }
-        .admin-info h1 { font-size: 1.1rem; font-weight: 800; }
-        .admin-info p { font-size: .85rem; color: #6b7280; margin-top: 2px; }
-        .avatar { width: 46px; height: 46px; border-radius: 16px; background: linear-gradient(135deg, #7c3aed, #a855f7); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 1rem; box-shadow: 0 10px 20px rgba(124,58,237,.25); }
-        .hero { padding: 22px 18px 10px; max-width: 700px; margin: auto; }
-        .hero-card { background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(79,70,229,.95)); border-radius: 28px; padding: 26px; color: #fff; position: relative; overflow: hidden; box-shadow: 0 20px 45px rgba(124,58,237,.18); }
-        .hero-card::before { content: ''; position: absolute; width: 260px; height: 260px; border-radius: 50%; background: rgba(255,255,255,.12); right: -80px; top: -80px; }
-        .hero h2 { font-size: 1.6rem; font-weight: 800; margin-bottom: 10px; position: relative; z-index: 2; }
-        .hero p { opacity: .92; line-height: 1.5; position: relative; z-index: 2; }
-        .dashboard { padding: 20px 18px 40px; max-width: 700px; margin: auto; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .card { background: rgba(255,255,255,.82); backdrop-filter: blur(12px); border: 1px solid rgba(168,85,247,.08); border-radius: 24px; padding: 18px; min-height: 180px; position: relative; overflow: hidden; cursor: pointer; transition: .25s; box-shadow: 0 10px 30px rgba(15,23,42,.05); }
-        .card:hover { transform: translateY(-3px); box-shadow: 0 18px 40px rgba(124,58,237,.10); }
-        .card:active { transform: scale(.98); }
-        .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
-        .icon { width: 58px; height: 58px; border-radius: 18px; display: flex; align-items: center; justify-content: center; color: #fff; }
-        .icon .material-symbols-outlined { font-size: 30px; }
-        .badge { min-width: 34px; height: 34px; border-radius: 999px; background: #111827; color: #fff; display: flex; align-items: center; justify-content: center; font-size: .82rem; font-weight: 800; padding: 0 10px; }
-        .card h3 { font-size: 1rem; font-weight: 800; margin-bottom: 8px; }
-        .card p { color: #6b7280; font-size: .88rem; line-height: 1.5; }
-        /* Colores originales */
-        .players .icon { background: linear-gradient(135deg, #2563eb, #60a5fa); }
-        .matches .icon { background: linear-gradient(135deg, #16a34a, #4ade80); }
-        .rivals .icon { background: linear-gradient(135deg, #ea580c, #fb923c); }
-        .finance .icon { background: linear-gradient(135deg, #d97706, #facc15); }
-        .uniforms .icon { background: linear-gradient(135deg, #7c3aed, #c084fc); }
-        .settings .icon { background: linear-gradient(135deg, #0f172a, #475569); }
-        .stats .icon { background: linear-gradient(135deg, #db2777, #f472b6); }
-        .news .icon { background: linear-gradient(135deg, #0891b2, #22d3ee); }
-        .attendance .icon { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
-        /* Nueva tarjeta: Vocalía (color granate / dorado) */
-        .vocalia .icon { background: linear-gradient(135deg, #b91c1c, #f97316); }
-        @media (min-width: 700px) { .dashboard { max-width: 700px; margin: auto; } .hero { max-width: 700px; margin: auto; } }
+        * { -webkit-tap-highlight-color: transparent; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 50%, #f1f4f9 100%);
+            color: #1f2937;
+            min-height: 100vh;
+        }
+        
+        /* Fondos Ambientales Suaves y Femeninos */
+        .ambient-glow {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .glow-sphere {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.35;
+        }
+        .glow-1 { width: 350px; height: 350px; background: #e0a899; top: -5%; left: -15%; }
+        .glow-2 { width: 450px; height: 450px; background: #e0f2fe; bottom: -5%; right: -15%; }
+
+        /* Cristal Blanco Lujoso */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.04);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .glass-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(0, 148, 214, 0.2);
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 12px 40px rgba(0, 148, 214, 0.08);
+        }
+        .glass-card:active {
+            transform: scale(0.98);
+        }
+
+        /* Contenedores de Iconos Estilizados en Tonos Pastel */
+        .icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
+        }
+        
+        /* Colores Pastel Premium para cada Sección */
+        .players .icon-box { background: #e0f2fe; color: #0369a1; }
+        .matches .icon-box { background: #dcfce7; color: #15803d; }
+        .rivals .icon-box { background: #fee2e2; color: #b91c1c; }
+        .finance .icon-box { background: #fef3c7; color: #b45309; }
+        .uniforms .icon-box { background: #f3e8ff; color: #6b21a8; }
+        .stats .icon-box { background: #fce7f3; color: #be185d; }
+        .news .icon-box { background: #ecfeff; color: #047487; }
+        .attendance .icon-box { background: #fff7ed; color: #c2410c; }
+        .vocalia .icon-box { background: #fff1f2; color: #9f1239; }
+        .settings .icon-box { background: #f1f5f9; color: #475569; }
     </style>
 </head>
-<body>
-<div class="wave-bg"><div class="wave wave1"></div><div class="wave wave2"></div><div class="wave wave3"></div></div>
+<body class="font-body antialiased">
 
-<header class="topbar">
-    <div class="top-left">
-        <div class="admin-info"><h1>Panel de Gata</h1><p>Nápoles F.C. Admin</p></div>
+<!-- Iluminación ambiental suave de fondo -->
+<div class="ambient-glow">
+    <div class="glow-sphere glow-1"></div>
+    <div class="glow-sphere glow-2"></div>
+</div>
+
+<!-- Barra Superior -->
+<header class="sticky top-0 z-50 bg-white/60 backdrop-blur-xl border-b border-gray-100 px-5 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-napoles-blue to-blue-600 flex items-center justify-center shadow-md shadow-blue-500/10 border border-white">
+            <span class="material-symbols-outlined text-white text-[20px] font-bold">shield</span>
+        </div>
+        <div>
+            <h1 class="font-headline text-base font-bold text-gray-900 tracking-wide leading-tight">Panel de Gata</h1>
+            <p class="text-[10px] font-bold text-rose-gold uppercase tracking-widest mt-0.5">Nápoles F.C. Admin</p>
+        </div>
     </div>
-    <div class="avatar">G</div>
+    <!-- Inicial con degradado Rose Gold elegante -->
+    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#fbcfe8] via-[#f472b6] to-[#e0a899] flex items-center justify-center font-headline font-bold text-white text-sm shadow-sm border border-white">
+        G
+    </div>
 </header>
 
-<section class="hero">
-    <div class="hero-card">
-        <h2>Hola Gata 👋</h2>
-        <p>Gestiona jugadores, partidos, uniformes, rivales, vocalía y todo el club desde tu celular.</p>
-    </div>
-</section>
+<!-- Contenido Principal -->
+<main class="max-w-md mx-auto px-4 pt-6 pb-12">
+    
+    <!-- Tarjeta de Bienvenida Principal -->
+    <section class="mb-6 relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0094d6] via-[#007bb3] to-[#0f4c81] p-6 shadow-xl shadow-blue-900/10">
+        <!-- Círculos de diseño minimalistas -->
+        <div class="absolute -right-8 -top-8 w-28 h-28 rounded-full bg-white/5 pointer-events-none"></div>
+        <div class="absolute -right-2 -top-2 w-16 h-16 rounded-full bg-white/5 pointer-events-none"></div>
+        
+        <h2 class="font-headline text-xl font-extrabold text-white tracking-wide flex items-center gap-2">
+            Hola Gata <span class="text-xl animate-bounce">👋</span>
+        </h2>
+        <p class="text-xs text-blue-50/90 leading-relaxed mt-1.5 max-w-[95%]">
+            Gestiona jugadores, partidos, uniformes, rivales, vocalía y todo el club desde tu celular con un control impecable.
+        </p>
+    </section>
 
-<section class="dashboard">
-    <div class="grid">
+    <!-- Grid de Herramientas -->
+    <section class="grid grid-cols-2 gap-4">
+        
         <!-- Jugadores -->
-        <div class="card players" onclick="window.location.href='jugadores.html'">
-            <div class="card-top"><div class="icon"><span class="material-symbols-outlined">groups</span></div><div class="badge">12</div></div>
-            <h3>Jugadores</h3><p>Aprobar jugadores, editar datos y revisar registros.</p>
+        <div class="glass-card card players p-4 rounded-2xl flex flex-col justify-between min-h-[160px] cursor-pointer" onclick="window.location.href='jugadores.html'">
+            <div class="flex justify-between items-start">
+                <div class="icon-box"><span class="material-symbols-outlined text-[24px]">groups</span></div>
+                <span class="bg-blue-50 text-blue-600 text-[11px] font-bold px-2 py-0.5 rounded-full border border-blue-100">12</span>
+            </div>
+            <div class="mt-4">
+                <h3 class="font-headline font-bold text-sm text-gray-800 tracking-wide">Jugadores</h3>
+                <p class="text-[11px] text-gray-500 leading-normal mt-0.5">Aprobar altas, datos y registros de fichas.</p>
+            </div>
         </div>
+
         <!-- Partidos -->
-        <div class="card matches" onclick="window.location.href='partidos.html'">
-            <div class="card-top"><div class="icon"><span class="material-symbols-outlined">sports_soccer</span></div><div class="badge">3</div></div>
-            <h3>Partidos</h3><p>Programa partidos, horarios y canchas.</p>
+        <div class="glass-card card matches p-4 rounded-2xl flex flex-col justify-between min-h-[160px] cursor-pointer" onclick="window.location.href='partidos.html'">
+            <div class="flex justify-between items-start">
+                <div class="icon-box"><span class="material-symbols-outlined text-[24px]">sports_soccer</span></div>
+                <span class="bg-green-50 text-green-600 text-[11px] font-bold px-2 py-0.5 rounded-full border border-green-100">3</span>
+            </div>
+            <div class="mt-4">
+                <h3 class="font-headline font-bold text-sm text-gray-800 tracking-wide">Partidos</h3>
+                <p class="text-[11px] text-gray-500 leading-normal mt-0.5">Programa partidos, canchas y horarios oficiales.</p>
+            </div>
         </div>
+
         <!-- Rivales -->
-        <div class="card rivals" onclick="window.location.href='rivales.html'">
-            <div class="card-top"><div class="icon"><span class="material-symbols-outlined">shield</span></div><div class="badge">8</div></div>
-            <h3>Rivales</h3><p>Agrega clubes rivales y administra estadísticas.</p>
+        <div class="glass-card card rivals p-4 rounded-2xl flex flex-col justify-between min-h-[160px] cursor-pointer" onclick="window.location.href='rivales.html'">
+            <div class="flex justify-between items-start">
+                <div class="icon-box"><span class="material-symbols-outlined text-[24px]">shield</span></div>
+                <span class="bg-red-50 text-red-600 text-[11px] font-bold px-2 py-0.5 rounded-full border border-red-100">8</span>
+            </div>
+            <div class="mt-4">
+                <h3 class="font-headline font-bold text-sm text-gray-800 tracking-wide">Rivales</h3>
+                <p class="text-[11px] text-gray-500 leading-normal mt-0.5">Administra clubes contrincantes e historial.</p>
+            </div>
         </div>
+
         <!-- Finanzas -->
-        <div class="card finance" onclick="window.location.href='finanzas.html'">
-            <div class="card-top"><div class="icon"><span class="material-symbols-outlined">payments</span></div><div class="badge">5</div></div>
-            <h3>Finanzas</h3><p>Revisa pagos, inscripciones y balances.</p>
+        <div class="glass-card card finance p-4 rounded-2xl flex flex-col justify-between min-h-[160px] cursor-pointer" onclick="window.location.href='finanzas.html'">
+            <div class="flex justify-between items-start">
+                <div class="icon-box"><span class="material-symbols-outlined text-[24px]">payments</span></div>
+                <span class="bg-amber-50 text-amber-700 text-[11px] font-bold px-2 py-0.5 rounded-full border border-amber-100">5</span>
+            </div>
+            <div class="mt-4">
+                <h3 class="font-headline font-bold text-sm text-gray-800 tracking-wide">Finanzas</h3>
+                <p class="text-[11px] text-gray-500 leading-normal mt-0.5">Revisa estados de cuenta, pagos e inscripciones.</p>
+            </div>
         </div>
+
         <!-- Uniformes -->
-        <div class="card uniforms" onclick="window.location.href='uniformes.html'">
-            <div class="card-top"><div class="icon"><span class="material-symbols-outlined">inventory_2</span></div><div class="badge">9</div></div>
-            <h3>Uniformes</h3><p>Gestiona tallas, entregas y stock.</p>
+        <div class="glass-card card uniforms p-4 rounded-2xl flex flex-col justify-between min-h-[160px] cursor-pointer" onclick="window.location.href='uniformes.html'">
+            <div class="flex justify-between items-start">
+                <div class="icon-box"><span class="material-symbols-outlined text-[24px]">inventory_2</span></div>
+                <span class="bg-purple-50 text-purple-600 text-[11px] font-bold px-2 py-0.5 rounded-full border border-purple-100">9</span>
+            </div>
+            <div class="mt-4">
+                <h3 class="font-headline font-bold text-sm text-gray-800 tracking-wide">Uniformes</h3>
+                <p class="text-[11px] text-gray-500 leading-normal mt-0.5">Control de stock, asignación de tallas y entregas.</p>
+            </div>
         </div>
-        <!-- Configuración -->
-        <div class="card settings" onclick="window.location.href='configuracion.html'">
-            <div class="card-top"><div class="icon"><span class="material-symbols-outlined">settings</span></div><div class="badge">2</div></div>
-            <h3>Configuración</h3><p>Ajustes del sistema y permisos del club.</p>
-        </div>
+
         <!-- Estadísticas -->
-        <div class="card stats" onclick="window.location.href='estadisticas.html'">
-            <div class="card-top"><div class="icon"><span class="material-symbols-outlined">query_stats</span></div><div class="badge">7</div></div>
-            <h3>Estadísticas</h3><p>Visualiza rendimiento, goles, asistencias y métricas del club.</p>
+        <div class="glass-card card stats p-4 rounded-2xl flex flex-col justify-between min-h-[160px] cursor-pointer" onclick="window.location.href='estadisticas.html'">
+            <div class="flex justify-between items-start">
+                <div class="icon-box"><span class="material-symbols-outlined text-[24px]">query_stats</span></div>
+                <span class="bg-pink-50 text-pink-600 text-[11px] font-bold px-2 py-0.5 rounded-full border border-pink-100">7</span>
+            </div>
+            <div class="mt-4">
+                <h3 class="font-headline font-bold text-sm text-gray-800 tracking-wide">Estadísticas</h3>
+                <p class="text-[11px] text-gray-500 leading-normal mt-0.5">Rendimiento, goleadores y asistencias del club.</p>
+            </div>
         </div>
+
         <!-- Notificaciones -->
-        <div class="card news" onclick="window.location.href='notificaciones.html'">
-            <div class="card-top"><div class="icon"><span class="material-symbols-outlined">notifications</span></div><div class="badge">4</div></div>
-            <h3>Notificaciones</h3><p>Envía anuncios, revisa alertas y novedades del club.</p>
+        <div class="glass-card card news p-4 rounded-2xl flex flex-col justify-between min-h-[160px] cursor-pointer" onclick="window.location.href='notificaciones.html'">
+            <div class="flex justify-between items-start">
+                <div class="icon-box"><span class="material-symbols-outlined text-[24px]">notifications</span></div>
+                <span class="bg-cyan-50 text-cyan-600 text-[11px] font-bold px-2 py-0.5 rounded-full border border-cyan-100">4</span>
+            </div>
+            <div class="mt-4">
+                <h3 class="font-headline font-bold text-sm text-gray-800 tracking-wide">Notificaciones</h3>
+                <p class="text-[11px] text-gray-500 leading-normal mt-0.5">Envío de comunicados, alertas y avisos urgentes.</p>
+            </div>
         </div>
-        <!-- Asistencia a Partidos (ya existente) -->
-        <div class="card attendance" onclick="window.location.href='asistencia.html'">
-            <div class="card-top"><div class="icon"><span class="material-symbols-outlined">event_seat</span></div><div class="badge">📋</div></div>
-            <h3>Asistencia a Partidos</h3><p>Confirma jugadores, revisa asistentes por encuentro y controla el registro.</p>
+
+        <!-- Asistencia a Partidos -->
+        <div class="glass-card card attendance p-4 rounded-2xl flex flex-col justify-between min-h-[160px] cursor-pointer" onclick="window.location.href='asistencia.html'">
+            <div class="flex justify-between items-start">
+                <div class="icon-box"><span class="material-symbols-outlined text-[24px]">event_seat</span></div>
+                <span class="text-xs">📋</span>
+            </div>
+            <div class="mt-4">
+                <h3 class="font-headline font-bold text-sm text-gray-800 tracking-wide">Asistencias</h3>
+                <p class="text-[11px] text-gray-500 leading-normal mt-0.5">Confirmación de convocados por encuentro.</p>
+            </div>
         </div>
-        <!-- NUEVA TARJETA: VOCALÍA -->
-        <div class="card vocalia" onclick="window.location.href='vocalia.html'">
-            <div class="card-top"><div class="icon"><span class="material-symbols-outlined">gavel</span></div><div class="badge">🎤</div></div>
-            <h3>Vocalía</h3><p>Gestiona cuotas, compromisos, actas y comunicación con los jugadores.</p>
+
+        <!-- Vocalía -->
+        <div class="glass-card card vocalia p-4 rounded-2xl flex flex-col justify-between min-h-[160px] cursor-pointer" onclick="window.location.href='vocalia.html'">
+            <div class="flex justify-between items-start">
+                <div class="icon-box"><span class="material-symbols-outlined text-[24px]">gavel</span></div>
+                <span class="text-xs">🎤</span>
+            </div>
+            <div class="mt-4">
+                <h3 class="font-headline font-bold text-sm text-gray-800 tracking-wide">Vocalía</h3>
+                <p class="text-[11px] text-gray-500 leading-normal mt-0.5">Gestión de cuotas, actas y compromisos del club.</p>
+            </div>
         </div>
-    </div>
-</section>
+
+        <!-- Configuración -->
+        <div class="glass-card card settings p-4 rounded-2xl flex flex-col justify-between min-h-[160px] cursor-pointer" onclick="window.location.href='configuracion.html'">
+            <div class="flex justify-between items-start">
+                <div class="icon-box"><span class="material-symbols-outlined text-[24px]">settings</span></div>
+                <span class="bg-gray-100 text-gray-600 text-[11px] font-bold px-2 py-0.5 rounded-full border border-gray-200">2</span>
+            </div>
+            <div class="mt-4">
+                <h3 class="font-headline font-bold text-sm text-gray-800 tracking-wide">Configuración</h3>
+                <p class="text-[11px] text-gray-500 leading-normal mt-0.5">Ajustes generales del sistema y permisos globales.</p>
+            </div>
+        </div>
+
+    </section>
+</main>
 
 <script>
     if (localStorage.getItem('admin_activo') !== 'true') {
