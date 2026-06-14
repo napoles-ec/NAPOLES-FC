@@ -3,305 +3,380 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>NAPÓLES FC · ADMIN</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <title>NAPÓLES FC · ADMIN PRO</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      background: #0b0e17;
+      background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 50%, #f1f4f9 100%);
       font-family: 'Inter', sans-serif;
-      color: #fff;
+      color: #1f2937;
       padding-bottom: 60px;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
     }
 
-    /* Header estilo top */
+    /* Iluminación ambiental premium de fondo */
+    .ambient-glow {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .glow-sphere {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.35;
+    }
+    .glow-1 { width: 350px; height: 350px; background: #e0a899; top: -5%; left: -10%; }
+    .glow-2 { width: 400px; height: 400px; background: #e0f2fe; top: 40%; right: -15%; }
+
+    /* Barra Superior Cristalina */
     .app-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px 20px;
-      background: rgba(10, 14, 23, 0.9);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(72, 187, 255, 0.2);
+      padding: 14px 24px;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(243, 244, 246, 0.8);
       position: sticky;
       top: 0;
       z-index: 100;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.01);
     }
     .logo h1 {
-      font-size: 1.5rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.3rem;
       font-weight: 800;
-      background: linear-gradient(135deg, #fff, #38bdf8);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
+      color: #111827;
+      letter-spacing: -0.2px;
     }
     .logo p {
       font-size: 0.7rem;
-      opacity: 0.7;
+      color: #e0a899;
+      margin-top: 2px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
     .header-actions {
       display: flex;
-      gap: 12px;
+      gap: 10px;
     }
     .icon-btn {
-      background: #1e293b;
-      width: 42px;
-      height: 42px;
-      border-radius: 30px;
+      background: #ffffff;
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: 0.2s;
-      border: 1px solid #334155;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      color: #4b5563;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
     }
     .icon-btn:hover {
-      background: #2d3a4e;
-      transform: scale(1.02);
+      background: #111827;
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(17, 24, 39, 0.15);
     }
 
-    /* Tabs estilo "Sun Mon Tue" */
+    /* Pestañas de estado (Filtros de Alineación) */
     .tabs-row {
       display: flex;
       justify-content: center;
-      gap: 12px;
-      padding: 20px 16px 0;
+      gap: 10px;
+      padding: 24px 16px 0;
       flex-wrap: wrap;
+      position: relative;
+      z-index: 2;
     }
     .tab {
-      background: #11161f;
-      border-radius: 40px;
-      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 10px 18px;
       font-weight: 700;
-      font-size: 0.85rem;
-      letter-spacing: 0.5px;
-      border: 1px solid #2a3440;
+      font-size: 0.75rem;
+      letter-spacing: 0.2px;
+      border: 1px solid rgba(255, 255, 255, 0.7);
       cursor: pointer;
-      color: #b9c7d9;
-      transition: 0.2s;
+      color: #4b5563;
+      transition: all 0.25s ease;
       display: flex;
-      align-items: baseline;
+      align-items: center;
       gap: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.01);
     }
     .tab span {
-      font-size: 1.3rem;
-      font-weight: 900;
-      color: #60a5fa;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #0094d6;
     }
     .tab.active {
-      background: linear-gradient(135deg, #2563eb, #4f46e5);
-      border-color: transparent;
-      color: white;
-      box-shadow: 0 4px 12px #2563eb40;
+      background: #ffffff;
+      border-color: rgba(0, 148, 214, 0.3);
+      color: #111827;
+      box-shadow: 0 10px 20px -5px rgba(0, 148, 214, 0.1);
     }
     .tab.active span {
-      color: white;
+      color: #0094d6;
     }
 
-    /* Barra de búsqueda */
+    /* Buscador Estilizado */
     .search-bar {
       display: flex;
       gap: 12px;
-      padding: 20px 24px;
-      max-width: 1300px;
+      padding: 24px 16px;
+      max-width: 700px;
       margin: 0 auto;
+      position: relative;
+      z-index: 2;
     }
     .search-wrapper {
       flex: 3;
-      background: #11161f;
-      border: 1px solid #2a3440;
-      border-radius: 60px;
-      padding: 0 20px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 0 16px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+    }
+    .search-wrapper span {
+      color: #94a3b8;
+      font-size: 20px;
     }
     .search-wrapper input {
       background: transparent;
       border: none;
-      padding: 14px 0;
+      padding: 12px 0;
       width: 100%;
-      color: white;
+      color: #1f2937;
       font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
       outline: none;
     }
     .search-wrapper input::placeholder {
-      color: #5b6e8c;
+      color: #94a3b8;
     }
     .filter-select {
-      background: #11161f;
-      border: 1px solid #2a3440;
-      border-radius: 40px;
-      padding: 0 20px;
-      color: white;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 0 16px;
+      color: #4b5563;
+      font-size: 0.85rem;
       font-weight: 600;
       outline: none;
       cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
     }
 
-    /* Tarjetas estilo "partido en vivo" */
+    /* Fichas Técnicas de Jugadores */
     .match-card {
-      background: #0f131e;
-      border-radius: 28px;
-      margin-bottom: 18px;
-      border: 1px solid #202838;
-      transition: 0.2s;
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 24px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.02);
       overflow: hidden;
     }
     .match-card:hover {
-      border-color: #3b82f660;
-      transform: scale(0.99);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.85);
+      border-color: rgba(0, 148, 214, 0.15);
+      box-shadow: 0 12px 35px rgba(0, 148, 214, 0.05);
     }
     .match-content {
-      padding: 18px 20px;
+      padding: 20px;
       display: flex;
       flex-direction: column;
       gap: 16px;
     }
-    /* enfrentamiento dos lados */
+    
     .match-teams {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      flex-wrap: wrap;
     }
     .team {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
       flex: 1;
     }
     .team-avatar {
-      width: 56px;
-      height: 56px;
-      background: linear-gradient(145deg, #1e2a4a, #0f172a);
-      border-radius: 20px;
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #e0f2fe, #bae6fd);
+      color: #0369a1;
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.8rem;
-      border: 1px solid #3b82f630;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 800;
+      border: 1px solid rgba(255,255,255,0.6);
     }
     .team-info h4 {
-      font-size: 1.1rem;
-      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #111827;
+      line-height: 1.2;
     }
     .team-info .ced {
       font-size: 0.7rem;
-      opacity: 0.6;
-      margin-top: 4px;
-    }
-    .match-status {
-      background: #0a0e16;
-      padding: 8px 18px;
-      border-radius: 40px;
-      text-align: center;
-      min-width: 110px;
-    }
-    .status-badge {
-      font-size: 0.7rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      padding: 4px 12px;
-      border-radius: 30px;
-      display: inline-block;
-    }
-    .status-badge.aprobado { background: #10b981; color: white; }
-    .status-badge.pendiente { background: #f59e0b; color: #0c0a2a; }
-    .status-badge.rechazado { background: #ef4444; color: white; }
-    .score-block {
-      background: #010409;
-      border-radius: 24px;
-      padding: 6px 20px;
-      text-align: center;
-      border: 1px solid #2a3440;
-    }
-    .dorsal-score {
-      font-size: 2.2rem;
-      font-weight: 900;
-      font-family: monospace;
-      letter-spacing: 2px;
-      color: #38bdf8;
-    }
-    .label-dorsal {
-      font-size: 0.6rem;
-      text-transform: uppercase;
-      opacity: 0.6;
+      color: #6b7280;
+      margin-top: 3px;
+      font-weight: 500;
     }
     .shirt-name {
-      font-size: 0.9rem;
-      font-weight: 600;
-      background: #00000060;
-      padding: 4px 12px;
-      border-radius: 20px;
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 800;
+      background: rgba(0, 148, 214, 0.08);
+      color: #007bb3;
+      padding: 2px 8px;
+      border-radius: 6px;
       margin-top: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
     }
 
+    .match-status {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .status-badge {
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 50px;
+      letter-spacing: 0.3px;
+    }
+    .status-badge.aprobado { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+    .status-badge.pendiente { background: #fff7ed; color: #c2410c; border: 1px solid #ffedd5; }
+    .status-badge.rechazado { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+    
+    .score-block {
+      background: rgba(241, 245, 249, 0.6);
+      border-radius: 16px;
+      padding: 6px 16px;
+      text-align: center;
+      min-width: 75px;
+      border: 1px solid rgba(0,0,0,0.02);
+    }
+    .dorsal-score {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #111827;
+      line-height: 1;
+    }
+    .label-dorsal {
+      font-size: 0.55rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    /* Botonera de acciones estilizada */
     .action-buttons-live {
       display: flex;
       flex-wrap: wrap;
       justify-content: flex-end;
-      gap: 12px;
-      margin-top: 8px;
-      border-top: 1px solid #202838;
-      padding-top: 16px;
+      gap: 8px;
+      margin-top: 4px;
+      border-top: 1px dashed rgba(0, 0, 0, 0.06);
+      padding-top: 14px;
     }
     .live-btn {
-      background: #1e293b;
       border: none;
-      padding: 8px 20px;
-      border-radius: 40px;
-      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-weight: 600;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      font-size: 0.8rem;
+      gap: 6px;
+      font-size: 0.75rem;
       cursor: pointer;
-      transition: 0.2s;
-      color: #e2e8f0;
+      transition: all 0.2s ease;
     }
-    .live-btn.approve { background: #10b981; color: white; }
-    .live-btn.reject { background: #ef4444; color: white; }
-    .live-btn.edit { background: #2563eb; }
-    .live-btn.whatsapp { background: #25D366; }
-    .live-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    .live-btn .material-symbols-outlined { font-size: 14px; }
+    
+    .live-btn.approve { background: #dcfce7; color: #15803d; }
+    .live-btn.reject { background: #fee2e2; color: #b91c1c; }
+    .live-btn.edit { background: #f1f5f9; color: #475569; }
+    .live-btn.whatsapp { background: #e8fbf0; color: #0f7642; }
+    
+    .live-btn:hover { transform: translateY(-1px); filter: brightness(0.96); }
 
     .loading-placeholder {
       text-align: center;
-      padding: 80px;
-      opacity: 0.7;
+      padding: 60px;
+      color: #94a3b8;
+      font-size: 0.9rem;
+      font-weight: 500;
     }
 
     @media (max-width: 750px) {
-      .match-teams { flex-direction: column; align-items: stretch; }
-      .team { justify-content: space-between; }
-      .action-buttons-live { justify-content: center; }
-      .tabs-row { gap: 8px; }
-      .tab { padding: 6px 14px; font-size: 0.7rem; }
+      .match-teams { flex-direction: column; align-items: stretch; gap: 12px; }
+      .team { justify-content: flex-start; }
+      .match-status { order: -1; justify-content: flex-start; }
+      .score-block { position: absolute; top: 20px; right: 20px; }
+      .match-card { position: relative; }
+      .action-buttons-live { justify-content: flex-start; }
+      .tabs-row { gap: 6px; padding-top: 16px; }
+      .tab { padding: 8px 12px; font-size: 0.7rem; }
       .search-bar { flex-direction: column; padding: 16px; }
     }
   </style>
 </head>
 <body>
 
+<div class="ambient-glow">
+  <div class="glow-sphere glow-1"></div>
+  <div class="glow-sphere glow-2"></div>
+</div>
+
 <div class="app-header">
   <div class="logo">
-    <h1>⚡ NÁPOLES F.C.</h1>
-    <p>Administración · Modo PRO</p>
+    <h1>⚽ NÁPOLES F.C.</h1>
+    <p>Panel de Jugadores · Admin</p>
   </div>
   <div class="header-actions">
-    <div class="icon-btn" onclick="descargarPDF()"><span class="material-symbols-outlined">picture_as_pdf</span></div>
-    <div class="icon-btn" onclick="configurarWhatsapp()"><span class="material-symbols-outlined">settings</span></div>
-    <div class="icon-btn" onclick="cerrarSesion()"><span class="material-symbols-outlined">logout</span></div>
+    <div class="icon-btn" onclick="descargarPDF()" title="Descargar PDF"><span class="material-symbols-outlined">picture_as_pdf</span></div>
+    <div class="icon-btn" onclick="configurarWhatsapp()" title="Configuración"><span class="material-symbols-outlined">settings</span></div>
+    <div class="icon-btn" onclick="cerrarSesion()" title="Salir"><span class="material-symbols-outlined">logout</span></div>
   </div>
 </div>
 
@@ -315,7 +390,7 @@
 <div class="search-bar">
   <div class="search-wrapper">
     <span class="material-symbols-outlined">search</span>
-    <input type="text" id="searchInput" placeholder="Buscar jugador, cédula o dorsal...">
+    <input type="text" id="searchInput" placeholder="Buscar por jugador, cédula o dorsal...">
   </div>
   <select id="filterSelect" class="filter-select">
     <option value="nombre">Nombre</option>
@@ -325,8 +400,8 @@
   </select>
 </div>
 
-<div id="playersContainer" style="max-width: 1300px; margin: 0 auto; padding: 0 20px;">
-  <div class="loading-placeholder">Cargando jugadores...</div>
+<div id="playersContainer" style="max-width: 700px; margin: 0 auto; padding: 0 16px; position: relative; z-index: 2;">
+  <div class="loading-placeholder">Cargando nómina de jugadores...</div>
 </div>
 
 <script>
@@ -347,12 +422,12 @@ if (!localStorage.getItem('tipo_whatsapp')) localStorage.setItem('tipo_whatsapp'
 function configurarWhatsapp() {
   let tipo = prompt('WhatsApp: normal / business', localStorage.getItem('tipo_whatsapp'));
   if (tipo) localStorage.setItem('tipo_whatsapp', tipo.toLowerCase());
-  alert('Configuración guardada');
+  alert('Configuración de WhatsApp guardada');
 }
 
 async function cargarJugadores() {
   const container = document.getElementById('playersContainer');
-  container.innerHTML = '<div class="loading-placeholder">Cargando jugadores...</div>';
+  container.innerHTML = '<div class="loading-placeholder">Cargando nómina de jugadores...</div>';
   try {
     const res = await fetch(`${CONFIG.URL_GAS}?action=getJugadores&t=${Date.now()}`);
     const data = await res.json();
@@ -360,7 +435,7 @@ async function cargarJugadores() {
     actualizarContadores();
     aplicarFiltros();
   } catch(e) {
-    container.innerHTML = '<div class="loading-placeholder">Error de conexión</div>';
+    container.innerHTML = '<div class="loading-placeholder">Error de conexión al servidor</div>';
   }
 }
 
@@ -401,7 +476,7 @@ function aplicarFiltros() {
 function renderMatches(jugadores) {
   const container = document.getElementById('playersContainer');
   if (!jugadores.length) {
-    container.innerHTML = '<div class="loading-placeholder">No hay jugadores que coincidan</div>';
+    container.innerHTML = '<div class="loading-placeholder">No hay jugadores que coincidan con la búsqueda</div>';
     return;
   }
   container.innerHTML = '';
@@ -422,14 +497,14 @@ function renderMatches(jugadores) {
             <div class="team-avatar">${avatarLocal}</div>
             <div class="team-info">
               <h4>${j.primerNombre || ''} ${j.segundoNombre || ''} ${j.apellidos || ''}</h4>
-              <div class="ced">${j.cedula}</div>
+              <div class="ced">C.I. ${j.cedula}</div>
               <div class="shirt-name">${j.nombreCamiseta || 'SIN NOMBRE'}</div>
             </div>
           </div>
           <div class="match-status">
-            <div class="status-badge ${estadoClass}">${estado}</div>
+            <div class="status-badge ${estadoClass}">${estado === 'APROBADO' ? '✅ Aprobado' : estado === 'RECHAZADO' ? '❌ Rechazado' : '⏳ Pendiente'}</div>
           </div>
-          <div class="team">
+          <div class="team" style="flex:0; justify-content: flex-end;">
             <div class="score-block">
               <div class="dorsal-score">${j.dorsal || 0}</div>
               <div class="label-dorsal">DORSAL</div>
@@ -452,7 +527,7 @@ function renderMatches(jugadores) {
 
 // Acciones
 async function aprobarJugador(cedula) {
-  if (!confirm('¿Aprobar este jugador? Se enviará mensaje de WhatsApp.')) return;
+  if (!confirm('¿Aprobar este jugador? Se abrirá la ventana para notificar por WhatsApp.')) return;
   try {
     const res = await fetch(`${CONFIG.URL_GAS}?action=aprobarJugador&cedula=${cedula}`);
     const data = await res.json();
@@ -462,8 +537,8 @@ async function aprobarJugador(cedula) {
       let url = tipo === 'business' ? `https://wa.me/593${data.telefono}?text=${encodeURIComponent(mensaje)}` : `https://api.whatsapp.com/send?phone=593${data.telefono}&text=${encodeURIComponent(mensaje)}`;
       window.open(url, '_blank');
       cargarJugadores();
-    } else alert('Error al aprobar');
-  } catch(e) { alert('Error'); }
+    } else alert('Error al aprobar el jugador');
+  } catch(e) { alert('Error de red al procesar aprobación'); }
 }
 
 async function rechazarJugador(cedula) {
@@ -472,12 +547,12 @@ async function rechazarJugador(cedula) {
     const res = await fetch(`${CONFIG.URL_GAS}?action=rechazarJugador&cedula=${cedula}`);
     const data = await res.json();
     if (data.ok) cargarJugadores();
-    else alert('Error');
-  } catch(e) { alert('Error'); }
+    else alert('Error al rechazar el jugador');
+  } catch(e) { alert('Error de red al procesar rechazo'); }
 }
 
 function enviarWhatsapp(telefono, nombre) {
-  const msg = `Hola ${nombre}, mensaje desde administración Nápoles FC.`;
+  const msg = `Hola ${nombre}, te saludamos desde la administración de Nápoles F.C.`;
   window.open(`https://wa.me/593${telefono}?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
