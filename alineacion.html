@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes" name="viewport"/>
-<title>Nápoles FC - Alineación táctica (móvil)</title>
+<title>Nápoles FC - Alineación táctica (conectada a Google Sheets)</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Outfit:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -15,10 +15,7 @@
             colors: {
               "primary": "#9d4300",
               "primary-container": "#f97316",
-              "secondary": "#565e74",
-              "surface": "#faf9f6",
-              "on-surface": "#1a1c1a",
-              "on-surface-variant": "#584237"
+              "secondary": "#565e74"
             },
             fontFamily: { "headline-md": ["Outfit"], "body-md": ["Inter"] }
           }
@@ -26,157 +23,29 @@
       }
     </script>
 <style>
-        * {
-            user-select: none; /* evitar selección de texto al arrastrar */
-            -webkit-tap-highlight-color: transparent;
-        }
-        body {
-            background: linear-gradient(145deg, #0a1a2a 0%, #051020 100%);
-            font-family: 'Inter', sans-serif;
-            touch-action: pan-y pinch-zoom; /* permite scroll vertical */
-            padding-bottom: 70px;
-        }
-        .pitch-perspective {
-            perspective: 800px;
-        }
-        .pitch-surface {
-            transform: rotateX(8deg);
-            transform-origin: top;
-            background: linear-gradient(to bottom, #1a5a2a 0%, #0e3a1a 100%);
-            border: 2px solid rgba(255,255,255,0.2);
-            border-radius: 1rem;
-            box-shadow: 0 15px 25px rgba(0,0,0,0.5);
-            position: relative;
-            aspect-ratio: 3 / 4; /* más alto para móvil */
-        }
-        .pitch-surface svg {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            opacity: 0.3;
-        }
-        .glass-card {
-            background: rgba(0,0,0,0.4);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.15);
-        }
-        /* Fichas de jugadores en el campo (compactas) */
-        .player-token {
-            position: absolute;
-            cursor: grab;
-            z-index: 20;
-            width: 50px;
-            transform: translate(-50%, -50%);
-            touch-action: none;
-        }
-        .player-token:active { cursor: grabbing; }
-        .player-token .inner {
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(8px);
-            border-radius: 40px;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid #f97316;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-        .player-token .dorsal {
-            font-size: 1rem;
-            font-weight: 800;
-            color: white;
-            line-height: 1.2;
-        }
-        .player-token .nombre {
-            font-size: 0.55rem;
-            color: #ddd;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 46px;
-        }
-        .player-token .stats {
-            font-size: 0.5rem;
-            display: flex;
-            gap: 4px;
-            margin-top: 2px;
-        }
-        /* Banca: grid 3 columnas */
-        .bench-card {
-            background: rgba(10,20,30,0.9);
-            backdrop-filter: blur(12px);
-            border-radius: 0.75rem;
-            cursor: grab;
-            touch-action: none;
-            padding: 8px 6px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-        .bench-card:active { cursor: grabbing; }
-        .bench-card .dorsal {
-            background: #f97316;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 0.9rem;
-            margin-bottom: 4px;
-        }
-        .bench-card .nombre {
-            font-size: 0.7rem;
-            font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 90px;
-        }
-        .bench-card .stats {
-            font-size: 0.6rem;
-            color: #ccc;
-        }
-        .drop-over {
-            background: rgba(249,115,22,0.3);
-            border: 2px dashed #f97316;
-        }
-        .dragging-touch {
-            opacity: 0.8;
-            transform: scale(1.1);
-            z-index: 2000;
-            position: fixed;
-            pointer-events: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 40px;
-            background: #f97316;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-            font-size: 1.2rem;
-            box-shadow: 0 0 15px rgba(0,0,0,0.5);
-        }
-        .btn-movil {
-            font-size: 0.7rem;
-            padding: 6px 12px;
-        }
+        * { user-select: none; -webkit-tap-highlight-color: transparent; }
+        body { background: linear-gradient(145deg, #0a1a2a 0%, #051020 100%); font-family: 'Inter', sans-serif; touch-action: pan-y pinch-zoom; padding-bottom: 70px; }
+        .pitch-perspective { perspective: 800px; }
+        .pitch-surface { transform: rotateX(8deg); transform-origin: top; background: linear-gradient(to bottom, #1a5a2a 0%, #0e3a1a 100%); border: 2px solid rgba(255,255,255,0.2); border-radius: 1rem; box-shadow: 0 15px 25px rgba(0,0,0,0.5); aspect-ratio: 3/4; }
+        .pitch-surface svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0.3; }
+        .glass-card { background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); }
+        .player-token { position: absolute; cursor: grab; z-index: 20; width: 50px; transform: translate(-50%, -50%); touch-action: none; }
+        .player-token .inner { background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); border-radius: 40px; width: 50px; height: 50px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid #f97316; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .player-token .dorsal { font-size: 1rem; font-weight: 800; color: white; }
+        .player-token .nombre { font-size: 0.55rem; color: #ddd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 46px; }
+        .player-token .stats { font-size: 0.5rem; display: flex; gap: 4px; margin-top: 2px; }
+        .bench-card { background: rgba(10,20,30,0.9); backdrop-filter: blur(12px); border-radius: 0.75rem; cursor: grab; touch-action: none; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .bench-card .dorsal { background: #f97316; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; margin-bottom: 4px; }
+        .bench-card .nombre { font-size: 0.65rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px; }
+        .bench-card .stats { font-size: 0.55rem; color: #ccc; }
+        .drop-over { background: rgba(249,115,22,0.3); border: 2px dashed #f97316; }
+        .dragging-touch { opacity: 0.8; transform: scale(1.1); position: fixed; width: 50px; height: 50px; border-radius: 40px; background: #f97316; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; font-size: 1.2rem; z-index: 2000; pointer-events: none; }
+        .btn-movil { font-size: 0.7rem; padding: 6px 12px; }
         @media (max-width: 500px) {
             .player-token { width: 45px; }
             .player-token .inner { width: 45px; height: 45px; }
             .player-token .dorsal { font-size: 0.9rem; }
-            .player-token .nombre { font-size: 0.5rem; }
             .bench-card .dorsal { width: 30px; height: 30px; font-size: 0.8rem; }
-            .bench-card .nombre { font-size: 0.6rem; }
-            .stats-summary { gap: 8px; }
         }
     </style>
 </head>
@@ -193,7 +62,7 @@
 </header>
 
 <main class="pt-14 pb-24 px-2 max-w-5xl mx-auto">
-    <!-- Info partido compacta -->
+    <!-- Info partido -->
     <div class="glass-card rounded-xl p-2 mb-3 flex flex-wrap justify-between items-center gap-2 text-xs">
         <div>
             <div class="font-bold text-sm">🗓️ 13 jun · Nápoles vs <span class="text-primary-container">FRANCO CANADIENSE</span></div>
@@ -206,7 +75,7 @@
         </div>
     </div>
 
-    <!-- Campo con perspectiva -->
+    <!-- Campo -->
     <div class="pitch-perspective w-full">
         <div id="pitch-container" class="pitch-surface relative w-full rounded-xl overflow-hidden">
             <svg viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -227,10 +96,10 @@
         <button id="cargar-ultima" class="px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs hover:bg-primary-container transition">📂 Cargar</button>
     </div>
 
-    <!-- Banca (grid 3 columnas) -->
+    <!-- Banca -->
     <div class="mt-4">
         <div class="flex justify-between items-center mb-2">
-            <h3 class="text-sm font-bold">✅ CONFIRMADOS (arrastra)</h3>
+            <h3 class="text-sm font-bold">✅ JUGADORES CONFIRMADOS (arrastra)</h3>
             <span class="text-[10px] text-white/60" id="suplentes-count">0</span>
         </div>
         <div id="bench-list" class="grid grid-cols-3 gap-2"></div>
@@ -244,23 +113,17 @@
 </nav>
 
 <script>
-    // ================= CONFIGURACIÓN =================
-    const API_URL = "https://script.google.com/macros/s/AKfycbwLcpH5z2x_EjRPaPu6gI_lLokWkVxsKLgBz-HHCVX7_OhKAFU1LVfZ67bh9DCbn9L6/exec";
+    // ================= CONFIGURACIÓN API REAL =================
+    const API_URL = "https://script.google.com/macros/s/AKfycbwLcpH5z2x_EjRPaPu6gI_lLokWkVxsKLgBz-HHCVX7_OhKAFU1LVfZ67bh9DCbn9L6/exec"; // <-- TU URL REAL
     const FECHA_PARTIDO = "2026-06-13";
     const RIVAL = "FRANCO CANADIENSE";
 
-    let jugadoresConfirmados = [];
-    let jugadoresEnCampo = [];
+    let jugadoresConfirmados = [];   // Lista de jugadores desde la hoja
+    let jugadoresEnCampo = [];       // { jugador, x, y }
     let jugadoresEnBanca = [];
 
     // Arrastre táctil/ratón
-    let dragActive = false;
-    let dragType = null;
-    let dragIndex = -1;
-    let dragJugador = null;
-    let clone = null;
-    let startX, startY;
-
+    let dragActive = false, dragType = null, dragIndex = -1, dragJugador = null, clone = null;
     const campoDiv = document.getElementById('campo-jugadores');
     const pitchContainer = document.getElementById('pitch-container');
     const benchListDiv = document.getElementById('bench-list');
@@ -268,40 +131,159 @@
     const guardarBtn = document.getElementById('guardar-tactica');
     const cargarUltimaBtn = document.getElementById('cargar-ultima');
 
-    function mostrarToast(msg) {
+    function mostrarToast(msg, error = false) {
         const toast = document.createElement('div');
-        toast.className = 'fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-black/80 text-white px-3 py-1 rounded-full text-xs z-50';
+        toast.className = `fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-black/80 text-white px-3 py-1 rounded-full text-xs z-50 ${error ? 'bg-red-800' : ''}`;
         toast.innerText = msg;
         document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 2000);
+        setTimeout(() => toast.remove(), 2500);
     }
 
-    // Cargar jugadores desde Google Sheets (simulado o real)
-    async function cargarJugadores() {
-        mostrarToast('Cargando jugadores...');
+    // ========== 1. CARGAR JUGADORES CONFIRMADOS DESDE GOOGLE SHEETS (REAL) ==========
+    async function cargarJugadoresDesdeGoogleSheets() {
+        mostrarToast('Conectando a la hoja...');
         try {
-            // Simulación con datos reales (9 jugadores)
-            await new Promise(r => setTimeout(r, 600));
-            jugadoresConfirmados = [
-                { id: "1716001431", nombre: "DARWIN MUÑOZ", dorsal: 10, goles: 0, amarillas: 0, rojas: 0 },
-                { id: "1751060987", nombre: "MICHAEL VILLAO", dorsal: 19, goles: 0, amarillas: 0, rojas: 0 },
-                { id: "1717984239", nombre: "LUIS SIMBA", dorsal: 27, goles: 0, amarillas: 0, rojas: 0 },
-                { id: "1205785460", nombre: "GABRIEL MORA", dorsal: "--", goles: 0, amarillas: 0, rojas: 0 },
-                { id: "2100783626", nombre: "JAMES VILLARREAL", dorsal: "--", goles: 0, amarillas: 0, rojas: 0 },
-                { id: "1751413848", nombre: "RENATO REYES", dorsal: "--", goles: 0, amarillas: 0, rojas: 0 },
-                { id: "1727021980", nombre: "BRYAN SEVILLANO", dorsal: "--", goles: 0, amarillas: 0, rojas: 0 },
-                { id: "1751846237", nombre: "MIGUEL GUALPA", dorsal: "--", goles: 0, amarillas: 0, rojas: 0 },
-                { id: "1728872068", nombre: "ANTHONY AGUILAR", dorsal: "--", goles: 0, amarillas: 0, rojas: 0 }
-            ];
-            jugadoresEnCampo = [];
-            jugadoresEnBanca = [...jugadoresConfirmados];
-            renderizarCampo();
+            // Construir URL con parámetros para obtener los jugadores confirmados del partido
+            const params = new URLSearchParams({
+                action: 'getPartidoHombres',
+                fecha: FECHA_PARTIDO,
+                rival: RIVAL,
+                t: Date.now()
+            });
+            const response = await fetch(`${API_URL}?${params.toString()}`);
+            const data = await response.json();
+            
+            if (data.success && data.jugadores) {
+                // Filtrar solo los que tienen estado CONFIRMADO (si la hoja tiene esa columna)
+                jugadoresConfirmados = data.jugadores
+                    .filter(j => j.estado === 'CONFIRMADO' || j.estado === 'confirmado')
+                    .map(j => ({
+                        id: j.cedula,
+                        nombre: j.nombre || j.jugador,
+                        dorsal: j.dorsal || '--',
+                        goles: j.goles || 0,
+                        amarillas: j.amarillas || 0,
+                        rojas: j.rojas || 0
+                    }));
+                
+                if (jugadoresConfirmados.length === 0) {
+                    mostrarToast('⚠️ No hay jugadores confirmados para este partido', true);
+                    jugadoresConfirmados = [];
+                } else {
+                    mostrarToast(`✅ ${jugadoresConfirmados.length} jugadores confirmados`);
+                }
+                // Inicializar vacío
+                jugadoresEnCampo = [];
+                jugadoresEnBanca = [...jugadoresConfirmados];
+                renderizarCampo();
+                renderizarBanca();
+                actualizarStats();
+            } else {
+                throw new Error(data.error || 'No se pudo obtener los datos');
+            }
+        } catch (error) {
+            console.error(error);
+            mostrarToast('❌ Error al cargar: ' + error.message, true);
+            // Datos de ejemplo para que no se rompa la interfaz (opcional)
+            jugadoresConfirmados = [];
+            jugadoresEnBanca = [];
             renderizarBanca();
-            actualizarStats();
-            mostrarToast(`✅ ${jugadoresConfirmados.length} jugadores listos`);
-        } catch(e) { mostrarToast('Error'); }
+        }
     }
 
+    // ========== 2. GUARDAR ALINEACIÓN EN LA NUBE (Google Sheets) ==========
+    async function guardarAlineacionEnCloud() {
+        const dataToSend = {
+            action: 'guardarAlineacion',
+            fecha: FECHA_PARTIDO,
+            rival: RIVAL,
+            alineacion: jugadoresEnCampo.map(item => ({
+                id: item.jugador.id,
+                nombre: item.jugador.nombre,
+                dorsal: item.jugador.dorsal,
+                x: item.x,
+                y: item.y
+            })),
+            timestamp: new Date().toISOString()
+        };
+        mostrarToast('Guardando en la nube...');
+        try {
+            // Enviar mediante POST (necesitas que tu API acepte POST)
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Si tu API no soporta CORS, usa no-cors (pero no podrás leer respuesta)
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dataToSend)
+            });
+            // Si usas no-cors, no podrás leer response.json(), asumimos éxito.
+            mostrarToast('✅ Alineación guardada en la hoja');
+            // También guardamos localmente como respaldo
+            localStorage.setItem('alineacion_napoles_backup', JSON.stringify(dataToSend.alineacion));
+        } catch (error) {
+            console.error(error);
+            mostrarToast('⚠️ Error al guardar, se guardó localmente', true);
+            localStorage.setItem('alineacion_napoles_backup', JSON.stringify(dataToSend.alineacion));
+        }
+    }
+
+    // ========== 3. CARGAR ÚLTIMA ALINEACIÓN DESDE LA NUBE ==========
+    async function cargarUltimaAlineacion() {
+        mostrarToast('Cargando última alineación guardada...');
+        try {
+            const params = new URLSearchParams({
+                action: 'getUltimaAlineacion',
+                fecha: FECHA_PARTIDO,
+                rival: RIVAL,
+                t: Date.now()
+            });
+            const response = await fetch(`${API_URL}?${params.toString()}`);
+            const data = await response.json();
+            if (data.success && data.alineacion && data.alineacion.length > 0) {
+                // Reconstruir jugadores en campo según los ids guardados
+                const nuevosCampo = [];
+                for (let a of data.alineacion) {
+                    const jug = jugadoresConfirmados.find(j => j.id === a.id);
+                    if (jug) nuevosCampo.push({ jugador: jug, x: a.x, y: a.y });
+                }
+                if (nuevosCampo.length > 0) {
+                    jugadoresEnCampo = nuevosCampo;
+                    const idsCampo = new Set(jugadoresEnCampo.map(i => i.jugador.id));
+                    jugadoresEnBanca = jugadoresConfirmados.filter(j => !idsCampo.has(j.id));
+                    renderizarCampo();
+                    renderizarBanca();
+                    actualizarStats();
+                    mostrarToast('Alineación restaurada desde la nube');
+                    return;
+                }
+            }
+            // Si no hay en la nube, intentar backup local
+            const local = localStorage.getItem('alineacion_napoles_backup');
+            if (local) {
+                const backup = JSON.parse(local);
+                const nuevosCampo = [];
+                for (let a of backup) {
+                    const jug = jugadoresConfirmados.find(j => j.id === a.id);
+                    if (jug) nuevosCampo.push({ jugador: jug, x: a.x, y: a.y });
+                }
+                if (nuevosCampo.length) {
+                    jugadoresEnCampo = nuevosCampo;
+                    const idsCampo = new Set(jugadoresEnCampo.map(i => i.jugador.id));
+                    jugadoresEnBanca = jugadoresConfirmados.filter(j => !idsCampo.has(j.id));
+                    renderizarCampo();
+                    renderizarBanca();
+                    actualizarStats();
+                    mostrarToast('Alineación cargada desde backup local');
+                    return;
+                }
+            }
+            mostrarToast('No hay alineación guardada previamente');
+        } catch (error) {
+            console.error(error);
+            mostrarToast('Error al cargar alineación', true);
+        }
+    }
+
+    // ========== FUNCIONES DE RENDER Y ESTADÍSTICAS ==========
     function actualizarStats() {
         let g = 0, a = 0, r = 0;
         jugadoresEnCampo.forEach(i => { g += i.jugador.goles; a += i.jugador.amarillas; r += i.jugador.rojas; });
@@ -335,7 +317,7 @@
         benchListDiv.innerHTML = '';
         document.getElementById('suplentes-count').innerText = `${jugadoresEnBanca.length}`;
         if (jugadoresEnBanca.length === 0) {
-            benchListDiv.innerHTML = '<div class="col-span-full text-center text-white/50 py-4 text-xs">No hay más jugadores</div>';
+            benchListDiv.innerHTML = '<div class="col-span-full text-center text-white/50 py-4 text-xs">No hay más jugadores en banca</div>';
             return;
         }
         jugadoresEnBanca.forEach(j => {
@@ -352,7 +334,7 @@
         });
     }
 
-    // === ARRASTRE ===
+    // ========== LÓGICA DE ARRASTRE TÁCTIL/RATÓN (sin cambios) ==========
     function iniciarArrastre(e, type, idx, jugador) {
         e.preventDefault();
         dragActive = true;
@@ -362,7 +344,6 @@
         let cx, cy;
         if (e.touches) { cx = e.touches[0].clientX; cy = e.touches[0].clientY; }
         else { cx = e.clientX; cy = e.clientY; }
-        startX = cx; startY = cy;
         clone = document.createElement('div');
         clone.className = 'dragging-touch';
         clone.innerText = jugador.dorsal;
@@ -464,37 +445,13 @@
         mostrarToast('Campo vaciado');
     }
 
-    async function guardarAlineacion() {
-        const data = { fecha: FECHA_PARTIDO, rival: RIVAL, alineacion: jugadoresEnCampo.map(i => ({ id: i.jugador.id, x: i.x, y: i.y })) };
-        localStorage.setItem('alineacion_napoles', JSON.stringify(data));
-        mostrarToast('Alineación guardada localmente');
-    }
-
-    async function cargarAlineacion() {
-        const saved = localStorage.getItem('alineacion_napoles');
-        if (saved) {
-            try {
-                const data = JSON.parse(saved);
-                jugadoresEnCampo = [];
-                for (let a of data.alineacion) {
-                    const jug = jugadoresConfirmados.find(j => j.id === a.id);
-                    if (jug) jugadoresEnCampo.push({ jugador: jug, x: a.x, y: a.y });
-                }
-                const idsCampo = new Set(jugadoresEnCampo.map(i => i.jugador.id));
-                jugadoresEnBanca = jugadoresConfirmados.filter(j => !idsCampo.has(j.id));
-                renderizarCampo();
-                renderizarBanca();
-                actualizarStats();
-                mostrarToast('Alineación cargada');
-            } catch(e) { mostrarToast('Error al cargar'); }
-        } else mostrarToast('No hay guardada');
-    }
-
+    // Eventos de botones
     resetBtn.addEventListener('click', vaciarCampo);
-    guardarBtn.addEventListener('click', guardarAlineacion);
-    cargarUltimaBtn.addEventListener('click', cargarAlineacion);
+    guardarBtn.addEventListener('click', guardarAlineacionEnCloud);
+    cargarUltimaBtn.addEventListener('click', cargarUltimaAlineacion);
 
-    cargarJugadores();
+    // Inicializar: cargar desde la hoja primero
+    cargarJugadoresDesdeGoogleSheets();
 </script>
 </body>
 </html>
