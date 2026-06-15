@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Nápoles F.C. | Estadísticas Premium</title>
+  <title>Estadísticas Pro - Nápoles F.C.</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -12,15 +12,13 @@
     :root {
       --gold: #e5c158;
       --gold-dark: #b89329;
-      --purple: #0094d6; /* Azul Nápoles */
+      --purple: #0094d6; /* Sincronizado con el Azul Nápoles de tu marca principal */
       --purple-light: #38bdf8;
-      --slate-dark: #0b0713; /* Fondo Velvet Oscuro Premium */
-      --glass-bg: rgba(255, 255, 255, 0.03);
-      --glass-border: rgba(255, 255, 255, 0.08);
-      --muted: #cbd2e1;
-      --success: #2dd4bf; /* Teal/Verde moderno */
+      --slate-dark: #0f172a;
+      --muted: #64748b;
+      --success: #10b981;
       --danger: #f43f5e;
-      --border: rgba(255, 255, 255, 0.06);
+      --border: rgba(226, 232, 240, 0.7);
     }
 
     * {
@@ -32,15 +30,14 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #0b0713;
-      color: #f3f1f5;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 40%, #f1f5f9 100%);
+      color: var(--slate-dark);
       min-height: 100vh;
       overflow-x: hidden;
       position: relative;
-      padding-bottom: 40px;
     }
 
-    /* ILUMINACIÓN AMBIENTAL */
+    /* ILUMINACIÓN AMBIENTAL PREMIUM */
     .ambient-glow {
       position: fixed;
       inset: 0;
@@ -51,18 +48,18 @@
     .glow-sphere {
       position: absolute;
       border-radius: 50%;
-      filter: blur(130px);
-      opacity: 0.15;
+      filter: blur(120px);
+      opacity: 0.28;
     }
-    .glow-1 { width: 350px; height: 350px; background: #e0897a; top: -5%; left: -10%; }
-    .glow-2 { width: 450px; height: 450px; background: #0094d6; bottom: 10%; right: -10%; }
+    .glow-1 { width: 320px; height: 320px; background: #e0a899; top: -5%; left: -15%; }
+    .glow-2 { width: 400px; height: 400px; background: #e0f2fe; bottom: 5%; right: -15%; }
 
-    /* TOPBAR CRISTALINA */
+    /* BARRA SUPERIOR BLANCA CRISTALINA */
     .topbar {
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(11, 7, 19, 0.6);
+      background: rgba(255, 255, 255, 0.75);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
@@ -82,47 +79,48 @@
       width: 38px;
       height: 38px;
       border-radius: 12px;
-      background: rgba(255, 255, 255, 0.03);
+      background: #ffffff;
       border: 1px solid var(--border);
-      color: #f3f1f5;
+      color: var(--slate-dark);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
       transition: all 0.2s;
     }
-    .btn-back:active { transform: scale(0.92); background: rgba(255,255,255,0.08); }
+    .btn-back:active { transform: scale(0.92); background: #f8fafc; }
 
     .admin-info h1 {
       font-family: 'Outfit', sans-serif;
       font-size: 1.15rem;
       font-weight: 800;
-      color: #ffffff;
+      color: var(--slate-dark);
       letter-spacing: -0.2px;
     }
 
     .admin-info p {
-      font-size: .62rem;
-      color: #ffb2a8; /* Rose Gold */
+      font-size: .68rem;
+      color: #e0a899; /* Tu Rose Gold insignia */
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-top: 2px;
+      letter-spacing: 0.8px;
+      margin-top: 1px;
     }
 
     .top-icon {
       width: 40px;
       height: 40px;
       border-radius: 12px;
-      background: rgba(0, 148, 214, 0.1);
+      background: #f0fdf4;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--purple-light);
-      border: 1px solid rgba(56, 189, 248, 0.2);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.15);
     }
 
-    /* CONTENEDOR CENTRAL */
+    /* CONTENEDOR CENTRAL MAQUETADO */
     .dashboard-container {
       max-width: 480px;
       margin: 0 auto;
@@ -130,7 +128,7 @@
       z-index: 2;
     }
 
-    /* BENTO GRID DE CONTADORES */
+    /* GRID DE CONTADORES MODERNOS */
     .summary {
       padding: 20px 16px 8px;
       display: grid;
@@ -139,18 +137,17 @@
     }
 
     .summary-card {
-      background: var(--glass-bg);
+      background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-radius: 20px;
       padding: 16px;
-      border: 1px solid var(--glass-border);
-      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 4px 24px rgba(15, 23, 42, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.8);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       position: relative;
-      transition: transform 0.2s;
     }
 
     .card-meta {
@@ -162,7 +159,7 @@
 
     .card-meta p {
       color: var(--muted);
-      font-size: .68rem;
+      font-size: .7rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -180,40 +177,39 @@
 
     .summary-card h3 {
       font-family: 'Outfit', sans-serif;
-      font-size: 2rem;
+      font-size: 1.8rem;
       font-weight: 800;
       letter-spacing: -0.5px;
-      color: #ffffff;
+      color: var(--slate-dark);
       line-height: 1;
     }
 
     .card-subtext {
       font-size: 0.68rem;
-      color: #cbd2e1;
-      opacity: 0.6;
-      margin-top: 6px;
+      color: var(--muted);
+      margin-top: 5px;
       font-weight: 500;
     }
 
-    /* SECCIONES */
+    /* SECCIONES Y CONTENIDOS */
     .players {
       padding: 8px 16px 40px;
     }
 
     .section-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 800;
-      color: #ffffff;
-      margin: 20px 0 12px;
+      color: var(--slate-dark);
+      margin: 16px 0 12px;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    /* CROMO DE JUGADOR */
+    /* TARJETA JUGADOR ESTILO ULTRA LIGA */
     .player-card {
-      background: var(--glass-bg);
+      background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-radius: 18px;
@@ -222,8 +218,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border: 1px solid var(--glass-border);
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 4px 18px rgba(0,0,0,0.01);
       transition: transform 0.2s;
     }
     .player-card:active { transform: scale(0.99); }
@@ -234,104 +230,104 @@
       gap: 12px;
     }
 
+    /* Avatar estilo cromo de fútbol */
     .player-avatar {
       width: 44px;
       height: 44px;
       border-radius: 12px;
-      background: linear-gradient(135deg, #2a1b40 0%, #140f20 100%);
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #ffb2a8; /* Rose Gold */
-      font-size: 0.9rem;
+      color: var(--gold);
+      font-size: 0.85rem;
       font-weight: 800;
-      border: 1px solid rgba(224, 137, 122, 0.3);
-      box-shadow: inset 0 2px 6px rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(229, 193, 88, 0.3);
+      box-shadow: inset 0 2px 6px rgba(255,255,255,0.1);
     }
 
     .player-info h3 {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       font-weight: 700;
-      color: #ffffff;
+      color: var(--slate-dark);
+      letter-spacing: -0.1px;
     }
 
     .player-info p {
       color: var(--muted);
-      opacity: 0.7;
       font-size: .75rem;
+      font-weight: 500;
       margin-top: 1px;
     }
 
     .player-stats {
       text-align: right;
-      background: rgba(45, 212, 191, 0.08);
-      padding: 6px 14px;
+      background: #f0fdf4;
+      padding: 6px 12px;
       border-radius: 12px;
-      border: 1px solid rgba(45, 212, 191, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.1);
     }
 
     .player-stats h4 {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.3rem;
+      font-size: 1.25rem;
       font-weight: 900;
       color: var(--success);
       line-height: 1;
     }
 
     .player-stats p {
-      color: var(--success);
-      opacity: 0.9;
-      font-size: .55rem;
+      color: #047857;
+      font-size: .6rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
       margin-top: 1px;
     }
 
-    /* CONTENEDOR GRÁFICO */
+    /* CONTENEDOR GRÁFICO IMPECABLE */
     .chart-card {
-      background: var(--glass-bg);
+      background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-radius: 24px;
       padding: 20px;
-      margin-top: 20px;
-      border: 1px solid var(--glass-border);
+      margin-top: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.01);
     }
 
     .chart-bars {
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
-      height: 150px;
+      height: 160px;
       margin-top: 36px;
-      padding: 0 10px 20px;
-      border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
+      padding: 0 10px 24px;
+      border-bottom: 1px dashed #cbd5e1;
     }
 
     .bar {
-      width: 34px;
+      width: 32px;
       background: linear-gradient(180deg, var(--purple-light) 0%, var(--purple) 100%);
       border-radius: 8px 8px 3px 3px;
       position: relative;
       min-height: 6px;
-      box-shadow: 0 4px 15px rgba(0, 148, 214, 0.3);
-      transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 12px rgba(0, 148, 214, 0.15);
     }
 
     .bar .bar-value {
       position: absolute;
-      top: -28px;
+      top: -26px;
       left: 50%;
       transform: translateX(-50%);
       font-size: 0.7rem;
       font-weight: 800;
-      color: #ffffff;
-      background: rgba(0, 148, 214, 0.25);
-      backdrop-filter: blur(5px);
+      color: #0369a1;
+      background: #e0f2fe;
       padding: 2px 6px;
       border-radius: 6px;
-      border: 1px solid rgba(56, 189, 248, 0.3);
+      border: 1px solid rgba(56, 189, 248, 0.2);
     }
 
     .bar .bar-label {
@@ -339,20 +335,20 @@
       bottom: -24px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: .68rem;
+      font-size: .7rem;
       color: var(--muted);
       font-weight: 700;
+      letter-spacing: -0.1px;
     }
 
-    /* ESQUELETOS SHIMMER OSCUROS */
+    /* ESQUELETOS SHIMMER */
     .shimmer-container { padding: 20px 16px; }
     .shimmer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-    .shimmer-box { height: 96px; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 20px; position: relative; overflow: hidden; }
-    .shimmer-strip { height: 72px; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 18px; margin-bottom: 10px; position: relative; overflow: hidden; }
-    
+    .shimmer-box { height: 92px; background: rgba(255,255,255,0.6); border-radius: 20px; position: relative; overflow: hidden; }
+    .shimmer-strip { height: 72px; background: rgba(255,255,255,0.6); border-radius: 18px; margin-bottom: 10px; position: relative; overflow: hidden; }
     .shimmer-box::after, .shimmer-strip::after {
       content: ""; position: absolute; inset: 0;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
       transform: translateX(-100%); animation: skeletonAnim 1.4s infinite;
     }
     @keyframes skeletonAnim { 100% { transform: translateX(100%); } }
@@ -388,7 +384,6 @@
 
 <div class="dashboard-container">
   <main id="mainContent">
-    <!-- Esqueletos de carga inicial -->
     <div class="shimmer-container">
       <div class="shimmer-grid">
         <div class="shimmer-box"></div>
@@ -403,7 +398,7 @@
 </div>
 
 <script>
-// ==================== CONFIGURACIÓN BACKEND ====================
+// ==================== CONFIGURACIÓN ====================
 const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycby1hZoGzUNJU5qQW8nZJk3HQ7m1zzRpMC6Cwe6oPhYnCcqO_vXFJccphDoeQJpz7CEO/exec';
 
 if (localStorage.getItem('admin_activo') !== 'true') {
@@ -444,21 +439,10 @@ function getIniciales(nombre) {
   return nombre.substring(0, 2).toUpperCase();
 }
 
-function escapeHtml(str) {
-  if (!str) return '';
-  return str.replace(/[&<>]/g, function(m) {
-    if (m === '&') return '&amp;';
-    if (m === '<') return '&lt;';
-    if (m === '>') return '&gt;';
-    return m;
-  });
-}
-
-// ==================== CARGA Y PROCESAMIENTO DE DATOS REALES ====================
+// ==================== CARGA Y CONSTRUCCIÓN FINAL ====================
 async function cargarEstadisticas() {
   const container = document.getElementById('mainContent');
   try {
-    // Consulta paralela idéntica a tu script original
     const [partidosData, jugadoresData] = await Promise.all([
       fetchData('getPartidos'),
       fetchData('getJugadores')
@@ -517,13 +501,12 @@ async function cargarEstadisticas() {
     const maxGoles = Math.max(...mesesMostrar.map(m => golesPorMes[m] || 0), 1);
     const alturaMaxima = 110; 
 
-    // Renderizado del HTML con la estructura Bento Box Oscura Premium
     container.innerHTML = `
       <section class="summary">
         <div class="summary-card">
           <div class="card-meta">
             <p>Goles Club</p>
-            <div class="card-icon-mini" style="background:rgba(56, 189, 248, 0.15); color:var(--purple-light);"><i class="fa-solid fa-soccer-ball"></i></div>
+            <div class="card-icon-mini" style="background:#e0f2fe; color:#0284c7;"><i class="fa-solid fa-soccer-ball"></i></div>
           </div>
           <h3>${totalGoles}</h3>
           <span class="card-subtext">Total anotados</span>
@@ -531,33 +514,32 @@ async function cargarEstadisticas() {
         <div class="summary-card">
           <div class="card-meta">
             <p>Partidos</p>
-            <div class="card-icon-mini" style="background:rgba(255,255,255,0.05); color:#cbd2e1;"><i class="fa-solid fa-calendar-alt"></i></div>
+            <div class="card-icon-mini" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-calendar-alt"></i></div>
           </div>
           <h3>${partidosJugados}</h3>
           <span class="card-subtext">Disputados oficiales</span>
         </div>
-        <div class="summary-card" style="border-left: 3px solid var(--success);">
+        <div class="summary-card">
           <div class="card-meta">
             <p>Victorias</p>
-            <div class="card-icon-mini" style="background:rgba(45, 212, 191, 0.15); color:var(--success);"><i class="fa-solid fa-trophy"></i></div>
+            <div class="card-icon-mini" style="background:#dcfce7; color:var(--success);"><i class="fa-solid fa-trophy"></i></div>
           </div>
           <h3 style="color: var(--success);">${victorias}</h3>
           <span class="card-subtext">Rendimiento positivo</span>
         </div>
-        <div class="summary-card" style="border-left: 3px solid var(--danger);">
+        <div class="summary-card">
           <div class="card-meta">
             <p>Derrotas</p>
-            <div class="card-icon-mini" style="background:rgba(244, 63, 94, 0.15); color:var(--danger);"><i class="fa-solid fa-circle-xmark"></i></div>
+            <div class="card-icon-mini" style="background:#ffe4e6; color:var(--danger);"><i class="fa-solid fa-circle-xmark"></i></div>
           </div>
           <h3 style="color: var(--danger);">${derrotas}</h3>
-          <span class="card-subtext">Por corregir</span>
+          <span class="card-subtext">Por corregir en cancha</span>
         </div>
       </section>
 
       <section class="players">
         <h2 class="section-title"><i class="fa-solid fa-crown" style="color: var(--gold)"></i> Máximos Goleadores</h2>
-        
-        ${topGoleadores.length === 0 ? '<div style="text-align:center; padding:30px; color:var(--muted); opacity:0.6; font-size:0.9rem;">No hay registros de goles asignados.</div>' : ''}
+        ${topGoleadores.length === 0 ? '<div style="text-align:center; padding:30px; color:var(--muted); font-size:0.9rem;">No hay registros de goles asignados a jugadores.</div>' : ''}
         
         ${topGoleadores.map(j => `
           <div class="player-card">
@@ -576,7 +558,7 @@ async function cargarEstadisticas() {
         `).join('')}
 
         <div class="chart-card">
-          <h2 class="section-title" style="margin:0;"><i class="fa-solid fa-chart-bar" style="color:var(--purple-light);"></i> Rendimiento Mensual</h2>
+          <h2 class="section-title" style="margin:0;"><i class="fa-solid fa-chart-bar" style="color:var(--purple);"></i> Rendimiento Mensual</h2>
           <div class="chart-bars">
             ${mesesMostrar.map(mes => {
               const goles = golesPorMes[mes] || 0;
@@ -594,12 +576,21 @@ async function cargarEstadisticas() {
     `;
   } catch (error) {
     console.error(error);
-    container.innerHTML = `<div class="error-msg">❌ No se pudo conectar con la base de datos de Google. Revisa tu WebApp URL.</div>`;
+    container.innerHTML = `<div class="error-msg">❌ No se pudo compilar la tabla de estadísticas. Verifica tu conexión de red o backend.</div>`;
   }
 }
 
-// Inicializar ejecución al cargar la ventana
-window.onload = cargarEstadisticas;
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>]/g, function(m) {
+    if (m === '&') return '&amp;';
+    if (m === '<') return '&lt;';
+    if (m === '>') return '&gt;';
+    return m;
+  });
+}
+
+cargarEstadisticas();
 </script>
 </body>
 </html>
