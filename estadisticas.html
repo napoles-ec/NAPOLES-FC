@@ -1,405 +1,121 @@
+Tienes toda la razón, mil disculpas. En la versión anterior apliqué la clase `dark` y un fondo oscuro por defecto que no correspondía con el diseño original claro de tu aplicación.
+
+Aquí tienes el código corregido por completo, restaurando el **fondo claro limpio, los bordes sutiles y la paleta de colores original (Azul Nápoles y Oro)**, pero estructurado en el formato de cuadrícula moderna que querías:
+
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Estadísticas Pro - Nápoles F.C.</title>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Nápoles F.C. | Estadísticas &amp; Rendimiento</title>
   
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
   <style>
     :root {
-      --gold: #e5c158;
-      --gold-dark: #b89329;
-      --purple: #0094d6; /* Sincronizado con el Azul Nápoles de tu marca principal */
+      --gold: #b89329; /* Oro Nápoles */
+      --purple: #0094d6; /* Azul Nápoles */
       --purple-light: #38bdf8;
-      --slate-dark: #0f172a;
-      --muted: #64748b;
-      --success: #10b981;
-      --danger: #f43f5e;
-      --border: rgba(226, 232, 240, 0.7);
+      --card-bg: #ffffff;
+      --card-border: rgba(0, 0, 0, 0.08);
     }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
     body {
+      background-color: #f8fafc; /* Fondo claro original */
+      color: #1e293b;
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 40%, #f1f5f9 100%);
-      color: var(--slate-dark);
-      min-height: 100vh;
-      overflow-x: hidden;
-      position: relative;
+      min-height: max(884px, 100dvh);
     }
-
-    /* ILUMINACIÓN AMBIENTAL PREMIUM */
-    .ambient-glow {
-      position: fixed;
-      inset: 0;
-      overflow: hidden;
-      z-index: 0;
-      pointer-events: none;
+    .custom-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
     }
-    .glow-sphere {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(120px);
-      opacity: 0.28;
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
     }
-    .glow-1 { width: 320px; height: 320px; background: #e0a899; top: -5%; left: -15%; }
-    .glow-2 { width: 400px; height: 400px; background: #e0f2fe; bottom: 5%; right: -15%; }
-
-    /* BARRA SUPERIOR BLANCA CRISTALINA */
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(255, 255, 255, 0.75);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-      padding: 14px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    .chart-bar {
+      transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
-    .top-left {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .btn-back {
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      background: #ffffff;
-      border: 1px solid var(--border);
-      color: var(--slate-dark);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-      transition: all 0.2s;
-    }
-    .btn-back:active { transform: scale(0.92); background: #f8fafc; }
-
-    .admin-info h1 {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.15rem;
-      font-weight: 800;
-      color: var(--slate-dark);
-      letter-spacing: -0.2px;
-    }
-
-    .admin-info p {
-      font-size: .68rem;
-      color: #e0a899; /* Tu Rose Gold insignia */
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-top: 1px;
-    }
-
-    .top-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      background: #f0fdf4;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--success);
-      border: 1px solid rgba(16, 185, 129, 0.15);
-    }
-
-    /* CONTENEDOR CENTRAL MAQUETADO */
-    .dashboard-container {
-      max-width: 480px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 2;
-    }
-
-    /* GRID DE CONTADORES MODERNOS */
-    .summary {
-      padding: 20px 16px 8px;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-
-    .summary-card {
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 20px;
-      padding: 16px;
-      box-shadow: 0 4px 24px rgba(15, 23, 42, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
-    }
-
-    .card-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .card-meta p {
-      color: var(--muted);
-      font-size: .7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .card-icon-mini {
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
-    }
-
-    .summary-card h3 {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.8rem;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      color: var(--slate-dark);
-      line-height: 1;
-    }
-
-    .card-subtext {
-      font-size: 0.68rem;
-      color: var(--muted);
-      margin-top: 5px;
-      font-weight: 500;
-    }
-
-    /* SECCIONES Y CONTENIDOS */
-    .players {
-      padding: 8px 16px 40px;
-    }
-
-    .section-title {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: var(--slate-dark);
-      margin: 16px 0 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    /* TARJETA JUGADOR ESTILO ULTRA LIGA */
-    .player-card {
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 18px;
-      padding: 14px 16px;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      box-shadow: 0 4px 18px rgba(0,0,0,0.01);
-      transition: transform 0.2s;
-    }
-    .player-card:active { transform: scale(0.99); }
-
-    .player-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    /* Avatar estilo cromo de fútbol */
-    .player-avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--gold);
-      font-size: 0.85rem;
-      font-weight: 800;
-      border: 1.5px solid rgba(229, 193, 88, 0.3);
-      box-shadow: inset 0 2px 6px rgba(255,255,255,0.1);
-    }
-
-    .player-info h3 {
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--slate-dark);
-      letter-spacing: -0.1px;
-    }
-
-    .player-info p {
-      color: var(--muted);
-      font-size: .75rem;
-      font-weight: 500;
-      margin-top: 1px;
-    }
-
-    .player-stats {
-      text-align: right;
-      background: #f0fdf4;
-      padding: 6px 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(16, 185, 129, 0.1);
-    }
-
-    .player-stats h4 {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.25rem;
-      font-weight: 900;
-      color: var(--success);
-      line-height: 1;
-    }
-
-    .player-stats p {
-      color: #047857;
-      font-size: .6rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-      margin-top: 1px;
-    }
-
-    /* CONTENEDOR GRÁFICO IMPECABLE */
-    .chart-card {
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 24px;
-      padding: 20px;
-      margin-top: 18px;
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      box-shadow: 0 4px 24px rgba(0,0,0,0.01);
-    }
-
-    .chart-bars {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      height: 160px;
-      margin-top: 36px;
-      padding: 0 10px 24px;
-      border-bottom: 1px dashed #cbd5e1;
-    }
-
-    .bar {
-      width: 32px;
-      background: linear-gradient(180deg, var(--purple-light) 0%, var(--purple) 100%);
-      border-radius: 8px 8px 3px 3px;
-      position: relative;
-      min-height: 6px;
-      box-shadow: 0 4px 12px rgba(0, 148, 214, 0.15);
-    }
-
-    .bar .bar-value {
-      position: absolute;
-      top: -26px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.7rem;
-      font-weight: 800;
-      color: #0369a1;
-      background: #e0f2fe;
-      padding: 2px 6px;
-      border-radius: 6px;
-      border: 1px solid rgba(56, 189, 248, 0.2);
-    }
-
-    .bar .bar-label {
-      position: absolute;
-      bottom: -24px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: .7rem;
-      color: var(--muted);
-      font-weight: 700;
-      letter-spacing: -0.1px;
-    }
-
-    /* ESQUELETOS SHIMMER */
-    .shimmer-container { padding: 20px 16px; }
-    .shimmer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-    .shimmer-box { height: 92px; background: rgba(255,255,255,0.6); border-radius: 20px; position: relative; overflow: hidden; }
-    .shimmer-strip { height: 72px; background: rgba(255,255,255,0.6); border-radius: 18px; margin-bottom: 10px; position: relative; overflow: hidden; }
-    .shimmer-box::after, .shimmer-strip::after {
+    
+    /* ESQUELETOS SHIMMER EN MODO CLARO */
+    .shimmer-box { position: relative; overflow: hidden; background: rgba(0,0,0,0.05); }
+    .shimmer-box::after {
       content: ""; position: absolute; inset: 0;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
       transform: translateX(-100%); animation: skeletonAnim 1.4s infinite;
     }
     @keyframes skeletonAnim { 100% { transform: translateX(100%); } }
-
-    .error-msg {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--danger);
-      font-weight: 700;
-      font-size: 0.9rem;
-    }
   </style>
+
+  <script id="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            "background": "#f8fafc",
+            "primary": "#0094d6", /* Azul Nápoles */
+            "secondary": "#b89329", /* Oro Nápoles */
+            "surface": "#ffffff",
+            "on-surface": "#1e293b",
+            "on-surface-variant": "#64748b"
+          },
+          spacing: {
+            "sm": "8px", "lg": "24px", "xl": "32px", "md": "16px",
+            "margin-mobile": "16px", "margin-desktop": "40px", "gutter": "24px"
+          },
+          fontFamily: {
+            "label-bold": ["Inter"],
+            "headline-md": ["Outfit"],
+            "headline-lg": ["Outfit"],
+            "display-lg": ["Outfit"],
+            "body-md": ["Inter"]
+          }
+        }
+      }
+    }
+  </script>
 </head>
-<body>
 
-<div class="ambient-glow">
-  <div class="glow-sphere glow-1"></div>
-  <div class="glow-sphere glow-2"></div>
-</div>
+<body class="pb-24">
 
-<header class="topbar">
-  <div class="top-left">
-    <div class="btn-back" onclick="window.location.href='index.html'">
-      <i class="fa-solid fa-chevron-left text-sm"></i>
+<!-- Top App Bar Clásico Claro -->
+<header class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200 h-16 flex justify-between items-center px-margin-mobile md:px-margin-desktop">
+  <div class="flex items-center gap-3">
+    <div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center shadow-[0_4px_12px_rgba(0,148,214,0.2)] hover:scale-105 active:scale-95 transition-transform" onclick="window.location.href='index.html'" style="cursor:pointer;">
+      <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">arrow_back_ios_new</span>
     </div>
-    <div class="admin-info">
-      <h1>Estadísticas Club</h1>
-      <p>Nápoles F.C. · En Vivo</p>
+    <div>
+      <h1 class="font-headline-md text-xl font-bold leading-none text-slate-900">Estadísticas Club</h1>
+      <p class="text-[10px] font-label-bold uppercase tracking-widest text-secondary mt-0.5 font-bold">Nápoles F.C. • Panel Oficial</p>
     </div>
   </div>
-  <div class="top-icon"><i class="fa-solid fa-chart-line"></i></div>
+  <button onclick="cargarEstadisticas()" class="w-10 h-10 rounded-full custom-card flex items-center justify-center hover:scale-105 active:scale-95 transition-all text-slate-600 bg-white">
+    <span class="material-symbols-outlined">sync</span>
+  </button>
 </header>
 
-<div class="dashboard-container">
-  <main id="mainContent">
-    <div class="shimmer-container">
-      <div class="shimmer-grid">
-        <div class="shimmer-box"></div>
-        <div class="shimmer-box"></div>
-        <div class="shimmer-box"></div>
-        <div class="shimmer-box"></div>
-      </div>
-      <div class="shimmer-strip"></div>
-      <div class="shimmer-strip"></div>
-    </div>
-  </main>
-</div>
+<main class="pt-24 px-margin-mobile md:px-margin-desktop max-w-[1440px] mx-auto space-y-xl" id="mainContent">
+  <!-- Skeletons Claros por defecto -->
+  <section class="grid grid-cols-2 md:grid-cols-4 gap-md">
+    <div class="shimmer-box h-32 rounded-xl"></div>
+    <div class="shimmer-box h-32 rounded-xl"></div>
+    <div class="shimmer-box h-32 rounded-xl"></div>
+    <div class="shimmer-box h-32 rounded-xl"></div>
+  </section>
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-xl">
+    <div class="lg:col-span-5 space-y-sm shimmer-box h-96 rounded-xl"></div>
+    <div class="lg:col-span-7 shimmer-box h-96 rounded-xl"></div>
+  </div>
+</main>
 
 <script>
 // ==================== CONFIGURACIÓN ====================
-const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycby1hZoGzUNJU5qQW8nZJk3HQ7m1zzRpMC6Cwe6oPhYnCcqO_vXFJccphDoeQJpz7CEO/exec';
+const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycby6iJXllkXrxhkp2_mlourA82Q_uTxZeiV7SgspizoKitF0GgGfpPdSm5pRPryY6I2-/exec';
 
 if (localStorage.getItem('admin_activo') !== 'true') {
   window.location.href = './login.html';
@@ -499,84 +215,128 @@ async function cargarEstadisticas() {
     if (mesesMostrar.length === 0) mesesMostrar.push('JUN');
 
     const maxGoles = Math.max(...mesesMostrar.map(m => golesPorMes[m] || 0), 1);
-    const alturaMaxima = 110; 
+    const alturaMaxima = 240;
 
     container.innerHTML = `
-      <section class="summary">
-        <div class="summary-card">
-          <div class="card-meta">
-            <p>Goles Club</p>
-            <div class="card-icon-mini" style="background:#e0f2fe; color:#0284c7;"><i class="fa-solid fa-soccer-ball"></i></div>
+      <!-- Tarjetas de Resumen en Fondo Blanco/Gris Claro -->
+      <section class="grid grid-cols-2 md:grid-cols-4 gap-md">
+        <!-- Tarjeta Goles -->
+        <div class="custom-card p-md rounded-xl relative overflow-hidden group hover:scale-[1.02] transition-transform bg-white">
+          <div class="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity">
+            <span class="material-symbols-outlined text-8xl text-secondary" style="font-variation-settings: 'opsz' 48;">sports_soccer</span>
           </div>
-          <h3>${totalGoles}</h3>
-          <span class="card-subtext">Total anotados</span>
+          <p class="font-label-bold text-[12px] uppercase text-slate-500 mb-1 font-bold">Goles Club</p>
+          <p class="font-display-lg text-4xl font-extrabold text-primary">${totalGoles}</p>
+          <p class="text-[11px] text-slate-400 mt-2">Total anotados oficiales</p>
         </div>
-        <div class="summary-card">
-          <div class="card-meta">
-            <p>Partidos</p>
-            <div class="card-icon-mini" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-calendar-alt"></i></div>
+        
+        <!-- Tarjeta Partidos -->
+        <div class="custom-card p-md rounded-xl group hover:scale-[1.02] transition-transform bg-white">
+          <p class="font-label-bold text-[12px] uppercase text-slate-500 mb-1 font-bold">Partidos</p>
+          <p class="font-display-lg text-4xl font-extrabold text-slate-800">${partidosJugados}</p>
+          <div class="w-full bg-slate-100 h-1 rounded-full mt-3 overflow-hidden">
+            <div class="bg-primary h-full w-full"></div>
           </div>
-          <h3>${partidosJugados}</h3>
-          <span class="card-subtext">Disputados oficiales</span>
         </div>
-        <div class="summary-card">
-          <div class="card-meta">
-            <p>Victorias</p>
-            <div class="card-icon-mini" style="background:#dcfce7; color:var(--success);"><i class="fa-solid fa-trophy"></i></div>
-          </div>
-          <h3 style="color: var(--success);">${victorias}</h3>
-          <span class="card-subtext">Rendimiento positivo</span>
+        
+        <!-- Tarjeta Victorias -->
+        <div class="custom-card p-md rounded-xl border-l-4 border-emerald-500 group hover:scale-[1.02] transition-transform bg-white">
+          <p class="font-label-bold text-[12px] uppercase text-slate-500 mb-1 font-bold">Victorias</p>
+          <p class="font-display-lg text-4xl font-extrabold text-emerald-600">${victorias}</p>
+          <p class="text-[12px] text-slate-400 mt-2">Rendimiento positivo</p>
         </div>
-        <div class="summary-card">
-          <div class="card-meta">
-            <p>Derrotas</p>
-            <div class="card-icon-mini" style="background:#ffe4e6; color:var(--danger);"><i class="fa-solid fa-circle-xmark"></i></div>
-          </div>
-          <h3 style="color: var(--danger);">${derrotas}</h3>
-          <span class="card-subtext">Por corregir en cancha</span>
+        
+        <!-- Tarjeta Derrotas -->
+        <div class="custom-card p-md rounded-xl border-l-4 border-rose-500 group hover:scale-[1.02] transition-transform bg-white">
+          <p class="font-label-bold text-[12px] uppercase text-slate-500 mb-1 font-bold">Derrotas</p>
+          <p class="font-display-lg text-4xl font-extrabold text-rose-600">${derrotas}</p>
+          <p class="text-[12px] text-slate-400 mt-2">Por corregir en cancha</p>
         </div>
       </section>
 
-      <section class="players">
-        <h2 class="section-title"><i class="fa-solid fa-crown" style="color: var(--gold)"></i> Máximos Goleadores</h2>
-        ${topGoleadores.length === 0 ? '<div style="text-align:center; padding:30px; color:var(--muted); font-size:0.9rem;">No hay registros de goles asignados a jugadores.</div>' : ''}
-        
-        ${topGoleadores.map(j => `
-          <div class="player-card">
-            <div class="player-left">
-              <div class="player-avatar">${getIniciales(getNombreCompleto(j))}</div>
-              <div class="player-info">
-                <h3>${escapeHtml(getNombreCompleto(j))}</h3>
-                <p>${j.dorsal ? `Dorsal ${j.dorsal}` : 'Sin Dorsal'}</p>
-              </div>
-            </div>
-            <div class="player-stats">
-              <h4>${j.goles || 0}</h4>
-              <p>Goles</p>
-            </div>
+      <!-- Tabla de Goleadores y Gráfica -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-xl">
+        <!-- Lista de Goleadores -->
+        <section class="lg:col-span-5 space-y-md">
+          <div class="flex items-center justify-between px-2">
+            <h2 class="font-headline-md text-slate-800 flex items-center gap-2 text-lg font-bold">
+              <span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">stars</span>
+              Máximos Goleadores
+            </h2>
+            <span class="text-xs font-label-bold text-slate-400 uppercase tracking-wider font-bold">Top 5</span>
           </div>
-        `).join('')}
-
-        <div class="chart-card">
-          <h2 class="section-title" style="margin:0;"><i class="fa-solid fa-chart-bar" style="color:var(--purple);"></i> Rendimiento Mensual</h2>
-          <div class="chart-bars">
-            ${mesesMostrar.map(mes => {
-              const goles = golesPorMes[mes] || 0;
-              const altura = (goles / maxGoles) * alturaMaxima;
+          
+          <div class="space-y-sm">
+            ${topGoleadores.length === 0 ? '<div class="custom-card p-6 text-center text-slate-400 text-sm rounded-xl bg-white">No hay registros de goles asignados a jugadores.</div>' : ''}
+            
+            ${topGoleadores.map((j, index) => {
+              const nombreCompleto = getNombreCompleto(j);
+              const iniciales = getIniciales(nombreCompleto);
+              const esPrimero = index === 0;
+              
               return `
-                <div class="bar" style="height: ${altura}px;">
-                  <span class="bar-value">${goles}</span>
-                  <span class="bar-label">${mes}</span>
+                <div class="custom-card p-4 rounded-xl flex items-center justify-between bg-white ${esPrimero ? 'border-l-4 border-secondary' : ''} hover:bg-slate-50 transition-colors">
+                  <div class="flex items-center gap-4">
+                    <div class="relative">
+                      <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm bg-slate-50 border ${esPrimero ? 'border-secondary' : 'border-slate-200'} text-primary">
+                        ${iniciales}
+                      </div>
+                      ${esPrimero ? `<div class="absolute -top-2 -left-2 bg-secondary text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow-lg uppercase">TOP</div>` : ''}
+                    </div>
+                    <div>
+                      <p class="font-headline-md text-base text-slate-800 font-bold">${escapeHtml(nombreCompleto)}</p>
+                      <p class="text-xs font-label-bold text-slate-400 uppercase tracking-tight font-bold">${j.dorsal ? `Dorsal #${j.dorsal}` : 'Sin Dorsal'}</p>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <p class="font-display-lg text-2xl font-black text-slate-800">${j.goles || 0}</p>
+                    <p class="text-[9px] font-label-bold text-slate-400 uppercase tracking-tighter font-bold">Goles</p>
+                  </div>
                 </div>
               `;
             }).join('')}
           </div>
-        </div>
-      </section>
+        </section>
+
+        <!-- Gráfico Mensual Claro -->
+        <section class="lg:col-span-7 space-y-md">
+          <div class="flex items-center justify-between px-2">
+            <h2 class="font-headline-md text-slate-800 text-lg font-bold flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary">chart_data</span>
+              Rendimiento Mensual
+            </h2>
+            <div class="flex gap-2">
+              <span class="px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold tracking-wider">CONEXIÓN DIRECTA</span>
+            </div>
+          </div>
+          
+          <div class="custom-card p-xl rounded-2xl h-[400px] flex flex-col justify-end bg-white">
+            <div class="flex-grow flex items-end justify-around gap-2 md:gap-4 mb-4 border-b border-slate-100 pb-2">
+              ${mesesMostrar.map(mes => {
+                const goles = golesPorMes[mes] || 0;
+                const altura = (goles / maxGoles) * alturaMaxima;
+                return `
+                  <div class="flex flex-col items-center gap-2 group w-full max-w-[48px]">
+                    <div class="opacity-0 group-hover:opacity-100 transition-opacity bg-slate-800 text-white px-2 py-1 rounded text-[10px] font-bold shadow">
+                      ${goles}
+                    </div>
+                    <div class="chart-bar w-full bg-gradient-to-t from-primary to-primary-light rounded-t-lg shadow-sm" style="height: ${altura}px;"></div>
+                    <span class="text-[10px] font-label-bold text-slate-500 font-bold">${mes}</span>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        </section>
+      </div>
     `;
   } catch (error) {
     console.error(error);
-    container.innerHTML = `<div class="error-msg">❌ No se pudo compilar la tabla de estadísticas. Verifica tu conexión de red o backend.</div>`;
+    container.innerHTML = `
+      <div class="custom-card p-8 rounded-xl text-center max-w-md mx-auto border-rose-300 bg-white">
+        <p class="text-rose-600 font-bold mb-2">❌ Error de Sincronización</p>
+        <p class="text-xs text-slate-500">No se pudo compilar el panel. Revisa tu conexión de red o el despliegue del Web App Script.</p>
+      </div>`;
   }
 }
 
@@ -590,6 +350,7 @@ function escapeHtml(str) {
   });
 }
 
+// Inicializar la carga automática al abrir la página
 cargarEstadisticas();
 </script>
 </body>
