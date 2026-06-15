@@ -3,21 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Estadísticas - Nápoles F.C.</title>
+  <title>Estadísticas Pro - Nápoles F.C.</title>
   
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
   <style>
     :root {
-      --gold: #D4AF37;
-      --purple: #7c3aed;
-      --purple-light: #c084fc;
+      --gold: #e5c158;
+      --gold-dark: #b89329;
+      --purple: #0094d6; /* Sincronizado con el Azul Nápoles de tu marca principal */
+      --purple-light: #38bdf8;
       --slate-dark: #0f172a;
       --muted: #64748b;
       --success: #10b981;
-      --danger: #ef4444;
-      --border: rgba(226, 232, 240, 0.6);
+      --danger: #f43f5e;
+      --border: rgba(226, 232, 240, 0.7);
     }
 
     * {
@@ -29,14 +30,14 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 50%, #f1f4f9 100%);
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 40%, #f1f5f9 100%);
       color: var(--slate-dark);
       min-height: 100vh;
       overflow-x: hidden;
       position: relative;
     }
 
-    /* ILUMINACIÓN AMBIENTAL */
+    /* ILUMINACIÓN AMBIENTAL PREMIUM */
     .ambient-glow {
       position: fixed;
       inset: 0;
@@ -47,22 +48,22 @@
     .glow-sphere {
       position: absolute;
       border-radius: 50%;
-      filter: blur(130px);
-      opacity: 0.22;
+      filter: blur(120px);
+      opacity: 0.28;
     }
-    .glow-1 { width: 300px; height: 300px; background: var(--purple-light); top: -5%; left: -10%; }
-    .glow-2 { width: 350px; height: 350px; background: #e0f2fe; bottom: 10%; right: -10%; }
+    .glow-1 { width: 320px; height: 320px; background: #e0a899; top: -5%; left: -15%; }
+    .glow-2 { width: 400px; height: 400px; background: #e0f2fe; bottom: 5%; right: -15%; }
 
-    /* BARRA SUPERIOR CRISTALINA */
+    /* BARRA SUPERIOR BLANCA CRISTALINA */
     .topbar {
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.75);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
-      padding: 16px 20px;
+      padding: 14px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -71,89 +72,133 @@
     .top-left {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
     }
 
-    .admin-info h1 {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.25rem;
-      font-weight: 900;
-      color: var(--slate-dark);
-      letter-spacing: -0.3px;
-    }
-
-    .admin-info p {
-      font-size: .7rem;
-      color: #78716c;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-top: 2px;
-    }
-
-    .avatar {
-      width: 42px;
-      height: 42px;
-      border-radius: 14px;
+    .btn-back {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
       background: #ffffff;
+      border: 1px solid var(--border);
+      color: var(--slate-dark);
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+      transition: all 0.2s;
+    }
+    .btn-back:active { transform: scale(0.92); background: #f8fafc; }
+
+    .admin-info h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
       color: var(--slate-dark);
-      border: 1px solid var(--border);
+      letter-spacing: -0.2px;
     }
 
-    /* RESUMEN CUADRANTE PANEL MÓVIL */
-    .summary {
-      padding: 20px 18px 10px;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
+    .admin-info p {
+      font-size: .68rem;
+      color: #e0a899; /* Tu Rose Gold insignia */
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-top: 1px;
+    }
+
+    .top-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: #f0fdf4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+    }
+
+    /* CONTENEDOR CENTRAL MAQUETADO */
+    .dashboard-container {
+      max-width: 480px;
+      margin: 0 auto;
       position: relative;
       z-index: 2;
-      max-width: 700px;
-      margin: 0 auto;
+    }
+
+    /* GRID DE CONTADORES MODERNOS */
+    .summary {
+      padding: 20px 16px 8px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
     }
 
     .summary-card {
-      background: rgba(255, 255, 255, 0.65);
+      background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-radius: 24px;
-      padding: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.01);
-      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 4px 24px rgba(15, 23, 42, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .card-meta p {
+      color: var(--muted);
+      font-size: .7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .card-icon-mini {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
     }
 
     .summary-card h3 {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.9rem;
-      font-weight: 900;
-      margin-bottom: 2px;
+      font-size: 1.8rem;
+      font-weight: 800;
       letter-spacing: -0.5px;
-      color: var(--purple);
+      color: var(--slate-dark);
+      line-height: 1;
     }
 
-    .summary-card p {
+    .card-subtext {
+      font-size: 0.68rem;
       color: var(--muted);
-      font-size: .72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
+      margin-top: 5px;
+      font-weight: 500;
     }
 
-    /* LISTA DE JUGADORES Y SECCIONES */
+    /* SECCIONES Y CONTENIDOS */
     .players {
-      padding: 10px 18px 60px;
-      position: relative;
-      z-index: 2;
-      max-width: 700px;
-      margin: 0 auto;
+      padding: 8px 16px 40px;
     }
 
     .section-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 800;
       color: var(--slate-dark);
       margin: 16px 0 12px;
@@ -162,111 +207,127 @@
       gap: 8px;
     }
 
+    /* TARJETA JUGADOR ESTILO ULTRA LIGA */
     .player-card {
-      background: rgba(255, 255, 255, 0.65);
+      background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-radius: 22px;
-      padding: 16px;
-      margin-bottom: 12px;
+      border-radius: 18px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border: 1px solid rgba(255, 255, 255, 0.7);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.01);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 4px 18px rgba(0,0,0,0.01);
+      transition: transform 0.2s;
     }
+    .player-card:active { transform: scale(0.99); }
 
     .player-left {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
     }
 
+    /* Avatar estilo cromo de fútbol */
     .player-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, var(--slate-dark), #1e293b);
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--gold);
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: 800;
+      border: 1.5px solid rgba(229, 193, 88, 0.3);
+      box-shadow: inset 0 2px 6px rgba(255,255,255,0.1);
     }
 
     .player-info h3 {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       font-weight: 700;
       color: var(--slate-dark);
+      letter-spacing: -0.1px;
     }
 
     .player-info p {
       color: var(--muted);
-      font-size: .8rem;
+      font-size: .75rem;
+      font-weight: 500;
       margin-top: 1px;
     }
 
     .player-stats {
       text-align: right;
+      background: #f0fdf4;
+      padding: 6px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(16, 185, 129, 0.1);
     }
 
     .player-stats h4 {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.35rem;
+      font-size: 1.25rem;
       font-weight: 900;
-      color: var(--purple);
+      color: var(--success);
+      line-height: 1;
     }
 
     .player-stats p {
-      color: var(--muted);
-      font-size: .72rem;
-      font-weight: 600;
+      color: #047857;
+      font-size: .6rem;
+      font-weight: 700;
       text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-top: 1px;
     }
 
-    /* MAQUETACIÓN DEL GRÁFICO MENSUAL */
+    /* CONTENEDOR GRÁFICO IMPECABLE */
     .chart-card {
-      background: rgba(255, 255, 255, 0.65);
+      background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-radius: 28px;
-      padding: 22px;
-      margin-top: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.7);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.01);
+      border-radius: 24px;
+      padding: 20px;
+      margin-top: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.01);
     }
 
     .chart-bars {
       display: flex;
       align-items: flex-end;
-      justify-content: space-around;
-      height: 180px;
-      margin-top: 32px;
-      padding-bottom: 20px;
-      border-bottom: 1px dashed var(--border);
+      justify-content: space-between;
+      height: 160px;
+      margin-top: 36px;
+      padding: 0 10px 24px;
+      border-bottom: 1px dashed #cbd5e1;
     }
 
     .bar {
-      width: 38px;
+      width: 32px;
       background: linear-gradient(180deg, var(--purple-light) 0%, var(--purple) 100%);
-      border-radius: 8px 8px 4px 4px;
+      border-radius: 8px 8px 3px 3px;
       position: relative;
       min-height: 6px;
-      transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 12px rgba(0, 148, 214, 0.15);
     }
 
     .bar .bar-value {
       position: absolute;
-      top: -24px;
+      top: -26px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 800;
-      color: var(--purple);
-      background: #f3e8ff;
+      color: #0369a1;
+      background: #e0f2fe;
       padding: 2px 6px;
       border-radius: 6px;
+      border: 1px solid rgba(56, 189, 248, 0.2);
     }
 
     .bar .bar-label {
@@ -274,20 +335,21 @@
       bottom: -24px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: .75rem;
+      font-size: .7rem;
       color: var(--muted);
       font-weight: 700;
+      letter-spacing: -0.1px;
     }
 
-    /* ESQUELETOS SHIMMER DE ESPERA */
-    .shimmer-container { padding: 20px 18px; max-width: 700px; margin: 0 auto; }
-    .shimmer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 24px; }
-    .shimmer-box { height: 82px; background: rgba(255,255,255,0.5); border-radius: 24px; position: relative; overflow: hidden; }
-    .shimmer-strip { height: 74px; background: rgba(255,255,255,0.5); border-radius: 22px; margin-bottom: 12px; position: relative; overflow: hidden; }
+    /* ESQUELETOS SHIMMER */
+    .shimmer-container { padding: 20px 16px; }
+    .shimmer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .shimmer-box { height: 92px; background: rgba(255,255,255,0.6); border-radius: 20px; position: relative; overflow: hidden; }
+    .shimmer-strip { height: 72px; background: rgba(255,255,255,0.6); border-radius: 18px; margin-bottom: 10px; position: relative; overflow: hidden; }
     .shimmer-box::after, .shimmer-strip::after {
       content: ""; position: absolute; inset: 0;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
-      transform: translateX(-100%); animation: skeletonAnim 1.6s infinite;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+      transform: translateX(-100%); animation: skeletonAnim 1.4s infinite;
     }
     @keyframes skeletonAnim { 100% { transform: translateX(100%); } }
 
@@ -296,13 +358,7 @@
       padding: 40px 20px;
       color: var(--danger);
       font-weight: 700;
-      font-size: 0.95rem;
-    }
-
-    @media(max-width: 640px) {
-      .summary { gap: 12px; padding: 16px 14px 5px; }
-      .players { padding: 10px 14px 60px; }
-      .bar { width: 32px; }
+      font-size: 0.9rem;
     }
   </style>
 </head>
@@ -315,26 +371,31 @@
 
 <header class="topbar">
   <div class="top-left">
+    <div class="btn-back" onclick="window.location.href='index.html'">
+      <i class="fa-solid fa-chevron-left text-sm"></i>
+    </div>
     <div class="admin-info">
-      <h1>Estadísticas</h1>
-      <p>Nápoles F.C. · Rendimiento Real</p>
+      <h1>Estadísticas Club</h1>
+      <p>Nápoles F.C. · En Vivo</p>
     </div>
   </div>
-  <div class="avatar"><i class="fa-solid fa-chart-simple"></i></div>
+  <div class="top-icon"><i class="fa-solid fa-chart-line"></i></div>
 </header>
 
-<main id="mainContent">
-  <div class="shimmer-container">
-    <div class="shimmer-grid">
-      <div class="shimmer-box"></div>
-      <div class="shimmer-box"></div>
-      <div class="shimmer-box"></div>
-      <div class="shimmer-box"></div>
+<div class="dashboard-container">
+  <main id="mainContent">
+    <div class="shimmer-container">
+      <div class="shimmer-grid">
+        <div class="shimmer-box"></div>
+        <div class="shimmer-box"></div>
+        <div class="shimmer-box"></div>
+        <div class="shimmer-box"></div>
+      </div>
+      <div class="shimmer-strip"></div>
+      <div class="shimmer-strip"></div>
     </div>
-    <div class="shimmer-strip"></div>
-    <div class="shimmer-strip"></div>
-  </div>
-</main>
+  </main>
+</div>
 
 <script>
 // ==================== CONFIGURACIÓN ====================
@@ -438,25 +499,41 @@ async function cargarEstadisticas() {
     if (mesesMostrar.length === 0) mesesMostrar.push('JUN');
 
     const maxGoles = Math.max(...mesesMostrar.map(m => golesPorMes[m] || 0), 1);
-    const alturaMaxima = 130; 
+    const alturaMaxima = 110; 
 
     container.innerHTML = `
       <section class="summary">
         <div class="summary-card">
+          <div class="card-meta">
+            <p>Goles Club</p>
+            <div class="card-icon-mini" style="background:#e0f2fe; color:#0284c7;"><i class="fa-solid fa-soccer-ball"></i></div>
+          </div>
           <h3>${totalGoles}</h3>
-          <p>⚽ Goles Club</p>
+          <span class="card-subtext">Total anotados</span>
         </div>
         <div class="summary-card">
+          <div class="card-meta">
+            <p>Partidos</p>
+            <div class="card-icon-mini" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-calendar-alt"></i></div>
+          </div>
           <h3>${partidosJugados}</h3>
-          <p>📅 Partidos</p>
+          <span class="card-subtext">Disputados oficiales</span>
         </div>
         <div class="summary-card">
+          <div class="card-meta">
+            <p>Victorias</p>
+            <div class="card-icon-mini" style="background:#dcfce7; color:var(--success);"><i class="fa-solid fa-trophy"></i></div>
+          </div>
           <h3 style="color: var(--success);">${victorias}</h3>
-          <p>🏆 Victorias</p>
+          <span class="card-subtext">Rendimiento positivo</span>
         </div>
         <div class="summary-card">
+          <div class="card-meta">
+            <p>Derrotas</p>
+            <div class="card-icon-mini" style="background:#ffe4e6; color:var(--danger);"><i class="fa-solid fa-circle-xmark"></i></div>
+          </div>
           <h3 style="color: var(--danger);">${derrotas}</h3>
-          <p>❌ Derrotas</p>
+          <span class="card-subtext">Por corregir en cancha</span>
         </div>
       </section>
 
@@ -481,7 +558,7 @@ async function cargarEstadisticas() {
         `).join('')}
 
         <div class="chart-card">
-          <h2 class="section-title" style="margin:0;"><i class="fa-solid fa-chart-bar" style="color:var(--purple);"></i> Goles Mensuales</h2>
+          <h2 class="section-title" style="margin:0;"><i class="fa-solid fa-chart-bar" style="color:var(--purple);"></i> Rendimiento Mensual</h2>
           <div class="chart-bars">
             ${mesesMostrar.map(mes => {
               const goles = golesPorMes[mes] || 0;
