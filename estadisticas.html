@@ -115,24 +115,13 @@ if (localStorage.getItem('admin_activo') !== 'true') {
   window.location.href = './login.html';
 }
 
-// ==================== LECTOR FLEXIBLE DE PROPIEDADES ====================
-function buscarPropiedad(objeto, posiblesNombres) {
-  if (!objeto) return null;
-  for (let nombre of posiblesNombres) {
-    if (objeto.hasOwnProperty(nombre)) return objeto[nombre];
-    let claveMin = Object.keys(objeto).find(k => k.toLowerCase() === nombre.toLowerCase().trim());
-    if (claveMin) return objeto[claveMin];
-  }
-  return null;
-}
-
 async function fetchData(action) {
   const url = `${WEBAPP_URL}?action=${action}&t=${Date.now()}`;
   const resp = await fetch(url);
   return await resp.json();
 }
 
-// Extrae los goles del Nápoles F.C (Primer valor antes del guión)
+// Extrae goles a favor (izq del guion)
 function getGolesFavor(resultado) {
   if (!resultado || resultado === 'VS') return 0;
   const partes = resultado.toString().split('-');
@@ -143,7 +132,7 @@ function getGolesFavor(resultado) {
   return 0;
 }
 
-// Extrae los goles recibidos (Segundo valor después del guión)
+// Extrae goles en contra (der del guion)
 function getGolesContra(resultado) {
   if (!resultado || resultado === 'VS') return 0;
   const partes = resultado.toString().split('-');
@@ -155,21 +144,53 @@ function getGolesContra(resultado) {
 }
 
 function getNombreCompleto(j) {
-  let pNombre = buscarPropiedad(j, ['primerNombre', 'primernombre', 'nombre']) || '';
-  let sNombre = buscarPropiedad(j, ['segundoNombre', 'segundonombre']) || '';
-  let apellidos = buscarPropiedad(j, ['apellidos', 'apellido']) || '';
-  
-  let nombre = `${pNombre} ${sNombre} ${apellidos}`;
-  return nombre.replace(/\s+/g, ' ').trim() || 'Jugador Sin Nombre';
+  let nombre = '';
+  if (j.primerNombre) nombre += j.primerNombre;
+  if (j.segundoNombre) nombre += ' ' + j.segundoNombre;
+  if (j.apellidos) nombre += ' ' + j.apellidos;
+  return nombre.trim() || 'Sin nombre';
 }
 
 function getIniciales(nombre) {
-  if (!nombre || nombre === 'Jugador Sin Nombre') return 'NP';
+  if (!nombre) return 'NP';
   const partes = nombre.trim().split(' ');
   if (partes.length >= 2) {
     return (partes[0][0] + partes[1][0]).toUpperCase();
   }
   return nombre.substring(0, 2).toUpperCase();
+}
+
+// Limpia el número de cédula en caso de que Google Sheets lo traiga con decimales (ej: "1716001431.0")
+function sanitizarCedula(cedulaRaw) {
+  if (!cedulaRaw) return '';
+  let cedulaStr = cedulaRaw.toString().trim();
+  if (cedulaStr.includes('.')) {
+    const partes = cedulaStr.split('.');
+    if (partes[1] === '0') {
+      cedulaStr = partes[0];
+    }
+  }
+  return cedulaStr;
+}
+
+// Parsea fechas de manera robusta previniendo bugs de navegadores móviles con el formato dd/mm/aaaa
+function parseFecha(fechaRaw) {
+  if (!fechaRaw) return null;
+  if (fechaRaw instanceof Date) return fechaRaw;
+  let dateStr = fechaRaw.toString().trim();
+  
+  let d = new Date(dateStr);
+  if (!isNaN(d.getTime())) return d;
+  
+  const partes = dateStr.split('/');
+  if (partes.length === 3) {
+    const dia = parseInt(partes[0], 10);
+    const mes = parseInt(partes[1], 10) - 1;
+    const anio = parseInt(partes[2], 10);
+    d = new Date(anio, mes, dia);
+    if (!isNaN(d.getTime())) return d;
+  }
+  return null;
 }
 
 // ==================== CARGA Y CONSTRUCCIÓN FINAL ====================
@@ -181,9 +202,8 @@ async function cargarEstadisticas() {
       fetchData('getJugadores')
     ]);
 
-    // Adaptación a la estructura real de tu JSON de Apps Script
-    const partidos = partidosData.data || partidosData.partidos || (Array.isArray(partidosData) ? partidosData : []);
-    const jugadores = jugadoresData.jugadores || jugadoresData.data || (Array.isArray(jugadoresData) ? jugadoresData : []);
+    const partidos = partidosData.data || [];
+    const jugadores = jugadoresData.jugadores || [];
 
     let totalGolesFavor = 0;
     let totalGolesContra = 0;
@@ -195,54 +215,34 @@ async function cargarEstadisticas() {
     const golesPorMes = {};
 
     partidos.forEach(p => {
-      const resultado = buscarPropiedad(p, ['resultado', 'Resultado', 'res', 'goles']) || '';
-      
-      if (resultado && resultado !== 'VS' && resultado.toString().includes('-')) {
-        partidosJugados++;
-        const gf = getGolesFavor(resultado);
-        const gc = getGolesContra(resultado);
-        
-        totalGolesFavor += gf;
-        totalGolesContra += gc;
+      const resultado = p.resultado || '';
+      const golesNap = getGolesFavor(resultado);
+      const golesRival = getGolesContra(resultado);
 
-        if (gf > gc) victorias++;
-        else if (gf < gc) derrotas++;
+      if (resultado && resultado !== 'VS' && resultado.includes('-')) {
+        partidosJugados++;
+        totalGolesFavor += golesNap;
+        totalGolesContra += golesRival;
+
+        if (golesNap > golesRival) victorias++;
+        else if (golesNap < golesRival) derrotas++;
         else empates++;
 
-        // Agrupación mensual para la gráfica gráfica
-        const fechaRaw = buscarPropiedad(p, ['fecha', 'Fecha']);
-        if (fechaRaw) {
-          let fechaObj = (typeof fechaRaw === 'string') ? new Date(fechaRaw) : fechaRaw;
-          if (fechaObj instanceof Date && !isNaN(fechaObj.getTime())) {
-            const mes = fechaObj.toLocaleString('es-ES', { month: 'short' }).toUpperCase().replace('.', '');
-            golesPorMes[mes] = (golesPorMes[mes] || 0) + gf;
-          }
+        const fechaObj = parseFecha(p.fecha);
+        if (fechaObj) {
+          const mes = fechaObj.toLocaleString('es-ES', { month: 'short' }).toUpperCase().replace('.', '');
+          golesPorMes[mes] = (golesPorMes[mes] || 0) + golesNap;
         }
       }
     });
 
-    // Procesar lista de goleadores e inyectar avatares dinámicos basados en la cédula
+    // Procesar goleadores y emparejar sus fotos por cédula
     const topGoleadores = [...jugadores]
-      .map(j => {
-        const golesNum = parseInt(buscarPropiedad(j, ['goles', 'Goles', 'golesTotales', 'g']), 10) || 0;
-        const dorsalNum = buscarPropiedad(j, ['dorsal', 'Dorsal', 'numero', 'd']);
-        const cedulaNum = buscarPropiedad(j, ['cedula', 'Cedula', 'ci', 'identificacion', 'id']);
-        
-        // Generar la ruta exacta solicitada: NAPOLES-FC/imagen/avatar/[CEDULA].png
-        const avatarUrl = cedulaNum ? `NAPOLES-FC/imagen/avatar/${cedulaNum.toString().trim()}.png` : null;
-
-        return { 
-          ...j, 
-          golesCalculados: golesNum, 
-          dorsalCalculado: dorsalNum,
-          avatarCalculado: avatarUrl
-        };
-      })
-      // Muestra a todos si no hay goles para que la lista no salga vacía por error de mapeo
-      .sort((a, b) => b.golesCalculados - a.golesCalculados)
+      .filter(j => (j.goles || 0) > 0)
+      .sort((a, b) => (b.goles || 0) - (a.goles || 0))
       .slice(0, 5);
 
-    // Configuración del eje de tiempo de la gráfica
+    // Configurar meses de la gráfica
     const mesesOrden = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
     let mesesConDatos = Object.keys(golesPorMes);
     if (mesesConDatos.length === 0) {
@@ -258,84 +258,90 @@ async function cargarEstadisticas() {
     const alturaMaxima = 240;
 
     container.innerHTML = `
-      <!-- Fila Superior de Tarjetas Integrales -->
+      <!-- Tarjetas de Resumen -->
       <section class="grid grid-cols-2 md:grid-cols-4 gap-md">
         <!-- Goles a Favor -->
         <div class="custom-card p-md rounded-xl relative overflow-hidden group bg-white">
           <div class="absolute -right-4 -top-4 opacity-5">
             <span class="material-symbols-outlined text-8xl text-primary">sports_soccer</span>
           </div>
-          <p class="font-label-bold text-[12px] uppercase text-slate-500 mb-1 font-bold">Goles a Favor</p>
+          <p class="font-label-bold text-[12px] uppercase text-slate-500 mb-1 font-bold">Goles Club</p>
           <p class="font-display-lg text-4xl font-extrabold text-primary">${totalGolesFavor}</p>
-          <p class="text-[11px] text-emerald-600 mt-2 font-medium">⚽ Marcados en liga</p>
+          <p class="text-[11px] text-slate-400 mt-2">Total anotados oficiales</p>
         </div>
         
-        <!-- Goles en Contra (¡Añadido!) -->
+        <!-- Goles en Contra -->
         <div class="custom-card p-md rounded-xl relative overflow-hidden bg-white border-l-4 border-amber-500">
           <p class="font-label-bold text-[12px] uppercase text-slate-500 mb-1 font-bold">Goles en Contra</p>
           <p class="font-display-lg text-4xl font-extrabold text-amber-600">${totalGolesContra}</p>
           <p class="text-[11px] text-slate-400 mt-2">Goles recibidos en arco</p>
         </div>
         
-        <!-- Victorias / Balance -->
-        <div class="custom-card p-md rounded-xl border-l-4 border-emerald-500 bg-white">
-          <p class="font-label-bold text-[12px] uppercase text-slate-500 mb-1 font-bold">Partidos Ganados</p>
-          <p class="font-display-lg text-4xl font-extrabold text-emerald-600">${victorias}</p>
-          <p class="text-[12px] text-slate-400 mt-2">De ${partidosJugados} disputados</p>
+        <!-- Partidos Jugados -->
+        <div class="custom-card p-md rounded-xl bg-white">
+          <p class="font-label-bold text-[12px] uppercase text-slate-500 mb-1 font-bold">Partidos</p>
+          <p class="font-display-lg text-4xl font-extrabold text-slate-800">${partidosJugados}</p>
+          <div class="w-full bg-slate-100 h-1 rounded-full mt-3 overflow-hidden">
+            <div class="bg-primary h-full w-full"></div>
+          </div>
         </div>
         
-        <!-- Derrotas / Empates -->
-        <div class="custom-card p-md rounded-xl border-l-4 border-rose-500 bg-white">
-          <p class="font-label-bold text-[12px] uppercase text-slate-500 mb-1 font-bold">Partidos Perdidos</p>
-          <p class="font-display-lg text-4xl font-extrabold text-rose-600">${derrotas}</p>
-          <p class="text-[12px] text-slate-400 mt-2">Empates registrados: ${empates}</p>
+        <!-- Victorias / Derrotas -->
+        <div class="custom-card p-md rounded-xl border-l-4 border-emerald-500 bg-white">
+          <p class="font-label-bold text-[12px] uppercase text-slate-500 mb-1 font-bold">Victorias</p>
+          <p class="font-display-lg text-4xl font-extrabold text-emerald-600">${victorias}</p>
+          <p class="text-[12px] text-slate-400 mt-2">Derrotas: ${derrotas} • Empates: ${empates}</p>
         </div>
       </section>
 
-      <!-- Distribución Principal -->
+      <!-- Tabla de Goleadores y Gráfica -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-xl">
-        
-        <!-- Panel de Goleadores con Fotos por Cédula -->
+        <!-- Lista de Goleadores -->
         <section class="lg:col-span-5 space-y-md">
           <div class="flex items-center justify-between px-2">
             <h2 class="font-headline-md text-slate-800 flex items-center gap-2 text-lg font-bold">
               <span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">stars</span>
-              Goleadores del Plantel
+              Máximos Goleadores
             </h2>
-            <span class="text-xs font-label-bold text-slate-400 uppercase font-bold">Goles</span>
+            <span class="text-xs font-label-bold text-slate-400 uppercase tracking-wider font-bold">Top 5</span>
           </div>
           
           <div class="space-y-sm">
-            ${topGoleadores.length === 0 ? '<div class="custom-card p-6 text-center text-slate-400 text-sm rounded-xl bg-white">No hay jugadores disponibles en la hoja actual.</div>' : ''}
+            ${topGoleadores.length === 0 ? '<div class="custom-card p-6 text-center text-slate-400 text-sm rounded-xl bg-white">No hay registros de goles asignados a jugadores activos.</div>' : ''}
             
             ${topGoleadores.map((j, index) => {
               const nombreCompleto = getNombreCompleto(j);
               const iniciales = getIniciales(nombreCompleto);
               const esPrimero = index === 0;
+              const cedulaSanitizada = sanitizarCedula(j.cedula || j.ci);
+              
+              // Ruta de avatar exacta en tu servidor
+              const avatarUrl = cedulaSanitizada ? `NAPOLES-FC/imagen/avatar/${cedulaSanitizada}.png` : '';
               
               return `
-                <div class="custom-card p-4 rounded-xl flex items-center justify-between bg-white ${esPrimero ? 'border-l-4 border-secondary shadow-sm' : ''} hover:bg-slate-50 transition-all">
+                <div class="custom-card p-4 rounded-xl flex items-center justify-between bg-white ${esPrimero ? 'border-l-4 border-secondary' : ''} hover:bg-slate-50 transition-colors">
                   <div class="flex items-center gap-4">
                     <div class="relative">
-                      <!-- Contenedor del Avatar -->
+                      <!-- Imagen del jugador o iniciales de respaldo -->
                       <div class="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center font-bold text-sm bg-slate-100 border ${esPrimero ? 'border-secondary' : 'border-slate-200'} text-primary shadow-inner">
-                        ${j.avatarCalculado ? `
-                          <img src="${j.avatarCalculado}" 
+                        ${avatarUrl ? `
+                          <img src="${avatarUrl}" 
                                alt="${escapeHtml(nombreCompleto)}" 
                                class="w-full h-full object-cover"
-                               onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\'text-slate-400\'>${iniciales}</span>';">
-                        ` : `<span>${iniciales}</span>`}
+                               onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
+                          <span class="text-slate-500 hidden">${iniciales}</span>
+                        ` : `<span class="text-slate-500">${iniciales}</span>`}
                       </div>
-                      ${esPrimero ? `<div class="absolute -top-2 -left-2 bg-secondary text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow uppercase">PICHICHI</div>` : ''}
+                      ${esPrimero ? `<div class="absolute -top-2 -left-2 bg-secondary text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow-lg uppercase">TOP</div>` : ''}
                     </div>
                     <div>
                       <p class="font-headline-md text-base text-slate-800 font-bold leading-tight">${escapeHtml(nombreCompleto)}</p>
-                      <p class="text-xs font-label-bold text-slate-400 uppercase font-bold mt-0.5">${j.dorsalCalculado ? `Camiseta #${j.dorsalCalculado}` : 'Sin Dorsal'}</p>
+                      <p class="text-xs font-label-bold text-slate-400 uppercase tracking-tight font-bold mt-1">${j.dorsal ? `Dorsal #${j.dorsal}` : 'Sin Dorsal'}</p>
                     </div>
                   </div>
                   <div class="text-right">
-                    <p class="font-display-lg text-2xl font-black text-slate-800">${j.golesCalculados}</p>
-                    <p class="text-[9px] font-label-bold text-slate-400 uppercase tracking-tighter font-bold">Anotados</p>
+                    <p class="font-display-lg text-2xl font-black text-slate-800">${j.goles || 0}</p>
+                    <p class="text-[9px] font-label-bold text-slate-400 uppercase tracking-tighter font-bold">Goles</p>
                   </div>
                 </div>
               `;
@@ -343,14 +349,16 @@ async function cargarEstadisticas() {
           </div>
         </section>
 
-        <!-- Gráfico del Rendimiento Mensual -->
+        <!-- Gráfico Mensual -->
         <section class="lg:col-span-7 space-y-md">
           <div class="flex items-center justify-between px-2">
             <h2 class="font-headline-md text-slate-800 text-lg font-bold flex items-center gap-2">
               <span class="material-symbols-outlined text-primary">chart_data</span>
-              Progresión Ofensiva
+              Rendimiento Mensual
             </h2>
-            <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-bold tracking-wider uppercase">Actualizado en vivo</span>
+            <div class="flex gap-2">
+              <span class="px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold tracking-wider">CONEXIÓN DIRECTA</span>
+            </div>
           </div>
           
           <div class="custom-card p-xl rounded-2xl h-[400px] flex flex-col justify-end bg-white">
@@ -360,10 +368,10 @@ async function cargarEstadisticas() {
                 const altura = (goles / maxGoles) * alturaMaxima;
                 return `
                   <div class="flex flex-col items-center gap-2 group w-full max-w-[48px]">
-                    <div class="opacity-0 group-hover:opacity-100 transition-opacity bg-slate-800 text-white px-2 py-1 rounded text-[10px] font-bold shadow text-center min-w-[28px]">
+                    <div class="opacity-0 group-hover:opacity-100 transition-opacity bg-slate-800 text-white px-2 py-1 rounded text-[10px] font-bold shadow text-center">
                       ${goles}
                     </div>
-                    <div class="chart-bar w-full bg-gradient-to-t from-primary to-sky-400 rounded-t-lg shadow-sm" style="height: ${altura}px;"></div>
+                    <div class="chart-bar w-full bg-gradient-to-t from-primary to-primary-light rounded-t-lg shadow-sm" style="height: ${altura}px;"></div>
                     <span class="text-[10px] font-label-bold text-slate-500 font-bold">${mes}</span>
                   </div>
                 `;
@@ -377,8 +385,8 @@ async function cargarEstadisticas() {
     console.error(error);
     container.innerHTML = `
       <div class="custom-card p-8 rounded-xl text-center max-w-md mx-auto border-rose-300 bg-white">
-        <p class="text-rose-600 font-bold mb-2">❌ Error detectado al procesar la Base de Datos</p>
-        <p class="text-xs text-slate-500">Asegúrate de que las columnas 'Resultado' (ej: 3-1) y 'Cedula' existan y contengan datos válidos en tu Google Sheets.</p>
+        <p class="text-rose-600 font-bold mb-2">❌ Error de Sincronización</p>
+        <p class="text-xs text-slate-500">Comprueba que el Web App URL tenga los permisos de acceso configurados como 'Anyone' (Cualquiera).</p>
       </div>`;
   }
 }
@@ -393,8 +401,7 @@ function escapeHtml(str) {
   });
 }
 
-// Ejecutar sincronización al renderizar el DOM
-document.addEventListener("DOMContentLoaded", cargarEstadisticas);
+cargarEstadisticas();
 </script>
 </body>
 </html>
