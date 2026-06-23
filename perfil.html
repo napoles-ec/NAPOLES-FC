@@ -196,7 +196,7 @@
     <div id="dynamicContent"></div>
     <div id="bottomNavContainer"></div>
 
-    <!-- Modal reporte incidencia -->
+    <!-- Modal reporte incidencia (ya no se usa, pero se mantiene por si acaso) -->
     <div id="reportModal" class="modal-backdrop">
         <div class="modal-box">
             <h3><i class="fa-solid fa-flag"></i> Reportar incidencia</h3>
@@ -333,7 +333,7 @@ function copiarCuenta() {
     });
 }
 
-// ==================== CACHÉ, NOTIFICACIONES, PDF, ETC. ====================
+// ==================== CACHÉ, NOTIFICACIONES, ETC. ====================
 function guardarCache(perfil, notificacion) {
     const cache = { timestamp: Date.now(), perfil, notificacion };
     localStorage.setItem('perfilCache_' + cedula, JSON.stringify(cache));
@@ -384,6 +384,10 @@ function enviarReporte() {
     document.getElementById('reportText').value = '';
 }
 function irAlineacion() { window.location.href = 'alineacion.html'; }
+
+// ==================== NUEVAS FUNCIONES PARA HISTORIALES ====================
+function irHistorialValores() { window.location.href = 'historial_valores.html'; }
+function irHistorialPartidos() { window.location.href = 'historial_partidos.html'; }
 
 // ==================== ACTUALIZAR DATOS ====================
 async function actualizarPerfil() {
@@ -630,25 +634,21 @@ async function mostrarPerfil(forceRefresh = false) {
         </div>
     </div>`;
 
-    // ====== Inyectar barra de navegación inferior ======
+    // ====== Inyectar barra de navegación inferior (MODIFICADA) ======
     const navContainer = document.getElementById('bottomNavContainer');
     navContainer.innerHTML = `
         <div class="bottom-nav">
-            <button class="nav-item" onclick="compartirPerfil()" title="Compartir">
-                <i class="fa-solid fa-share-alt"></i>
-                <span class="nav-label">Compartir</span>
-            </button>
-            <button class="nav-item" onclick="descargarPDF()" title="PDF">
-                <i class="fa-solid fa-file-pdf"></i>
-                <span class="nav-label">PDF</span>
-            </button>
-            <button class="nav-item" onclick="abrirReporte()" title="Reportar">
-                <i class="fa-solid fa-flag"></i>
-                <span class="nav-label">Reportar</span>
-            </button>
             <button class="nav-item" onclick="irAlineacion()" title="Alineación">
                 <i class="fa-solid fa-people-arrows"></i>
                 <span class="nav-label">Alineación</span>
+            </button>
+            <button class="nav-item" onclick="irHistorialValores()" title="Historial Valores">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span class="nav-label">Hist. Valores</span>
+            </button>
+            <button class="nav-item" onclick="irHistorialPartidos()" title="Historial Partidos">
+                <i class="fa-solid fa-futbol"></i>
+                <span class="nav-label">Hist. Partidos</span>
             </button>
             <button class="nav-item" id="btnActualizar" onclick="actualizarPerfil()" title="Actualizar">
                 <i class="fa-solid fa-rotate"></i>
