@@ -194,8 +194,6 @@
     </div>
 
     <div id="dynamicContent"></div>
-
-    <!-- BARRA DE NAVEGACIÓN INFERIOR (se inyecta en mostrarPerfil) -->
     <div id="bottomNavContainer"></div>
 
     <!-- Modal reporte incidencia -->
@@ -232,9 +230,8 @@
 
 <script>
 // ==================== CONFIGURACIÓN ====================
-// ⚠️ CAMBIA ESTA URL POR LA QUE OBTENGAS AL PUBLICAR EL SCRIPT ⚠️
 const CONFIG = {
-    URL_GAS: "https://script.google.com/macros/s/AKfycbxF-_odeNm-_SfYDjZSDQhOd_iKqZoNbvV22WHpsojjoLAGRDSQZlTrVKrnIgIOFNfR/exec"  // <-- ACTUALIZA CON TU URL
+    URL_GAS: "https://script.google.com/macros/s/AKfycbxF-_odeNm-_SfYDjZSDQhOd_iKqZoNbvV22WHpsojjoLAGRDSQZlTrVKrnIgIOFNfR/exec"  // URL que funciona
 };
 
 let PROXIMO_PARTIDO = null;
@@ -451,7 +448,6 @@ async function mostrarPerfil(forceRefresh = false) {
         const url = `${CONFIG.URL_GAS}?action=getPerfil&cedula=${encodeURIComponent(cedula)}&categoria=${encodeURIComponent(categoria)}&t=${Date.now()}`;
         const resp = await fetch(url);
         const data = await resp.json();
-        // ====== MOSTRAR DEPURACIÓN EN CONSOLA ======
         console.log("🔍 DATOS DE DEPURACIÓN:", data.debug);
         if (!data.success || !data.jugador) throw new Error(data.error);
         perfil = data.jugador;
@@ -462,21 +458,17 @@ async function mostrarPerfil(forceRefresh = false) {
     }
     jugadorData = perfil;
 
-    const partidosJugados = Number(perfil.partidosJugados) || 0;
-    const goles = Number(perfil.goles) || 0;
-    const amarillas = Number(perfil.amarillas) || 0;
-    const rojas = Number(perfil.rojas) || 0;
-    
+    // ====== CORRECCIÓN: Usar perfil["partidos jugados"] ======
     const s = {
         primerNombre: escapeHtml(perfil['primer nombre'] || ''),
         apellidos: escapeHtml(perfil['apellidos'] || ''),
         fechaNacimiento: perfil['fecha de nacimiento'] || '',
         nombreCamiseta: escapeHtml(perfil['nombre en camiseta'] || 'NÁPOLES'),
         dorsal: escapeHtml(perfil['número de dorsal'] || '00'),
-        partidosJugados: partidosJugados,
-        goles: goles,
-        amarillas: amarillas,
-        rojas: rojas,
+        partidosJugados: Number(perfil["partidos jugados"]) || 0,
+        goles: Number(perfil.goles) || 0,
+        amarillas: Number(perfil.amarillas) || 0,
+        rojas: Number(perfil.rojas) || 0,
         puntualidad: parseFloat(perfil.puntualidad) || 0,
         companerismo: parseFloat(perfil.compañerismo) || 0,
         respeto: parseFloat(perfil.respeto) || 0,
@@ -487,6 +479,7 @@ async function mostrarPerfil(forceRefresh = false) {
         unifEstado: escapeHtml(perfil.unif_estado || 'PENDIENTE'),
         mediasEstado: escapeHtml(perfil.medias_estado || 'PENDIENTE')
     };
+
     let edad = calcularEdad(s.fechaNacimiento);
     let suma = s.puntualidad + s.companerismo + s.respeto + s.humildad;
     let promedio = suma > 0 ? parseFloat((suma / 4).toFixed(1)) : 0;
