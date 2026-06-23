@@ -449,9 +449,11 @@ async function mostrarPerfil(forceRefresh = false) {
     document.body.className = '';
     document.body.style.background = '';
     if (refreshInterval) clearInterval(refreshInterval);
+    
+    // ====== ACTUALIZACIÓN AUTOMÁTICA CADA 10 MINUTOS ======
     refreshInterval = setInterval(() => {
         if (document.body.className !== 'ruleta-mode') actualizarDatosEnSegundoPlano();
-    }, 30000);
+    }, 10 * 60 * 1000); // 600000 ms = 10 minutos
 
     const container = document.getElementById('dynamicContent');
     container.innerHTML = `<div class="perfil-root"><div class="perfil-container"><div class="soccer-loading-container" style="text-align:center; margin-top:140px;"><div class="soccer-spinner" style="font-size:3.5rem; color:#D4AF37; animation: spinSoccer 1.2s linear infinite;"><i class="fa-solid fa-futbol"></i></div><div>Cargando perfil...</div></div></div></div>`;
