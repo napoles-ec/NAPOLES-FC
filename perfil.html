@@ -231,7 +231,7 @@
 <script>
 // ==================== CONFIGURACIÓN ====================
 const CONFIG = {
-    URL_GAS: "https://script.google.com/macros/s/AKfycbw8omTz-HjZM-s5MK8z4KQccXVa1uiBzN0TtOQkApsyb8OlTUtvSsYIQMmD6qFXT5Qt/exec"  // URL que funciona
+    URL_GAS: "https://script.google.com/macros/s/AKfycbz7tqh-8QC-MW_BjhDLDOS5_6JtET83DLAq4os9lCs6HllrF1-DI9PzBMvhPhBUqVDy/exec"  // CAMBIA POR TU URL
 };
 
 let PROXIMO_PARTIDO = null;
@@ -453,7 +453,7 @@ async function mostrarPerfil(forceRefresh = false) {
     // ====== ACTUALIZACIÓN AUTOMÁTICA CADA 10 MINUTOS ======
     refreshInterval = setInterval(() => {
         if (document.body.className !== 'ruleta-mode') actualizarDatosEnSegundoPlano();
-    }, 10 * 60 * 1000); // 600000 ms = 10 minutos
+    }, 10 * 60 * 1000);
 
     const container = document.getElementById('dynamicContent');
     container.innerHTML = `<div class="perfil-root"><div class="perfil-container"><div class="soccer-loading-container" style="text-align:center; margin-top:140px;"><div class="soccer-spinner" style="font-size:3.5rem; color:#D4AF37; animation: spinSoccer 1.2s linear infinite;"><i class="fa-solid fa-futbol"></i></div><div>Cargando perfil...</div></div></div></div>`;
@@ -492,8 +492,8 @@ async function mostrarPerfil(forceRefresh = false) {
         companerismo: parseFloat(perfil.compañerismo) || 0,
         respeto: parseFloat(perfil.respeto) || 0,
         humildad: parseFloat(perfil.humildad) || 0,
-        deudaVocalia: Number(perfil['deuda vocalia']) || 0,
-        detalleVocalia: perfil.detalleVocalia || [],
+        deudaTotal: Number(perfil["deuda total"]) || 0,
+        detalleDeudas: perfil["detalle deudas"] || [],
         inscripEstado: escapeHtml(perfil.inscrip_estado || 'PENDIENTE'),
         unifEstado: escapeHtml(perfil.unif_estado || 'PENDIENTE'),
         mediasEstado: escapeHtml(perfil.medias_estado || 'PENDIENTE')
@@ -505,41 +505,37 @@ async function mostrarPerfil(forceRefresh = false) {
     let deudaInscripcion = s.inscripEstado.toUpperCase().includes('PENDIENTE') ? 5 : 0;
     let deudaUniforme = s.unifEstado.toUpperCase().includes('PENDIENTE') ? 17 : 0;
     let deudaMedias = s.mediasEstado.toUpperCase().includes('PENDIENTE') ? 2 : 0;
-    let totalAdmin = deudaInscripcion + deudaUniforme + deudaMedias + s.deudaVocalia;
+    let totalAdmin = deudaInscripcion + deudaUniforme + deudaMedias + s.deudaTotal;
 
-    // ====== Construcción de la tarjeta de Vocalía ======
-    let vocaliaHTML = '';
-    if (s.detalleVocalia.length > 0) {
-        let items = s.detalleVocalia.map(d => 
+    // ====== Construcción de la tarjeta de VALORES PENDIENTES ======
+    let deudasHTML = '';
+    if (s.detalleDeudas && s.detalleDeudas.length > 0) {
+        let items = s.detalleDeudas.map(d => 
             `<div style="display:flex; justify-content:space-between; font-size:0.75rem; border-bottom:1px solid rgba(255,255,255,0.05); padding:4px 0;">
                 <span>${escapeHtml(d.concepto)}</span>
                 <span>$${Number(d.saldo).toFixed(2)}</span>
                 <span style="color:${d.estado === 'PAGADO' ? '#2ecc71' : '#f39c12'}; font-size:0.6rem;">${d.estado}</span>
             </div>`
         ).join('');
-        vocaliaHTML = `
-            <div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;">
-                <div><i class="fa-solid fa-money-bill-wave"></i></div>
-                <div>$${s.deudaVocalia.toFixed(2)}</div>
-                <div>VOCALÍA</div>
-                <div style="background:rgba(155,89,182,.15); color:#9b59b6; border-radius:20px; margin-top:5px; padding:4px;">PENDIENTE</div>
+        deudasHTML = `
+            <div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center; grid-column: span 2;">
+                <div><i class="fa-solid fa-file-invoice"></i></div>
+                <div>$${s.deudaTotal.toFixed(2)}</div>
+                <div style="font-size:0.8rem; font-weight:bold;">VALORES PENDIENTES</div>
+                <div style="background:rgba(155,89,182,.15); color:#9b59b6; border-radius:20px; margin-top:5px; padding:4px; font-size:0.7rem;">${s.detalleDeudas.length} concepto(s)</div>
                 <div style="margin-top:8px; background:rgba(0,0,0,0.3); border-radius:12px; padding:8px; text-align:left; font-size:0.7rem; color:#ccc;">
-                    <div style="font-weight:bold; margin-bottom:4px;">Detalle de deuda:</div>
+                    <div style="font-weight:bold; margin-bottom:4px;">Detalle:</div>
                     ${items}
-                    <div style="margin-top:6px; font-size:0.6rem; color:#aaa; border-top:1px solid rgba(255,255,255,0.1); padding-top:6px;">
-                        ⚠️ <strong>Corresponde a los Valores Pendientes</strong>.
-                        ${s.deudaVocalia === 0 ? ' <span style="color:#f39c12;">(Saldo $0.00 pero registro pendiente)</span>' : ''}
-                    </div>
                 </div>
             </div>
         `;
     } else {
-        vocaliaHTML = `
-            <div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;">
+        deudasHTML = `
+            <div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center; grid-column: span 2;">
                 <div><i class="fa-solid fa-check-circle" style="color:#2ecc71;"></i></div>
                 <div style="color:#2ecc71;">Al día</div>
-                <div>VOCALÍA</div>
-                <div style="background:rgba(46,204,113,.15); color:#2ecc71; border-radius:20px; margin-top:5px; padding:4px;">PAGADO</div>
+                <div style="font-size:0.8rem; font-weight:bold;">VALORES PENDIENTES</div>
+                <div style="background:rgba(46,204,113,.15); color:#2ecc71; border-radius:20px; margin-top:5px; padding:4px; font-size:0.7rem;">PAGADO</div>
             </div>
         `;
     }
@@ -578,7 +574,7 @@ async function mostrarPerfil(forceRefresh = false) {
         `;
     }
 
-    // ====== OBTENER RIVALES ACTIVOS (dinámicamente) ======
+    // ====== OBTENER RIVALES ACTIVOS ======
     let rivalesActivos = [];
     try {
         const resp = await fetch(`${CONFIG.URL_GAS}?action=getRivalesActivos&t=${Date.now()}`);
@@ -590,13 +586,10 @@ async function mostrarPerfil(forceRefresh = false) {
         console.error("Error cargando rivales:", e);
     }
 
-    // Construir la lista para el carrusel
     const listaRivales = rivalesActivos.map(rival => ({ nombre: rival, especial: "" }));
-    // Si existe partido próximo, asegurar que esté en la lista (si no, agregarlo)
     if (PROXIMO_PARTIDO && !listaRivales.some(r => r.nombre === PROXIMO_PARTIDO.rival)) {
         listaRivales.push({ nombre: PROXIMO_PARTIDO.rival, especial: "next" });
     }
-    // Si la lista queda vacía, mostrar un mensaje
     if (listaRivales.length === 0) {
         listaRivales.push({ nombre: "Sin rivales programados", especial: "" });
     }
@@ -618,7 +611,7 @@ async function mostrarPerfil(forceRefresh = false) {
                 ${deudaInscripcion ? `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><div><i class="fa-solid fa-file-signature"></i></div><div>$5</div><div>INSCRIPCIÓN</div><div style="background:rgba(231,76,60,.15); color:#e74c3c; border-radius:20px; margin-top:5px;">PENDIENTE</div></div>` : ''}
                 ${deudaUniforme ? `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><div><i class="fa-solid fa-tshirt"></i></div><div>$17</div><div>UNIFORME</div><div style="background:rgba(243,156,18,.15); color:#f39c12; border-radius:20px; margin-top:5px;">PENDIENTE</div></div>` : ''}
                 ${deudaMedias ? `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><div><i class="fa-solid fa-socks"></i></div><div>$2</div><div>MEDIAS</div><div style="background:rgba(52,152,219,.15); color:#3498db; border-radius:20px; margin-top:5px;">PENDIENTE</div></div>` : ''}
-                ${vocaliaHTML}
+                ${deudasHTML}
             </div>
             <div class="debt-box" style="margin-top:15px; background:rgba(0,0,0,.4); border-radius:14px; padding:12px;">
                 <div style="display:flex; justify-content:space-between;">
@@ -857,13 +850,11 @@ async function verificarConfirmacionPrevia() {
 (async function() {
     iniciarSlogan();
     await cargarProximoPartido();
-    
     if (!PROXIMO_PARTIDO) {
         ocultarSkeleton();
         await mostrarPerfil();
         return;
     }
-    
     const yaConfirmo = await verificarConfirmacionPrevia();
     ocultarSkeleton();
     if (yaConfirmo) {
