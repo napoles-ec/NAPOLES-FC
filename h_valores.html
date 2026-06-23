@@ -2,7 +2,7 @@
 <html class="dark" lang="es">
 <head>
     <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" name="viewport"/>
     <meta name="theme-color" content="#ADFF2F">
     <title>Nápoles F.C. - Historial de Valores</title>
     <link rel="icon" type="image/x-icon" href="./favicon.ico">
@@ -11,243 +11,383 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         /* ========== ESTILOS GENERALES ========== */
+        * { box-sizing: border-box; }
         body {
             background: radial-gradient(circle at top, #111a33 0%, #060912 100%);
             font-family: 'Inter', sans-serif;
             color: #fff;
             min-height: 100vh;
-            padding: 15px 15px 80px 15px;
+            padding: 12px 12px 75px 12px;
             margin: 0;
         }
         .container {
             max-width: 480px;
             margin: 0 auto;
         }
+
+        /* ========== CABECERA ========== */
         .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 20px;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            margin-bottom: 16px;
+            padding: 8px 0 12px 0;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.25);
         }
         .header h1 {
             font-family: 'Outfit', sans-serif;
             color: #D4AF37;
-            font-size: 1.5rem;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .header h1 img {
-            height: 40px;
-        }
-        .header .btn-back {
-            background: rgba(212, 175, 55, 0.15);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            border-radius: 40px;
-            padding: 8px 16px;
-            color: #FFD700;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.85rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            text-decoration: none;
-        }
-        .header .btn-back:hover {
-            background: rgba(212, 175, 55, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .card {
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 20px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(212, 175, 55, 0.2);
-        }
-        .card h2 {
-            color: #D4AF37;
-            font-family: 'Outfit', sans-serif;
             font-size: 1.2rem;
-            margin-bottom: 12px;
+            letter-spacing: 0.5px;
             display: flex;
             align-items: center;
             gap: 8px;
+            margin: 0;
+        }
+        .header h1 img {
+            height: 32px;
+        }
+        .header .btn-back {
+            background: rgba(212, 175, 55, 0.12);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 30px;
+            padding: 6px 14px;
+            color: #FFD700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+        }
+        .header .btn-back:hover {
+            background: rgba(212, 175, 55, 0.25);
+        }
+        .header .btn-back:active {
+            transform: scale(0.95);
         }
 
-        /* ========== TABLA ========== */
-        .table-responsive {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+        /* ========== TARJETAS DE RESUMEN ========== */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.75rem;
+        .summary-card {
+            background: rgba(0, 0, 0, 0.45);
+            border-radius: 16px;
+            padding: 14px 12px;
+            text-align: center;
+            border: 1px solid rgba(212, 175, 55, 0.15);
         }
-        thead th {
+        .summary-card .label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #94a3b8;
+            margin-bottom: 4px;
+        }
+        .summary-card .value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+        }
+        .summary-card .value.pagado { color: #2ecc71; }
+        .summary-card .value.pendiente { color: #f39c12; }
+        .summary-card .icon {
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        /* ========== TARJETA PRINCIPAL ========== */
+        .card {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 16px;
+            padding: 12px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            margin-bottom: 12px;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .card-header h2 {
+            color: #D4AF37;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .card-header .badge-count {
             background: rgba(212, 175, 55, 0.15);
             color: #D4AF37;
-            padding: 8px 6px;
-            text-align: left;
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 0.65rem;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+        }
+
+        /* ========== LISTA DE REGISTROS (TARJETAS) ========== */
+        .registro-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            border-left: 3px solid rgba(212, 175, 55, 0.2);
+            transition: background 0.2s;
+        }
+        .registro-item:active {
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .registro-item .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 6px;
+        }
+        .registro-item .concepto {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #fff;
+            flex: 1;
+        }
+        .registro-item .estado-badge {
+            font-size: 0.55rem;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 20px;
             white-space: nowrap;
-        }
-        tbody td {
-            padding: 8px 6px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            vertical-align: middle;
-        }
-        tbody tr:hover {
-            background: rgba(212, 175, 55, 0.05);
-        }
-        .estado-pagado {
-            color: #2ecc71;
-        }
-        .estado-pendiente {
-            color: #f39c12;
         }
         .estado-pagado-badge {
             background: rgba(46, 204, 113, 0.15);
             color: #2ecc71;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 0.65rem;
-            font-weight: 600;
-            display: inline-block;
         }
         .estado-pendiente-badge {
             background: rgba(243, 156, 18, 0.15);
             color: #f39c12;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 0.65rem;
+        }
+        .registro-item .detalles {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 6px;
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+        .registro-item .detalles span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .registro-item .detalles .monto-total {
+            color: #fff;
             font-weight: 600;
-            display: inline-block;
+        }
+        .registro-item .detalles .monto-pagado {
+            color: #2ecc71;
+        }
+        .registro-item .detalles .monto-saldo {
+            color: #f39c12;
+        }
+        .registro-item .id-label {
+            font-size: 0.55rem;
+            color: #64748b;
+            background: rgba(255,255,255,0.05);
+            padding: 1px 8px;
+            border-radius: 12px;
+        }
+
+        /* ========== SIN REGISTROS ========== */
+        .sin-registros {
+            text-align: center;
+            padding: 30px 15px;
+            color: #94a3b8;
+        }
+        .sin-registros i {
+            font-size: 2.5rem;
+            color: #D4AF37;
+            opacity: 0.5;
+        }
+        .sin-registros p {
+            margin-top: 10px;
+            font-size: 0.85rem;
         }
 
         /* ========== CARGANDO ========== */
         .loading {
             text-align: center;
-            margin-top: 60px;
+            padding: 40px 0;
         }
         .loading i {
-            font-size: 3rem;
+            font-size: 2.5rem;
             color: #D4AF37;
             animation: spin 1s linear infinite;
+        }
+        .loading p {
+            margin-top: 12px;
+            color: #94a3b8;
+            font-size: 0.85rem;
         }
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        /* ========== BARRA INFERIOR ========== */
+        /* ========== TOAST ========== */
+        #toast {
+            position: fixed;
+            bottom: 85px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            border: 1px solid #D4AF37;
+            border-radius: 30px;
+            padding: 8px 20px;
+            color: #D4AF37;
+            font-weight: 600;
+            font-size: 0.8rem;
+            z-index: 2000;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            display: none;
+            white-space: nowrap;
+            max-width: 90%;
+        }
+        #toast.show {
+            display: block;
+            animation: toastAnim 2.5s ease forwards;
+        }
+        @keyframes toastAnim {
+            0% { opacity: 0; transform: translateX(-50%) translateY(15px); }
+            15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            85% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+        }
+
+        /* ========== BARRA DE NAVEGACIÓN INFERIOR ========== */
         .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(15, 23, 42, 0.95);
+            background: rgba(15, 23, 42, 0.96);
             backdrop-filter: blur(12px);
-            border-top: 1px solid rgba(212, 175, 55, 0.3);
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
             display: flex;
             justify-content: space-around;
             align-items: center;
-            padding: 8px 0 env(safe-area-inset-bottom, 8px) 0;
+            padding: 6px 0 env(safe-area-inset-bottom, 6px) 0;
             z-index: 100;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
         }
         .bottom-nav .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 4px 12px;
-            border-radius: 12px;
-            color: #94a3b8;
+            padding: 4px 8px;
+            border-radius: 10px;
+            color: #64748b;
             transition: all 0.2s;
             cursor: pointer;
             text-decoration: none;
-            font-size: 0.6rem;
-            gap: 2px;
-            min-width: 50px;
+            font-size: 0.5rem;
+            gap: 1px;
+            min-width: 44px;
             border: none;
             background: transparent;
             font-family: 'Inter', sans-serif;
             font-weight: 500;
+            -webkit-tap-highlight-color: transparent;
         }
-        .bottom-nav .nav-item i { font-size: 1.3rem; transition: all 0.2s; }
-        .bottom-nav .nav-item:hover { color: #D4AF37; }
-        .bottom-nav .nav-item:active { transform: scale(0.92); }
+        .bottom-nav .nav-item i {
+            font-size: 1.2rem;
+            transition: all 0.2s;
+        }
+        .bottom-nav .nav-item:hover { color: #94a3b8; }
+        .bottom-nav .nav-item:active { transform: scale(0.9); }
         .bottom-nav .nav-item.active { color: #D4AF37; }
-        .bottom-nav .nav-item .nav-label { font-size: 0.55rem; letter-spacing: 0.3px; text-transform: uppercase; }
+        .bottom-nav .nav-item .nav-label {
+            font-size: 0.45rem;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
 
-        @media (max-width: 480px) {
-            .bottom-nav .nav-item i { font-size: 1.1rem; }
-            .bottom-nav .nav-item .nav-label { font-size: 0.45rem; }
-            .bottom-nav .nav-item { min-width: 40px; padding: 2px 8px; }
-            table { font-size: 0.65rem; }
-            thead th, tbody td { padding: 6px 4px; }
+        @media (max-width: 400px) {
+            body { padding: 8px 8px 70px 8px; }
+            .header h1 { font-size: 1rem; }
+            .header h1 img { height: 26px; }
+            .summary-card .value { font-size: 1.1rem; }
+            .registro-item .concepto { font-size: 0.75rem; }
+            .registro-item .detalles { font-size: 0.6rem; gap: 6px; }
+            .bottom-nav .nav-item i { font-size: 1rem; }
+            .bottom-nav .nav-item { min-width: 36px; padding: 2px 4px; }
         }
     </style>
 </head>
 <body>
     <div id="app">
-        <!-- CABECERA -->
         <div class="container">
+
+            <!-- ===== CABECERA ===== -->
             <div class="header">
-                <h1><img src="./imagen/logo/napoles_fc.png" alt="Logo"> Historial de Valores</h1>
+                <h1><img src="./imagen/logo/napoles_fc.png" alt="Logo"> Historial</h1>
                 <a href="perfil.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Volver</a>
             </div>
 
-            <!-- CARGANDO -->
-            <div id="loading" class="loading">
-                <i class="fa-solid fa-spinner"></i>
-                <p style="margin-top: 15px; color: #ccc;">Cargando historial...</p>
-            </div>
-
-            <!-- CONTENIDO -->
-            <div id="content" style="display: none;">
-                <div class="card">
-                    <h2><i class="fa-solid fa-list"></i> Todos los valores</h2>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Concepto</th>
-                                    <th>Valor Total</th>
-                                    <th>Pagado</th>
-                                    <th>Saldo</th>
-                                    <th>Fec. Vencimiento</th>
-                                    <th>Estado</th>
-                                    <th>Observaciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabla-body">
-                                <!-- Se llena con JS -->
-                            </tbody>
-                        </table>
+            <!-- ===== RESUMEN ===== -->
+            <div id="summary" style="display:none;">
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <span class="icon">✅</span>
+                        <div class="label">Total Pagado</div>
+                        <div class="value pagado" id="totalPagado">$0.00</div>
                     </div>
-                    <div id="sin-registros" style="display: none; text-align:center; padding: 20px; color: #aaa;">
-                        <i class="fa-solid fa-circle-info" style="font-size: 2rem;"></i>
-                        <p style="margin-top: 10px;">No se encontraron registros de valores para este jugador.</p>
+                    <div class="summary-card">
+                        <span class="icon">⏳</span>
+                        <div class="label">Total Pendiente</div>
+                        <div class="value pendiente" id="totalPendiente">$0.00</div>
                     </div>
                 </div>
             </div>
 
-            <!-- NOTIFICACIÓN -->
-            <div id="toast" style="display: none; position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #1e293b; border: 1px solid #D4AF37; border-radius: 40px; padding: 10px 24px; color: #D4AF37; font-weight: 600; font-size: 0.9rem; z-index: 2000; box-shadow: 0 10px 25px rgba(0,0,0,0.3); backdrop-filter: blur(4px);"></div>
+            <!-- ===== CARGANDO ===== -->
+            <div id="loading" class="loading">
+                <i class="fa-solid fa-spinner"></i>
+                <p>Cargando historial...</p>
+            </div>
+
+            <!-- ===== CONTENIDO ===== -->
+            <div id="content" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-list-ul"></i> Registros</h2>
+                        <span class="badge-count" id="totalRegistros">0</span>
+                    </div>
+                    <div id="lista-registros">
+                        <!-- Se llena con JS -->
+                    </div>
+                    <div id="sin-registros" class="sin-registros" style="display: none;">
+                        <i class="fa-solid fa-inbox"></i>
+                        <p>No se encontraron registros de valores para este jugador.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== TOAST ===== -->
+            <div id="toast"></div>
         </div>
     </div>
 
-    <!-- BARRA DE NAVEGACIÓN INFERIOR -->
+    <!-- ===== BARRA DE NAVEGACIÓN INFERIOR ===== -->
     <div class="bottom-nav">
         <a href="perfil.html" class="nav-item" title="Perfil">
             <i class="fa-solid fa-user"></i>
@@ -259,11 +399,11 @@
         </a>
         <a href="h_valores.html" class="nav-item active" title="Historial Valores">
             <i class="fa-solid fa-clock-rotate-left"></i>
-            <span class="nav-label">Hist. Valores</span>
+            <span class="nav-label">Valores</span>
         </a>
         <a href="estadisticas.html" class="nav-item" title="Historial Partidos">
             <i class="fa-solid fa-futbol"></i>
-            <span class="nav-label">Hist. Partidos</span>
+            <span class="nav-label">Partidos</span>
         </a>
         <button class="nav-item" onclick="actualizar()" title="Actualizar">
             <i class="fa-solid fa-rotate"></i>
@@ -292,13 +432,10 @@
         function mostrarToast(mensaje) {
             const toast = document.getElementById('toast');
             toast.textContent = mensaje;
-            toast.style.display = 'block';
-            toast.style.animation = 'none';
-            setTimeout(() => {
-                toast.style.animation = 'fadeIn 0.3s ease';
-            }, 10);
-            setTimeout(() => {
-                toast.style.display = 'none';
+            toast.className = 'show';
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => {
+                toast.className = '';
             }, 2500);
         }
 
@@ -307,7 +444,7 @@
             try {
                 const d = new Date(fecha);
                 if (isNaN(d.getTime())) return fecha;
-                return d.toLocaleDateString('es-ES');
+                return d.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
             } catch(e) {
                 return fecha;
             }
@@ -321,11 +458,14 @@
         async function cargarHistorial() {
             const loading = document.getElementById('loading');
             const content = document.getElementById('content');
-            const tbody = document.getElementById('tabla-body');
+            const summary = document.getElementById('summary');
+            const lista = document.getElementById('lista-registros');
             const sinRegistros = document.getElementById('sin-registros');
+            const totalRegistros = document.getElementById('totalRegistros');
 
             loading.style.display = 'block';
             content.style.display = 'none';
+            summary.style.display = 'none';
 
             try {
                 const url = `${URL_GAS}?action=getHistorialValores&cedula=${encodeURIComponent(cedula)}&t=${Date.now()}`;
@@ -334,27 +474,55 @@
 
                 if (data.success && data.data) {
                     const registros = data.data;
-                    tbody.innerHTML = '';
+                    lista.innerHTML = '';
+                    sinRegistros.style.display = 'none';
+
+                    // Calcular totales
+                    let totalPagado = 0;
+                    let totalPendiente = 0;
+                    registros.forEach(r => {
+                        const estado = (r.estado || '').toUpperCase();
+                        const saldo = parseFloat(r.saldo) || 0;
+                        const pagado = parseFloat(r.valorPagado) || 0;
+                        if (estado === 'PAGADO' || saldo === 0) {
+                            totalPagado += pagado;
+                        } else {
+                            totalPendiente += saldo;
+                        }
+                    });
+
+                    // Actualizar resumen
+                    document.getElementById('totalPagado').textContent = '$' + totalPagado.toFixed(2);
+                    document.getElementById('totalPendiente').textContent = '$' + totalPendiente.toFixed(2);
+                    summary.style.display = 'block';
+
                     if (registros.length === 0) {
                         sinRegistros.style.display = 'block';
+                        totalRegistros.textContent = '0';
                     } else {
-                        sinRegistros.style.display = 'none';
+                        totalRegistros.textContent = registros.length;
                         registros.forEach(r => {
-                            const estado = r.estado || '';
-                            const estadoClass = estado.toUpperCase().includes('PAGADO') ? 'estado-pagado' : 'estado-pendiente';
-                            const badgeClass = estado.toUpperCase().includes('PAGADO') ? 'estado-pagado-badge' : 'estado-pendiente-badge';
-                            const tr = document.createElement('tr');
-                            tr.innerHTML = `
-                                <td>${r.id || '-'}</td>
-                                <td>${r.concepto || '-'}</td>
-                                <td>$${formatearNumero(r.valorTotal)}</td>
-                                <td>$${formatearNumero(r.valorPagado)}</td>
-                                <td>$${formatearNumero(r.saldo)}</td>
-                                <td>${formatearFecha(r.fechaVencimiento)}</td>
-                                <td><span class="${badgeClass}">${estado}</span></td>
-                                <td>${r.observaciones || '-'}</td>
+                            const estado = (r.estado || '').toUpperCase();
+                            const esPagado = estado === 'PAGADO' || parseFloat(r.saldo) === 0;
+                            const badgeClass = esPagado ? 'estado-pagado-badge' : 'estado-pendiente-badge';
+                            const estadoLabel = esPagado ? 'PAGADO' : 'PENDIENTE';
+
+                            const div = document.createElement('div');
+                            div.className = 'registro-item';
+                            div.innerHTML = `
+                                <div class="row">
+                                    <span class="concepto">${r.concepto || 'Sin concepto'}</span>
+                                    <span class="estado-badge ${badgeClass}">${estadoLabel}</span>
+                                </div>
+                                <div class="detalles">
+                                    <span class="id-label">#${r.id || '-'}</span>
+                                    <span><i class="fa-regular fa-calendar"></i> ${formatearFecha(r.fechaVencimiento)}</span>
+                                    <span class="monto-total">$${formatearNumero(r.valorTotal)}</span>
+                                    <span class="monto-pagado">P: $${formatearNumero(r.valorPagado)}</span>
+                                    <span class="monto-saldo">S: $${formatearNumero(r.saldo)}</span>
+                                </div>
                             `;
-                            tbody.appendChild(tr);
+                            lista.appendChild(div);
                         });
                     }
                     loading.style.display = 'none';
@@ -364,10 +532,10 @@
                 }
             } catch(e) {
                 console.error(e);
-                mostrarToast('❌ Error al cargar historial: ' + e.message);
+                mostrarToast('❌ Error: ' + e.message);
                 loading.style.display = 'none';
                 content.style.display = 'block';
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#e74c3c;">Error: ${e.message}</td></tr>`;
+                lista.innerHTML = `<div style="text-align:center; padding:20px; color:#e74c3c; font-size:0.85rem;"><i class="fa-solid fa-circle-exclamation"></i> ${e.message}</div>`;
             }
         }
 
