@@ -231,7 +231,7 @@
 <script>
 // ==================== CONFIGURACIÓN ====================
 const CONFIG = {
-    URL_GAS: "https://script.google.com/macros/s/AKfycbxF-_odeNm-_SfYDjZSDQhOd_iKqZoNbvV22WHpsojjoLAGRDSQZlTrVKrnIgIOFNfR/exec"  // URL que funciona
+    URL_GAS: "https://script.google.com/macros/s/AKfycbw8omTz-HjZM-s5MK8z4KQccXVa1uiBzN0TtOQkApsyb8OlTUtvSsYIQMmD6qFXT5Qt/exec"  // URL que funciona
 };
 
 let PROXIMO_PARTIDO = null;
@@ -427,6 +427,23 @@ async function cargarProximoPartido() {
     }
 }
 
+// ==================== OBTENER RIVALES ACTIVOS ====================
+async function cargarRivalesActivos() {
+    try {
+        const resp = await fetch(`${CONFIG.URL_GAS}?action=getRivalesActivos&t=${Date.now()}`);
+        const data = await resp.json();
+        if (data.success && data.data) {
+            return data.data;
+        } else {
+            console.warn("No se pudieron cargar rivales activos:", data.error);
+            return [];
+        }
+    } catch(e) {
+        console.error("Error cargando rivales:", e);
+        return [];
+    }
+}
+
 // ==================== RENDER PERFIL ====================
 async function mostrarPerfil(forceRefresh = false) {
     document.body.className = '';
@@ -559,15 +576,30 @@ async function mostrarPerfil(forceRefresh = false) {
         `;
     }
 
-    const listaRivales = [
-        { nombre: "LEONES", especial: "past" }, { nombre: "IDEAL", especial: "" }, { nombre: "BARZA", especial: "" },
-        { nombre: "SAN MARTIN", especial: "" }, { nombre: "INDEPENDIENTE", especial: "" }, { nombre: "VODKILA", especial: "" },
-        { nombre: "CHELSEA", especial: "" }, { nombre: "JUVENTUD DE AMERICA", especial: "" }, { nombre: "JUVENTUS", especial: "" }
-    ];
-    if (PROXIMO_PARTIDO) {
+    // ====== OBTENER RIVALES ACTIVOS (dinámicamente) ======
+    let rivalesActivos = [];
+    try {
+        const resp = await fetch(`${CONFIG.URL_GAS}?action=getRivalesActivos&t=${Date.now()}`);
+        const data = await resp.json();
+        if (data.success && data.data) {
+            rivalesActivos = data.data;
+        }
+    } catch(e) {
+        console.error("Error cargando rivales:", e);
+    }
+
+    // Construir la lista para el carrusel
+    const listaRivales = rivalesActivos.map(rival => ({ nombre: rival, especial: "" }));
+    // Si existe partido próximo, asegurar que esté en la lista (si no, agregarlo)
+    if (PROXIMO_PARTIDO && !listaRivales.some(r => r.nombre === PROXIMO_PARTIDO.rival)) {
         listaRivales.push({ nombre: PROXIMO_PARTIDO.rival, especial: "next" });
     }
+    // Si la lista queda vacía, mostrar un mensaje
+    if (listaRivales.length === 0) {
+        listaRivales.push({ nombre: "Sin rivales programados", especial: "" });
+    }
     const chipsRivales = [...listaRivales, ...listaRivales].map(rival => `<span class="rival-chip ${rival.especial}">${rival.nombre}</span>`).join('');
+
     const metricIcons = { puntualidad: '<i class="fa-solid fa-clock"></i>', companerismo: '<i class="fa-solid fa-handshake"></i>', respeto: '<i class="fa-solid fa-hand-peace"></i>', humildad: '<i class="fa-solid fa-dove"></i>' };
 
     container.innerHTML = `
