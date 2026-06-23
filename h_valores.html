@@ -1,1 +1,395 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta name="theme-color" content="#ADFF2F">
+    <title>Nápoles F.C. - Historial de Valores</title>
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* ========== ESTILOS GENERALES ========== */
+        body {
+            background: radial-gradient(circle at top, #111a33 0%, #060912 100%);
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+            min-height: 100vh;
+            padding: 15px 15px 80px 15px;
+            margin: 0;
+        }
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        .header h1 {
+            font-family: 'Outfit', sans-serif;
+            color: #D4AF37;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header h1 img {
+            height: 40px;
+        }
+        .header .btn-back {
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 40px;
+            padding: 8px 16px;
+            color: #FFD700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+        .header .btn-back:hover {
+            background: rgba(212, 175, 55, 0.3);
+            transform: translateY(-2px);
+        }
 
+        .card {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .card h2 {
+            color: #D4AF37;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ========== TABLA ========== */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+        }
+        thead th {
+            background: rgba(212, 175, 55, 0.15);
+            color: #D4AF37;
+            padding: 8px 6px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+            white-space: nowrap;
+        }
+        tbody td {
+            padding: 8px 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            vertical-align: middle;
+        }
+        tbody tr:hover {
+            background: rgba(212, 175, 55, 0.05);
+        }
+        .estado-pagado {
+            color: #2ecc71;
+        }
+        .estado-pendiente {
+            color: #f39c12;
+        }
+        .estado-pagado-badge {
+            background: rgba(46, 204, 113, 0.15);
+            color: #2ecc71;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .estado-pendiente-badge {
+            background: rgba(243, 156, 18, 0.15);
+            color: #f39c12;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        /* ========== CARGANDO ========== */
+        .loading {
+            text-align: center;
+            margin-top: 60px;
+        }
+        .loading i {
+            font-size: 3rem;
+            color: #D4AF37;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ========== BARRA INFERIOR ========== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(212, 175, 55, 0.3);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 0 env(safe-area-inset-bottom, 8px) 0;
+            z-index: 100;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+        }
+        .bottom-nav .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 12px;
+            border-radius: 12px;
+            color: #94a3b8;
+            transition: all 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.6rem;
+            gap: 2px;
+            min-width: 50px;
+            border: none;
+            background: transparent;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+        }
+        .bottom-nav .nav-item i { font-size: 1.3rem; transition: all 0.2s; }
+        .bottom-nav .nav-item:hover { color: #D4AF37; }
+        .bottom-nav .nav-item:active { transform: scale(0.92); }
+        .bottom-nav .nav-item.active { color: #D4AF37; }
+        .bottom-nav .nav-item .nav-label { font-size: 0.55rem; letter-spacing: 0.3px; text-transform: uppercase; }
+
+        @media (max-width: 480px) {
+            .bottom-nav .nav-item i { font-size: 1.1rem; }
+            .bottom-nav .nav-item .nav-label { font-size: 0.45rem; }
+            .bottom-nav .nav-item { min-width: 40px; padding: 2px 8px; }
+            table { font-size: 0.65rem; }
+            thead th, tbody td { padding: 6px 4px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- CABECERA -->
+        <div class="container">
+            <div class="header">
+                <h1><img src="./imagen/logo/napoles_fc.png" alt="Logo"> Historial de Valores</h1>
+                <a href="perfil.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Volver</a>
+            </div>
+
+            <!-- CARGANDO -->
+            <div id="loading" class="loading">
+                <i class="fa-solid fa-spinner"></i>
+                <p style="margin-top: 15px; color: #ccc;">Cargando historial...</p>
+            </div>
+
+            <!-- CONTENIDO -->
+            <div id="content" style="display: none;">
+                <div class="card">
+                    <h2><i class="fa-solid fa-list"></i> Todos los valores</h2>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Concepto</th>
+                                    <th>Valor Total</th>
+                                    <th>Pagado</th>
+                                    <th>Saldo</th>
+                                    <th>Fec. Vencimiento</th>
+                                    <th>Estado</th>
+                                    <th>Observaciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-body">
+                                <!-- Se llena con JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="sin-registros" style="display: none; text-align:center; padding: 20px; color: #aaa;">
+                        <i class="fa-solid fa-circle-info" style="font-size: 2rem;"></i>
+                        <p style="margin-top: 10px;">No se encontraron registros de valores para este jugador.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NOTIFICACIÓN -->
+            <div id="toast" style="display: none; position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #1e293b; border: 1px solid #D4AF37; border-radius: 40px; padding: 10px 24px; color: #D4AF37; font-weight: 600; font-size: 0.9rem; z-index: 2000; box-shadow: 0 10px 25px rgba(0,0,0,0.3); backdrop-filter: blur(4px);"></div>
+        </div>
+    </div>
+
+    <!-- BARRA DE NAVEGACIÓN INFERIOR -->
+    <div class="bottom-nav">
+        <a href="perfil.html" class="nav-item" title="Perfil">
+            <i class="fa-solid fa-user"></i>
+            <span class="nav-label">Perfil</span>
+        </a>
+        <a href="alineacion.html" class="nav-item" title="Alineación">
+            <i class="fa-solid fa-people-arrows"></i>
+            <span class="nav-label">Alineación</span>
+        </a>
+        <a href="h_valores.html" class="nav-item active" title="Historial Valores">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span class="nav-label">Hist. Valores</span>
+        </a>
+        <a href="estadisticas.html" class="nav-item" title="Historial Partidos">
+            <i class="fa-solid fa-futbol"></i>
+            <span class="nav-label">Hist. Partidos</span>
+        </a>
+        <button class="nav-item" onclick="actualizar()" title="Actualizar">
+            <i class="fa-solid fa-rotate"></i>
+            <span class="nav-label">Actualizar</span>
+        </button>
+    </div>
+
+    <script>
+        // ==================== CONFIGURACIÓN ====================
+        // ⚠️ CAMBIA ESTA URL POR LA DE TU SCRIPT DE GAS ⚠️
+        const URL_GAS = "https://script.google.com/macros/s/AKfycbxiT2brF1A0tr-LSy3wSy_rO3mjpQQTMD7a2O6Mgw5auAjfFwTkBUnBSEnEARbteL7Z/exec";
+
+        // ==================== OBTENER CÉDULA ====================
+        let jugadorSesion = null;
+        try {
+            jugadorSesion = JSON.parse(localStorage.getItem('jugador_actual'));
+        } catch(e) {
+            console.warn(e);
+        }
+        if (!jugadorSesion || !jugadorSesion.cedula) {
+            window.location.href = 'login.html';
+        }
+        const cedula = jugadorSesion.cedula;
+
+        // ==================== FUNCIONES ====================
+        function mostrarToast(mensaje) {
+            const toast = document.getElementById('toast');
+            toast.textContent = mensaje;
+            toast.style.display = 'block';
+            toast.style.animation = 'none';
+            setTimeout(() => {
+                toast.style.animation = 'fadeIn 0.3s ease';
+            }, 10);
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 2500);
+        }
+
+        function formatearFecha(fecha) {
+            if (!fecha) return '-';
+            try {
+                const d = new Date(fecha);
+                if (isNaN(d.getTime())) return fecha;
+                return d.toLocaleDateString('es-ES');
+            } catch(e) {
+                return fecha;
+            }
+        }
+
+        function formatearNumero(valor) {
+            return Number(valor).toFixed(2);
+        }
+
+        // ==================== CARGAR HISTORIAL ====================
+        async function cargarHistorial() {
+            const loading = document.getElementById('loading');
+            const content = document.getElementById('content');
+            const tbody = document.getElementById('tabla-body');
+            const sinRegistros = document.getElementById('sin-registros');
+
+            loading.style.display = 'block';
+            content.style.display = 'none';
+
+            try {
+                const url = `${URL_GAS}?action=getHistorialValores&cedula=${encodeURIComponent(cedula)}&t=${Date.now()}`;
+                const resp = await fetch(url);
+                const data = await resp.json();
+
+                if (data.success && data.data) {
+                    const registros = data.data;
+                    tbody.innerHTML = '';
+                    if (registros.length === 0) {
+                        sinRegistros.style.display = 'block';
+                    } else {
+                        sinRegistros.style.display = 'none';
+                        registros.forEach(r => {
+                            const estado = r.estado || '';
+                            const estadoClass = estado.toUpperCase().includes('PAGADO') ? 'estado-pagado' : 'estado-pendiente';
+                            const badgeClass = estado.toUpperCase().includes('PAGADO') ? 'estado-pagado-badge' : 'estado-pendiente-badge';
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td>${r.id || '-'}</td>
+                                <td>${r.concepto || '-'}</td>
+                                <td>$${formatearNumero(r.valorTotal)}</td>
+                                <td>$${formatearNumero(r.valorPagado)}</td>
+                                <td>$${formatearNumero(r.saldo)}</td>
+                                <td>${formatearFecha(r.fechaVencimiento)}</td>
+                                <td><span class="${badgeClass}">${estado}</span></td>
+                                <td>${r.observaciones || '-'}</td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
+                    }
+                    loading.style.display = 'none';
+                    content.style.display = 'block';
+                } else {
+                    throw new Error(data.error || 'Error al cargar historial');
+                }
+            } catch(e) {
+                console.error(e);
+                mostrarToast('❌ Error al cargar historial: ' + e.message);
+                loading.style.display = 'none';
+                content.style.display = 'block';
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#e74c3c;">Error: ${e.message}</td></tr>`;
+            }
+        }
+
+        // ==================== ACTUALIZAR ====================
+        async function actualizar() {
+            const btn = document.querySelector('.bottom-nav .nav-item:last-child');
+            if (btn) {
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span class="nav-label">Cargando...</span>';
+                btn.disabled = true;
+            }
+            await cargarHistorial();
+            if (btn) {
+                btn.innerHTML = '<i class="fa-solid fa-rotate"></i> <span class="nav-label">Actualizar</span>';
+                btn.disabled = false;
+            }
+            mostrarToast('✅ Datos actualizados');
+        }
+
+        // ==================== INICIALIZACIÓN ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarHistorial();
+        });
+    </script>
+</body>
+</html>
