@@ -190,7 +190,7 @@
 <script>
 // ==================== CONFIGURACIÓN ====================
 const CONFIG = {
-    URL_GAS: "https://script.google.com/macros/s/AKfycbwWs5fJPhbKlOPJL_uxLqLNZ9_bdF9Fe3hOhaDChruAkpeD5QvXGJl0vyay7hrMy45D/exec"  // <-- CAMBIA POR TU URL
+    URL_GAS: "https://script.google.com/macros/s/AKfycbzAsGO_i7fmBCwNoba1oN5vwViW1v6WKZcAp8A_2i4XwfQrPP6O1JgFVhyWdtbFspdl/exec"  // <-- CAMBIA POR TU URL
 };
 
 let PROXIMO_PARTIDO = null;  // Se cargará dinámicamente
@@ -320,40 +320,19 @@ async function cargarProximoPartido() {
             PROXIMO_PARTIDO = data.partido;
             return true;
         } else {
-            console.error("Error obteniendo próximo partido:", data.error);
-            // Fallback: usar un partido por defecto
-            PROXIMO_PARTIDO = {
-                rival: "FRANCO CANADIENSE",
-                icono: "🍁",
-                fecha: "2026-06-13",
-                fechaLegible: "SÁBADO 13 DE JUNIO, 2026",
-                hora: "12:00",
-                lugar: "CANCHA 1 - LIGA SANTA RITA",
-                valorVocalia: 2.5
-            };
+            console.warn("No hay partido próximo:", data.error);
+            PROXIMO_PARTIDO = null;
             return false;
         }
     } catch(e) {
         console.error("Error cargando próximo partido:", e);
-        // Fallback
-        PROXIMO_PARTIDO = {
-            rival: "FRANCO CANADIENSE",
-            icono: "🍁",
-            fecha: "2026-06-13",
-            fechaLegible: "SÁBADO 13 DE JUNIO, 2026",
-            hora: "12:00",
-            lugar: "CANCHA 1 - LIGA SANTA RITA",
-            valorVocalia: 2.5
-        };
+        PROXIMO_PARTIDO = null;
         return false;
     }
 }
 
-// ==================== RENDER PERFIL (usa PROXIMO_PARTIDO dinámico) ====================
+// ==================== RENDER PERFIL (con partido dinámico o mensaje) ====================
 async function mostrarPerfil() {
-    if (!PROXIMO_PARTIDO) {
-        await cargarProximoPartido();
-    }
     document.body.className = '';
     document.body.style.background = '';
     if (refreshInterval) clearInterval(refreshInterval);
@@ -452,14 +431,43 @@ async function mostrarPerfil() {
         `;
     }
 
-    // Lista de rivales desde backend (se obtiene con getRivales, pero aquí usamos array fijo por simplicidad)
-    // Podríamos obtenerlos dinámicamente también, pero para la ruleta usamos los mismos de siempre.
+    // ====== Construcción del bloque del partido ======
+    let partidoHTML = '';
+    if (PROXIMO_PARTIDO) {
+        partidoHTML = `
+            <div class="match-card-gold match-next">
+                <div class="match-teams">
+                    <div class="team-badge"><div class="team-name">⚜️ NÁPOLES F.C.</div></div>
+                    <div class="vs-circle">VS</div>
+                    <div class="team-badge"><div class="team-name">${PROXIMO_PARTIDO.icono} ${PROXIMO_PARTIDO.rival}</div></div>
+                </div>
+                <div class="match-info">
+                    <div class="match-info-item"><i class="fa-regular fa-calendar-alt"></i> ${PROXIMO_PARTIDO.fechaLegible}</div>
+                    <div class="match-info-item"><i class="fa-regular fa-clock"></i> ${PROXIMO_PARTIDO.hora} HORAS</div>
+                    <div class="match-info-item"><i class="fa-solid fa-location-dot"></i> ${PROXIMO_PARTIDO.lugar}</div>
+                </div>
+            </div>
+        `;
+    } else {
+        partidoHTML = `
+            <div class="match-card-gold" style="border-left-color: #f39c12;">
+                <div style="text-align:center; padding: 10px; color: #f39c12;">
+                    <i class="fa-solid fa-calendar-xmark" style="font-size: 2rem;"></i>
+                    <p style="margin-top: 10px;">No hay partidos próximos programados.</p>
+                    <p style="font-size: 0.8rem; color: #aaa;">Mantente atento a la programación.</p>
+                </div>
+            </div>
+        `;
+    }
+
     const listaRivales = [
         { nombre: "LEONES", especial: "past" }, { nombre: "IDEAL", especial: "" }, { nombre: "BARZA", especial: "" },
         { nombre: "SAN MARTIN", especial: "" }, { nombre: "INDEPENDIENTE", especial: "" }, { nombre: "VODKILA", especial: "" },
-        { nombre: "CHELSEA", especial: "" }, { nombre: "JUVENTUD DE AMERICA", especial: "" }, { nombre: "JUVENTUS", especial: "" },
-        { nombre: PROXIMO_PARTIDO.rival, especial: "next" }
+        { nombre: "CHELSEA", especial: "" }, { nombre: "JUVENTUD DE AMERICA", especial: "" }, { nombre: "JUVENTUS", especial: "" }
     ];
+    if (PROXIMO_PARTIDO) {
+        listaRivales.push({ nombre: PROXIMO_PARTIDO.rival, especial: "next" });
+    }
     const chipsRivales = [...listaRivales, ...listaRivales].map(rival => `<span class="rival-chip ${rival.especial}">${rival.nombre}</span>`).join('');
     const metricIcons = { puntualidad: '<i class="fa-solid fa-clock"></i>', companerismo: '<i class="fa-solid fa-handshake"></i>', respeto: '<i class="fa-solid fa-hand-peace"></i>', humildad: '<i class="fa-solid fa-dove"></i>' };
 
@@ -475,7 +483,7 @@ async function mostrarPerfil() {
                 <button class="btn-alineacion" onclick="window.location.href='alineacion.html'"><i class="fa-solid fa-people-arrows"></i> Alineación</button>
             </div>
             <div class="cards-row"><div class="card-identity"><div class="avatar-icon-box"><img src="./imagen/avatar/${cedula}.png" alt="Avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><i class="fa-solid fa-user-ninja" style="display:none;"></i></div><div style="font-weight:900;">${s.primerNombre}<br>${s.apellidos}</div><div style="font-size:.65rem;"><i class="fa-solid fa-id-card"></i> ${cedula}</div><div style="margin-top:8px;background:rgba(212,175,55,.2);padding:4px 10px;border-radius:20px; display:inline-block;">${edad} años</div></div><div class="jersey-3d"><div class="jersey-rotating"><div class="jersey-front"><div class="jersey-name">${s.nombreCamiseta}</div><div class="jersey-number">${s.dorsal}</div></div><div class="jersey-back"><div class="jersey-name">NÁPOLES FC</div><div class="jersey-number">${s.dorsal}</div></div></div></div></div>
-            <div class="match-card-gold match-next"><div class="match-teams"><div class="team-badge"><div class="team-name">⚜️ NÁPOLES F.C.</div></div><div class="vs-circle">VS</div><div class="team-badge"><div class="team-name">${PROXIMO_PARTIDO.icono} ${PROXIMO_PARTIDO.rival}</div></div></div><div class="match-info"><div class="match-info-item"><i class="fa-regular fa-calendar-alt"></i> ${PROXIMO_PARTIDO.fechaLegible}</div><div class="match-info-item"><i class="fa-regular fa-clock"></i> ${PROXIMO_PARTIDO.hora} HORAS</div><div class="match-info-item"><i class="fa-solid fa-location-dot"></i> ${PROXIMO_PARTIDO.lugar}</div></div></div>
+            ${partidoHTML}
             <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;"><div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-people-group"></i> OTROS RIVALES DEL TORNEO</div><div class="rivales-scroll"><div class="rivales-track">${chipsRivales}</div></div></div>
             <div class="stats-grid"><div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-shirt"></i></div><div class="stat-value">${s.partidosJugados}</div><div class="stat-label">PARTIDOS</div></div><div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-futbol"></i></div><div class="stat-value">${s.goles}</div><div class="stat-label">GOLES</div></div><div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-square" style="color:#f1c40f;"></i></div><div class="stat-value">${s.amarillas}</div><div class="stat-label">AMARILLAS</div></div><div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-square" style="color:#e74c3c;"></i></div><div class="stat-value">${s.rojas}</div><div class="stat-label">ROJAS</div></div></div>
             <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;"><div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-heart"></i> Rendimiento Humano</div><div class="performance-grid"><div class="metric-card"><div class="metric-icon">${metricIcons.puntualidad}</div>${renderProgressCircle(s.puntualidad, '#3498db')}<div style="margin-top:10px; font-size:.7rem;">PUNTUALIDAD</div></div><div class="metric-card"><div class="metric-icon">${metricIcons.companerismo}</div>${renderProgressCircle(s.companerismo, '#2ecc71')}<div style="margin-top:10px; font-size:.7rem;">COMPAÑERISMO</div></div><div class="metric-card"><div class="metric-icon">${metricIcons.respeto}</div>${renderProgressCircle(s.respeto, '#f39c12')}<div style="margin-top:10px; font-size:.7rem;">RESPETO</div></div><div class="metric-card"><div class="metric-icon">${metricIcons.humildad}</div>${renderProgressCircle(s.humildad, '#9b59b6')}<div style="margin-top:10px; font-size:.7rem;">HUMILDAD</div></div></div><div class="average-box"><div class="average-score" style="font-size:2.2rem;">${promedio}/10</div><div class="stars-container">${generarEstrellas(promedio)}</div></div></div>
@@ -548,16 +556,9 @@ window.cerrarSesion = function() { if (confirm('¿Cerrar sesión?')) { localStor
 // ==================== RULETA (usa PROXIMO_PARTIDO dinámico) ====================
 function mostrarRuleta() {
     if (!PROXIMO_PARTIDO) {
-        // Si no se ha cargado, usar fallback
-        PROXIMO_PARTIDO = {
-            rival: "FRANCO CANADIENSE",
-            icono: "🍁",
-            fecha: "2026-06-13",
-            fechaLegible: "SÁBADO 13 DE JUNIO, 2026",
-            hora: "12:00",
-            lugar: "CANCHA 1 - LIGA SANTA RITA",
-            valorVocalia: 2.5
-        };
+        // Si no hay partido, no se debe ejecutar la ruleta, pero por seguridad mostramos perfil
+        mostrarPerfil();
+        return;
     }
     document.body.className = 'ruleta-mode';
     document.body.style.background = '#0a0c10';
@@ -569,7 +570,6 @@ function mostrarRuleta() {
             <div class="relative w-full overflow-hidden py-12 flex items-center" id="roulette-window"><div class="absolute left-1/2 top-0 -translate-x-1/2 z-20 flex flex-col items-center h-full justify-between py-4"><div class="w-1 h-8 bg-secondary/80 rounded-full blur-[2px]"></div><div class="w-1 h-8 bg-secondary/80 rounded-full blur-[2px]"></div></div><div class="roulette-track px-[50vw]" id="roulette-track"></div></div>
             <div class="hidden absolute inset-0 flex flex-col items-center justify-center z-40 bg-black/90 backdrop-blur-md" id="reveal-screen"><div class="reveal-element text-center mb-8"><p class="font-label-caps text-secondary tracking-[0.4em] mb-4" style="color:#e9c349;">PRÓXIMO ENCUENTRO</p><div class="flex items-center justify-center gap-6 md:gap-12"><div class="flex flex-col items-center gap-4"><div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-white/30"><span class="text-5xl">⚜️</span></div><span class="font-display-lg text-xl tracking-wider text-white">NÁPOLES</span></div><div class="font-display-lg text-5xl text-secondary cinematic-text italic" style="color:#e9c349;">VS</div><div class="flex flex-col items-center gap-4"><div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-secondary winner-glow"><span class="text-5xl">${PROXIMO_PARTIDO.icono}</span></div><span class="font-display-lg text-xl tracking-wider text-white">${PROXIMO_PARTIDO.rival}</span></div></div></div><div class="reveal-element match-info-card w-full max-w-md mx-4"><div class="flex justify-center gap-6 flex-wrap text-white"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">event</span><span class="text-sm font-bold">${PROXIMO_PARTIDO.fechaLegible}</span></div><div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">schedule</span><span class="text-sm font-bold">${PROXIMO_PARTIDO.hora} HORAS</span></div><div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">stadium</span><span class="text-sm font-bold">${PROXIMO_PARTIDO.lugar}</span></div></div></div><div class="reveal-element space-y-6 w-full max-w-xs px-6"><div class="glass-card p-6 rounded-2xl border border-secondary/40"><div class="flex justify-between items-center mb-4"><span class="font-label-caps text-[10px] text-white uppercase">Nivel de Riesgo</span><span class="font-label-caps text-[10px] text-secondary">MÁXIMO</span></div><div class="w-full bg-white/20 h-1.5 rounded-full overflow-hidden"><div class="bg-secondary h-full rounded-full" style="width: 95%;"></div></div></div><button id="confirmButton" class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 rounded-lg text-sm uppercase transition-all shadow-lg">Ahí estaré puntual</button></div></div><div class="fixed inset-0 pointer-events-none z-50" id="particles"></div>
         </main>`;
-    // Obtener rivales de la hoja Equipos (usamos los mismos que en perfil)
     const rivals = [
         { name: "LEONES", icon: "🦁", power: "ALTO" },
         { name: "IDEAL", icon: "⚡", power: "MEDIO" },
@@ -645,6 +645,12 @@ async function guardarPartido() {
     btn.innerText = 'GUARDANDO...';
     if (!PROXIMO_PARTIDO) {
         await cargarProximoPartido();
+        if (!PROXIMO_PARTIDO) {
+            alert('No hay partido próximo para confirmar.');
+            btn.disabled = false;
+            btn.innerText = 'Ahí estaré puntual';
+            return;
+        }
     }
     const params = new URLSearchParams({ 
         action: 'guardarPartido', 
@@ -687,6 +693,7 @@ async function verificarConfirmacionPrevia() {
         if (!PROXIMO_PARTIDO) {
             await cargarProximoPartido();
         }
+        if (!PROXIMO_PARTIDO) return false;
         const url = `${CONFIG.URL_GAS}?action=verificarConfirmacionPartido&cedula=${encodeURIComponent(cedula)}&rival=${encodeURIComponent(PROXIMO_PARTIDO.rival)}&fecha=${PROXIMO_PARTIDO.fecha}&t=${Date.now()}`;
         const resp = await fetch(url);
         const data = await resp.json();
@@ -697,11 +704,23 @@ async function verificarConfirmacionPrevia() {
 // ==================== INICIALIZACIÓN ====================
 (async function() {
     iniciarSlogan();
-    await cargarProximoPartido(); // Cargar partido primero
+    await cargarProximoPartido(); // Carga el partido (puede ser null)
+    
+    // Si NO hay partido próximo, mostrar perfil directamente (sin ruleta)
+    if (!PROXIMO_PARTIDO) {
+        ocultarSkeleton();
+        await mostrarPerfil();
+        return;
+    }
+    
+    // Si hay partido, verificar si ya confirmó
     const yaConfirmo = await verificarConfirmacionPrevia();
     ocultarSkeleton();
-    if (yaConfirmo) await mostrarPerfil();
-    else mostrarRuleta();
+    if (yaConfirmo) {
+        await mostrarPerfil();
+    } else {
+        mostrarRuleta();
+    }
 })();
 </script>
 </body>
