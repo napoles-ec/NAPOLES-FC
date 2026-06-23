@@ -193,7 +193,7 @@ const CONFIG = {
     URL_GAS: "https://script.google.com/macros/s/AKfycbzAsGO_i7fmBCwNoba1oN5vwViW1v6WKZcAp8A_2i4XwfQrPP6O1JgFVhyWdtbFspdl/exec"  // <-- CAMBIA POR TU URL
 };
 
-let PROXIMO_PARTIDO = null;  // Se cargará dinámicamente
+let PROXIMO_PARTIDO = null;
 let jugadorSesion = null;
 try { jugadorSesion = JSON.parse(localStorage.getItem('jugador_actual')); } catch(e) { console.warn(e); }
 if (!jugadorSesion || !jugadorSesion.cedula) window.location.href = 'login.html';
@@ -211,6 +211,39 @@ const slogans = [
     "💪 Corazón de campeón", "🎯 Preparando la táctica", "✨ Magia napolitana", 
     "🦁 A rugir en la cancha", "⚡ Cargando la pasión del fútbol", "🥅 El gol está por llegar"
 ];
+
+// ==================== FUNCIONES DE FORMATO ====================
+function formatearFecha(fechaStr) {
+    if (!fechaStr) return 'FECHA NO DISPONIBLE';
+    try {
+        const partes = fechaStr.split('-');
+        if (partes.length !== 3) return fechaStr;
+        const fecha = new Date(partes[0], partes[1]-1, partes[2]);
+        if (isNaN(fecha.getTime())) return fechaStr;
+        const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        return fecha.toLocaleDateString('es-ES', opciones).toUpperCase();
+    } catch(e) {
+        return fechaStr;
+    }
+}
+
+function formatearHora(hora) {
+    if (!hora) return '12:00';
+    let h = String(hora).trim();
+    // Si es un número, convertirlo a string con dos dígitos y agregar ":00"
+    if (!isNaN(h) && h.indexOf(':') === -1) {
+        h = h.padStart(2, '0') + ':00';
+    }
+    // Si tiene formato "HH:MM", asegurar dos dígitos en la hora
+    if (h.indexOf(':') !== -1) {
+        let partes = h.split(':');
+        if (partes.length === 2) {
+            partes[0] = partes[0].padStart(2, '0');
+            return partes.join(':');
+        }
+    }
+    return h;
+}
 
 // ==================== FUNCIONES DE CARGA ====================
 function iniciarSlogan() {
@@ -316,8 +349,14 @@ async function cargarProximoPartido() {
     try {
         const resp = await fetch(`${CONFIG.URL_GAS}?action=getProximoPartido&t=${Date.now()}`);
         const data = await resp.json();
+        console.log("Respuesta getProximoPartido:", data);
         if (data.success && data.partido) {
-            PROXIMO_PARTIDO = data.partido;
+            // Formatear fecha y hora
+            const partido = data.partido;
+            partido.fechaLegible = formatearFecha(partido.fecha);
+            partido.hora = formatearHora(partido.hora);
+            PROXIMO_PARTIDO = partido;
+            console.log("Partido procesado:", PROXIMO_PARTIDO);
             return true;
         } else {
             console.warn("No hay partido próximo:", data.error);
@@ -434,17 +473,23 @@ async function mostrarPerfil() {
     // ====== Construcción del bloque del partido ======
     let partidoHTML = '';
     if (PROXIMO_PARTIDO) {
+        // Asegurar que los campos estén formateados (por si acaso)
+        const rival = PROXIMO_PARTIDO.rival || 'RIVAL';
+        const icono = PROXIMO_PARTIDO.icono || '⚽';
+        const fechaLegible = PROXIMO_PARTIDO.fechaLegible || 'FECHA NO DISPONIBLE';
+        const hora = PROXIMO_PARTIDO.hora || '12:00';
+        const lugar = PROXIMO_PARTIDO.lugar || 'LUGAR NO DISPONIBLE';
         partidoHTML = `
             <div class="match-card-gold match-next">
                 <div class="match-teams">
                     <div class="team-badge"><div class="team-name">⚜️ NÁPOLES F.C.</div></div>
                     <div class="vs-circle">VS</div>
-                    <div class="team-badge"><div class="team-name">${PROXIMO_PARTIDO.icono} ${PROXIMO_PARTIDO.rival}</div></div>
+                    <div class="team-badge"><div class="team-name">${icono} ${rival}</div></div>
                 </div>
                 <div class="match-info">
-                    <div class="match-info-item"><i class="fa-regular fa-calendar-alt"></i> ${PROXIMO_PARTIDO.fechaLegible}</div>
-                    <div class="match-info-item"><i class="fa-regular fa-clock"></i> ${PROXIMO_PARTIDO.hora} HORAS</div>
-                    <div class="match-info-item"><i class="fa-solid fa-location-dot"></i> ${PROXIMO_PARTIDO.lugar}</div>
+                    <div class="match-info-item"><i class="fa-regular fa-calendar-alt"></i> ${fechaLegible}</div>
+                    <div class="match-info-item"><i class="fa-regular fa-clock"></i> ${hora} HORAS</div>
+                    <div class="match-info-item"><i class="fa-solid fa-location-dot"></i> ${lugar}</div>
                 </div>
             </div>
         `;
@@ -556,7 +601,6 @@ window.cerrarSesion = function() { if (confirm('¿Cerrar sesión?')) { localStor
 // ==================== RULETA (usa PROXIMO_PARTIDO dinámico) ====================
 function mostrarRuleta() {
     if (!PROXIMO_PARTIDO) {
-        // Si no hay partido, no se debe ejecutar la ruleta, pero por seguridad mostramos perfil
         mostrarPerfil();
         return;
     }
