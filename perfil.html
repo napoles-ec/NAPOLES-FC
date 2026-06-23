@@ -79,10 +79,51 @@
     .btn-pagar { background: #16a34a; color: white; border: none; border-radius: 40px; padding: 10px 16px; font-weight: 700; width: 100%; justify-content: center; animation: pulseSoft 1.8s infinite ease-in-out; }
     @keyframes pulseSoft { 0% { transform: scale(1); } 50% { transform: scale(1.03); background: #15803d; } 100% { transform: scale(1); } }
     .btn-logout { background: rgba(231,76,60,.12); color: #e74c3c; border: 1px solid rgba(231,76,60,.2); width: 100%; border-radius: 14px; padding: 14px; cursor: pointer; margin-top: 10px; }
-    .action-buttons { display: flex; justify-content: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
-    .btn-share, .btn-report, .btn-pdf, .btn-alineacion { background: rgba(212,175,55,0.15); border: 1px solid rgba(212,175,55,0.3); border-radius: 40px; padding: 8px 16px; color: #FFD700; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px; }
-    .btn-share:hover, .btn-report:hover, .btn-pdf:hover, .btn-alineacion:hover { background: rgba(212,175,55,0.3); transform: translateY(-2px); }
     
+    /* ========== BOTONES MEJORADOS ========== */
+    .action-buttons { 
+        display: grid; 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 8px; 
+        margin-bottom: 20px; 
+    }
+    .action-buttons .btn-action {
+        background: rgba(212,175,55,0.15);
+        border: 1px solid rgba(212,175,55,0.3);
+        border-radius: 40px;
+        padding: 8px 12px;
+        color: #FFD700;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        text-align: center;
+        min-height: 40px;
+    }
+    .action-buttons .btn-action:hover {
+        background: rgba(212,175,55,0.3);
+        transform: translateY(-2px);
+    }
+    .action-buttons .btn-action.btn-refresh {
+        background: rgba(46,204,113,0.15);
+        border-color: rgba(46,204,113,0.3);
+        color: #2ecc71;
+    }
+    .action-buttons .btn-action.btn-refresh:hover {
+        background: rgba(46,204,113,0.3);
+    }
+    .action-buttons .btn-action.btn-danger {
+        background: rgba(231,76,60,0.15);
+        border-color: rgba(231,76,60,0.3);
+        color: #e74c3c;
+    }
+    .action-buttons .btn-action.btn-danger:hover {
+        background: rgba(231,76,60,0.3);
+    }
+
     /* ========== MODAL BANCARIO ========== */
     .modal-backdrop { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(8px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 15px; }
     .modal-box { background: #0f172a; border-radius: 32px; padding: 28px; max-width: 450px; width: 100%; border: 1px solid rgba(212,175,55,0.4); box-shadow: 0 25px 40px rgba(0,0,0,0.5); color: #fff; }
@@ -101,6 +142,18 @@
     @keyframes toastFade { 0% { opacity: 0; transform: translateX(-50%) translateY(20px); } 15% { opacity: 1; transform: translateX(-50%) translateY(0); } 85% { opacity: 1; transform: translateX(-50%) translateY(0); } 100% { opacity: 0; transform: translateX(-50%) translateY(20px); } }
     .notification-banner { background: rgba(212,175,55,0.2); border-left: 4px solid #D4AF37; border-radius: 16px; padding: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(4px); }
     .close-notification { background: none; border: none; color: #D4AF37; cursor: pointer; font-size: 1.2rem; }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 480px) {
+        .action-buttons { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+        .action-buttons .btn-action { font-size: 0.7rem; padding: 6px 10px; min-height: 36px; }
+        .perfil-header h1 { font-size: 1.5rem; }
+        .perfil-header h1 img { height: 60px; }
+        .jersey-number { font-size: 3rem; }
+        .cards-row { flex-direction: column; align-items: center; }
+        .card-identity { min-height: 200px; width: 100%; }
+        .jersey-3d { height: 200px; width: 100%; }
+    }
 </style>
 </head>
 <body>
@@ -190,7 +243,7 @@
 <script>
 // ==================== CONFIGURACIÓN ====================
 const CONFIG = {
-    URL_GAS: "https://script.google.com/macros/s/AKfycby5uAhZrqJfY7aKxe8waex5DsGAkeWTcvSlIYOtcPlBLDpRzTi5DuZOcyisUMk4TLFR/exec"  // <-- CAMBIA POR TU URL
+    URL_GAS: "https://script.google.com/macros/s/AKfycbyQnk19mxc2SWQT69Ziz7950sN2pHZJn0MAg79RWgrrMu_W3QTeB0zFDXpKysL6I4x7/exec"  // <-- CAMBIA POR TU URL
 };
 
 let PROXIMO_PARTIDO = null;
@@ -229,21 +282,17 @@ function formatearFecha(fechaStr) {
 
 function formatearHora(hora) {
     if (!hora) return '12:00';
-    // Si es un objeto Date
     if (hora instanceof Date) {
         const h = hora.getHours();
         const m = hora.getMinutes();
         return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
     }
-    // Si es número
     if (typeof hora === 'number') {
         const h = Math.floor(hora);
         const m = Math.round((hora - h) * 60);
         return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
     }
-    // Si es string
     let h = String(hora).trim();
-    // Si viene como "Sat Dec 30 1899 02:46:00 GMT-0514" (caso raro)
     if (h.includes('GMT') || h.includes(':')) {
         const d = new Date(h);
         if (!isNaN(d.getTime())) {
@@ -363,6 +412,29 @@ function enviarReporte() {
     alert('Reporte enviado al administrador. Gracias.');
     cerrarReporte();
     document.getElementById('reportText').value = '';
+}
+
+// ==================== ACTUALIZAR DATOS (sin recargar página) ====================
+async function actualizarPerfil() {
+    const btn = document.getElementById('refreshButton');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Actualizando...';
+    }
+    try {
+        // Limpiar caché
+        localStorage.removeItem('perfilCache_' + cedula);
+        // Forzar recarga del perfil
+        await mostrarPerfil();
+        mostrarToast('✅ Datos actualizados correctamente');
+    } catch(e) {
+        mostrarToast('❌ Error al actualizar: ' + e.message);
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-rotate"></i> Actualizar';
+        }
+    }
 }
 
 // ==================== OBTENER PRÓXIMO PARTIDO (desde backend) ====================
@@ -540,12 +612,16 @@ async function mostrarPerfil() {
         <div class="perfil-container">
             <div class="perfil-header"><h1><img src="./imagen/logo/napoles_fc.png" alt="Logo"> NÁPOLES F.C.</h1></div>
             <div style="font-size:0.75rem;color:#D4AF37; text-align:center; margin-bottom:20px;">Categoría: ${categoria === 'mujeres' ? 'Femenina ♀' : 'Masculina ♂'}</div>
+            
             <div class="action-buttons">
-                <button class="btn-share" onclick="compartirPerfil()"><i class="fa-solid fa-share-alt"></i> Compartir</button>
-                <button class="btn-pdf" onclick="descargarPDF()"><i class="fa-solid fa-file-pdf"></i> PDF</button>
-                <button class="btn-report" onclick="abrirReporte()"><i class="fa-solid fa-flag"></i> Reportar</button>
-                <button class="btn-alineacion" onclick="window.location.href='alineacion.html'"><i class="fa-solid fa-people-arrows"></i> Alineación</button>
+                <button class="btn-action" onclick="compartirPerfil()"><i class="fa-solid fa-share-alt"></i> Compartir</button>
+                <button class="btn-action" onclick="descargarPDF()"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+                <button class="btn-action" onclick="abrirReporte()"><i class="fa-solid fa-flag"></i> Reportar</button>
+                <button class="btn-action" onclick="window.location.href='alineacion.html'"><i class="fa-solid fa-people-arrows"></i> Alineación</button>
+                <button class="btn-action btn-refresh" id="refreshButton" onclick="actualizarPerfil()"><i class="fa-solid fa-rotate"></i> Actualizar</button>
+                <button class="btn-action btn-danger" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> Salir</button>
             </div>
+            
             <div class="cards-row"><div class="card-identity"><div class="avatar-icon-box"><img src="./imagen/avatar/${cedula}.png" alt="Avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><i class="fa-solid fa-user-ninja" style="display:none;"></i></div><div style="font-weight:900;">${s.primerNombre}<br>${s.apellidos}</div><div style="font-size:.65rem;"><i class="fa-solid fa-id-card"></i> ${cedula}</div><div style="margin-top:8px;background:rgba(212,175,55,.2);padding:4px 10px;border-radius:20px; display:inline-block;">${edad} años</div></div><div class="jersey-3d"><div class="jersey-rotating"><div class="jersey-front"><div class="jersey-name">${s.nombreCamiseta}</div><div class="jersey-number">${s.dorsal}</div></div><div class="jersey-back"><div class="jersey-name">NÁPOLES FC</div><div class="jersey-number">${s.dorsal}</div></div></div></div></div>
             ${partidoHTML}
             <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;"><div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-people-group"></i> OTROS RIVALES DEL TORNEO</div><div class="rivales-scroll"><div class="rivales-track">${chipsRivales}</div></div></div>
@@ -767,14 +843,16 @@ async function verificarConfirmacionPrevia() {
 // ==================== INICIALIZACIÓN ====================
 (async function() {
     iniciarSlogan();
-    await cargarProximoPartido();
+    await cargarProximoPartido(); // Carga el partido (puede ser null)
     
+    // Si NO hay partido próximo, mostrar perfil directamente (sin ruleta)
     if (!PROXIMO_PARTIDO) {
         ocultarSkeleton();
         await mostrarPerfil();
         return;
     }
     
+    // Si hay partido, verificar si ya confirmó
     const yaConfirmo = await verificarConfirmacionPrevia();
     ocultarSkeleton();
     if (yaConfirmo) {
