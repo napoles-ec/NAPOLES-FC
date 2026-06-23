@@ -190,7 +190,7 @@
 <script>
 // ==================== CONFIGURACIÓN ====================
 const CONFIG = {
-    URL_GAS: "https://script.google.com/macros/s/AKfycbyFOA57cS2uGM3zGbZ-k3bugfENGs_7tCS0UmRF84j2IdEGJM8XfqndK6yDccxKxqgr/exec"  // <-- CAMBIA POR TU URL
+    URL_GAS: "https://script.google.com/macros/s/AKfycby5uAhZrqJfY7aKxe8waex5DsGAkeWTcvSlIYOtcPlBLDpRzTi5DuZOcyisUMk4TLFR/exec"  // <-- CAMBIA POR TU URL
 };
 
 let PROXIMO_PARTIDO = null;
@@ -390,7 +390,7 @@ async function cargarProximoPartido() {
     }
 }
 
-// ==================== RENDER PERFIL (con partido dinámico o mensaje) ====================
+// ==================== RENDER PERFIL ====================
 async function mostrarPerfil() {
     document.body.className = '';
     document.body.style.background = '';
@@ -617,7 +617,7 @@ async function actualizarDatosEnSegundoPlano() {
 }
 window.cerrarSesion = function() { if (confirm('¿Cerrar sesión?')) { localStorage.removeItem('jugador_actual'); window.location.href = 'login.html'; } };
 
-// ==================== RULETA (usa PROXIMO_PARTIDO dinámico) ====================
+// ==================== RULETA ====================
 function mostrarRuleta() {
     if (!PROXIMO_PARTIDO) {
         mostrarPerfil();
@@ -767,16 +767,14 @@ async function verificarConfirmacionPrevia() {
 // ==================== INICIALIZACIÓN ====================
 (async function() {
     iniciarSlogan();
-    await cargarProximoPartido(); // Carga el partido (puede ser null)
+    await cargarProximoPartido();
     
-    // Si NO hay partido próximo, mostrar perfil directamente (sin ruleta)
     if (!PROXIMO_PARTIDO) {
         ocultarSkeleton();
         await mostrarPerfil();
         return;
     }
     
-    // Si hay partido, verificar si ya confirmó
     const yaConfirmo = await verificarConfirmacionPrevia();
     ocultarSkeleton();
     if (yaConfirmo) {
