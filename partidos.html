@@ -23,7 +23,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Iluminación ambiental suave de fondo (Premium) */
 .ambient-glow {
   position: fixed;
   inset: 0;
@@ -55,7 +54,6 @@ body {
   background: #cfa093;
 }
 
-/* Barra Superior Cristalina */
 .topbar {
   position: sticky;
   top: 0;
@@ -120,7 +118,6 @@ body {
   z-index: 2;
 }
 
-/* Cristal Blanco Lujoso para Tarjetas */
 .match-card {
   background: rgba(255, 255, 255, 0.65);
   backdrop-filter: blur(20px);
@@ -307,7 +304,6 @@ body {
   transform: none !important;
 }
 
-/* FAB Flotante Rose Gold */
 .fab {
   position: fixed;
   bottom: 26px;
@@ -332,7 +328,6 @@ body {
 }
 .fab .material-symbols-outlined { font-size: 28px; }
 
-/* Modal Elegante */
 .modal {
   display: none;
   position: fixed;
@@ -472,7 +467,6 @@ body {
 </head>
 <body>
 
-<!-- Fondos de iluminación ambiental -->
 <div class="ambient-glow">
   <div class="glow-sphere glow-1"></div>
   <div class="glow-sphere glow-2"></div>
@@ -523,6 +517,11 @@ body {
     </select>
     <label>📢 Vocalía / Encargado</label>
     <input type="text" id="inputVocalia" placeholder="Ej: Juan Pérez o número">
+    <label>🏆 Campeonato</label>
+    <select id="selectCampeonato">
+      <option value="CAMPEONATO SANTA RITA">🏆 CAMPEONATO SANTA RITA</option>
+      <option value="COPA SANTA RITA">🏆 COPA SANTA RITA</option>
+    </select>
     <div class="modal-actions">
       <button class="btn-cancel" id="btnCancelar">Cancelar</button>
       <button class="btn-save" id="btnGuardar">Guardar</button>
@@ -532,7 +531,7 @@ body {
 
 <script>
 // ================= CONFIGURACIÓN WEB APP =================
-const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwi5CS8cjG-52kDBnPQh29_fYaIJZgMr2rlVP0-3ggsoe4BrALxZ1JMne0gqrU0yXB5/exec';
+const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwQ-wrIqdhy7W2EH7yL9nMYMLTbc94xzwdErYkJbaVip-TYv8ljJaXVzbr5TW6YCrUl/exec';
 
 let rivalesList = [];
 let partidosList = [];
@@ -567,13 +566,17 @@ function determinarResultado(resultadoStr, estado) {
 }
 
 // ================= API =================
-async function cargarDatosGET(accion) {
+async function cargarDatosGET(accion, params = {}) {
   try {
-    const url = `${WEBAPP_URL}?accion=${accion}&t=${Date.now()}`;
+    let url = `${WEBAPP_URL}?accion=${accion}&t=${Date.now()}`;
+    for (let key in params) {
+      if (params[key]) url += `&${key}=${encodeURIComponent(params[key])}`;
+    }
     const resp = await fetch(url);
     return await resp.json();
   } catch(e) { console.error(e); return null; }
 }
+
 async function enviarDatosPOST(accion, datos) {
   try {
     await fetch(WEBAPP_URL, {
@@ -586,16 +589,19 @@ async function enviarDatosPOST(accion, datos) {
   } catch(e) { console.error(e); return { success: false, error: e.message }; }
 }
 
-async function cargarRivales() {
-  const data = await cargarDatosGET('getRivales');
+async function cargarRivales(campeonato) {
+  const data = await cargarDatosGET('getRivales', { campeonato: campeonato || '' });
   if (data && data.success && data.data && data.data.length) {
     rivalesList = data.data;
   } else {
-    rivalesList = [
+    // Fallback manual
+    const todos = [
       { nombre: 'IDEAL' }, { nombre: 'BARZA' }, { nombre: 'SAN MARTIN' }, { nombre: 'INDEPENDIENTE' },
       { nombre: 'VODKILA' }, { nombre: 'CHELSEA' }, { nombre: 'JUVENTUD DE AMERICA' },
-      { nombre: 'JUVENTUS' }, { nombre: 'LEONES' }, { nombre: 'FRANCO CANADIENSE' }
+      { nombre: 'JUVENTUS' }, { nombre: 'LEONES' }, { nombre: 'FRANCO CANADIENSE' },
+      { nombre: 'UNION FAMILIAR' }
     ];
+    rivalesList = todos;
   }
   const select = document.getElementById('selectRival');
   select.innerHTML = '<option value="">🔽 Selecciona rival</option>';
@@ -709,6 +715,7 @@ function renderPartidos() {
         <div class="info-item"><span class="material-symbols-outlined">schedule</span> ${horaShow}</div>
         <div class="info-item"><span class="material-symbols-outlined">stadium</span> ${partido.lugar || 'LIGA SANTA RITA'}</div>
         ${partido.vocalia ? `<div class="info-item"><span class="material-symbols-outlined">assignment_ind</span> Vocalía: ${partido.vocalia}</div>` : ''}
+        ${partido.campeonato ? `<div class="info-item"><span class="material-symbols-outlined">emoji_events</span> ${partido.campeonato}</div>` : ''}
       </div>
       <div class="card-actions">
         <button class="btn-edit" data-id="${partido.id}" data-fila="${partido.fila}" ${esFinalizado ? 'disabled' : ''}><span class="material-symbols-outlined" style="font-size:14px">edit</span> Editar</button>
@@ -739,11 +746,13 @@ function abrirModalNuevo() {
   document.getElementById('modalTitle').textContent = '📅 Nuevo Partido';
   document.getElementById('inputFecha').value = '';
   document.getElementById('inputHora').value = '';
-  document.getElementById('selectRival').value = '';
+  document.getElementById('selectRival').innerHTML = '<option value="">Cargando...</option>';
   document.getElementById('selectLugar').value = 'LIGA SANTA RITA - Cancha 1';
   document.getElementById('inputResultado').value = 'VS';
   document.getElementById('selectEstado').value = 'PENDIENTE';
   document.getElementById('inputVocalia').value = '';
+  const campeonato = document.getElementById('selectCampeonato').value;
+  cargarRivales(campeonato);
   document.getElementById('modal').classList.add('active');
 }
 
@@ -759,11 +768,17 @@ function abrirModalEditar(id, fila) {
   document.getElementById('modalTitle').textContent = '✏️ Editar Partido';
   document.getElementById('inputFecha').value = partido.fecha || '';
   document.getElementById('inputHora').value = partido.hora || '';
-  document.getElementById('selectRival').value = partido.rival || '';
+  document.getElementById('selectRival').innerHTML = '<option value="">Cargando...</option>';
   document.getElementById('selectLugar').value = partido.lugar || 'LIGA SANTA RITA - Cancha 1';
   document.getElementById('inputResultado').value = partido.resultado || 'VS';
   document.getElementById('selectEstado').value = partido.estado || 'PENDIENTE';
   document.getElementById('inputVocalia').value = partido.vocalia || '';
+  const campeonato = partido.campeonato || 'CAMPEONATO SANTA RITA';
+  document.getElementById('selectCampeonato').value = campeonato;
+  // Cargar rivales según campeonato y luego seleccionar el rival
+  cargarRivales(campeonato).then(() => {
+    document.getElementById('selectRival').value = partido.rival || '';
+  });
   document.getElementById('modal').classList.add('active');
 }
 
@@ -777,7 +792,8 @@ async function guardarPartido() {
     lugar: document.getElementById('selectLugar').value,
     resultado: document.getElementById('inputResultado').value.trim() || 'VS',
     estado: document.getElementById('selectEstado').value,
-    vocalia: document.getElementById('inputVocalia').value
+    vocalia: document.getElementById('inputVocalia').value,
+    campeonato: document.getElementById('selectCampeonato').value
   };
   if (!partido.rival) { alert('Selecciona un rival'); return; }
   guardando = true;
@@ -838,6 +854,7 @@ if (localStorage.getItem('admin_activo') !== 'true') {
 
 // ================= INICIALIZACIÓN =================
 document.addEventListener('DOMContentLoaded', async () => {
+  // Cargar rivales sin filtro inicial
   await cargarRivales();
   await cargarPartidos();
   document.getElementById('btnAgregar').addEventListener('click', abrirModalNuevo);
