@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=yes">
+  <title>Nápoles F.C. · Mi Historial de Partidos</title>
+  
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    :root {
+      --gold: #E9C349;
+      --gold-dim: rgba(233, 195, 73, 0.15);
+      --bg-dark-start: #020617;
+      --bg-dark-end: #0f172a;
+      --glass-bg: rgba(30, 41, 59, 0.35);
+      --glass-border: rgba(233, 195, 73, 0.12);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      background: linear-gradient(180deg, var(--bg-dark-start) 0%, var(--bg-dark-end) 100%);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding: 0 0 80px 0;
+      margin: 0;
+    }
+    .font-outfit { font-family: 'Outfit', sans-serif; }
+
+    /* SKELETON */
+    .skeleton-wrapper { padding: 20px; }
+    .skeleton-shimmer {
+      background: linear-gradient(90deg, #0f172a 25%, #1e293b 50%, #0f172a 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* GLASS CARDS */
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 28px;
+      border: 0.5px solid var(--glass-border);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+    .payment-focus-card {
+      box-shadow: 0 0 40px -10px rgba(233, 195, 73, 0.15), 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(233, 195, 73, 0.25);
+      background: linear-gradient(165deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+    }
+
+    /* PROGRESS */
+    .progress-bar-container {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 100px;
+      height: 4px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--gold);
+      box-shadow: 0 0 12px rgba(233, 195, 73, 0.4);
+      border-radius: 100px;
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* BADGES */
+    .badge-success {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      padding: 2px 12px;
+      border-radius: 20px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .badge-primary {
+      background: rgba(233, 195, 73, 0.15);
+      color: var(--gold);
+      border: 1px solid rgba(233, 195, 73, 0.2);
+      padding: 2px 12px;
+      border-radius: 20px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    /* PARTIDO CARD */
+    .partido-item {
+      background: rgba(2, 6, 23, 0.3);
+      border-radius: 16px;
+      padding: 14px 16px;
+      border: 0.5px solid rgba(255, 255, 255, 0.04);
+      transition: all 0.2s;
+      position: relative;
+    }
+    .partido-item:active { transform: scale(0.99); background: rgba(30, 41, 59, 0.3); }
+    .partido-item .fila-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .partido-item .fila-top .rival {
+      font-weight: 800;
+      font-size: 1rem;
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+    }
+    .partido-item .fila-top .fecha {
+      font-size: 0.65rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .partido-item .detalles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 8px;
+      font-size: 0.7rem;
+    }
+    .partido-item .detalles span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-secondary);
+    }
+    .partido-item .detalles .goles { color: var(--gold); font-weight: 700; }
+    .partido-item .detalles .amarillas { color: #fbbf24; }
+    .partido-item .detalles .rojas { color: #ef4444; }
+    .partido-item .rendimiento {
+      margin-top: 8px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 0.6rem;
+      background: rgba(0,0,0,0.2);
+      border-radius: 12px;
+      padding: 6px 12px;
+    }
+    .partido-item .rendimiento span { display: flex; align-items: center; gap: 4px; color: var(--text-secondary); }
+    .partido-item .rendimiento .valor { color: #fff; font-weight: 700; }
+
+    /* STATS RESUMEN */
+    .stat-box {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 16px;
+      padding: 14px 10px;
+      text-align: center;
+      border: 0.5px solid rgba(255, 255, 255, 0.04);
+    }
+    .stat-box .numero {
+      font-size: 1.8rem;
+      font-weight: 900;
+      font-family: 'Outfit', sans-serif;
+      color: #fff;
+      line-height: 1.1;
+    }
+    .stat-box .label {
+      font-size: 0.55rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    .stat-box .label.gold { color: var(--gold); }
+    .stat-box .label.green { color: #10b981; }
+    .stat-box .label.red { color: #ef4444; }
+
+    /* BOTÓN ACCIÓN */
+    .btn-action {
+      background: rgba(255, 255, 255, 0.03);
+      border: 0.5px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 12px 16px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: all 0.2s;
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      background: rgba(255,255,255,0.02);
+    }
+    .btn-action:active { transform: scale(0.95); background: rgba(255,255,255,0.06); }
+
+    .btn-primary {
+      background: var(--gold);
+      color: #000;
+      padding: 16px;
+      border-radius: 20px;
+      font-weight: 800;
+      width: 100%;
+      font-family: 'Outfit', sans-serif;
+      box-shadow: 0 8px 25px rgba(233, 195, 73, 0.2);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border: none;
+    }
+
+    /* BARRA NAVEGACIÓN INFERIOR (Élite) */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(2, 6, 23, 0.92);
+      backdrop-filter: blur(16px);
+      border-top: 0.5px solid rgba(255, 255, 255, 0.04);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 0 env(safe-area-inset-bottom, 8px) 0;
+      z-index: 100;
+      box-shadow: 0 -8px 30px rgba(0,0,0,0.5);
+    }
+    .bottom-nav .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 10px;
+      border-radius: 12px;
+      color: #64748b;
+      transition: all 0.2s;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 0.5rem;
+      gap: 1px;
+      min-width: 44px;
+      border: none;
+      background: transparent;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .bottom-nav .nav-item .material-symbols-outlined { font-size: 1.3rem; transition: all 0.2s; }
+    .bottom-nav .nav-item:hover { color: #94a3b8; }
+    .bottom-nav .nav-item:active { transform: scale(0.9); }
+    .bottom-nav .nav-item.active { color: var(--gold); }
+    .bottom-nav .nav-item .nav-label { font-size: 0.4rem; letter-spacing: 0.1em; font-weight: 800; }
+
+    /* TOAST */
+    #toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(2, 6, 23, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(233, 195, 73, 0.25);
+      border-radius: 30px;
+      padding: 8px 20px;
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 0.8rem;
+      z-index: 2000;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+      display: none;
+      white-space: nowrap;
+      max-width: 90%;
+    }
+    #toast.show { display: block; animation: toastAnim 2.5s ease forwards; }
+    @keyframes toastAnim {
+      0% { opacity: 0; transform: translateX(-50%) translateY(15px); }
+      15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+      85% { opacity: 1; transform: translateX(-50%) translateY(0); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+    }
+
+    @media (max-width: 480px) {
+      .stat-box .numero { font-size: 1.4rem; }
+      .partido-item .fila-top .rival { font-size: 0.9rem; }
+      .btn-action { font-size: 0.6rem; padding: 10px 12px; }
+      .partido-item .detalles { gap: 6px; font-size: 0.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- SKELETON LOADER -->
+<div class="skeleton-wrapper" id="skeletonLoader">
+  <div class="max-w-md mx-auto space-y-6">
+    <div class="skeleton-shimmer h-16 rounded-2xl"></div>
+    <div class="grid grid-cols-4 gap-3">
+      <div class="skeleton-shimmer h-24 rounded-2xl"></div>
+      <div class="skeleton-shimmer h-24 rounded-2xl"></div>
+      <div class="skeleton-shimmer h-24 rounded-2xl"></div>
+      <div class="skeleton-shimmer h-24 rounded-2xl"></div>
+    </div>
+    <div class="skeleton-shimmer h-48 rounded-2xl"></div>
+    <div class="space-y-3">
+      <div class="skeleton-shimmer h-20 rounded-2xl"></div>
+      <div class="skeleton-shimmer h-20 rounded-2xl"></div>
+      <div class="skeleton-shimmer h-20 rounded-2xl"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENIDO DINÁMICO -->
+<div id="dynamicContent" style="display:none;"></div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- MODAL REPORTE (opcional) -->
+<div class="fixed inset-0 modal-bg z-[1000] hidden flex items-center justify-center p-6" id="reportModal">
+  <div class="bg-[#0f172a] w-full max-w-sm rounded-[32px] p-8 border border-white/5 shadow-2xl">
+    <h3 class="text-2xl font-black text-white mb-6 flex items-center gap-3 font-outfit">
+      <span class="material-symbols-outlined text-gold">report</span> REPORTAR
+    </h3>
+    <textarea class="w-full bg-[#020617] border border-white/10 rounded-2xl p-4 text-white placeholder:text-gray-600 focus:border-gold/50 outline-none transition-all" id="reportText" placeholder="Describe tu incidencia..." rows="4"></textarea>
+    <div class="flex gap-4 mt-8">
+      <button class="flex-1 py-4 text-gray-500 font-bold text-xs uppercase tracking-widest" onclick="cerrarReporte()">Cerrar</button>
+      <button class="flex-1 py-4 bg-gold text-black rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-gold/20" onclick="enviarReporte()">Enviar</button>
+    </div>
+  </div>
+</div>
+
+<!-- BARRA DE NAVEGACIÓN INFERIOR -->
+<div class="bottom-nav">
+  <a href="perfil.html" class="nav-item" title="Perfil">
+    <span class="material-symbols-outlined">account_circle</span>
+    <span class="nav-label">Perfil</span>
+  </a>
+  <a href="alineacion.html" class="nav-item" title="Alineación">
+    <span class="material-symbols-outlined">group</span>
+    <span class="nav-label">Alineación</span>
+  </a>
+  <a href="h_valores.html" class="nav-item" title="Historial Valores">
+    <span class="material-symbols-outlined">payments</span>
+    <span class="nav-label">Valores</span>
+  </a>
+  <a href="h_partidos.html" class="nav-item active" title="Historial Partidos">
+    <span class="material-symbols-outlined">sports_soccer</span>
+    <span class="nav-label">Partidos</span>
+  </a>
+  <button class="nav-item" onclick="actualizar()" title="Actualizar">
+    <span class="material-symbols-outlined">sync</span>
+    <span class="nav-label">Actualizar</span>
+  </button>
+</div>
+
+<script>
+// ==================== CONFIGURACIÓN ====================
+// ⚠️ CAMBIA ESTA URL POR LA DE TU SCRIPT DE GAS ⚠️
+const URL_GAS = "https://script.google.com/macros/s/AKfycbxCHVz1vt8YJy7OKWJKev7veeCI5WRyfiK_aTWJgS3yxPCHMELJ-KqSP4UtfV3kYqSJ/exec";
+
+// ==================== OBTENER CÉDULA ====================
+let jugadorSesion = null;
+try {
+  jugadorSesion = JSON.parse(localStorage.getItem('jugador_actual'));
+} catch(e) { console.warn(e); }
+if (!jugadorSesion || !jugadorSesion.cedula) {
+  window.location.href = 'login.html';
+}
+const cedula = jugadorSesion.cedula;
+const categoria = jugadorSesion.categoria || 'hombres';
+
+// ==================== FUNCIONES AUXILIARES ====================
+function mostrarToast(mensaje) {
+  const toast = document.getElementById('toast');
+  toast.textContent = mensaje;
+  toast.className = 'show';
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => { toast.className = ''; }, 2500);
+}
+
+function formatearFecha(fechaStr) {
+  if (!fechaStr) return '-';
+  try {
+    const d = new Date(fechaStr);
+    if (isNaN(d.getTime())) return fechaStr;
+    return d.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
+  } catch(e) { return fechaStr; }
+}
+
+function formatearHora(hora) {
+  if (!hora) return '--:--';
+  let h = String(hora).trim();
+  if (h.indexOf(':') !== -1) {
+    const p = h.split(':');
+    return p[0].padStart(2,'0') + ':' + p[1].padStart(2,'0');
+  }
+  const num = parseInt(h);
+  if (!isNaN(num)) return String(num).padStart(2,'0') + ':00';
+  return h.substring(0,5) || '--:--';
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// ==================== MODALES ====================
+function abrirReporte() {
+  document.getElementById('reportModal').classList.remove('hidden');
+  document.getElementById('reportModal').classList.add('flex');
+}
+function cerrarReporte() {
+  document.getElementById('reportModal').classList.add('hidden');
+  document.getElementById('reportModal').classList.remove('flex');
+}
+function enviarReporte() {
+  const text = document.getElementById('reportText').value.trim();
+  if (text) {
+    alert('Incidencia registrada.');
+    cerrarReporte();
+    document.getElementById('reportText').value = '';
+  } else {
+    alert('Escribe una descripción.');
+  }
+}
+
+// ==================== RENDERIZAR PANEL ====================
+function renderizarPanel(data) {
+  const container = document.getElementById('dynamicContent');
+  const partidos = data.partidos || [];
+  const totalPartidos = partidos.length;
+  let totalGoles = 0, totalAmarillas = 0, totalRojas = 0;
+  let sumaPunt = 0, sumaComp = 0, sumaResp = 0, sumaHum = 0;
+  let countRend = 0;
+
+  partidos.forEach(p => {
+    totalGoles += parseInt(p.goles) || 0;
+    totalAmarillas += parseInt(p.amarillas) || 0;
+    totalRojas += parseInt(p.rojas) || 0;
+    if (p.puntualidad) { sumaPunt += parseFloat(p.puntualidad) || 0; countRend++; }
+    if (p.compañerismo) { sumaComp += parseFloat(p.compañerismo) || 0; }
+    if (p.respeto) { sumaResp += parseFloat(p.respeto) || 0; }
+    if (p.humildad) { sumaHum += parseFloat(p.humildad) || 0; }
+  });
+  const avgPunt = countRend ? (sumaPunt / countRend) : 0;
+  const avgComp = countRend ? (sumaComp / countRend) : 0;
+  const avgResp = countRend ? (sumaResp / countRend) : 0;
+  const avgHum = countRend ? (sumaHum / countRend) : 0;
+  const promedioGeneral = countRend ? (avgPunt + avgComp + avgResp + avgHum) / 4 : 0;
+
+  // Construir lista de partidos
+  let partidosHTML = '';
+  if (totalPartidos === 0) {
+    partidosHTML = `
+      <div class="text-center py-10 text-gray-500">
+        <span class="material-symbols-outlined text-5xl text-gold/20">sports_soccer</span>
+        <p class="mt-4 text-sm font-bold uppercase tracking-widest">No has jugado partidos aún</p>
+      </div>
+    `;
+  } else {
+    partidos.forEach(p => {
+      const fecha = formatearFecha(p.fecha);
+      const hora = formatearHora(p.hora);
+      const rival = escapeHtml(p.rival || 'Sin rival');
+      const goles = p.goles || 0;
+      const amarillas = p.amarillas || 0;
+      const rojas = p.rojas || 0;
+      const punt = p.puntualidad || 0;
+      const comp = p.compañerismo || 0;
+      const resp = p.respeto || 0;
+      const hum = p.humildad || 0;
+      const valorVocalia = p['valor vocalia'] || 0;
+
+      partidosHTML += `
+        <div class="partido-item">
+          <div class="fila-top">
+            <span class="rival">⚽ vs ${rival}</span>
+            <span class="fecha"><span class="material-symbols-outlined" style="font-size:14px;">event</span> ${fecha}</span>
+          </div>
+          <div class="detalles">
+            <span><span class="material-symbols-outlined" style="font-size:14px;">schedule</span> ${hora}</span>
+            <span class="goles"><span class="material-symbols-outlined" style="font-size:14px;">sports_soccer</span> ${goles} goles</span>
+            ${amarillas > 0 ? `<span class="amarillas"><span class="material-symbols-outlined" style="font-size:14px;">square</span> ${amarillas}</span>` : ''}
+            ${rojas > 0 ? `<span class="rojas"><span class="material-symbols-outlined" style="font-size:14px;">square</span> ${rojas}</span>` : ''}
+            ${valorVocalia > 0 ? `<span>💰 $${valorVocalia}</span>` : ''}
+          </div>
+          <div class="rendimiento">
+            <span>Puntualidad: <span class="valor">${punt}/10</span></span>
+            <span>Compañerismo: <span class="valor">${comp}/10</span></span>
+            <span>Respeto: <span class="valor">${resp}/10</span></span>
+            <span>Humildad: <span class="valor">${hum}/10</span></span>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  container.innerHTML = `
+    <div class="max-w-md mx-auto p-6 pb-24">
+
+      <!-- HEADER -->
+      <header class="text-center pt-6 pb-6">
+        <div class="flex items-center justify-between">
+          <h1 class="text-2xl font-black text-white tracking-tight uppercase font-outfit flex items-center gap-2">
+            <span class="material-symbols-outlined text-gold" style="font-size:28px;">sports_soccer</span>
+            Mis Partidos
+          </h1>
+          <button class="btn-action" onclick="window.location.href='perfil.html'">
+            <span class="material-symbols-outlined text-gold" style="font-size:18px;">arrow_back</span>
+            Volver
+          </button>
+        </div>
+        <p class="text-[10px] text-gold font-bold uppercase tracking-[0.3em] mt-1">Historial de encuentros</p>
+      </header>
+
+      <!-- BOTONES RÁPIDOS -->
+      <div class="flex gap-3 mb-6 overflow-x-auto pb-1">
+        <button class="btn-action flex-1 justify-center" onclick="abrirReporte()">
+          <span class="material-symbols-outlined text-gold" style="font-size:18px;">flag</span> Reportar
+        </button>
+        <button class="btn-action flex-1 justify-center" onclick="compartir()">
+          <span class="material-symbols-outlined text-gold" style="font-size:18px;">ios_share</span> Compartir
+        </button>
+        <button class="btn-action flex-1 justify-center" onclick="window.print()">
+          <span class="material-symbols-outlined text-gold" style="font-size:18px;">description</span> Ficha
+        </button>
+      </div>
+
+      <!-- ESTADÍSTICAS RESUMEN -->
+      <div class="grid grid-cols-4 gap-3 mb-8">
+        <div class="stat-box">
+          <div class="numero">${totalPartidos}</div>
+          <div class="label">Partidos</div>
+        </div>
+        <div class="stat-box">
+          <div class="numero" style="color:var(--gold);">${totalGoles}</div>
+          <div class="label gold">Goles</div>
+        </div>
+        <div class="stat-box">
+          <div class="numero" style="color:#fbbf24;">${totalAmarillas}</div>
+          <div class="label" style="color:#fbbf24;">Amarillas</div>
+        </div>
+        <div class="stat-box">
+          <div class="numero" style="color:#ef4444;">${totalRojas}</div>
+          <div class="label red">Rojas</div>
+        </div>
+      </div>
+
+      <!-- RENDIMIENTO PROMEDIO -->
+      <div class="glass-card payment-focus-card p-6 mb-8">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="bg-gold/10 p-2 rounded-xl border border-gold/20">
+            <span class="material-symbols-outlined text-gold">trending_up</span>
+          </div>
+          <h3 class="text-sm font-black text-white uppercase tracking-[0.1em] font-outfit">Rendimiento Promedio</h3>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Puntualidad</p>
+            <p class="text-xl font-black text-white font-outfit">${avgPunt.toFixed(1)}/10</p>
+            <div class="progress-bar-container mt-1"><div class="progress-bar-fill" style="width:${avgPunt*10}%;"></div></div>
+          </div>
+          <div>
+            <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Compañerismo</p>
+            <p class="text-xl font-black text-white font-outfit">${avgComp.toFixed(1)}/10</p>
+            <div class="progress-bar-container mt-1"><div class="progress-bar-fill" style="width:${avgComp*10}%;"></div></div>
+          </div>
+          <div>
+            <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Respeto</p>
+            <p class="text-xl font-black text-white font-outfit">${avgResp.toFixed(1)}/10</p>
+            <div class="progress-bar-container mt-1"><div class="progress-bar-fill" style="width:${avgResp*10}%;"></div></div>
+          </div>
+          <div>
+            <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Humildad</p>
+            <p class="text-xl font-black text-white font-outfit">${avgHum.toFixed(1)}/10</p>
+            <div class="progress-bar-container mt-1"><div class="progress-bar-fill" style="width:${avgHum*10}%;"></div></div>
+          </div>
+        </div>
+        <div class="mt-4 text-center border-t border-white/5 pt-4">
+          <span class="text-[10px] text-gray-500 uppercase tracking-widest">Promedio General</span>
+          <p class="text-3xl font-black text-gold font-outfit">${promedioGeneral.toFixed(1)}/10</p>
+        </div>
+      </div>
+
+      <!-- LISTA DE PARTIDOS -->
+      <div class="glass-card p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-gold">list_alt</span>
+            <h3 class="text-xs font-black text-white uppercase tracking-[0.2em] font-outfit">Partidos Jugados</h3>
+          </div>
+          <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">${totalPartidos} encuentros</span>
+        </div>
+        <div class="space-y-3">
+          ${partidosHTML}
+        </div>
+      </div>
+
+    </div>
+  `;
+
+  // Mostrar contenido, ocultar skeleton
+  document.getElementById('skeletonLoader').style.display = 'none';
+  document.getElementById('dynamicContent').style.display = 'block';
+}
+
+// ==================== COMPARTIR ====================
+function compartir() {
+  const url = window.location.href;
+  if (navigator.share) {
+    navigator.share({
+      title: 'Nápoles F.C. - Mi historial de partidos',
+      text: 'Mira mi historial de partidos en el panel élite de Nápoles F.C.',
+      url: url
+    });
+  } else {
+    navigator.clipboard.writeText(url).then(() => mostrarToast('📋 Enlace copiado'));
+  }
+}
+
+// ==================== ACTUALIZAR ====================
+async function actualizar() {
+  const btn = document.querySelector('.bottom-nav .nav-item:last-child');
+  if (btn) {
+    btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> <span class="nav-label">Cargando...</span>';
+    btn.disabled = true;
+  }
+  await cargarHistorialPartidos();
+  if (btn) {
+    btn.innerHTML = '<span class="material-symbols-outlined">sync</span> <span class="nav-label">Actualizar</span>';
+    btn.disabled = false;
+  }
+  mostrarToast('✅ Datos actualizados');
+}
+
+// ==================== CARGAR HISTORIAL DE PARTIDOS ====================
+async function cargarHistorialPartidos() {
+  try {
+    const url = `${URL_GAS}?action=getHistorialPartidos&cedula=${encodeURIComponent(cedula)}&categoria=${encodeURIComponent(categoria)}&t=${Date.now()}`;
+    const resp = await fetch(url);
+    const data = await resp.json();
+
+    if (data.success && data.data) {
+      renderizarPanel({ partidos: data.data });
+    } else {
+      throw new Error(data.error || 'No se pudieron cargar los partidos');
+    }
+  } catch(e) {
+    console.error(e);
+    mostrarToast('❌ Error: ' + e.message);
+    document.getElementById('skeletonLoader').style.display = 'none';
+    document.getElementById('dynamicContent').style.display = 'block';
+    document.getElementById('dynamicContent').innerHTML = `
+      <div class="max-w-md mx-auto p-6 text-center text-red-400">
+        <span class="material-symbols-outlined text-5xl">error</span>
+        <p class="mt-4 font-bold">${e.message}</p>
+        <button onclick="cargarHistorialPartidos()" class="mt-6 btn-primary text-xs">Reintentar</button>
+      </div>
+    `;
+  }
+}
+
+// ==================== INICIALIZACIÓN ====================
+document.addEventListener('DOMContentLoaded', () => {
+  cargarHistorialPartidos();
+});
+</script>
+</body>
+</html>
