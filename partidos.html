@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1" rel="stylesheet">
 <style>
-/* (Mantén todos los estilos que ya tienes, sin cambios) */
+/* (todos los estilos que ya tienes, sin cambios) */
 * {
   margin: 0;
   padding: 0;
@@ -532,7 +532,8 @@ body {
 
 <script>
 // ================= CONFIGURACIÓN WEB APP =================
-const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycby5dgo6xx6o4Pl4bedFj_samhCc7Jejcoq4VRG6QLV0GER-DcGaxToZzKX8SWJe-ogE/exec';
+// ⚠️ CAMBIA ESTA URL POR LA DE TU SCRIPT PUBLICADO ⚠️
+const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzwgcY5y_fGcNUYXHPrzSAZxq_zdJ-WZIn7rczH4D6iOS5EyLcvrUNSxAq25ew9gqlx/exec';
 
 let rivalesList = [];
 let partidosList = [];
@@ -573,9 +574,15 @@ async function cargarDatosGET(accion, params = {}) {
     for (let key in params) {
       if (params[key]) url += `&${key}=${encodeURIComponent(params[key])}`;
     }
+    console.log('📤 Petición GET:', url);
     const resp = await fetch(url);
-    return await resp.json();
-  } catch(e) { console.error(e); return null; }
+    const data = await resp.json();
+    console.log('📥 Respuesta:', data);
+    return data;
+  } catch(e) {
+    console.error('❌ Error en GET:', e);
+    return null;
+  }
 }
 
 async function enviarDatosPOST(accion, datos) {
@@ -587,7 +594,10 @@ async function enviarDatosPOST(accion, datos) {
       body: JSON.stringify({ accion, ...datos })
     });
     return { success: true };
-  } catch(e) { console.error(e); return { success: false, error: e.message }; }
+  } catch(e) {
+    console.error('❌ Error en POST:', e);
+    return { success: false, error: e.message };
+  }
 }
 
 // ================= CARGAR RIVALES POR CAMPEONATO =================
@@ -595,6 +605,8 @@ async function cargarRivales(campeonato) {
   const select = document.getElementById('selectRival');
   select.innerHTML = '<option value="">Cargando rivales...</option>';
   select.disabled = true;
+  
+  console.log('🔍 Cargando rivales para campeonato:', campeonato);
   
   const data = await cargarDatosGET('getRivales', { campeonato: campeonato || '' });
   if (data && data.success && data.data && data.data.length) {
@@ -606,8 +618,9 @@ async function cargarRivales(campeonato) {
       opt.textContent = r.nombre;
       select.appendChild(opt);
     });
+    console.log('✅ Rivales cargados:', rivalesList.length);
   } else {
-    // Fallback: si no hay datos del servidor, mostrar opción para agregar rivales
+    console.warn('⚠️ No se encontraron rivales para este campeonato:', campeonato);
     select.innerHTML = '<option value="">No hay rivales para este campeonato</option>';
   }
   select.disabled = false;
@@ -755,9 +768,7 @@ function abrirModalNuevo() {
   document.getElementById('selectEstado').value = 'PENDIENTE';
   document.getElementById('inputVocalia').value = '';
   
-  // Seleccionar campeonato por defecto (el primero)
   const campeonato = document.getElementById('selectCampeonato').value;
-  // Cargar rivales del campeonato seleccionado
   cargarRivales(campeonato);
   
   document.getElementById('modal').classList.add('active');
@@ -785,7 +796,6 @@ function abrirModalEditar(id, fila) {
   
   const campeonato = partido.campeonato || 'CAMPEONATO SANTA RITA';
   document.getElementById('selectCampeonato').value = campeonato;
-  // Cargar rivales según campeonato y luego seleccionar el rival
   cargarRivales(campeonato).then(() => {
     document.getElementById('selectRival').value = partido.rival || '';
   });
@@ -867,9 +877,7 @@ function configurarEventoCampeonato() {
     const campeonato = this.value;
     const modalActivo = document.getElementById('modal').classList.contains('active');
     if (modalActivo) {
-      // Si el modal está abierto, recargar rivales
       cargarRivales(campeonato);
-      // Limpiar selección de rival
       document.getElementById('selectRival').value = '';
     }
   });
@@ -882,10 +890,8 @@ if (localStorage.getItem('admin_activo') !== 'true') {
 
 // ================= INICIALIZACIÓN =================
 document.addEventListener('DOMContentLoaded', async () => {
-  // Cargar partidos al inicio
   await cargarPartidos();
   
-  // Configurar eventos
   document.getElementById('btnAgregar').addEventListener('click', abrirModalNuevo);
   document.getElementById('btnRefrescar').addEventListener('click', () => cargarPartidos());
   document.getElementById('btnGuardar').addEventListener('click', guardarPartido);
@@ -894,10 +900,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (e.target === document.getElementById('modal')) cerrarModal();
   });
   
-  // Evento de cambio de campeonato (para recargar rivales en tiempo real)
   configurarEventoCampeonato();
   
-  // Precargar rivales del campeonato por defecto (para que al abrir el modal ya estén listos)
   const campeonatoDefault = document.getElementById('selectCampeonato').value;
   await cargarRivales(campeonatoDefault);
 });
