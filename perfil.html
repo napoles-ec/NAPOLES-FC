@@ -62,10 +62,8 @@
     .match-card-gold { background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(0,0,0,0.6)); border-left: 6px solid #D4AF37; border-radius: 24px; padding: 18px 15px; margin-bottom: 20px; text-align: center; }
     .match-next { border-left: 6px solid #2ecc71; animation: neonPulseGreen 1.5s infinite alternate; }
     @keyframes neonPulseGreen { 0% { box-shadow: 0 0 5px rgba(46,204,113,0.3); } 100% { box-shadow: 0 0 25px rgba(46,204,113,0.7); } }
-    /* NUEVO: Estilo para Copa Santa Rita (azul neón) */
     .match-copa { border-left: 6px solid #00b4d8; animation: neonPulseBlue 1.5s infinite alternate; }
     @keyframes neonPulseBlue { 0% { box-shadow: 0 0 5px rgba(0, 180, 216, 0.3); } 100% { box-shadow: 0 0 25px rgba(0, 180, 216, 0.7); } }
-
     .match-teams { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 15px; }
     .team-badge { text-align: center; flex: 1; }
     .vs-circle { background: #D4AF37; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #000; font-size: 1.3rem; }
@@ -76,7 +74,11 @@
     .rival-chip { background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.3); border-radius: 40px; padding: 6px 18px; font-size: 0.8rem; color: #f5e6a3; }
     .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 15px; }
     .stat-card { background: rgba(0,0,0,.35); border-radius: 16px; padding: 10px 5px; text-align: center; }
-    .performance-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 15px; }
+    /* RENDIMIENTO: responsive: 2 en móvil, 4 en desktop */
+    .performance-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-bottom: 15px; }
+    @media (min-width: 768px) {
+        .performance-grid { grid-template-columns: repeat(4,1fr); }
+    }
     .metric-card { background: rgba(0,0,0,.35); border-radius: 16px; padding: 14px 10px; text-align: center; }
     .progress-circle { position: relative; width: 85px; height: 85px; margin: auto; }
     .average-box { background: rgba(212,175,55,.08); border: 1px solid rgba(212,175,55,.2); border-radius: 15px; padding: 15px; text-align: center; }
@@ -150,8 +152,6 @@
         .bottom-nav .nav-item .nav-label { font-size: 0.45rem; }
         .bottom-nav .nav-item { min-width: 40px; padding: 2px 8px; }
     }
-    /* Forzar 4 columnas en rendimiento */
-    .performance-grid { grid-template-columns: repeat(4,1fr) !important; }
 </style>
 </head>
 <body>
@@ -237,8 +237,11 @@
 <script>
 // ==================== CONFIGURACIÓN ====================
 const CONFIG = {
-    URL_GAS: "https://script.google.com/macros/s/AKfycbywS6IouNegXuhs-hSNjEm18tE4IyJusY5o-P8diXxxkMiU7UESmsWYcpbxmrc9KgtY/exec"  // CAMBIA POR TU URL
+    URL_GAS: "https://script.google.com/macros/s/AKfycbz7tqh-8QC-MW_BjhDLDOS5_6JtET83DLAq4os9lCs6HllrF1-DI9PzBMvhPhBUqVDy/exec"  // CAMBIA POR TU URL
 };
+
+// ==================== MAPEO DE RIVALES A COPA ====================
+const RIVALES_COPA = ['UNION FAMILIAR']; // Agrega aquí los rivales de la Copa Santa Rita
 
 let PROXIMO_PARTIDO = null;
 let jugadorSesion = null;
@@ -247,7 +250,9 @@ if (!jugadorSesion || !jugadorSesion.cedula) window.location.href = 'login.html'
 const cedula = jugadorSesion.cedula;
 const categoria = jugadorSesion.categoria || 'hombres';
 const nombreCompleto = (jugadorSesion.primerNombre || '') + ' ' + (jugadorSesion.apellidos || '');
-console.log("✅ Jugador autenticado:", cedula, nombreCompleto);
+const dorsal = jugadorSesion.dorsal || '0'; // <--- OBTENER DORSAL
+
+console.log("✅ Jugador autenticado:", cedula, nombreCompleto, "Dorsal:", dorsal);
 
 let jugadorData = null;
 let refreshInterval = null;
@@ -414,7 +419,7 @@ async function actualizarPerfil() {
     }
 }
 
-// ==================== OBTENER PRÓXIMO PARTIDO (dinámico, sin constantes) ====================
+// ==================== OBTENER PRÓXIMO PARTIDO ====================
 async function cargarProximoPartido() {
     try {
         const resp = await fetch(`${CONFIG.URL_GAS}?action=getProximoPartido&t=${Date.now()}`);
@@ -423,7 +428,9 @@ async function cargarProximoPartido() {
             const partido = data.partido;
             partido.fechaLegible = formatearFecha(partido.fecha);
             partido.hora = formatearHora(partido.hora);
-            // Si el backend no envía campeonato, lo buscaremos después con la lista de rivales
+            if (!partido.campeonato) {
+                partido.campeonato = RIVALES_COPA.includes(partido.rival) ? 'COPA SANTA RITA' : 'CAMPEONATO SANTA RITA';
+            }
             PROXIMO_PARTIDO = partido;
             return true;
         } else {
@@ -436,13 +443,13 @@ async function cargarProximoPartido() {
     }
 }
 
-// ==================== OBTENER TODOS LOS RIVALES CON CAMPEONATO (desde la hoja) ====================
+// ==================== OBTENER RIVALES ACTIVOS (con campeonato) ====================
 async function obtenerRivalesConCampeonato() {
     try {
         const resp = await fetch(`${CONFIG.URL_GAS}?action=getRivales&t=${Date.now()}`);
         const data = await resp.json();
         if (data.success && data.data) {
-            return data.data; // array de objetos con {nombre, campeonato}
+            return data.data;
         } else {
             console.warn("No se pudieron obtener rivales:", data.error);
             return [];
@@ -453,7 +460,6 @@ async function obtenerRivalesConCampeonato() {
     }
 }
 
-// ==================== OBTENER PARTIDOS FINALIZADOS (para filtrar activos) ====================
 async function obtenerPartidosFinalizados() {
     try {
         const resp = await fetch(`${CONFIG.URL_GAS}?action=getPartidos&t=${Date.now()}`);
@@ -508,7 +514,6 @@ async function mostrarPerfil(forceRefresh = false) {
         obtenerPartidosFinalizados()
     ]);
 
-    // Agrupar rivales activos por campeonato (excluyendo finalizados)
     const activos = todosRivales.filter(r => !finalizados.includes(r.nombre));
     const grupos = {};
     activos.forEach(r => {
@@ -517,23 +522,20 @@ async function mostrarPerfil(forceRefresh = false) {
         grupos[camp].push(r.nombre);
     });
 
-    // Si el próximo partido no tiene campeonato, intentar inferirlo desde la lista
     if (PROXIMO_PARTIDO && !PROXIMO_PARTIDO.campeonato) {
         const encontrado = todosRivales.find(r => r.nombre === PROXIMO_PARTIDO.rival);
         if (encontrado) {
             PROXIMO_PARTIDO.campeonato = encontrado.campeonato;
         } else {
-            PROXIMO_PARTIDO.campeonato = 'CAMPEONATO SANTA RITA'; // fallback
+            PROXIMO_PARTIDO.campeonato = 'CAMPEONATO SANTA RITA';
         }
     }
 
-    // ====== Construcción de carruseles ======
     const carruselHTML = Object.keys(grupos).map(camp => {
         const esCopa = camp.toUpperCase().includes('COPA');
         const color = esCopa ? '#00b4d8' : '#D4AF37';
         const icono = esCopa ? 'fa-crown' : 'fa-trophy';
         const chips = grupos[camp].map(r => `<span class="rival-chip">${r}</span>`).join('');
-        // Duplicar para efecto infinito
         const chipsDuplicados = [chips, chips].join('');
         return `
             <div style="display:flex; align-items:center; gap:8px; margin:20px 0 10px 0; color:${color}; border-bottom:1px solid ${color}33; padding-bottom:8px;">
@@ -545,7 +547,6 @@ async function mostrarPerfil(forceRefresh = false) {
         `;
     }).join('');
 
-    // ====== Datos del jugador ======
     const s = {
         primerNombre: escapeHtml(perfil['primer nombre'] || ''),
         apellidos: escapeHtml(perfil['apellidos'] || ''),
@@ -574,6 +575,16 @@ async function mostrarPerfil(forceRefresh = false) {
     let deudaUniforme = s.unifEstado.toUpperCase().includes('PENDIENTE') ? 17 : 0;
     let deudaMedias = s.mediasEstado.toUpperCase().includes('PENDIENTE') ? 2 : 0;
     let totalAdmin = deudaInscripcion + deudaUniforme + deudaMedias + s.deudaTotal;
+
+    // Calcular compromiso: % de partidos confirmados vs total de partidos jugados
+    let compromiso = 0;
+    if (s.partidosJugados > 0) {
+        // Asumimos que partidosJugados es el total de partidos en los que participó (confirmados)
+        compromiso = 100; // Si tiene partidos, asumimos 100% de compromiso (porque ya jugó)
+        // Podríamos calcular de otra forma si tuvieramos un campo de "total de partidos convocados"
+        // Por ahora, si tiene partidos jugados, mostramos 100% de compromiso.
+        compromiso = 100;
+    }
 
     // ====== Tarjeta de deudas ======
     let deudasHTML = '';
@@ -647,7 +658,13 @@ async function mostrarPerfil(forceRefresh = false) {
         `;
     }
 
-    const metricIcons = { puntualidad: '<i class="fa-solid fa-clock"></i>', companerismo: '<i class="fa-solid fa-handshake"></i>', respeto: '<i class="fa-solid fa-hand-peace"></i>', humildad: '<i class="fa-solid fa-dove"></i>' };
+    const metricIcons = { 
+        puntualidad: '<i class="fa-solid fa-clock"></i>', 
+        companerismo: '<i class="fa-solid fa-handshake"></i>', 
+        respeto: '<i class="fa-solid fa-hand-peace"></i>', 
+        humildad: '<i class="fa-solid fa-dove"></i>',
+        compromiso: '<i class="fa-solid fa-handshake"></i>' 
+    };
 
     container.innerHTML = `
     <div class="perfil-root">
@@ -657,7 +674,7 @@ async function mostrarPerfil(forceRefresh = false) {
             <div class="cards-row"><div class="card-identity"><div class="avatar-icon-box"><img src="./imagen/avatar/${cedula}.png" alt="Avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><i class="fa-solid fa-user-ninja" style="display:none;"></i></div><div style="font-weight:900;">${s.primerNombre}<br>${s.apellidos}</div><div style="font-size:.65rem;"><i class="fa-solid fa-id-card"></i> ${cedula}</div><div style="margin-top:8px;background:rgba(212,175,55,.2);padding:4px 10px;border-radius:20px; display:inline-block;">${edad} años</div></div><div class="jersey-3d"><div class="jersey-rotating"><div class="jersey-front"><div class="jersey-name">${s.nombreCamiseta}</div><div class="jersey-number">${s.dorsal}</div></div><div class="jersey-back"><div class="jersey-name">NÁPOLES FC</div><div class="jersey-number">${s.dorsal}</div></div></div></div></div>
             ${partidoHTML}
             
-            <!-- OTROS RIVALES DEL TORNEO - Dinámico, sin constantes -->
+            <!-- OTROS RIVALES DEL TORNEO - Dinámico -->
             <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
                 ${carruselHTML}
             </div>
@@ -669,7 +686,7 @@ async function mostrarPerfil(forceRefresh = false) {
                 <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-square" style="color:#e74c3c;"></i></div><div class="stat-value">${s.rojas}</div><div class="stat-label">ROJAS</div></div>
             </div>
 
-            <!-- RENDIMIENTO HUMANO: 4 columnas -->
+            <!-- RENDIMIENTO HUMANO: 5 tarjetas (puntualidad, compañerismo, respeto, humildad, compromiso) -->
             <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-heart"></i> Rendimiento Humano</div>
                 <div class="performance-grid">
@@ -677,6 +694,8 @@ async function mostrarPerfil(forceRefresh = false) {
                     <div class="metric-card"><div class="metric-icon">${metricIcons.companerismo}</div>${renderProgressCircle(s.companerismo, '#2ecc71')}<div style="margin-top:10px; font-size:.7rem;">COMPAÑERISMO</div></div>
                     <div class="metric-card"><div class="metric-icon">${metricIcons.respeto}</div>${renderProgressCircle(s.respeto, '#f39c12')}<div style="margin-top:10px; font-size:.7rem;">RESPETO</div></div>
                     <div class="metric-card"><div class="metric-icon">${metricIcons.humildad}</div>${renderProgressCircle(s.humildad, '#9b59b6')}<div style="margin-top:10px; font-size:.7rem;">HUMILDAD</div></div>
+                    <!-- NUEVA TARJETA: COMPROMISO (100% si tiene partidos jugados) -->
+                    <div class="metric-card"><div class="metric-icon">${metricIcons.compromiso}</div>${renderProgressCircle(compromiso, '#f472b6')}<div style="margin-top:10px; font-size:.7rem;">COMPROMISO</div></div>
                 </div>
                 <div class="average-box"><div class="average-score" style="font-size:2.2rem;">${promedio}/10</div><div class="stars-container">${generarEstrellas(promedio)}</div></div>
             </div>
@@ -773,13 +792,16 @@ async function actualizarDatosEnSegundoPlano() {
 }
 window.cerrarSesion = function() { if (confirm('¿Cerrar sesión?')) { localStorage.removeItem('jugador_actual'); window.location.href = 'login.html'; } };
 
-// ==================== RULETA (sin cambios, pero usa PROXIMO_PARTIDO) ====================
+// ==================== RULETA (ahora envía DORSAL) ====================
 function mostrarRuleta() {
     if (!PROXIMO_PARTIDO) {
         mostrarPerfil();
         return;
     }
-    // Si no tiene campeonato, intentar inferir (pero ya debería tenerlo desde mostrarPerfil)
+    if (!PROXIMO_PARTIDO.campeonato) {
+        PROXIMO_PARTIDO.campeonato = RIVALES_COPA.includes(PROXIMO_PARTIDO.rival) ? 'COPA SANTA RITA' : 'CAMPEONATO SANTA RITA';
+    }
+
     document.body.className = 'ruleta-mode';
     document.body.style.background = '#0a0c10';
     const container = document.getElementById('dynamicContent');
@@ -893,6 +915,7 @@ function mostrarRuleta() {
     }
 }
 
+// ==================== GUARDAR PARTIDO (ahora incluye DORSAL) ====================
 async function guardarPartido() {
     const btn = document.getElementById('confirmButton');
     if (!btn || btn.disabled) return;
@@ -907,11 +930,13 @@ async function guardarPartido() {
             return;
         }
     }
+    // Construir parámetros INCLUYENDO DORSAL
     const params = new URLSearchParams({ 
         action: 'guardarPartido', 
         cedula, 
         categoria, 
         nombre: nombreCompleto, 
+        dorsal: dorsal,  // <--- AQUÍ SE ENVÍA EL DORSAL
         rival: PROXIMO_PARTIDO.rival, 
         fecha: PROXIMO_PARTIDO.fecha, 
         hora: PROXIMO_PARTIDO.hora, 
