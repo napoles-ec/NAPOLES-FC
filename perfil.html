@@ -196,7 +196,7 @@
     <div id="dynamicContent"></div>
     <div id="bottomNavContainer"></div>
 
-    <!-- Modal reporte incidencia (ya no se usa, pero se mantiene por si acaso) -->
+    <!-- Modal reporte incidencia -->
     <div id="reportModal" class="modal-backdrop">
         <div class="modal-box">
             <h3><i class="fa-solid fa-flag"></i> Reportar incidencia</h3>
@@ -234,7 +234,7 @@ const CONFIG = {
     URL_GAS: "https://script.google.com/macros/s/AKfycbz7tqh-8QC-MW_BjhDLDOS5_6JtET83DLAq4os9lCs6HllrF1-DI9PzBMvhPhBUqVDy/exec"  // CAMBIA POR TU URL
 };
 
-// ==================== RIVALES DE LA COPA SANTA RITA (fallback) ====================
+// ==================== MAPEO DE RIVALES A CAMPEONATO ====================
 const RIVALES_COPA = ['UNION FAMILIAR']; // Agrega aquí los rivales de la Copa Santa Rita
 
 let PROXIMO_PARTIDO = null;
@@ -411,7 +411,7 @@ async function actualizarPerfil() {
     }
 }
 
-// ==================== OBTENER PRÓXIMO PARTIDO (con detección de campeonato) ====================
+// ==================== OBTENER PRÓXIMO PARTIDO ====================
 async function cargarProximoPartido() {
     try {
         const resp = await fetch(`${CONFIG.URL_GAS}?action=getProximoPartido&t=${Date.now()}`);
@@ -420,7 +420,7 @@ async function cargarProximoPartido() {
             const partido = data.partido;
             partido.fechaLegible = formatearFecha(partido.fecha);
             partido.hora = formatearHora(partido.hora);
-            // Si el backend no devuelve campeonato, inferirlo
+            // Si el backend no devuelve campeonato, inferirlo desde la lista de rivales de Copa
             if (!partido.campeonato) {
                 partido.campeonato = RIVALES_COPA.includes(partido.rival) ? 'COPA SANTA RITA' : 'CAMPEONATO SANTA RITA';
             }
@@ -453,7 +453,7 @@ async function cargarRivalesActivos() {
     }
 }
 
-// ==================== RENDER PERFIL (con premio en la COPA) ====================
+// ==================== RENDER PERFIL ====================
 async function mostrarPerfil(forceRefresh = false) {
     document.body.className = '';
     document.body.style.background = '';
@@ -549,7 +549,7 @@ async function mostrarPerfil(forceRefresh = false) {
         `;
     }
 
-    // ====== Construcción del bloque del partido (con premio) ======
+    // ====== Construcción del bloque del partido (sin premio) ======
     let partidoHTML = '';
     if (PROXIMO_PARTIDO) {
         const rival = PROXIMO_PARTIDO.rival || 'RIVAL';
@@ -558,8 +558,6 @@ async function mostrarPerfil(forceRefresh = false) {
         const hora = PROXIMO_PARTIDO.hora || '12:00';
         const lugar = PROXIMO_PARTIDO.lugar || 'LUGAR NO DISPONIBLE';
         const campeonato = PROXIMO_PARTIDO.campeonato || '';
-        const esCopa = campeonato === 'COPA SANTA RITA';
-       
 
         partidoHTML = `
             <div class="match-card-gold match-next">
@@ -573,7 +571,6 @@ async function mostrarPerfil(forceRefresh = false) {
                     <div class="match-info-item"><i class="fa-regular fa-clock"></i> ${hora} HORAS</div>
                     <div class="match-info-item"><i class="fa-solid fa-location-dot"></i> ${lugar}</div>
                 </div>
-                ${premio ? `<div style="text-align:center; margin-top:10px; background: rgba(233,195,73,0.15); padding:6px 12px; border-radius:30px; border:1px solid #e9c349; color:#e9c349; font-weight:bold; font-size:0.9rem;">${premio}</div>` : ''}
                 ${campeonato ? `<div style="text-align:center; margin-top:6px; font-size:0.7rem; color:#94a3b8;">${campeonato}</div>` : ''}
             </div>
         `;
@@ -710,7 +707,7 @@ async function actualizarDatosEnSegundoPlano() {
 }
 window.cerrarSesion = function() { if (confirm('¿Cerrar sesión?')) { localStorage.removeItem('jugador_actual'); window.location.href = 'login.html'; } };
 
-// ==================== RULETA (con premio en la COPA) ====================
+// ==================== RULETA (sin premio) ====================
 function mostrarRuleta() {
     if (!PROXIMO_PARTIDO) {
         mostrarPerfil();
@@ -720,8 +717,6 @@ function mostrarRuleta() {
     if (!PROXIMO_PARTIDO.campeonato) {
         PROXIMO_PARTIDO.campeonato = RIVALES_COPA.includes(PROXIMO_PARTIDO.rival) ? 'COPA SANTA RITA' : 'CAMPEONATO SANTA RITA';
     }
-    const esCopa = PROXIMO_PARTIDO.campeonato === 'COPA SANTA RITA';
-    
 
     document.body.className = 'ruleta-mode';
     document.body.style.background = '#0a0c10';
@@ -745,7 +740,6 @@ function mostrarRuleta() {
                             <span class="font-display-lg text-xl tracking-wider text-white">${PROXIMO_PARTIDO.rival}</span>
                         </div>
                     </div>
-                    ${premioText ? `<div style="margin-top:12px; background:rgba(233,195,73,0.2); padding:6px 16px; border-radius:30px; border:1px solid #e9c349; color:#e9c349; font-weight:bold; font-size:1rem;">${premioText}</div>` : ''}
                 </div>
                 <div class="reveal-element match-info-card w-full max-w-md mx-4">
                     <div class="flex justify-center gap-6 flex-wrap text-white">
@@ -769,7 +763,6 @@ function mostrarRuleta() {
             </div>
             <div class="fixed inset-0 pointer-events-none z-50" id="particles"></div>
         </main>`;
-    
     const rivals = [
         { name: "LEONES", icon: "🦁", power: "ALTO" },
         { name: "IDEAL", icon: "⚡", power: "MEDIO" },
