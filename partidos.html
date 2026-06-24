@@ -3,535 +3,397 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Nápoles F.C. · Gestión de Partidos</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1" rel="stylesheet">
+<title>Gestión de Partidos · Nápoles F.C.</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&family=Inter:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <style>
-/* (todos los estilos que ya tienes, sin cambios) */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
-}
+  :root {
+    --bg-start: #fff5f7;
+    --bg-end: #fce4ec;
+    --card-bg: rgba(255, 255, 255, 0.75);
+    --card-border: rgba(255, 105, 180, 0.2);
+    --primary: #ec407a;
+    --primary-light: #f8bbd0;
+    --primary-dark: #c2185b;
+    --text-primary: #4a4a4a;
+    --text-secondary: #7a7a7a;
+    --shadow: 0 8px 30px rgba(233, 30, 99, 0.08);
+  }
 
-body {
-  font-family: 'Inter', sans-serif;
-  background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 50%, #f1f4f9 100%);
-  color: #1f2937;
-  min-height: 100vh;
-  position: relative;
-  overflow-x: hidden;
-}
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(145deg, var(--bg-start), var(--bg-end));
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding-bottom: 80px;
+  }
 
-.ambient-glow {
-  position: fixed;
-  inset: 0;
-  overflow: hidden;
-  z-index: 0;
-  pointer-events: none;
-}
-.glow-sphere {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(100px);
-  opacity: 0.35;
-}
-.glow-1 { width: 350px; height: 350px; background: #e0a899; top: -5%; left: -15%; }
-.glow-2 { width: 450px; height: 450px; background: #e0f2fe; bottom: -5%; right: -15%; }
+  .glass-panel {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 0.5px solid var(--card-border);
+    box-shadow: var(--shadow);
+    border-radius: 24px;
+  }
 
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 12px;
-}
-::-webkit-scrollbar-thumb {
-  background: #e0a899;
-  border-radius: 12px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #cfa093;
-}
+  .pink-border-top {
+    border-top: 2px solid var(--primary);
+  }
 
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 110;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(243, 244, 246, 0.8);
-  padding: 14px 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.01);
-}
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
 
-.admin-info h1 {
-  font-family: 'Outfit', sans-serif;
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: #111827;
-  letter-spacing: -0.2px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+  .btn-pink {
+    background: var(--primary);
+    color: white;
+    transition: all 0.2s;
+  }
+  .btn-pink:hover { background: var(--primary-dark); transform: scale(1.02); }
+  .btn-outline-pink {
+    border: 1.5px solid var(--primary);
+    color: var(--primary);
+    background: transparent;
+    transition: all 0.2s;
+  }
+  .btn-outline-pink:hover { background: var(--primary-light); }
 
-.admin-info p {
-  font-size: 0.7rem;
-  color: #e0a899;
-  margin-top: 2px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
+  .status-fit { color: #2e7d32; background: #e8f5e9; padding: 2px 10px; border-radius: 20px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; }
+  .status-upcoming { color: #c2185b; background: #fce4ec; padding: 2px 10px; border-radius: 20px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; }
+  .status-pending { color: #e65100; background: #fff3e0; padding: 2px 10px; border-radius: 20px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; }
 
-.avatar {
-  width: 42px;
-  height: 42px;
-  background: #ffffff;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #0094d6;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  border: 1px solid rgba(0, 148, 214, 0.15);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
-}
-.avatar:hover {
-  transform: translateY(-2px);
-  background: #0094d6;
-  color: white;
-  box-shadow: 0 6px 20px rgba(0, 148, 214, 0.2);
-}
+  .match-card {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .match-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(233, 30, 99, 0.12);
+  }
 
-.matches {
-  padding: 24px 16px 40px;
-  max-width: 600px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 2;
-}
+  .fab {
+    position: fixed;
+    bottom: 100px;
+    right: 24px;
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #ec407a, #c2185b);
+    color: white;
+    border: none;
+    box-shadow: 0 8px 25px rgba(233, 30, 99, 0.4);
+    cursor: pointer;
+    transition: all 0.3s;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .fab:hover { transform: scale(1.1) rotate(90deg); box-shadow: 0 12px 35px rgba(233, 30, 99, 0.5); }
+  .fab .material-symbols-outlined { font-size: 32px; }
 
-.match-card {
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 30px;
-  padding: 24px;
-  margin-bottom: 20px;
-  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.03);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  border: 1px solid rgba(255, 255, 255, 0.7);
-}
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+    border-top: 0.5px solid rgba(233, 30, 99, 0.15);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 8px 0 env(safe-area-inset-bottom, 8px) 0;
+    z-index: 100;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.03);
+  }
+  .bottom-nav .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    border-radius: 16px;
+    color: #b0b0b0;
+    transition: all 0.2s;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 0.5rem;
+    gap: 2px;
+    min-width: 56px;
+    border: none;
+    background: transparent;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  .bottom-nav .nav-item .material-symbols-outlined { font-size: 24px; transition: all 0.2s; }
+  .bottom-nav .nav-item:hover { color: var(--primary); }
+  .bottom-nav .nav-item:active { transform: scale(0.92); }
+  .bottom-nav .nav-item.active { color: var(--primary); }
+  .bottom-nav .nav-item.active .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
 
-.match-card:hover {
-  transform: translateY(-3px);
-  background: rgba(255, 255, 255, 0.85);
-  border-color: rgba(0, 148, 214, 0.15);
-  box-shadow: 0 12px 40px rgba(0, 148, 214, 0.06);
-}
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(6px);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.active { display: flex; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal-content {
+    background: white;
+    max-width: 480px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 32px;
+    padding: 28px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+    border: 1px solid rgba(233, 30, 99, 0.1);
+  }
+  .modal-content h2 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .modal-content label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .modal-content input, .modal-content select {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    border: 1.5px solid #f0e0e5;
+    background: #fafafa;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    margin-bottom: 14px;
+    transition: all 0.2s;
+    color: var(--text-primary);
+  }
+  .modal-content input:focus, .modal-content select:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+  }
 
-.match-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-.match-date {
-  background: #f0fdf4;
-  color: #166534;
-  font-weight: 700;
-  font-size: 0.75rem;
-  padding: 6px 14px;
-  border-radius: 50px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border: 1px solid #dcfce7;
-}
-.status {
-  font-weight: 800;
-  padding: 6px 14px;
-  border-radius: 50px;
-  font-size: 0.65rem;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-.status.FINALIZADO { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
-.status.PRÓXIMO { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
-.status.PENDIENTE { background: #fff7ed; color: #c2410c; border: 1px solid #ffedd5; }
+  .toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(50,50,50,0.9);
+    color: white;
+    padding: 10px 24px;
+    border-radius: 30px;
+    font-weight: 600;
+    z-index: 300;
+    backdrop-filter: blur(4px);
+    font-size: 0.8rem;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    animation: toastAnim 2.5s ease forwards;
+    pointer-events: none;
+  }
+  @keyframes toastAnim {
+    0% { opacity: 0; transform: translateX(-50%) translateY(15px); }
+    15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    85% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+  }
 
-.teams {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 16px 0;
-}
-.team-block {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-.team-logo {
-  width: 54px;
-  height: 54px;
-  border-radius: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 1.1rem;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.03);
-  border: 1px solid rgba(255,255,255,0.8);
-}
-.team-logo.home {
-  background: linear-gradient(135deg, #e0f2fe, #bae6fd);
-  color: #0369a1;
-}
-.team-logo.away {
-  background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
-  color: #6b21a8;
-}
-.team-name {
-  font-family: 'Outfit', sans-serif;
-  font-weight: 700;
-  font-size: 0.85rem;
-  text-align: center;
-  color: #1f2937;
-}
+  .loading-spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid #f0e0e5;
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-.scoreboard {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 100px;
-  background: rgba(241, 245, 249, 0.6);
-  border-radius: 20px;
-  padding: 8px 12px;
-  border: 1px solid rgba(0,0,0,0.02);
-}
-.score-digits {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-.home-score, .away-score {
-  font-family: 'Outfit', sans-serif;
-  font-size: 1.8rem;
-  font-weight: 800;
-  line-height: 1;
-}
-.score-sep {
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: #9ca3af;
-}
-.result-badge {
-  font-size: 0.65rem;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 50px;
-  margin-top: 6px;
-}
-.result-badge.victoria { background: #dcfce7; color: #15803d; }
-.result-badge.derrota { background: #fee2e2; color: #b91c1c; }
-.result-badge.empate { background: #fef3c7; color: #b45309; }
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-secondary);
+  }
+  .empty-state .material-symbols-outlined { font-size: 48px; color: var(--primary-light); margin-bottom: 12px; }
 
-.match-info {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
-  margin-top: 20px;
-  padding-top: 14px;
-  border-top: 1px dashed rgba(0, 0, 0, 0.06);
-}
-.info-item {
-  background: rgba(248, 250, 252, 0.8);
-  padding: 6px 12px;
-  border-radius: 50px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: #4b5563;
-  border: 1px solid rgba(0,0,0,0.01);
-}
-.info-item .material-symbols-outlined {
-  font-size: 15px;
-  color: #8892b0;
-}
-
-.card-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 16px;
-}
-.btn-edit, .btn-delete {
-  border: none;
-  padding: 8px 16px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 0.75rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.btn-edit { background: #e0f2fe; color: #0369a1; }
-.btn-edit:hover:not(:disabled) { background: #bae6fd; transform: translateY(-1px); }
-.btn-delete { background: #fee2e2; color: #b91c1c; }
-.btn-delete:hover:not(:disabled) { background: #fecaca; transform: translateY(-1px); }
-
-.btn-edit:disabled, .btn-delete:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  transform: none !important;
-}
-
-.fab {
-  position: fixed;
-  bottom: 26px;
-  right: 24px;
-  width: 56px;
-  height: 56px;
-  border-radius: 18px;
-  background: linear-gradient(135deg, #e0a899, #cfa093);
-  border: none;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 10px 25px rgba(224, 168, 153, 0.4);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  z-index: 200;
-}
-.fab:hover {
-  transform: scale(1.05) rotate(90deg);
-  box-shadow: 0 14px 32px rgba(224, 168, 153, 0.55);
-}
-.fab .material-symbols-outlined { font-size: 28px; }
-
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(15, 23, 42, 0.25);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  z-index: 1000;
-  align-items: center;
-  justify-content: center;
-}
-.modal.active {
-  display: flex;
-  animation: fadeModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-@keyframes fadeModal {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-.modal-content {
-  background: rgba(255, 255, 255, 0.95);
-  width: 92%;
-  max-width: 440px;
-  max-height: 85vh;
-  overflow-y: auto;
-  border-radius: 32px;
-  padding: 28px;
-  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.1);
-  border: 1px solid rgba(255,255,255,0.8);
-}
-.modal-content h2 {
-  font-family: 'Outfit', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: #111827;
-  margin-bottom: 20px;
-}
-.modal-content label {
-  font-weight: 600;
-  font-size: 0.75rem;
-  display: block;
-  margin-bottom: 6px;
-  color: #4b5563;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-.modal-content input, .modal-content select {
-  width: 100%;
-  padding: 12px 16px;
-  border-radius: 14px;
-  border: 1.5px solid #e2e8f0;
-  background: #ffffff;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
-  margin-bottom: 16px;
-  transition: all 0.2s ease;
-  color: #1f2937;
-}
-.modal-content input:focus, .modal-content select:focus {
-  border-color: #0094d6;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 148, 214, 0.1);
-}
-.modal-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-  margin-top: 24px;
-}
-.btn-save {
-  background: linear-gradient(135deg, #0094d6, #007bb3);
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 14px;
-  font-weight: 700;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 4px 12px rgba(0, 148, 214, 0.15);
-}
-.btn-cancel {
-  background: #f1f5f9;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 14px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: #475569;
-  cursor: pointer;
-}
-.btn-save:hover { transform: translateY(-1px); filter: brightness(1.05); }
-.btn-cancel:hover { background: #e2e8f0; }
-
-.loading-container, .empty-state {
-  text-align: center;
-  padding: 50px 20px;
-  background: rgba(255,255,255,0.5);
-  border-radius: 30px;
-  border: 1px solid rgba(255,255,255,0.7);
-}
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3.5px solid #e2e8f0;
-  border-top-color: #e0a899;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin: 0 auto 16px;
-}
-.toast {
-  position: fixed;
-  bottom: 100px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(15, 23, 42, 0.9);
-  color: white;
-  padding: 12px 24px;
-  border-radius: 50px;
-  font-weight: 500;
-  z-index: 300;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  font-size: 0.8rem;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-  animation: fadeUp 0.25s ease;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateX(-50%) translateY(15px); }
-  to { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
+  @media (max-width: 480px) {
+    .modal-content { padding: 20px; }
+    .bottom-nav .nav-item { min-width: 44px; padding: 2px 6px; }
+    .bottom-nav .nav-item .material-symbols-outlined { font-size: 20px; }
+  }
 </style>
 </head>
 <body>
 
-<div class="ambient-glow">
-  <div class="glow-sphere glow-1"></div>
-  <div class="glow-sphere glow-2"></div>
-</div>
-
-<header class="topbar">
-  <div class="admin-info">
-    <h1>⚽ PARTIDOS</h1>
-    <p>Nápoles F.C. Admin</p>
+<!-- ===== TOP BAR ===== -->
+<header class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-pink-200/50 px-4 py-3 flex items-center justify-between shadow-sm">
+  <div class="flex items-center gap-3">
+    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
+      ⚽
+    </div>
+    <h1 class="font-outfit text-xl font-bold text-pink-700 tracking-tight">Partidos</h1>
   </div>
-  <div class="avatar" id="btnRefrescar">
+  <button onclick="cargarPartidos()" class="p-2 rounded-full hover:bg-pink-50 transition-colors text-pink-400">
     <span class="material-symbols-outlined">sync</span>
-  </div>
+  </button>
 </header>
 
-<section class="matches" id="matchesContainer">
-  <div class="loading-container">
-    <div class="loading-spinner"></div>
-    <div class="loading-text" style="font-size:0.85rem; color:#6b7280;">Cargando calendario de encuentros...</div>
-  </div>
-</section>
+<!-- ===== MAIN CONTENT ===== -->
+<main class="pt-24 px-4 max-w-6xl mx-auto">
 
+  <!-- Stats Row -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+    <div class="glass-panel p-4 pink-border-top">
+      <p class="text-[10px] font-bold uppercase tracking-wider text-pink-400 opacity-70">Temporada</p>
+      <h3 class="text-xl font-bold text-pink-700 mt-1">24/25</h3>
+    </div>
+    <div class="glass-panel p-4 pink-border-top">
+      <p class="text-[10px] font-bold uppercase tracking-wider text-pink-400 opacity-70">Partidos</p>
+      <h3 class="text-xl font-bold text-pink-700 mt-1" id="totalPartidos">0</h3>
+    </div>
+    <div class="glass-panel p-4 pink-border-top">
+      <p class="text-[10px] font-bold uppercase tracking-wider text-pink-400 opacity-70">Victorias</p>
+      <h3 class="text-xl font-bold text-pink-700 mt-1" id="totalVictorias">0</h3>
+    </div>
+    <div class="glass-panel p-4 pink-border-top">
+      <p class="text-[10px] font-bold uppercase tracking-wider text-pink-400 opacity-70">Goles</p>
+      <h3 class="text-xl font-bold text-pink-700 mt-1" id="totalGoles">0</h3>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-6">
+    <div class="flex flex-wrap gap-2">
+      <button class="filter-btn px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border transition-all" data-filter="todos" style="border-color:var(--primary); color:var(--primary); background:var(--primary-light);">Todos</button>
+      <button class="filter-btn px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-pink-200 text-pink-400 hover:bg-pink-50 transition-all" data-filter="proximo">Próximos</button>
+      <button class="filter-btn px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-pink-200 text-pink-400 hover:bg-pink-50 transition-all" data-filter="finalizado">Finalizados</button>
+      <button class="filter-btn px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border border-pink-200 text-pink-400 hover:bg-pink-50 transition-all" data-filter="pendiente">Pendientes</button>
+    </div>
+    <div class="relative w-full md:w-56">
+      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-pink-300 text-sm">search</span>
+      <input id="searchInput" class="w-full bg-white/70 border border-pink-200 rounded-xl pl-9 pr-3 py-2 text-sm focus:ring-2 focus:ring-pink-300 outline-none transition-all" placeholder="Buscar rival..." type="text">
+    </div>
+  </div>
+
+  <!-- Match Cards Grid -->
+  <div id="matchContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <!-- Aquí se renderizan los partidos dinámicamente -->
+    <div class="col-span-2 text-center py-12">
+      <div class="loading-spinner mx-auto"></div>
+      <p class="text-pink-400 text-sm mt-2">Cargando encuentros...</p>
+    </div>
+  </div>
+</main>
+
+<!-- ===== FAB ===== -->
 <button class="fab" id="btnAgregar">
   <span class="material-symbols-outlined">add</span>
 </button>
 
-<div class="modal" id="modal">
+<!-- ===== BOTTOM NAV ===== -->
+<nav class="bottom-nav">
+  <a href="perfil.html" class="nav-item" title="Perfil">
+    <span class="material-symbols-outlined">person</span>
+    <span class="text-[9px]">Perfil</span>
+  </a>
+  <a href="alineacion.html" class="nav-item" title="Alineación">
+    <span class="material-symbols-outlined">group</span>
+    <span class="text-[9px]">Alineación</span>
+  </a>
+  <a href="h_valores.html" class="nav-item" title="Valores">
+    <span class="material-symbols-outlined">payments</span>
+    <span class="text-[9px]">Valores</span>
+  </a>
+  <a href="gestion_partidos.html" class="nav-item active" title="Partidos">
+    <span class="material-symbols-outlined">sports_soccer</span>
+    <span class="text-[9px]">Partidos</span>
+  </a>
+  <button class="nav-item" onclick="cargarPartidos()" title="Actualizar">
+    <span class="material-symbols-outlined">sync</span>
+    <span class="text-[9px]">Actualizar</span>
+  </button>
+</nav>
+
+<!-- ===== MODAL ===== -->
+<div class="modal-overlay" id="matchModal">
   <div class="modal-content">
-    <h2 id="modalTitle">📅 Nuevo Partido</h2>
-    <label>📆 Fecha</label>
-    <input type="date" id="inputFecha">
-    <label>⏱️ Hora</label>
-    <input type="time" id="inputHora">
-    <label>🏆 Campeonato</label>
-    <select id="selectCampeonato">
-      <option value="CAMPEONATO SANTA RITA">🏆 CAMPEONATO SANTA RITA</option>
-      <option value="COPA SANTA RITA">🏆 COPA SANTA RITA</option>
-    </select>
-    <label>⚔️ Rival</label>
-    <select id="selectRival"><option value="">Selecciona un campeonato primero</option></select>
-    <label>🏟️ Estadio / Lugar</label>
-    <select id="selectLugar">
-      <option value="LIGA SANTA RITA - Cancha 1">🏟️ LIGA SANTA RITA - Cancha 1</option>
-      <option value="LIGA SANTA RITA - Cancha 2">🏟️ LIGA SANTA RITA - Cancha 2</option>
-    </select>
-    <label>🎯 Resultado (ej: 3-1 , 2-2 , VS)</label>
-    <input type="text" id="inputResultado" placeholder="3-1 | VS" value="VS">
-    <label>📌 Estado</label>
-    <select id="selectEstado">
-      <option value="PENDIENTE">⏳ PENDIENTE</option>
-      <option value="PRÓXIMO">🔥 PRÓXIMO</option>
-      <option value="FINALIZADO">✅ FINALIZADO</option>
-    </select>
-    <label>📢 Vocalía / Encargado</label>
-    <input type="text" id="inputVocalia" placeholder="Ej: Juan Pérez o número">
-    <div class="modal-actions">
-      <button class="btn-cancel" id="btnCancelar">Cancelar</button>
-      <button class="btn-save" id="btnGuardar">Guardar</button>
-    </div>
+    <h2 id="modalTitle"><span class="material-symbols-outlined" style="color:var(--primary);">edit_note</span> Nuevo Partido</h2>
+    <form id="matchForm">
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label>📆 Fecha</label>
+          <input type="date" id="inputFecha" required>
+        </div>
+        <div>
+          <label>⏱️ Hora</label>
+          <input type="time" id="inputHora" required>
+        </div>
+      </div>
+      <div>
+        <label>🏆 Campeonato</label>
+        <select id="selectCampeonato">
+          <option value="CAMPEONATO SANTA RITA">🏆 CAMPEONATO SANTA RITA</option>
+          <option value="COPA SANTA RITA">🏆 COPA SANTA RITA</option>
+        </select>
+      </div>
+      <div>
+        <label>⚔️ Rival</label>
+        <select id="selectRival"><option value="">Selecciona un campeonato</option></select>
+      </div>
+      <div>
+        <label>🏟️ Lugar</label>
+        <select id="selectLugar">
+          <option value="LIGA SANTA RITA - Cancha 1">🏟️ LIGA SANTA RITA - Cancha 1</option>
+          <option value="LIGA SANTA RITA - Cancha 2">🏟️ LIGA SANTA RITA - Cancha 2</option>
+        </select>
+      </div>
+      <div>
+        <label>🎯 Resultado (ej: 3-1 , VS)</label>
+        <input type="text" id="inputResultado" placeholder="3-1 | VS" value="VS">
+      </div>
+      <div>
+        <label>📌 Estado</label>
+        <select id="selectEstado">
+          <option value="PENDIENTE">⏳ PENDIENTE</option>
+          <option value="PRÓXIMO">🔥 PRÓXIMO</option>
+          <option value="FINALIZADO">✅ FINALIZADO</option>
+        </select>
+      </div>
+      <div>
+        <label>📢 Vocalía / Encargado</label>
+        <input type="text" id="inputVocalia" placeholder="Ej: Juan Pérez">
+      </div>
+      <div class="flex gap-3 mt-4">
+        <button type="button" class="flex-1 py-3 rounded-xl border border-pink-200 text-pink-400 font-bold text-xs uppercase tracking-wider hover:bg-pink-50 transition-all" onclick="cerrarModal()">Cancelar</button>
+        <button type="submit" class="flex-1 py-3 rounded-xl btn-pink font-bold text-xs uppercase tracking-wider shadow-md">Guardar</button>
+      </div>
+    </form>
   </div>
 </div>
 
 <script>
-// ================= CONFIGURACIÓN WEB APP =================
+// ================= CONFIGURACIÓN =================
 // ⚠️ CAMBIA ESTA URL POR LA DE TU SCRIPT PUBLICADO ⚠️
 const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzwgcY5y_fGcNUYXHPrzSAZxq_zdJ-WZIn7rczH4D6iOS5EyLcvrUNSxAq25ew9gqlx/exec';
 
@@ -541,29 +403,27 @@ let editandoId = null;
 let editandoFila = null;
 let guardando = false;
 
-// ================= HELPER PARSEO DE RESULTADOS =================
-function parseResultado(resultadoStr) {
-  if (!resultadoStr || resultadoStr === 'VS') return { homeScore: null, awayScore: null, valid: false };
-  let clean = resultadoStr.toString().trim().replace(/\s/g, '');
+// ================= HELPER =================
+function parseResultado(str) {
+  if (!str || str === 'VS') return { home: null, away: null, valid: false };
+  let clean = str.toString().trim().replace(/\s/g, '');
   if (clean.includes('-')) {
     let parts = clean.split('-');
     if (parts.length === 2) {
-      let home = parseInt(parts[0], 10);
-      let away = parseInt(parts[1], 10);
-      if (!isNaN(home) && !isNaN(away)) {
-        return { homeScore: home, awayScore: away, valid: true };
-      }
+      let h = parseInt(parts[0], 10);
+      let a = parseInt(parts[1], 10);
+      if (!isNaN(h) && !isNaN(a)) return { home: h, away: a, valid: true };
     }
   }
-  return { homeScore: null, awayScore: null, valid: false };
+  return { home: null, away: null, valid: false };
 }
 
-function determinarResultado(resultadoStr, estado) {
+function determinarResultado(str, estado) {
   if (estado !== 'FINALIZADO') return null;
-  const parsed = parseResultado(resultadoStr);
-  if (!parsed.valid) return null;
-  if (parsed.homeScore > parsed.awayScore) return 'VICTORIA';
-  if (parsed.homeScore < parsed.awayScore) return 'DERROTA';
+  const p = parseResultado(str);
+  if (!p.valid) return null;
+  if (p.home > p.away) return 'VICTORIA';
+  if (p.home < p.away) return 'DERROTA';
   return 'EMPATE';
 }
 
@@ -571,18 +431,10 @@ function determinarResultado(resultadoStr, estado) {
 async function cargarDatosGET(accion, params = {}) {
   try {
     let url = `${WEBAPP_URL}?accion=${accion}&t=${Date.now()}`;
-    for (let key in params) {
-      if (params[key]) url += `&${key}=${encodeURIComponent(params[key])}`;
-    }
-    console.log('📤 Petición GET:', url);
+    for (let k in params) { if (params[k]) url += `&${k}=${encodeURIComponent(params[k])}`; }
     const resp = await fetch(url);
-    const data = await resp.json();
-    console.log('📥 Respuesta:', data);
-    return data;
-  } catch(e) {
-    console.error('❌ Error en GET:', e);
-    return null;
-  }
+    return await resp.json();
+  } catch(e) { console.error(e); return null; }
 }
 
 async function enviarDatosPOST(accion, datos) {
@@ -594,20 +446,14 @@ async function enviarDatosPOST(accion, datos) {
       body: JSON.stringify({ accion, ...datos })
     });
     return { success: true };
-  } catch(e) {
-    console.error('❌ Error en POST:', e);
-    return { success: false, error: e.message };
-  }
+  } catch(e) { console.error(e); return { success: false, error: e.message }; }
 }
 
-// ================= CARGAR RIVALES POR CAMPEONATO =================
+// ================= RIVALES =================
 async function cargarRivales(campeonato) {
   const select = document.getElementById('selectRival');
-  select.innerHTML = '<option value="">Cargando rivales...</option>';
+  select.innerHTML = '<option value="">Cargando...</option>';
   select.disabled = true;
-  
-  console.log('🔍 Cargando rivales para campeonato:', campeonato);
-  
   const data = await cargarDatosGET('getRivales', { campeonato: campeonato || '' });
   if (data && data.success && data.data && data.data.length) {
     rivalesList = data.data;
@@ -618,193 +464,211 @@ async function cargarRivales(campeonato) {
       opt.textContent = r.nombre;
       select.appendChild(opt);
     });
-    console.log('✅ Rivales cargados:', rivalesList.length);
   } else {
-    console.warn('⚠️ No se encontraron rivales para este campeonato:', campeonato);
     select.innerHTML = '<option value="">No hay rivales para este campeonato</option>';
   }
   select.disabled = false;
 }
 
-// ================= CARGAR PARTIDOS =================
+// ================= PARTIDOS =================
 async function cargarPartidos() {
-  const container = document.getElementById('matchesContainer');
-  container.innerHTML = `<div class="loading-container"><div class="loading-spinner"></div><div class="loading-text" style="font-size:0.85rem; color:#6b7280;">Cargando partidos...</div></div>`;
+  const container = document.getElementById('matchContainer');
+  container.innerHTML = `<div class="col-span-2 text-center py-12"><div class="loading-spinner mx-auto"></div><p class="text-pink-400 text-sm mt-2">Cargando encuentros...</p></div>`;
   const data = await cargarDatosGET('getPartidos');
   if (data && data.success && data.data) {
     partidosList = data.data;
-    renderPartidos();
+    renderPartidos(partidosList);
   } else {
-    container.innerHTML = `<div class="empty-state"><span class="material-symbols-outlined" style="font-size:48px; color:#9ca3af; margin-bottom:12px;">sports_soccer</span><p style="font-weight:600; color:#4b5563;">⚽ No hay partidos registrados</p><p style="font-size:0.8rem; color:#9ca3af; mt-1">Presiona + para crear uno nuevo</p></div>`;
+    container.innerHTML = `<div class="col-span-2 empty-state"><span class="material-symbols-outlined">sports_soccer</span><p>No hay partidos registrados</p><p class="text-xs opacity-60 mt-1">Presiona + para crear uno nuevo</p></div>`;
     partidosList = [];
   }
+  actualizarEstadisticas();
 }
 
-function formatearFecha(fechaStr) {
-  if (!fechaStr) return 'Sin fecha';
-  try {
-    let d = new Date(fechaStr);
-    return d.toLocaleDateString('es-ES', { day:'numeric', month:'short', year:'numeric' });
-  } catch(e) { return fechaStr; }
+function actualizarEstadisticas() {
+  let total = partidosList.length;
+  let victorias = 0, goles = 0;
+  partidosList.forEach(p => {
+    if (p.estado === 'FINALIZADO') {
+      const r = parseResultado(p.resultado);
+      if (r.valid) { goles += r.home; if (r.home > r.away) victorias++; }
+    }
+  });
+  document.getElementById('totalPartidos').textContent = total;
+  document.getElementById('totalVictorias').textContent = victorias;
+  document.getElementById('totalGoles').textContent = goles;
 }
-function formatearHora(horaStr) {
-  if (!horaStr) return '--:--';
-  let raw = String(horaStr);
-  if (raw.includes(':')) {
-    let seg = raw.split(':');
-    if (seg.length >= 2) return `${seg[0].padStart(2,'0')}:${seg[1].padStart(2,'0')}`;
-  }
-  if (typeof horaStr === 'number') {
-    let totalSec = Math.round(horaStr * 86400);
-    let hh = Math.floor(totalSec / 3600);
-    let mm = Math.floor((totalSec % 3600) / 60);
-    return `${hh.toString().padStart(2,'0')}:${mm.toString().padStart(2,'0')}`;
-  }
+
+function formatearFecha(f) {
+  if (!f) return 'Sin fecha';
+  try { const d = new Date(f); return d.toLocaleDateString('es-ES', { day:'numeric', month:'short', year:'numeric' }); }
+  catch(e) { return f; }
+}
+function formatearHora(h) {
+  if (!h) return '--:--';
+  let raw = String(h);
+  if (raw.includes(':')) { let seg = raw.split(':'); if (seg.length >= 2) return `${seg[0].padStart(2,'0')}:${seg[1].padStart(2,'0')}`; }
+  if (typeof h === 'number') { let totalSec = Math.round(h * 86400); let hh = Math.floor(totalSec / 3600); let mm = Math.floor((totalSec % 3600) / 60); return `${hh.toString().padStart(2,'0')}:${mm.toString().padStart(2,'0')}`; }
   if (raw.match(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/)) return raw;
   return raw.substring(0,5) || '--:--';
 }
 
-function renderPartidos() {
-  const container = document.getElementById('matchesContainer');
-  if (!partidosList.length) {
-    container.innerHTML = `<div class="empty-state"><span class="material-symbols-outlined" style="font-size:48px; color:#9ca3af; margin-bottom:12px;">sports_soccer</span><p style="font-weight:600; color:#4b5563;">📋 Agrega el primer encuentro deportivo</p></div>`;
+function renderPartidos(lista) {
+  const container = document.getElementById('matchContainer');
+  if (!lista.length) {
+    container.innerHTML = `<div class="col-span-2 empty-state"><span class="material-symbols-outlined">sports_soccer</span><p>No hay partidos registrados</p><p class="text-xs opacity-60 mt-1">Presiona + para crear uno nuevo</p></div>`;
     return;
   }
   container.innerHTML = '';
-  partidosList.forEach(partido => {
-    const fechaShow = formatearFecha(partido.fecha);
-    const horaShow = formatearHora(partido.hora);
+  lista.forEach(partido => {
+    const fecha = formatearFecha(partido.fecha);
+    const hora = formatearHora(partido.hora);
     const estado = partido.estado || 'PENDIENTE';
-    const rivalNombre = partido.rival || 'Desconocido';
-    const abrevRival = rivalNombre.substring(0,3).toUpperCase();
-    const resultadoRaw = partido.resultado || 'VS';
-    const outcome = determinarResultado(resultadoRaw, estado);
-    const parsedScore = parseResultado(resultadoRaw);
-    
-    const card = document.createElement('div');
-    card.className = 'match-card';
-    
+    const rival = partido.rival || 'Desconocido';
+    const resultado = partido.resultado || 'VS';
+    const outcome = determinarResultado(resultado, estado);
+    const parsed = parseResultado(resultado);
+    const esFinalizado = estado === 'FINALIZADO';
+
+    let statusBadge = '';
+    if (estado === 'FINALIZADO') statusBadge = `<span class="status-fit">✅ Finalizado</span>`;
+    else if (estado === 'PRÓXIMO') statusBadge = `<span class="status-upcoming">🔥 Próximo</span>`;
+    else statusBadge = `<span class="status-pending">⏳ Pendiente</span>`;
+
     let scoreHTML = '';
-    if (estado === 'FINALIZADO' && parsedScore.valid) {
-      let homeClass = 'style="color:#1f2937;"', awayClass = 'style="color:#1f2937;"';
-      if (outcome === 'VICTORIA') { homeClass = 'style="color:#16a34a;"'; awayClass = 'style="color:#9ca3af; font-weight:500;"'; }
-      else if (outcome === 'DERROTA') { homeClass = 'style="color:#9ca3af; font-weight:500;"'; awayClass = 'style="color:#dc2626;"'; }
-      else if (outcome === 'EMPATE') { homeClass = 'style="color:#d97706;"'; awayClass = 'style="color:#d97706;"'; }
+    if (esFinalizado && parsed.valid) {
+      let homeColor = 'text-pink-700', awayColor = 'text-pink-700';
+      if (outcome === 'VICTORIA') { homeColor = 'text-green-600'; awayColor = 'text-gray-400'; }
+      else if (outcome === 'DERROTA') { homeColor = 'text-gray-400'; awayColor = 'text-red-500'; }
+      else if (outcome === 'EMPATE') { homeColor = 'text-amber-500'; awayColor = 'text-amber-500'; }
       scoreHTML = `
-        <div class="scoreboard">
-          <div class="score-digits">
-            <span class="home-score" ${homeClass}>${parsedScore.homeScore}</span>
-            <span class="score-sep">-</span>
-            <span class="away-score" ${awayClass}>${parsedScore.awayScore}</span>
-          </div>
-          <div class="result-badge ${outcome === 'VICTORIA' ? 'victoria' : outcome === 'DERROTA' ? 'derrota' : outcome === 'EMPATE' ? 'empate' : ''}">
-            ${outcome === 'VICTORIA' ? '🏆 GANADO' : outcome === 'DERROTA' ? '❌ PERDIDO' : outcome === 'EMPATE' ? '🤝 EMPATE' : ''}
-          </div>
+        <div class="flex items-baseline gap-1">
+          <span class="font-bold text-2xl ${homeColor}">${parsed.home}</span>
+          <span class="text-gray-300 text-xl">-</span>
+          <span class="font-bold text-2xl ${awayColor}">${parsed.away}</span>
         </div>
+        <span class="text-[9px] font-bold uppercase tracking-wider ${outcome === 'VICTORIA' ? 'text-green-600' : outcome === 'DERROTA' ? 'text-red-500' : 'text-amber-500'}">${outcome}</span>
       `;
     } else {
-      scoreHTML = `<div class="scoreboard"><div class="score-digits"><span class="home-score" style="color:#9ca3af; font-size:1.4rem;">-</span><span class="score-sep" style="margin:0 4px">•</span><span class="away-score" style="color:#9ca3af; font-size:1.4rem;">-</span></div><div class="result-badge" style="background:#f1f5f9; color:#475569;">${resultadoRaw === 'VS' ? 'VS' : resultadoRaw}</div></div>`;
+      scoreHTML = `<span class="text-gray-300 text-2xl font-light">${resultado === 'VS' ? 'VS' : resultado}</span>`;
     }
-    
-    const esFinalizado = (estado === 'FINALIZADO');
+
+    const card = document.createElement('div');
+    card.className = 'glass-panel match-card p-4 flex flex-col gap-3';
     card.innerHTML = `
-      <div class="match-top">
-        <div class="match-date"><span class="material-symbols-outlined">event</span> ${fechaShow}</div>
-        <div class="status ${estado}">${estado === 'FINALIZADO' ? '✅ Finalizado' : estado === 'PRÓXIMO' ? '🔥 Próximo' : '⏳ Pendiente'}</div>
-      </div>
-      <div class="teams">
-        <div class="team-block">
-          <div class="team-logo home">⚡</div>
-          <div class="team-name">NAPOLES F.C.</div>
+      <div class="flex justify-between items-start">
+        <div class="flex flex-col gap-1">
+          <div class="flex items-center gap-2 flex-wrap">
+            ${statusBadge}
+            <span class="text-[10px] text-pink-400 font-bold uppercase tracking-wider">${partido.campeonato || ''}</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-pink-600">${fecha}</span>
+            <span class="text-xs text-gray-400">${hora}</span>
+          </div>
         </div>
-        <div class="score-area">
+        <div class="flex gap-1">
+          <button class="p-1.5 rounded-lg hover:bg-pink-50 text-pink-300 hover:text-pink-600 transition-colors ${esFinalizado ? 'opacity-40 cursor-not-allowed' : ''}" ${esFinalizado ? 'disabled' : ''} onclick="abrirEditar(${partido.id}, ${partido.fila})">
+            <span class="material-symbols-outlined text-sm">edit</span>
+          </button>
+          <button class="p-1.5 rounded-lg hover:bg-pink-50 text-pink-300 hover:text-red-500 transition-colors ${esFinalizado ? 'opacity-40 cursor-not-allowed' : ''}" ${esFinalizado ? 'disabled' : ''} onclick="eliminarPartido(${partido.fila})">
+            <span class="material-symbols-outlined text-sm">delete</span>
+          </button>
+        </div>
+      </div>
+      <div class="flex items-center justify-between gap-4">
+        <div class="flex flex-col items-center gap-1 flex-1">
+          <div class="w-14 h-14 rounded-full bg-pink-50 flex items-center justify-center border border-pink-200 text-pink-600 font-bold text-lg">⚡</div>
+          <span class="text-xs font-bold text-center uppercase tracking-wider">Napoles</span>
+        </div>
+        <div class="flex flex-col items-center gap-0">
           ${scoreHTML}
         </div>
-        <div class="team-block">
-          <div class="team-logo away">${abrevRival}</div>
-          <div class="team-name">${rivalNombre}</div>
+        <div class="flex flex-col items-center gap-1 flex-1">
+          <div class="w-14 h-14 rounded-full bg-gray-50 flex items-center justify-center border border-gray-200 text-gray-500 font-bold text-lg">${rival.substring(0,2).toUpperCase()}</div>
+          <span class="text-xs font-bold text-center uppercase tracking-wider">${rival}</span>
         </div>
       </div>
-      <div class="match-info">
-        <div class="info-item"><span class="material-symbols-outlined">schedule</span> ${horaShow}</div>
-        <div class="info-item"><span class="material-symbols-outlined">stadium</span> ${partido.lugar || 'LIGA SANTA RITA'}</div>
-        ${partido.vocalia ? `<div class="info-item"><span class="material-symbols-outlined">assignment_ind</span> Vocalía: ${partido.vocalia}</div>` : ''}
-        ${partido.campeonato ? `<div class="info-item"><span class="material-symbols-outlined">emoji_events</span> ${partido.campeonato}</div>` : ''}
-      </div>
-      <div class="card-actions">
-        <button class="btn-edit" data-id="${partido.id}" data-fila="${partido.fila}" ${esFinalizado ? 'disabled' : ''}><span class="material-symbols-outlined" style="font-size:14px">edit</span> Editar</button>
-        <button class="btn-delete" data-id="${partido.id}" data-fila="${partido.fila}" ${esFinalizado ? 'disabled' : ''}><span class="material-symbols-outlined" style="font-size:14px">delete</span> Eliminar</button>
+      <div class="text-[10px] text-gray-400 flex items-center gap-3 border-t border-pink-100 pt-2 mt-1">
+        <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs">location_on</span> ${partido.lugar || 'LIGA SANTA RITA'}</span>
+        ${partido.vocalia ? `<span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs">assignment_ind</span> ${partido.vocalia}</span>` : ''}
       </div>
     `;
     container.appendChild(card);
   });
-  
-  document.querySelectorAll('.btn-edit:not([disabled])').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const id = parseInt(btn.dataset.id);
-      const fila = parseInt(btn.dataset.fila);
-      abrirModalEditar(id, fila);
-    });
-  });
-  document.querySelectorAll('.btn-delete:not([disabled])').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const fila = parseInt(btn.dataset.fila);
-      if (confirm('🗑️ ¿Eliminar este partido permanentemente?')) eliminarPartido(fila);
-    });
-  });
 }
 
-// ================= ABRIR MODAL NUEVO =================
+// ================= FILTROS =================
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.filter-btn').forEach(b => { b.style.background = 'transparent'; b.style.color = 'var(--text-secondary)'; b.style.borderColor = '#f0e0e5'; });
+    this.style.background = 'var(--primary-light)';
+    this.style.color = 'var(--primary)';
+    this.style.borderColor = 'var(--primary)';
+    const filter = this.dataset.filter;
+    let filtered = partidosList;
+    if (filter === 'proximo') filtered = partidosList.filter(p => p.estado === 'PRÓXIMO');
+    else if (filter === 'finalizado') filtered = partidosList.filter(p => p.estado === 'FINALIZADO');
+    else if (filter === 'pendiente') filtered = partidosList.filter(p => p.estado === 'PENDIENTE');
+    renderPartidos(filtered);
+  });
+});
+
+document.getElementById('searchInput').addEventListener('input', function() {
+  const term = this.value.toLowerCase().trim();
+  const filtered = partidosList.filter(p => (p.rival || '').toLowerCase().includes(term));
+  renderPartidos(filtered);
+});
+
+// ================= MODAL =================
 function abrirModalNuevo() {
-  editandoId = null;
-  editandoFila = null;
-  document.getElementById('modalTitle').textContent = '📅 Nuevo Partido';
-  document.getElementById('inputFecha').value = '';
-  document.getElementById('inputHora').value = '';
-  document.getElementById('selectRival').innerHTML = '<option value="">Selecciona un campeonato</option>';
-  document.getElementById('selectRival').disabled = true;
-  document.getElementById('selectLugar').value = 'LIGA SANTA RITA - Cancha 1';
+  editandoId = null; editandoFila = null;
+  document.getElementById('modalTitle').innerHTML = '<span class="material-symbols-outlined" style="color:var(--primary);">add_circle</span> Nuevo Partido';
+  document.getElementById('matchForm').reset();
   document.getElementById('inputResultado').value = 'VS';
   document.getElementById('selectEstado').value = 'PENDIENTE';
-  document.getElementById('inputVocalia').value = '';
-  
+  document.getElementById('selectRival').innerHTML = '<option value="">Selecciona un campeonato</option>';
+  document.getElementById('selectRival').disabled = true;
   const campeonato = document.getElementById('selectCampeonato').value;
   cargarRivales(campeonato);
-  
-  document.getElementById('modal').classList.add('active');
+  document.getElementById('matchModal').classList.add('active');
 }
 
-// ================= ABRIR MODAL EDITAR =================
-function abrirModalEditar(id, fila) {
+function abrirEditar(id, fila) {
   const partido = partidosList.find(p => p.id === id);
   if (!partido) return;
-  if (partido.estado === 'FINALIZADO') {
-    mostrarToast('⛔ No se puede editar un partido finalizado');
-    return;
-  }
-  editandoId = id;
-  editandoFila = fila;
-  document.getElementById('modalTitle').textContent = '✏️ Editar Partido';
+  if (partido.estado === 'FINALIZADO') { mostrarToast('⛔ No se puede editar un partido finalizado'); return; }
+  editandoId = id; editandoFila = fila;
+  document.getElementById('modalTitle').innerHTML = '<span class="material-symbols-outlined" style="color:var(--primary);">edit_note</span> Editar Partido';
   document.getElementById('inputFecha').value = partido.fecha || '';
   document.getElementById('inputHora').value = partido.hora || '';
-  document.getElementById('selectRival').innerHTML = '<option value="">Cargando...</option>';
-  document.getElementById('selectRival').disabled = true;
+  document.getElementById('selectCampeonato').value = partido.campeonato || 'CAMPEONATO SANTA RITA';
   document.getElementById('selectLugar').value = partido.lugar || 'LIGA SANTA RITA - Cancha 1';
   document.getElementById('inputResultado').value = partido.resultado || 'VS';
   document.getElementById('selectEstado').value = partido.estado || 'PENDIENTE';
   document.getElementById('inputVocalia').value = partido.vocalia || '';
-  
   const campeonato = partido.campeonato || 'CAMPEONATO SANTA RITA';
-  document.getElementById('selectCampeonato').value = campeonato;
   cargarRivales(campeonato).then(() => {
     document.getElementById('selectRival').value = partido.rival || '';
   });
-  document.getElementById('modal').classList.add('active');
+  document.getElementById('matchModal').classList.add('active');
 }
 
-// ================= GUARDAR PARTIDO =================
-async function guardarPartido() {
-  if (guardando) { mostrarToast('⏳ Procesando, espera...'); return; }
+function cerrarModal() {
+  document.getElementById('matchModal').classList.remove('active');
+}
+
+document.getElementById('selectCampeonato').addEventListener('change', function() {
+  if (document.getElementById('matchModal').classList.contains('active')) {
+    cargarRivales(this.value);
+    document.getElementById('selectRival').value = '';
+  }
+});
+
+// ================= GUARDAR =================
+document.getElementById('matchForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  if (guardando) { mostrarToast('⏳ Procesando...'); return; }
   const partido = {
     fecha: document.getElementById('inputFecha').value,
     hora: document.getElementById('inputHora').value,
@@ -818,8 +682,8 @@ async function guardarPartido() {
   };
   if (!partido.rival) { alert('Selecciona un rival'); return; }
   guardando = true;
-  const btn = document.getElementById('btnGuardar');
-  const originalText = btn.textContent;
+  const btn = this.querySelector('button[type="submit"]');
+  const orig = btn.textContent;
   btn.textContent = 'Guardando...';
   btn.disabled = true;
   try {
@@ -830,80 +694,57 @@ async function guardarPartido() {
       await enviarDatosPOST('agregar', { partido });
     }
     cerrarModal();
-    mostrarToast('✅ Partido guardado con éxito');
-    setTimeout(() => cargarPartidos(), 1000);
-  } catch(e) { mostrarToast('❌ Error al guardar'); }
+    mostrarToast('✅ Partido guardado');
+    setTimeout(() => cargarPartidos(), 500);
+  } catch(e) { mostrarToast('❌ Error'); }
   finally {
-    setTimeout(() => {
-      btn.textContent = originalText;
-      btn.disabled = false;
-      guardando = false;
-    }, 1000);
+    btn.textContent = orig;
+    btn.disabled = false;
+    guardando = false;
   }
-}
+});
 
-// ================= ELIMINAR PARTIDO =================
+// ================= ELIMINAR =================
 async function eliminarPartido(fila) {
   const partido = partidosList.find(p => p.fila === fila);
   if (partido && partido.estado === 'FINALIZADO') {
     mostrarToast('⛔ No se puede eliminar un partido finalizado');
     return;
   }
-  if (guardando) { mostrarToast('⏳ Espera operación anterior'); return; }
+  if (!confirm('🗑️ ¿Eliminar este partido?')) return;
+  if (guardando) { mostrarToast('⏳ Espera...'); return; }
   guardando = true;
   await enviarDatosPOST('eliminar', { fila });
   mostrarToast('🗑️ Partido eliminado');
-  setTimeout(() => { cargarPartidos(); guardando = false; }, 1100);
+  setTimeout(() => { cargarPartidos(); guardando = false; }, 500);
 }
 
-// ================= TOAST Y MODAL =================
+// ================= TOAST =================
 function mostrarToast(msg) {
   let t = document.querySelector('.toast');
-  if(t) t.remove();
+  if (t) t.remove();
   t = document.createElement('div');
   t.className = 'toast';
-  t.innerHTML = msg;
+  t.textContent = msg;
   document.body.appendChild(t);
-  setTimeout(() => t.remove(), 2200);
-}
-function cerrarModal() {
-  document.getElementById('modal').classList.remove('active');
+  setTimeout(() => t.remove(), 2500);
 }
 
-// ================= CONFIGURAR EVENTO DE CAMBIO DE CAMPEONATO =================
-function configurarEventoCampeonato() {
-  const selectCampeonato = document.getElementById('selectCampeonato');
-  selectCampeonato.addEventListener('change', function() {
-    const campeonato = this.value;
-    const modalActivo = document.getElementById('modal').classList.contains('active');
-    if (modalActivo) {
-      cargarRivales(campeonato);
-      document.getElementById('selectRival').value = '';
-    }
-  });
-}
-
-// ================= VALIDACIÓN ADMIN =================
+// ================= ADMIN CHECK =================
 if (localStorage.getItem('admin_activo') !== 'true') {
   window.location.href = './login.html';
 }
 
-// ================= INICIALIZACIÓN =================
-document.addEventListener('DOMContentLoaded', async () => {
+// ================= INICIO =================
+document.addEventListener('DOMContentLoaded', async function() {
   await cargarPartidos();
-  
   document.getElementById('btnAgregar').addEventListener('click', abrirModalNuevo);
-  document.getElementById('btnRefrescar').addEventListener('click', () => cargarPartidos());
-  document.getElementById('btnGuardar').addEventListener('click', guardarPartido);
-  document.getElementById('btnCancelar').addEventListener('click', cerrarModal);
-  document.getElementById('modal').addEventListener('click', (e) => {
-    if (e.target === document.getElementById('modal')) cerrarModal();
+  document.getElementById('matchModal').addEventListener('click', function(e) {
+    if (e.target === this) cerrarModal();
   });
-  
-  configurarEventoCampeonato();
-  
-  const campeonatoDefault = document.getElementById('selectCampeonato').value;
-  await cargarRivales(campeonatoDefault);
+  // Precargar rivales para el campeonato por defecto
+  const def = document.getElementById('selectCampeonato').value;
+  await cargarRivales(def);
 });
 </script>
 </body>
