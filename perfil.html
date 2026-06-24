@@ -559,7 +559,7 @@ async function mostrarPerfil(forceRefresh = false) {
         const lugar = PROXIMO_PARTIDO.lugar || 'LUGAR NO DISPONIBLE';
         const campeonato = PROXIMO_PARTIDO.campeonato || '';
         const esCopa = campeonato === 'COPA SANTA RITA';
-        const premio = esCopa ? '🏆 Premio: $200' : '';
+       
 
         partidoHTML = `
             <div class="match-card-gold match-next">
@@ -721,7 +721,7 @@ function mostrarRuleta() {
         PROXIMO_PARTIDO.campeonato = RIVALES_COPA.includes(PROXIMO_PARTIDO.rival) ? 'COPA SANTA RITA' : 'CAMPEONATO SANTA RITA';
     }
     const esCopa = PROXIMO_PARTIDO.campeonato === 'COPA SANTA RITA';
-    const premioText = esCopa ? '🏆 Premio: $200' : '';
+    
 
     document.body.className = 'ruleta-mode';
     document.body.style.background = '#0a0c10';
