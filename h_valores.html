@@ -2,7 +2,7 @@
 <html class="dark" lang="es">
 <head>
     <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" name="viewport"/>
     <meta content="#020617" name="theme-color"/>
     <title>Nápoles F.C. - Historial de Valores</title>
     <link href="./favicon.ico" rel="icon" type="image/x-icon"/>
@@ -18,7 +18,6 @@
             --glass-border: rgba(233, 195, 73, 0.15);
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
-            --accent-green: #10b981;
             --status-success: #10b981;
             --status-error: #ef4444;
         }
@@ -29,6 +28,7 @@
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
             padding: 0 0 80px 0;
+            margin: 0;
         }
 
         h1, h2, h3, .font-outfit { font-family: 'Outfit', sans-serif; }
@@ -130,20 +130,56 @@
             letter-spacing: 0.5px;
         }
 
-        /* REGISTRO ITEM (TARJETA) */
+        /* REGISTRO ITEM (TARJETA) CON ANIMACIÓN */
         .registro-item {
             background: rgba(2, 6, 23, 0.3);
             border-radius: 16px;
             padding: 14px 16px;
             border: 0.5px solid rgba(255, 255, 255, 0.04);
             transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
         }
         .registro-item:active {
             background: rgba(30, 41, 59, 0.3);
             transform: scale(0.99);
         }
 
-        /* BARRA INFERIOR */
+        /* ANIMACIÓN PARA PENDIENTES: PULSO DORADO */
+        .registro-item.pendiente {
+            border-left: 3px solid var(--brand-gold);
+            animation: pulse-gold 2s ease-in-out infinite;
+        }
+        @keyframes pulse-gold {
+            0% { box-shadow: 0 0 0 0 rgba(233, 195, 73, 0); }
+            50% { box-shadow: 0 0 20px 0 rgba(233, 195, 73, 0.15); border-left-color: #fbbf24; }
+            100% { box-shadow: 0 0 0 0 rgba(233, 195, 73, 0); }
+        }
+
+        /* EFECTO DE BRILLO EN PENDIENTES */
+        .registro-item.pendiente::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(233, 195, 73, 0.05), transparent 70%);
+            animation: shine 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(25deg); }
+            100% { transform: translateX(100%) rotate(25deg); }
+        }
+
+        /* ICONOS DE CONCEPTOS */
+        .concepto-icon {
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+
+        /* BARRA INFERIOR MEJORADA (ESTILO ÉLITE) */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -180,11 +216,19 @@
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
-        .bottom-nav .nav-item i { font-size: 1.2rem; transition: all 0.2s; }
+        .bottom-nav .nav-item i, 
+        .bottom-nav .nav-item .material-symbols-outlined {
+            font-size: 1.2rem;
+            transition: all 0.2s;
+        }
         .bottom-nav .nav-item:hover { color: #94a3b8; }
         .bottom-nav .nav-item:active { transform: scale(0.9); }
         .bottom-nav .nav-item.active { color: var(--brand-gold); }
-        .bottom-nav .nav-item .nav-label { font-size: 0.45rem; letter-spacing: 0.1em; }
+        .bottom-nav .nav-item .nav-label { 
+            font-size: 0.45rem; 
+            letter-spacing: 0.1em; 
+            font-weight: 800;
+        }
 
         /* TOAST */
         #toast {
@@ -219,10 +263,12 @@
 
         @media (max-width: 480px) {
             .btn-action { font-size: 0.65rem; padding: 10px 14px; }
-            .btn-action span.material-symbols-outlined { font-size: 1rem; }
-            .bottom-nav .nav-item i { font-size: 1rem; }
+            .btn-action .material-symbols-outlined { font-size: 1rem; }
+            .bottom-nav .nav-item i, 
+            .bottom-nav .nav-item .material-symbols-outlined { font-size: 1rem; }
             .bottom-nav .nav-item { min-width: 36px; padding: 2px 6px; }
             .bottom-nav .nav-item .nav-label { font-size: 0.4rem; }
+            .concepto-icon { font-size: 1rem; }
         }
     </style>
 </head>
@@ -293,26 +339,26 @@
         </div>
     </div>
 
-    <!-- BARRA DE NAVEGACIÓN INFERIOR -->
+    <!-- BARRA DE NAVEGACIÓN INFERIOR (MEJORADA) -->
     <div class="bottom-nav">
         <a href="perfil.html" class="nav-item" title="Perfil">
-            <i class="fa-regular fa-user"></i>
+            <span class="material-symbols-outlined">account_circle</span>
             <span class="nav-label">Perfil</span>
         </a>
         <a href="alineacion.html" class="nav-item" title="Alineación">
-            <i class="fa-regular fa-people-arrows"></i>
+            <span class="material-symbols-outlined">group</span>
             <span class="nav-label">Alineación</span>
         </a>
         <a href="h_valores.html" class="nav-item active" title="Historial Valores">
-            <i class="fa-regular fa-clock-rotate-left"></i>
+            <span class="material-symbols-outlined">payments</span>
             <span class="nav-label">Valores</span>
         </a>
         <a href="estadisticas.html" class="nav-item" title="Historial Partidos">
-            <i class="fa-regular fa-futbol"></i>
+            <span class="material-symbols-outlined">sports_soccer</span>
             <span class="nav-label">Partidos</span>
         </a>
         <button class="nav-item" onclick="actualizar()" title="Actualizar">
-            <i class="fa-solid fa-rotate"></i>
+            <span class="material-symbols-outlined">sync</span>
             <span class="nav-label">Actualizar</span>
         </button>
     </div>
@@ -405,6 +451,21 @@
             return Number(valor).toFixed(2);
         }
 
+        // ==================== OBTENER ICONO POR CONCEPTO ====================
+        function getIconoConcepto(concepto) {
+            const c = concepto.toLowerCase();
+            if (c.includes('inscripcion') || c.includes('inscripción')) return '📋';
+            if (c.includes('uniforme')) return '👕';
+            if (c.includes('medias')) return '🧦';
+            if (c.includes('multa')) return '🔴';
+            if (c.includes('amarilla')) return '🟨';
+            if (c.includes('roja')) return '🟥';
+            if (c.includes('vocalia') || c.includes('v.')) return '⚽';
+            if (c.includes('inaguracion')) return '🎉';
+            if (c.includes('pagado')) return '✅';
+            return '💳';
+        }
+
         // ==================== RENDERIZAR PANEL ====================
         function renderizarPanel(data) {
             const container = document.getElementById('dynamicContent');
@@ -427,22 +488,27 @@
                     const esPagado = estado === 'PAGADO' || parseFloat(r.saldo) === 0;
                     const badgeClass = esPagado ? 'estado-pagado-badge' : 'estado-pendiente-badge';
                     const estadoLabel = esPagado ? 'PAGADO' : 'PENDIENTE';
+                    const icono = getIconoConcepto(r.concepto);
+                    const pendienteClass = esPagado ? '' : 'pendiente';
 
                     registrosHTML += `
-                        <div class="registro-item">
+                        <div class="registro-item ${pendienteClass}">
                             <div class="flex justify-between items-start mb-2">
-                                <div>
-                                    <div class="text-[13px] font-black text-white font-outfit">${r.concepto || 'Sin concepto'}</div>
-                                    <div class="flex items-center gap-3 mt-1 text-[10px] text-gray-500 font-bold uppercase tracking-wider">
-                                        <span>ID #${r.id || '-'}</span>
-                                        <span class="text-white/10">|</span>
-                                        <span>${formatearFecha(r.fechaVencimiento)}</span>
+                                <div class="flex items-center gap-2 flex-1 min-w-0">
+                                    <span class="concepto-icon">${icono}</span>
+                                    <div class="truncate">
+                                        <div class="text-[13px] font-black text-white font-outfit">${r.concepto || 'Sin concepto'}</div>
+                                        <div class="flex items-center gap-3 mt-1 text-[10px] text-gray-500 font-bold uppercase tracking-wider">
+                                            <span>ID #${r.id || '-'}</span>
+                                            <span class="text-white/10">|</span>
+                                            <span>${formatearFecha(r.fechaVencimiento)}</span>
+                                        </div>
                                     </div>
                                 </div>
-                                <span class="${badgeClass}">${estadoLabel}</span>
+                                <span class="${badgeClass} flex-shrink-0 ml-2">${estadoLabel}</span>
                             </div>
                             <div class="flex justify-between items-center mt-2 text-[12px] font-black">
-                                <div class="flex gap-4">
+                                <div class="flex flex-wrap gap-3">
                                     <span class="text-white/50">Total: <span class="text-white">$${formatearNumero(r.valorTotal)}</span></span>
                                     <span class="text-emerald-400">Pagado: $${formatearNumero(r.valorPagado)}</span>
                                     <span class="text-red-400">Saldo: $${formatearNumero(r.saldo)}</span>
@@ -453,7 +519,6 @@
                 });
             }
 
-            // Porcentaje de progreso de pago
             const totalGeneral = totalPagado + totalPendiente;
             const porcentajePagado = totalGeneral > 0 ? (totalPagado / totalGeneral) * 100 : 0;
 
@@ -471,7 +536,7 @@
                         </div>
                     </header>
 
-                    <!-- BOTONES DE ACCIÓN (Reportar, Compartir, Ficha) -->
+                    <!-- BOTONES DE ACCIÓN -->
                     <div class="flex justify-between gap-3 mb-8 overflow-x-auto pb-2 scrollbar-hide">
                         <button class="btn-action flex-1 flex-shrink-0 justify-center" onclick="abrirReporte()">
                             <span class="material-symbols-outlined text-gold text-lg">flag</span> 
@@ -542,7 +607,7 @@
                         </div>
                     </div>
 
-                    <!-- BOTÓN VOLVER (opcional) -->
+                    <!-- BOTÓN VOLVER -->
                     <div class="text-center">
                         <a href="perfil.html" class="text-white/20 hover:text-gold/40 text-[10px] font-black uppercase tracking-[0.5em] transition-all">
                             ← Volver al Perfil
@@ -558,10 +623,15 @@
 
         // ==================== COMPARTIR PERFIL ====================
         function compartirPerfil() {
+            // Usamos la variable totalPagado y totalPendiente del último renderizado (las obtenemos del DOM)
+            const pagadoEl = document.querySelector('.text-emerald-400');
+            const pendienteEl = document.querySelector('.text-red-500');
+            const pagado = pagadoEl ? pagadoEl.textContent : '$0.00';
+            const pendiente = pendienteEl ? pendienteEl.textContent : '$0.00';
             if (navigator.share) {
                 navigator.share({
                     title: 'NÁPOLES F.C. - Historial de Valores',
-                    text: `Mi historial de pagos en el panel élite. Total pagado: $${totalPagado}, Pendiente: $${totalPendiente}`,
+                    text: `Mi historial de pagos: Total Pagado ${pagado}, Saldo Pendiente ${pendiente}`,
                     url: window.location.href
                 });
             } else {
@@ -621,12 +691,12 @@
         async function actualizar() {
             const btn = document.querySelector('.bottom-nav .nav-item:last-child');
             if (btn) {
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span class="nav-label">Cargando...</span>';
+                btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> <span class="nav-label">Cargando...</span>';
                 btn.disabled = true;
             }
             await cargarHistorial();
             if (btn) {
-                btn.innerHTML = '<i class="fa-solid fa-rotate"></i> <span class="nav-label">Actualizar</span>';
+                btn.innerHTML = '<span class="material-symbols-outlined">sync</span> <span class="nav-label">Actualizar</span>';
                 btn.disabled = false;
             }
             mostrarToast('✅ Datos actualizados');
