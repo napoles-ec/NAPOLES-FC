@@ -74,10 +74,17 @@
     .rival-chip { background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.3); border-radius: 40px; padding: 6px 18px; font-size: 0.8rem; color: #f5e6a3; }
     .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 15px; }
     .stat-card { background: rgba(0,0,0,.35); border-radius: 16px; padding: 10px 5px; text-align: center; }
-    /* RENDIMIENTO: responsive: 2 en móvil, 4 en desktop */
-    .performance-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-bottom: 15px; }
-    @media (min-width: 768px) {
-        .performance-grid { grid-template-columns: repeat(4,1fr); }
+    /* RENDIMIENTO: 3 columnas en desktop, 2 en móvil */
+    .performance-grid { 
+        display: grid; 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 12px; 
+        margin-bottom: 15px; 
+    }
+    @media (min-width: 640px) {
+        .performance-grid { 
+            grid-template-columns: repeat(3, 1fr); 
+        }
     }
     .metric-card { background: rgba(0,0,0,.35); border-radius: 16px; padding: 14px 10px; text-align: center; }
     .progress-circle { position: relative; width: 85px; height: 85px; margin: auto; }
@@ -240,8 +247,7 @@ const CONFIG = {
     URL_GAS: "https://script.google.com/macros/s/AKfycbywS6IouNegXuhs-hSNjEm18tE4IyJusY5o-P8diXxxkMiU7UESmsWYcpbxmrc9KgtY/exec"  // CAMBIA POR TU URL
 };
 
-// ==================== MAPEO DE RIVALES A COPA ====================
-const RIVALES_COPA = ['UNION FAMILIAR']; // Agrega aquí los rivales de la Copa Santa Rita
+const RIVALES_COPA = ['UNION FAMILIAR']; // Solo para inferir campeonato si el backend no lo envía
 
 let PROXIMO_PARTIDO = null;
 let jugadorSesion = null;
@@ -250,9 +256,7 @@ if (!jugadorSesion || !jugadorSesion.cedula) window.location.href = 'login.html'
 const cedula = jugadorSesion.cedula;
 const categoria = jugadorSesion.categoria || 'hombres';
 const nombreCompleto = (jugadorSesion.primerNombre || '') + ' ' + (jugadorSesion.apellidos || '');
-const dorsal = jugadorSesion.dorsal || '0'; // <--- OBTENER DORSAL
-
-console.log("✅ Jugador autenticado:", cedula, nombreCompleto, "Dorsal:", dorsal);
+const dorsal = jugadorSesion.dorsal || '0';
 
 let jugadorData = null;
 let refreshInterval = null;
@@ -443,15 +447,21 @@ async function cargarProximoPartido() {
     }
 }
 
-// ==================== OBTENER RIVALES ACTIVOS (con campeonato) ====================
+// ==================== OBTENER RIVALES CON CAMPEONATO (sin "SIN CAMPEONATO") ====================
 async function obtenerRivalesConCampeonato() {
     try {
         const resp = await fetch(`${CONFIG.URL_GAS}?action=getRivales&t=${Date.now()}`);
         const data = await resp.json();
         if (data.success && data.data) {
-            return data.data;
+            // Asignar CAMPEONATO SANTA RITA por defecto a los que no tengan
+            return data.data.map(r => {
+                const camp = (r.campeonato || '').trim();
+                if (!camp || camp === 'SIN CAMPEONATO') {
+                    return { ...r, campeonato: 'CAMPEONATO SANTA RITA' };
+                }
+                return r;
+            });
         } else {
-            console.warn("No se pudieron obtener rivales:", data.error);
             return [];
         }
     } catch(e) {
@@ -517,21 +527,15 @@ async function mostrarPerfil(forceRefresh = false) {
     const activos = todosRivales.filter(r => !finalizados.includes(r.nombre));
     const grupos = {};
     activos.forEach(r => {
-        const camp = r.campeonato || 'SIN CAMPEONATO';
+        const camp = r.campeonato || 'CAMPEONATO SANTA RITA';
         if (!grupos[camp]) grupos[camp] = [];
         grupos[camp].push(r.nombre);
     });
 
-    if (PROXIMO_PARTIDO && !PROXIMO_PARTIDO.campeonato) {
-        const encontrado = todosRivales.find(r => r.nombre === PROXIMO_PARTIDO.rival);
-        if (encontrado) {
-            PROXIMO_PARTIDO.campeonato = encontrado.campeonato;
-        } else {
-            PROXIMO_PARTIDO.campeonato = 'CAMPEONATO SANTA RITA';
-        }
-    }
-
-    const carruselHTML = Object.keys(grupos).map(camp => {
+    // Filtramos para que solo se muestren los campeonatos que tienen rivales
+    // Si solo hay "CAMPEONATO SANTA RITA" y "COPA SANTA RITA", se muestran dos carruseles
+    // Si aparece algún otro, también se mostrará
+    const carruselHTML = Object.keys(grupos).filter(camp => grupos[camp].length > 0).map(camp => {
         const esCopa = camp.toUpperCase().includes('COPA');
         const color = esCopa ? '#00b4d8' : '#D4AF37';
         const icono = esCopa ? 'fa-crown' : 'fa-trophy';
@@ -546,6 +550,15 @@ async function mostrarPerfil(forceRefresh = false) {
             </div>
         `;
     }).join('');
+
+    if (PROXIMO_PARTIDO && !PROXIMO_PARTIDO.campeonato) {
+        const encontrado = todosRivales.find(r => r.nombre === PROXIMO_PARTIDO.rival);
+        if (encontrado) {
+            PROXIMO_PARTIDO.campeonato = encontrado.campeonato;
+        } else {
+            PROXIMO_PARTIDO.campeonato = 'CAMPEONATO SANTA RITA';
+        }
+    }
 
     const s = {
         primerNombre: escapeHtml(perfil['primer nombre'] || ''),
@@ -576,15 +589,8 @@ async function mostrarPerfil(forceRefresh = false) {
     let deudaMedias = s.mediasEstado.toUpperCase().includes('PENDIENTE') ? 2 : 0;
     let totalAdmin = deudaInscripcion + deudaUniforme + deudaMedias + s.deudaTotal;
 
-    // Calcular compromiso: % de partidos confirmados vs total de partidos jugados
-    let compromiso = 0;
-    if (s.partidosJugados > 0) {
-        // Asumimos que partidosJugados es el total de partidos en los que participó (confirmados)
-        compromiso = 100; // Si tiene partidos, asumimos 100% de compromiso (porque ya jugó)
-        // Podríamos calcular de otra forma si tuvieramos un campo de "total de partidos convocados"
-        // Por ahora, si tiene partidos jugados, mostramos 100% de compromiso.
-        compromiso = 100;
-    }
+    // Compromiso: 100% si ha jugado partidos, 0 si no
+    let compromiso = s.partidosJugados > 0 ? 100 : 0;
 
     // ====== Tarjeta de deudas ======
     let deudasHTML = '';
@@ -674,7 +680,7 @@ async function mostrarPerfil(forceRefresh = false) {
             <div class="cards-row"><div class="card-identity"><div class="avatar-icon-box"><img src="./imagen/avatar/${cedula}.png" alt="Avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><i class="fa-solid fa-user-ninja" style="display:none;"></i></div><div style="font-weight:900;">${s.primerNombre}<br>${s.apellidos}</div><div style="font-size:.65rem;"><i class="fa-solid fa-id-card"></i> ${cedula}</div><div style="margin-top:8px;background:rgba(212,175,55,.2);padding:4px 10px;border-radius:20px; display:inline-block;">${edad} años</div></div><div class="jersey-3d"><div class="jersey-rotating"><div class="jersey-front"><div class="jersey-name">${s.nombreCamiseta}</div><div class="jersey-number">${s.dorsal}</div></div><div class="jersey-back"><div class="jersey-name">NÁPOLES FC</div><div class="jersey-number">${s.dorsal}</div></div></div></div></div>
             ${partidoHTML}
             
-            <!-- OTROS RIVALES DEL TORNEO - Dinámico -->
+            <!-- OTROS RIVALES DEL TORNEO (2 carruseles: CAMPEONATO SANTA RITA y COPA SANTA RITA) -->
             <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
                 ${carruselHTML}
             </div>
@@ -686,7 +692,7 @@ async function mostrarPerfil(forceRefresh = false) {
                 <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-square" style="color:#e74c3c;"></i></div><div class="stat-value">${s.rojas}</div><div class="stat-label">ROJAS</div></div>
             </div>
 
-            <!-- RENDIMIENTO HUMANO: 5 tarjetas (puntualidad, compañerismo, respeto, humildad, compromiso) -->
+            <!-- RENDIMIENTO HUMANO: 3 columnas en desktop, 2 en móvil -->
             <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-heart"></i> Rendimiento Humano</div>
                 <div class="performance-grid">
@@ -694,7 +700,6 @@ async function mostrarPerfil(forceRefresh = false) {
                     <div class="metric-card"><div class="metric-icon">${metricIcons.companerismo}</div>${renderProgressCircle(s.companerismo, '#2ecc71')}<div style="margin-top:10px; font-size:.7rem;">COMPAÑERISMO</div></div>
                     <div class="metric-card"><div class="metric-icon">${metricIcons.respeto}</div>${renderProgressCircle(s.respeto, '#f39c12')}<div style="margin-top:10px; font-size:.7rem;">RESPETO</div></div>
                     <div class="metric-card"><div class="metric-icon">${metricIcons.humildad}</div>${renderProgressCircle(s.humildad, '#9b59b6')}<div style="margin-top:10px; font-size:.7rem;">HUMILDAD</div></div>
-                    <!-- NUEVA TARJETA: COMPROMISO (100% si tiene partidos jugados) -->
                     <div class="metric-card"><div class="metric-icon">${metricIcons.compromiso}</div>${renderProgressCircle(compromiso, '#f472b6')}<div style="margin-top:10px; font-size:.7rem;">COMPROMISO</div></div>
                 </div>
                 <div class="average-box"><div class="average-score" style="font-size:2.2rem;">${promedio}/10</div><div class="stars-container">${generarEstrellas(promedio)}</div></div>
@@ -792,7 +797,7 @@ async function actualizarDatosEnSegundoPlano() {
 }
 window.cerrarSesion = function() { if (confirm('¿Cerrar sesión?')) { localStorage.removeItem('jugador_actual'); window.location.href = 'login.html'; } };
 
-// ==================== RULETA (ahora envía DORSAL) ====================
+// ==================== RULETA ====================
 function mostrarRuleta() {
     if (!PROXIMO_PARTIDO) {
         mostrarPerfil();
@@ -915,7 +920,7 @@ function mostrarRuleta() {
     }
 }
 
-// ==================== GUARDAR PARTIDO (ahora incluye DORSAL) ====================
+// ==================== GUARDAR PARTIDO (con dorsal) ====================
 async function guardarPartido() {
     const btn = document.getElementById('confirmButton');
     if (!btn || btn.disabled) return;
@@ -930,13 +935,12 @@ async function guardarPartido() {
             return;
         }
     }
-    // Construir parámetros INCLUYENDO DORSAL
     const params = new URLSearchParams({ 
         action: 'guardarPartido', 
         cedula, 
         categoria, 
         nombre: nombreCompleto, 
-        dorsal: dorsal,  // <--- AQUÍ SE ENVÍA EL DORSAL
+        dorsal: dorsal,
         rival: PROXIMO_PARTIDO.rival, 
         fecha: PROXIMO_PARTIDO.fecha, 
         hora: PROXIMO_PARTIDO.hora, 
