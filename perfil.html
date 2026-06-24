@@ -62,6 +62,10 @@
     .match-card-gold { background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(0,0,0,0.6)); border-left: 6px solid #D4AF37; border-radius: 24px; padding: 18px 15px; margin-bottom: 20px; text-align: center; }
     .match-next { border-left: 6px solid #2ecc71; animation: neonPulseGreen 1.5s infinite alternate; }
     @keyframes neonPulseGreen { 0% { box-shadow: 0 0 5px rgba(46,204,113,0.3); } 100% { box-shadow: 0 0 25px rgba(46,204,113,0.7); } }
+    /* NUEVO: Estilo para Copa Santa Rita (azul neón) */
+    .match-copa { border-left: 6px solid #00b4d8; animation: neonPulseBlue 1.5s infinite alternate; }
+    @keyframes neonPulseBlue { 0% { box-shadow: 0 0 5px rgba(0, 180, 216, 0.3); } 100% { box-shadow: 0 0 25px rgba(0, 180, 216, 0.7); } }
+
     .match-teams { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 15px; }
     .team-badge { text-align: center; flex: 1; }
     .vs-circle { background: #D4AF37; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #000; font-size: 1.3rem; }
@@ -72,7 +76,7 @@
     .rival-chip { background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.3); border-radius: 40px; padding: 6px 18px; font-size: 0.8rem; color: #f5e6a3; }
     .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 15px; }
     .stat-card { background: rgba(0,0,0,.35); border-radius: 16px; padding: 10px 5px; text-align: center; }
-    .performance-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-bottom: 15px; }
+    .performance-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 15px; }
     .metric-card { background: rgba(0,0,0,.35); border-radius: 16px; padding: 14px 10px; text-align: center; }
     .progress-circle { position: relative; width: 85px; height: 85px; margin: auto; }
     .average-box { background: rgba(212,175,55,.08); border: 1px solid rgba(212,175,55,.2); border-radius: 15px; padding: 15px; text-align: center; }
@@ -146,6 +150,8 @@
         .bottom-nav .nav-item .nav-label { font-size: 0.45rem; }
         .bottom-nav .nav-item { min-width: 40px; padding: 2px 8px; }
     }
+    /* Forzar 4 columnas en rendimiento */
+    .performance-grid { grid-template-columns: repeat(4,1fr) !important; }
 </style>
 </head>
 <body>
@@ -233,9 +239,6 @@
 const CONFIG = {
     URL_GAS: "https://script.google.com/macros/s/AKfycbz7tqh-8QC-MW_BjhDLDOS5_6JtET83DLAq4os9lCs6HllrF1-DI9PzBMvhPhBUqVDy/exec"  // CAMBIA POR TU URL
 };
-
-// ==================== MAPEO DE RIVALES A CAMPEONATO ====================
-const RIVALES_COPA = ['UNION FAMILIAR']; // Agrega aquí los rivales de la Copa Santa Rita
 
 let PROXIMO_PARTIDO = null;
 let jugadorSesion = null;
@@ -411,7 +414,7 @@ async function actualizarPerfil() {
     }
 }
 
-// ==================== OBTENER PRÓXIMO PARTIDO ====================
+// ==================== OBTENER PRÓXIMO PARTIDO (dinámico, sin constantes) ====================
 async function cargarProximoPartido() {
     try {
         const resp = await fetch(`${CONFIG.URL_GAS}?action=getProximoPartido&t=${Date.now()}`);
@@ -420,10 +423,7 @@ async function cargarProximoPartido() {
             const partido = data.partido;
             partido.fechaLegible = formatearFecha(partido.fecha);
             partido.hora = formatearHora(partido.hora);
-            // Si el backend no devuelve campeonato, inferirlo desde la lista de rivales de Copa
-            if (!partido.campeonato) {
-                partido.campeonato = RIVALES_COPA.includes(partido.rival) ? 'COPA SANTA RITA' : 'CAMPEONATO SANTA RITA';
-            }
+            // Si el backend no envía campeonato, lo buscaremos después con la lista de rivales
             PROXIMO_PARTIDO = partido;
             return true;
         } else {
@@ -436,19 +436,36 @@ async function cargarProximoPartido() {
     }
 }
 
-// ==================== OBTENER RIVALES ACTIVOS ====================
-async function cargarRivalesActivos() {
+// ==================== OBTENER TODOS LOS RIVALES CON CAMPEONATO (desde la hoja) ====================
+async function obtenerRivalesConCampeonato() {
     try {
-        const resp = await fetch(`${CONFIG.URL_GAS}?action=getRivalesActivos&t=${Date.now()}`);
+        const resp = await fetch(`${CONFIG.URL_GAS}?action=getRivales&t=${Date.now()}`);
         const data = await resp.json();
         if (data.success && data.data) {
-            return data.data;
+            return data.data; // array de objetos con {nombre, campeonato}
         } else {
-            console.warn("No se pudieron cargar rivales activos:", data.error);
+            console.warn("No se pudieron obtener rivales:", data.error);
             return [];
         }
     } catch(e) {
         console.error("Error cargando rivales:", e);
+        return [];
+    }
+}
+
+// ==================== OBTENER PARTIDOS FINALIZADOS (para filtrar activos) ====================
+async function obtenerPartidosFinalizados() {
+    try {
+        const resp = await fetch(`${CONFIG.URL_GAS}?action=getPartidos&t=${Date.now()}`);
+        const data = await resp.json();
+        if (data.success && data.data) {
+            return data.data
+                .filter(p => p.estado && p.estado.toUpperCase() === 'FINALIZADO')
+                .map(p => p.rival);
+        } else {
+            return [];
+        }
+    } catch(e) {
         return [];
     }
 }
@@ -459,7 +476,6 @@ async function mostrarPerfil(forceRefresh = false) {
     document.body.style.background = '';
     if (refreshInterval) clearInterval(refreshInterval);
     
-    // ====== ACTUALIZACIÓN AUTOMÁTICA CADA 10 MINUTOS ======
     refreshInterval = setInterval(() => {
         if (document.body.className !== 'ruleta-mode') actualizarDatosEnSegundoPlano();
     }, 10 * 60 * 1000);
@@ -486,7 +502,50 @@ async function mostrarPerfil(forceRefresh = false) {
     }
     jugadorData = perfil;
 
-    // ====== CORRECCIÓN: Usar perfil["partidos jugados"] ======
+    // ====== OBTENER RIVALES Y FINALIZADOS PARA CARRUSELES ======
+    const [todosRivales, finalizados] = await Promise.all([
+        obtenerRivalesConCampeonato(),
+        obtenerPartidosFinalizados()
+    ]);
+
+    // Agrupar rivales activos por campeonato (excluyendo finalizados)
+    const activos = todosRivales.filter(r => !finalizados.includes(r.nombre));
+    const grupos = {};
+    activos.forEach(r => {
+        const camp = r.campeonato || 'SIN CAMPEONATO';
+        if (!grupos[camp]) grupos[camp] = [];
+        grupos[camp].push(r.nombre);
+    });
+
+    // Si el próximo partido no tiene campeonato, intentar inferirlo desde la lista
+    if (PROXIMO_PARTIDO && !PROXIMO_PARTIDO.campeonato) {
+        const encontrado = todosRivales.find(r => r.nombre === PROXIMO_PARTIDO.rival);
+        if (encontrado) {
+            PROXIMO_PARTIDO.campeonato = encontrado.campeonato;
+        } else {
+            PROXIMO_PARTIDO.campeonato = 'CAMPEONATO SANTA RITA'; // fallback
+        }
+    }
+
+    // ====== Construcción de carruseles ======
+    const carruselHTML = Object.keys(grupos).map(camp => {
+        const esCopa = camp.toUpperCase().includes('COPA');
+        const color = esCopa ? '#00b4d8' : '#D4AF37';
+        const icono = esCopa ? 'fa-crown' : 'fa-trophy';
+        const chips = grupos[camp].map(r => `<span class="rival-chip">${r}</span>`).join('');
+        // Duplicar para efecto infinito
+        const chipsDuplicados = [chips, chips].join('');
+        return `
+            <div style="display:flex; align-items:center; gap:8px; margin:20px 0 10px 0; color:${color}; border-bottom:1px solid ${color}33; padding-bottom:8px;">
+                <i class="fa-solid ${icono}"></i> ${camp}
+            </div>
+            <div class="rivales-scroll">
+                <div class="rivales-track">${chipsDuplicados}</div>
+            </div>
+        `;
+    }).join('');
+
+    // ====== Datos del jugador ======
     const s = {
         primerNombre: escapeHtml(perfil['primer nombre'] || ''),
         apellidos: escapeHtml(perfil['apellidos'] || ''),
@@ -516,7 +575,7 @@ async function mostrarPerfil(forceRefresh = false) {
     let deudaMedias = s.mediasEstado.toUpperCase().includes('PENDIENTE') ? 2 : 0;
     let totalAdmin = deudaInscripcion + deudaUniforme + deudaMedias + s.deudaTotal;
 
-    // ====== Construcción de la tarjeta de VALORES PENDIENTES ======
+    // ====== Tarjeta de deudas ======
     let deudasHTML = '';
     if (s.detalleDeudas && s.detalleDeudas.length > 0) {
         let items = s.detalleDeudas.map(d => 
@@ -549,7 +608,7 @@ async function mostrarPerfil(forceRefresh = false) {
         `;
     }
 
-    // ====== Construcción del bloque del partido (sin premio) ======
+    // ====== Partido próximo ======
     let partidoHTML = '';
     if (PROXIMO_PARTIDO) {
         const rival = PROXIMO_PARTIDO.rival || 'RIVAL';
@@ -558,9 +617,11 @@ async function mostrarPerfil(forceRefresh = false) {
         const hora = PROXIMO_PARTIDO.hora || '12:00';
         const lugar = PROXIMO_PARTIDO.lugar || 'LUGAR NO DISPONIBLE';
         const campeonato = PROXIMO_PARTIDO.campeonato || '';
+        const esCopa = campeonato && campeonato.toUpperCase().includes('COPA');
+        const matchClass = esCopa ? 'match-card-gold match-copa' : 'match-card-gold match-next';
 
         partidoHTML = `
-            <div class="match-card-gold match-next">
+            <div class="${matchClass}">
                 <div class="match-teams">
                     <div class="team-badge"><div class="team-name">⚜️ NÁPOLES F.C.</div></div>
                     <div class="vs-circle">VS</div>
@@ -586,27 +647,6 @@ async function mostrarPerfil(forceRefresh = false) {
         `;
     }
 
-    // ====== OBTENER RIVALES ACTIVOS ======
-    let rivalesActivos = [];
-    try {
-        const resp = await fetch(`${CONFIG.URL_GAS}?action=getRivalesActivos&t=${Date.now()}`);
-        const data = await resp.json();
-        if (data.success && data.data) {
-            rivalesActivos = data.data;
-        }
-    } catch(e) {
-        console.error("Error cargando rivales:", e);
-    }
-
-    const listaRivales = rivalesActivos.map(rival => ({ nombre: rival, especial: "" }));
-    if (PROXIMO_PARTIDO && !listaRivales.some(r => r.nombre === PROXIMO_PARTIDO.rival)) {
-        listaRivales.push({ nombre: PROXIMO_PARTIDO.rival, especial: "next" });
-    }
-    if (listaRivales.length === 0) {
-        listaRivales.push({ nombre: "Sin rivales programados", especial: "" });
-    }
-    const chipsRivales = [...listaRivales, ...listaRivales].map(rival => `<span class="rival-chip ${rival.especial}">${rival.nombre}</span>`).join('');
-
     const metricIcons = { puntualidad: '<i class="fa-solid fa-clock"></i>', companerismo: '<i class="fa-solid fa-handshake"></i>', respeto: '<i class="fa-solid fa-hand-peace"></i>', humildad: '<i class="fa-solid fa-dove"></i>' };
 
     container.innerHTML = `
@@ -616,33 +656,59 @@ async function mostrarPerfil(forceRefresh = false) {
             <div style="font-size:0.75rem;color:#D4AF37; text-align:center; margin-bottom:20px;">Categoría: ${categoria === 'mujeres' ? 'Femenina ♀' : 'Masculina ♂'}</div>
             <div class="cards-row"><div class="card-identity"><div class="avatar-icon-box"><img src="./imagen/avatar/${cedula}.png" alt="Avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><i class="fa-solid fa-user-ninja" style="display:none;"></i></div><div style="font-weight:900;">${s.primerNombre}<br>${s.apellidos}</div><div style="font-size:.65rem;"><i class="fa-solid fa-id-card"></i> ${cedula}</div><div style="margin-top:8px;background:rgba(212,175,55,.2);padding:4px 10px;border-radius:20px; display:inline-block;">${edad} años</div></div><div class="jersey-3d"><div class="jersey-rotating"><div class="jersey-front"><div class="jersey-name">${s.nombreCamiseta}</div><div class="jersey-number">${s.dorsal}</div></div><div class="jersey-back"><div class="jersey-name">NÁPOLES FC</div><div class="jersey-number">${s.dorsal}</div></div></div></div></div>
             ${partidoHTML}
-            <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;"><div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-people-group"></i> OTROS RIVALES DEL TORNEO</div><div class="rivales-scroll"><div class="rivales-track">${chipsRivales}</div></div></div>
-            <div class="stats-grid"><div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-shirt"></i></div><div class="stat-value">${s.partidosJugados}</div><div class="stat-label">PARTIDOS</div></div><div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-futbol"></i></div><div class="stat-value">${s.goles}</div><div class="stat-label">GOLES</div></div><div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-square" style="color:#f1c40f;"></i></div><div class="stat-value">${s.amarillas}</div><div class="stat-label">AMARILLAS</div></div><div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-square" style="color:#e74c3c;"></i></div><div class="stat-value">${s.rojas}</div><div class="stat-label">ROJAS</div></div></div>
-            <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;"><div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-heart"></i> Rendimiento Humano</div><div class="performance-grid"><div class="metric-card"><div class="metric-icon">${metricIcons.puntualidad}</div>${renderProgressCircle(s.puntualidad, '#3498db')}<div style="margin-top:10px; font-size:.7rem;">PUNTUALIDAD</div></div><div class="metric-card"><div class="metric-icon">${metricIcons.companerismo}</div>${renderProgressCircle(s.companerismo, '#2ecc71')}<div style="margin-top:10px; font-size:.7rem;">COMPAÑERISMO</div></div><div class="metric-card"><div class="metric-icon">${metricIcons.respeto}</div>${renderProgressCircle(s.respeto, '#f39c12')}<div style="margin-top:10px; font-size:.7rem;">RESPETO</div></div><div class="metric-card"><div class="metric-icon">${metricIcons.humildad}</div>${renderProgressCircle(s.humildad, '#9b59b6')}<div style="margin-top:10px; font-size:.7rem;">HUMILDAD</div></div></div><div class="average-box"><div class="average-score" style="font-size:2.2rem;">${promedio}/10</div><div class="stars-container">${generarEstrellas(promedio)}</div></div></div>
-            <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;"><div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-chart-line"></i> Estado Administrativo</div><div class="admin-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                ${deudaInscripcion ? `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><div><i class="fa-solid fa-file-signature"></i></div><div>$5</div><div>INSCRIPCIÓN</div><div style="background:rgba(231,76,60,.15); color:#e74c3c; border-radius:20px; margin-top:5px;">PENDIENTE</div></div>` : ''}
-                ${deudaUniforme ? `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><div><i class="fa-solid fa-tshirt"></i></div><div>$17</div><div>UNIFORME</div><div style="background:rgba(243,156,18,.15); color:#f39c12; border-radius:20px; margin-top:5px;">PENDIENTE</div></div>` : ''}
-                ${deudaMedias ? `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><div><i class="fa-solid fa-socks"></i></div><div>$2</div><div>MEDIAS</div><div style="background:rgba(52,152,219,.15); color:#3498db; border-radius:20px; margin-top:5px;">PENDIENTE</div></div>` : ''}
-                ${deudasHTML}
+            
+            <!-- OTROS RIVALES DEL TORNEO - Dinámico, sin constantes -->
+            <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
+                ${carruselHTML}
             </div>
-            <div class="debt-box" style="margin-top:15px; background:rgba(0,0,0,.4); border-radius:14px; padding:12px;">
-                <div style="display:flex; justify-content:space-between;">
-                    <span>VALORES PENDIENTES</span>
-                    <span style="color:${totalAdmin > 0 ? '#e74c3c' : '#2ecc71'}">$${totalAdmin.toFixed(2)}</span>
-                </div>
-                <div class="progress-bar" style="width:100%; height:8px; border-radius:10px; background:rgba(255,255,255,.08); overflow:hidden; margin-top:10px;">
-                    <div style="height:100%; width:${Math.min(totalAdmin / 30 * 100, 100)}%; background:linear-gradient(90deg,#e74c3c,#f39c12);"></div>
-                </div>
-                <div style="margin-top:10px; font-size:.7rem; padding:8px; border-radius:10px; text-align:center; background:${totalAdmin === 0 ? 'rgba(46,204,113,.1)' : 'rgba(231,76,60,.1)'};">
-                    ${totalAdmin === 0 ? '✅ ¡Estás al día!' : '⚠️ Regulariza tus pagos'}
-                </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-shirt"></i></div><div class="stat-value">${s.partidosJugados}</div><div class="stat-label">PARTIDOS</div></div>
+                <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-futbol" style="color:#22c55e;"></i></div><div class="stat-value">${s.goles}</div><div class="stat-label">GOLES</div></div>
+                <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-square" style="color:#f1c40f;"></i></div><div class="stat-value">${s.amarillas}</div><div class="stat-label">AMARILLAS</div></div>
+                <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-square" style="color:#e74c3c;"></i></div><div class="stat-value">${s.rojas}</div><div class="stat-label">ROJAS</div></div>
             </div>
-            <button class="btn-pagar" onclick="abrirBankModal()"><i class="fa-solid fa-credit-card"></i> Realizar Pago</button>
+
+            <!-- RENDIMIENTO HUMANO: 4 columnas -->
+            <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-heart"></i> Rendimiento Humano</div>
+                <div class="performance-grid">
+                    <div class="metric-card"><div class="metric-icon">${metricIcons.puntualidad}</div>${renderProgressCircle(s.puntualidad, '#3498db')}<div style="margin-top:10px; font-size:.7rem;">PUNTUALIDAD</div></div>
+                    <div class="metric-card"><div class="metric-icon">${metricIcons.companerismo}</div>${renderProgressCircle(s.companerismo, '#2ecc71')}<div style="margin-top:10px; font-size:.7rem;">COMPAÑERISMO</div></div>
+                    <div class="metric-card"><div class="metric-icon">${metricIcons.respeto}</div>${renderProgressCircle(s.respeto, '#f39c12')}<div style="margin-top:10px; font-size:.7rem;">RESPETO</div></div>
+                    <div class="metric-card"><div class="metric-icon">${metricIcons.humildad}</div>${renderProgressCircle(s.humildad, '#9b59b6')}<div style="margin-top:10px; font-size:.7rem;">HUMILDAD</div></div>
+                </div>
+                <div class="average-box"><div class="average-score" style="font-size:2.2rem;">${promedio}/10</div><div class="stars-container">${generarEstrellas(promedio)}</div></div>
+            </div>
+
+            <!-- ADMINISTRATIVO -->
+            <div class="glass-card-perfil" style="padding:15px; margin-bottom:15px;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px; color:#D4AF37;"><i class="fa-solid fa-chart-line"></i> Estado Administrativo</div>
+                <div class="admin-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    ${deudaInscripcion ? `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><div><i class="fa-solid fa-file-signature"></i></div><div>$5</div><div>INSCRIPCIÓN</div><div style="background:rgba(231,76,60,.15); color:#e74c3c; border-radius:20px; margin-top:5px;">PENDIENTE</div></div>` : ''}
+                    ${deudaUniforme ? `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><div><i class="fa-solid fa-tshirt"></i></div><div>$17</div><div>UNIFORME</div><div style="background:rgba(243,156,18,.15); color:#f39c12; border-radius:20px; margin-top:5px;">PENDIENTE</div></div>` : ''}
+                    ${deudaMedias ? `<div style="background:rgba(0,0,0,.35); border-radius:16px; padding:12px; text-align:center;"><div><i class="fa-solid fa-socks"></i></div><div>$2</div><div>MEDIAS</div><div style="background:rgba(52,152,219,.15); color:#3498db; border-radius:20px; margin-top:5px;">PENDIENTE</div></div>` : ''}
+                    ${deudasHTML}
+                </div>
+                <div class="debt-box" style="margin-top:15px; background:rgba(0,0,0,.4); border-radius:14px; padding:12px;">
+                    <div style="display:flex; justify-content:space-between;">
+                        <span>VALORES PENDIENTES</span>
+                        <span style="color:${totalAdmin > 0 ? '#e74c3c' : '#2ecc71'}">$${totalAdmin.toFixed(2)}</span>
+                    </div>
+                    <div class="progress-bar" style="width:100%; height:8px; border-radius:10px; background:rgba(255,255,255,.08); overflow:hidden; margin-top:10px;">
+                        <div style="height:100%; width:${Math.min(totalAdmin / 30 * 100, 100)}%; background:linear-gradient(90deg,#e74c3c,#f39c12);"></div>
+                    </div>
+                    <div style="margin-top:10px; font-size:.7rem; padding:8px; border-radius:10px; text-align:center; background:${totalAdmin === 0 ? 'rgba(46,204,113,.1)' : 'rgba(231,76,60,.1)'};">
+                        ${totalAdmin === 0 ? '✅ ¡Estás al día!' : '⚠️ Regulariza tus pagos'}
+                    </div>
+                </div>
+                <button class="btn-pagar" onclick="abrirBankModal()"><i class="fa-solid fa-credit-card"></i> Realizar Pago</button>
+            </div>
             <button class="btn-logout" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> CERRAR SESIÓN</button>
         </div>
     </div>`;
 
-    // ====== Inyectar barra de navegación inferior ======
+    // ====== Barra de navegación ======
     const navContainer = document.getElementById('bottomNavContainer');
     navContainer.innerHTML = `
         <div class="bottom-nav">
@@ -707,17 +773,13 @@ async function actualizarDatosEnSegundoPlano() {
 }
 window.cerrarSesion = function() { if (confirm('¿Cerrar sesión?')) { localStorage.removeItem('jugador_actual'); window.location.href = 'login.html'; } };
 
-// ==================== RULETA (sin premio) ====================
+// ==================== RULETA (sin cambios, pero usa PROXIMO_PARTIDO) ====================
 function mostrarRuleta() {
     if (!PROXIMO_PARTIDO) {
         mostrarPerfil();
         return;
     }
-    // Si no tiene campeonato, inferirlo
-    if (!PROXIMO_PARTIDO.campeonato) {
-        PROXIMO_PARTIDO.campeonato = RIVALES_COPA.includes(PROXIMO_PARTIDO.rival) ? 'COPA SANTA RITA' : 'CAMPEONATO SANTA RITA';
-    }
-
+    // Si no tiene campeonato, intentar inferir (pero ya debería tenerlo desde mostrarPerfil)
     document.body.className = 'ruleta-mode';
     document.body.style.background = '#0a0c10';
     const container = document.getElementById('dynamicContent');
