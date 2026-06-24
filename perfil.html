@@ -234,6 +234,9 @@ const CONFIG = {
     URL_GAS: "https://script.google.com/macros/s/AKfycbz7tqh-8QC-MW_BjhDLDOS5_6JtET83DLAq4os9lCs6HllrF1-DI9PzBMvhPhBUqVDy/exec"  // CAMBIA POR TU URL
 };
 
+// ==================== RIVALES DE LA COPA SANTA RITA (fallback) ====================
+const RIVALES_COPA = ['UNION FAMILIAR']; // Agrega aquí los rivales de la Copa Santa Rita
+
 let PROXIMO_PARTIDO = null;
 let jugadorSesion = null;
 try { jugadorSesion = JSON.parse(localStorage.getItem('jugador_actual')); } catch(e) { console.warn(e); }
@@ -384,8 +387,6 @@ function enviarReporte() {
     document.getElementById('reportText').value = '';
 }
 function irAlineacion() { window.location.href = 'alineacion.html'; }
-
-// ==================== NUEVAS FUNCIONES PARA HISTORIALES ====================
 function irHistorialValores() { window.location.href = 'h_valores.html'; }
 function irHistorialPartidos() { window.location.href = 'h_partidos.html'; }
 
@@ -410,7 +411,7 @@ async function actualizarPerfil() {
     }
 }
 
-// ==================== OBTENER PRÓXIMO PARTIDO ====================
+// ==================== OBTENER PRÓXIMO PARTIDO (con detección de campeonato) ====================
 async function cargarProximoPartido() {
     try {
         const resp = await fetch(`${CONFIG.URL_GAS}?action=getProximoPartido&t=${Date.now()}`);
@@ -419,6 +420,10 @@ async function cargarProximoPartido() {
             const partido = data.partido;
             partido.fechaLegible = formatearFecha(partido.fecha);
             partido.hora = formatearHora(partido.hora);
+            // Si el backend no devuelve campeonato, inferirlo
+            if (!partido.campeonato) {
+                partido.campeonato = RIVALES_COPA.includes(partido.rival) ? 'COPA SANTA RITA' : 'CAMPEONATO SANTA RITA';
+            }
             PROXIMO_PARTIDO = partido;
             return true;
         } else {
@@ -448,7 +453,7 @@ async function cargarRivalesActivos() {
     }
 }
 
-// ==================== RENDER PERFIL ====================
+// ==================== RENDER PERFIL (con premio en la COPA) ====================
 async function mostrarPerfil(forceRefresh = false) {
     document.body.className = '';
     document.body.style.background = '';
@@ -544,7 +549,7 @@ async function mostrarPerfil(forceRefresh = false) {
         `;
     }
 
-    // ====== Construcción del bloque del partido ======
+    // ====== Construcción del bloque del partido (con premio) ======
     let partidoHTML = '';
     if (PROXIMO_PARTIDO) {
         const rival = PROXIMO_PARTIDO.rival || 'RIVAL';
@@ -552,6 +557,10 @@ async function mostrarPerfil(forceRefresh = false) {
         const fechaLegible = PROXIMO_PARTIDO.fechaLegible || 'FECHA NO DISPONIBLE';
         const hora = PROXIMO_PARTIDO.hora || '12:00';
         const lugar = PROXIMO_PARTIDO.lugar || 'LUGAR NO DISPONIBLE';
+        const campeonato = PROXIMO_PARTIDO.campeonato || '';
+        const esCopa = campeonato === 'COPA SANTA RITA';
+        const premio = esCopa ? '🏆 Premio: $200' : '';
+
         partidoHTML = `
             <div class="match-card-gold match-next">
                 <div class="match-teams">
@@ -564,6 +573,8 @@ async function mostrarPerfil(forceRefresh = false) {
                     <div class="match-info-item"><i class="fa-regular fa-clock"></i> ${hora} HORAS</div>
                     <div class="match-info-item"><i class="fa-solid fa-location-dot"></i> ${lugar}</div>
                 </div>
+                ${premio ? `<div style="text-align:center; margin-top:10px; background: rgba(233,195,73,0.15); padding:6px 12px; border-radius:30px; border:1px solid #e9c349; color:#e9c349; font-weight:bold; font-size:0.9rem;">${premio}</div>` : ''}
+                ${campeonato ? `<div style="text-align:center; margin-top:6px; font-size:0.7rem; color:#94a3b8;">${campeonato}</div>` : ''}
             </div>
         `;
     } else {
@@ -634,7 +645,7 @@ async function mostrarPerfil(forceRefresh = false) {
         </div>
     </div>`;
 
-    // ====== Inyectar barra de navegación inferior (MODIFICADA) ======
+    // ====== Inyectar barra de navegación inferior ======
     const navContainer = document.getElementById('bottomNavContainer');
     navContainer.innerHTML = `
         <div class="bottom-nav">
@@ -699,12 +710,19 @@ async function actualizarDatosEnSegundoPlano() {
 }
 window.cerrarSesion = function() { if (confirm('¿Cerrar sesión?')) { localStorage.removeItem('jugador_actual'); window.location.href = 'login.html'; } };
 
-// ==================== RULETA ====================
+// ==================== RULETA (con premio en la COPA) ====================
 function mostrarRuleta() {
     if (!PROXIMO_PARTIDO) {
         mostrarPerfil();
         return;
     }
+    // Si no tiene campeonato, inferirlo
+    if (!PROXIMO_PARTIDO.campeonato) {
+        PROXIMO_PARTIDO.campeonato = RIVALES_COPA.includes(PROXIMO_PARTIDO.rival) ? 'COPA SANTA RITA' : 'CAMPEONATO SANTA RITA';
+    }
+    const esCopa = PROXIMO_PARTIDO.campeonato === 'COPA SANTA RITA';
+    const premioText = esCopa ? '🏆 Premio: $200' : '';
+
     document.body.className = 'ruleta-mode';
     document.body.style.background = '#0a0c10';
     const container = document.getElementById('dynamicContent');
@@ -713,8 +731,45 @@ function mostrarRuleta() {
             <div class="absolute inset-0 overflow-hidden pointer-events-none opacity-20"><div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-secondary/10 rounded-full blur-[120px]"></div></div>
             <div class="text-center px-4 mb-12" id="intro-header"><h2 class="font-display-lg text-[32px] text-secondary tracking-widest mb-2 uppercase" style="color:#e9c349;">Sorteo de Rivales</h2><p class="font-label-caps text-on-surface-variant text-[10px] tracking-[0.3em] uppercase" style="color:#ccc;">Buscando el próximo desafío...</p></div>
             <div class="relative w-full overflow-hidden py-12 flex items-center" id="roulette-window"><div class="absolute left-1/2 top-0 -translate-x-1/2 z-20 flex flex-col items-center h-full justify-between py-4"><div class="w-1 h-8 bg-secondary/80 rounded-full blur-[2px]"></div><div class="w-1 h-8 bg-secondary/80 rounded-full blur-[2px]"></div></div><div class="roulette-track px-[50vw]" id="roulette-track"></div></div>
-            <div class="hidden absolute inset-0 flex flex-col items-center justify-center z-40 bg-black/90 backdrop-blur-md" id="reveal-screen"><div class="reveal-element text-center mb-8"><p class="font-label-caps text-secondary tracking-[0.4em] mb-4" style="color:#e9c349;">PRÓXIMO ENCUENTRO</p><div class="flex items-center justify-center gap-6 md:gap-12"><div class="flex flex-col items-center gap-4"><div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-white/30"><span class="text-5xl">⚜️</span></div><span class="font-display-lg text-xl tracking-wider text-white">NÁPOLES</span></div><div class="font-display-lg text-5xl text-secondary cinematic-text italic" style="color:#e9c349;">VS</div><div class="flex flex-col items-center gap-4"><div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-secondary winner-glow"><span class="text-5xl">${PROXIMO_PARTIDO.icono}</span></div><span class="font-display-lg text-xl tracking-wider text-white">${PROXIMO_PARTIDO.rival}</span></div></div></div><div class="reveal-element match-info-card w-full max-w-md mx-4"><div class="flex justify-center gap-6 flex-wrap text-white"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">event</span><span class="text-sm font-bold">${PROXIMO_PARTIDO.fechaLegible}</span></div><div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">schedule</span><span class="text-sm font-bold">${PROXIMO_PARTIDO.hora} HORAS</span></div><div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">stadium</span><span class="text-sm font-bold">${PROXIMO_PARTIDO.lugar}</span></div></div></div><div class="reveal-element space-y-6 w-full max-w-xs px-6"><div class="glass-card p-6 rounded-2xl border border-secondary/40"><div class="flex justify-between items-center mb-4"><span class="font-label-caps text-[10px] text-white uppercase">Nivel de Riesgo</span><span class="font-label-caps text-[10px] text-secondary">MÁXIMO</span></div><div class="w-full bg-white/20 h-1.5 rounded-full overflow-hidden"><div class="bg-secondary h-full rounded-full" style="width: 95%;"></div></div></div><button id="confirmButton" class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 rounded-lg text-sm uppercase transition-all shadow-lg">Ahí estaré puntual</button></div></div><div class="fixed inset-0 pointer-events-none z-50" id="particles"></div>
+            <div class="hidden absolute inset-0 flex flex-col items-center justify-center z-40 bg-black/90 backdrop-blur-md" id="reveal-screen">
+                <div class="reveal-element text-center mb-8">
+                    <p class="font-label-caps text-secondary tracking-[0.4em] mb-4" style="color:#e9c349;">PRÓXIMO ENCUENTRO</p>
+                    <div class="flex items-center justify-center gap-6 md:gap-12">
+                        <div class="flex flex-col items-center gap-4">
+                            <div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-white/30"><span class="text-5xl">⚜️</span></div>
+                            <span class="font-display-lg text-xl tracking-wider text-white">NÁPOLES</span>
+                        </div>
+                        <div class="font-display-lg text-5xl text-secondary cinematic-text italic" style="color:#e9c349;">VS</div>
+                        <div class="flex flex-col items-center gap-4">
+                            <div class="w-24 h-24 glass-card rounded-full flex items-center justify-center border-2 border-secondary winner-glow"><span class="text-5xl">${PROXIMO_PARTIDO.icono}</span></div>
+                            <span class="font-display-lg text-xl tracking-wider text-white">${PROXIMO_PARTIDO.rival}</span>
+                        </div>
+                    </div>
+                    ${premioText ? `<div style="margin-top:12px; background:rgba(233,195,73,0.2); padding:6px 16px; border-radius:30px; border:1px solid #e9c349; color:#e9c349; font-weight:bold; font-size:1rem;">${premioText}</div>` : ''}
+                </div>
+                <div class="reveal-element match-info-card w-full max-w-md mx-4">
+                    <div class="flex justify-center gap-6 flex-wrap text-white">
+                        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">event</span><span class="text-sm font-bold">${PROXIMO_PARTIDO.fechaLegible}</span></div>
+                        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">schedule</span><span class="text-sm font-bold">${PROXIMO_PARTIDO.hora} HORAS</span></div>
+                        <div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary">stadium</span><span class="text-sm font-bold">${PROXIMO_PARTIDO.lugar}</span></div>
+                    </div>
+                </div>
+                <div class="reveal-element space-y-6 w-full max-w-xs px-6">
+                    <div class="glass-card p-6 rounded-2xl border border-secondary/40">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="font-label-caps text-[10px] text-white uppercase">Nivel de Riesgo</span>
+                            <span class="font-label-caps text-[10px] text-secondary">MÁXIMO</span>
+                        </div>
+                        <div class="w-full bg-white/20 h-1.5 rounded-full overflow-hidden">
+                            <div class="bg-secondary h-full rounded-full" style="width: 95%;"></div>
+                        </div>
+                    </div>
+                    <button id="confirmButton" class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 rounded-lg text-sm uppercase transition-all shadow-lg">Ahí estaré puntual</button>
+                </div>
+            </div>
+            <div class="fixed inset-0 pointer-events-none z-50" id="particles"></div>
         </main>`;
+    
     const rivals = [
         { name: "LEONES", icon: "🦁", power: "ALTO" },
         { name: "IDEAL", icon: "⚡", power: "MEDIO" },
