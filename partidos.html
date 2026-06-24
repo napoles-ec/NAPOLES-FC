@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1" rel="stylesheet">
 <style>
+/* (Mantén todos los estilos que ya tienes, sin cambios) */
 * {
   margin: 0;
   padding: 0;
@@ -500,8 +501,13 @@ body {
     <input type="date" id="inputFecha">
     <label>⏱️ Hora</label>
     <input type="time" id="inputHora">
+    <label>🏆 Campeonato</label>
+    <select id="selectCampeonato">
+      <option value="CAMPEONATO SANTA RITA">🏆 CAMPEONATO SANTA RITA</option>
+      <option value="COPA SANTA RITA">🏆 COPA SANTA RITA</option>
+    </select>
     <label>⚔️ Rival</label>
-    <select id="selectRival"><option value="">Cargando contrincantes...</option></select>
+    <select id="selectRival"><option value="">Selecciona un campeonato primero</option></select>
     <label>🏟️ Estadio / Lugar</label>
     <select id="selectLugar">
       <option value="LIGA SANTA RITA - Cancha 1">🏟️ LIGA SANTA RITA - Cancha 1</option>
@@ -517,11 +523,6 @@ body {
     </select>
     <label>📢 Vocalía / Encargado</label>
     <input type="text" id="inputVocalia" placeholder="Ej: Juan Pérez o número">
-    <label>🏆 Campeonato</label>
-    <select id="selectCampeonato">
-      <option value="CAMPEONATO SANTA RITA">🏆 CAMPEONATO SANTA RITA</option>
-      <option value="COPA SANTA RITA">🏆 COPA SANTA RITA</option>
-    </select>
     <div class="modal-actions">
       <button class="btn-cancel" id="btnCancelar">Cancelar</button>
       <button class="btn-save" id="btnGuardar">Guardar</button>
@@ -589,30 +590,30 @@ async function enviarDatosPOST(accion, datos) {
   } catch(e) { console.error(e); return { success: false, error: e.message }; }
 }
 
+// ================= CARGAR RIVALES POR CAMPEONATO =================
 async function cargarRivales(campeonato) {
+  const select = document.getElementById('selectRival');
+  select.innerHTML = '<option value="">Cargando rivales...</option>';
+  select.disabled = true;
+  
   const data = await cargarDatosGET('getRivales', { campeonato: campeonato || '' });
   if (data && data.success && data.data && data.data.length) {
     rivalesList = data.data;
+    select.innerHTML = '<option value="">🔽 Selecciona rival</option>';
+    rivalesList.forEach(r => {
+      let opt = document.createElement('option');
+      opt.value = r.nombre;
+      opt.textContent = r.nombre;
+      select.appendChild(opt);
+    });
   } else {
-    // Fallback manual
-    const todos = [
-      { nombre: 'IDEAL' }, { nombre: 'BARZA' }, { nombre: 'SAN MARTIN' }, { nombre: 'INDEPENDIENTE' },
-      { nombre: 'VODKILA' }, { nombre: 'CHELSEA' }, { nombre: 'JUVENTUD DE AMERICA' },
-      { nombre: 'JUVENTUS' }, { nombre: 'LEONES' }, { nombre: 'FRANCO CANADIENSE' },
-      { nombre: 'UNION FAMILIAR' }
-    ];
-    rivalesList = todos;
+    // Fallback: si no hay datos del servidor, mostrar opción para agregar rivales
+    select.innerHTML = '<option value="">No hay rivales para este campeonato</option>';
   }
-  const select = document.getElementById('selectRival');
-  select.innerHTML = '<option value="">🔽 Selecciona rival</option>';
-  rivalesList.forEach(r => {
-    let opt = document.createElement('option');
-    opt.value = r.nombre;
-    opt.textContent = r.nombre;
-    select.appendChild(opt);
-  });
+  select.disabled = false;
 }
 
+// ================= CARGAR PARTIDOS =================
 async function cargarPartidos() {
   const container = document.getElementById('matchesContainer');
   container.innerHTML = `<div class="loading-container"><div class="loading-spinner"></div><div class="loading-text" style="font-size:0.85rem; color:#6b7280;">Cargando partidos...</div></div>`;
@@ -740,22 +741,29 @@ function renderPartidos() {
   });
 }
 
+// ================= ABRIR MODAL NUEVO =================
 function abrirModalNuevo() {
   editandoId = null;
   editandoFila = null;
   document.getElementById('modalTitle').textContent = '📅 Nuevo Partido';
   document.getElementById('inputFecha').value = '';
   document.getElementById('inputHora').value = '';
-  document.getElementById('selectRival').innerHTML = '<option value="">Cargando...</option>';
+  document.getElementById('selectRival').innerHTML = '<option value="">Selecciona un campeonato</option>';
+  document.getElementById('selectRival').disabled = true;
   document.getElementById('selectLugar').value = 'LIGA SANTA RITA - Cancha 1';
   document.getElementById('inputResultado').value = 'VS';
   document.getElementById('selectEstado').value = 'PENDIENTE';
   document.getElementById('inputVocalia').value = '';
+  
+  // Seleccionar campeonato por defecto (el primero)
   const campeonato = document.getElementById('selectCampeonato').value;
+  // Cargar rivales del campeonato seleccionado
   cargarRivales(campeonato);
+  
   document.getElementById('modal').classList.add('active');
 }
 
+// ================= ABRIR MODAL EDITAR =================
 function abrirModalEditar(id, fila) {
   const partido = partidosList.find(p => p.id === id);
   if (!partido) return;
@@ -769,10 +777,12 @@ function abrirModalEditar(id, fila) {
   document.getElementById('inputFecha').value = partido.fecha || '';
   document.getElementById('inputHora').value = partido.hora || '';
   document.getElementById('selectRival').innerHTML = '<option value="">Cargando...</option>';
+  document.getElementById('selectRival').disabled = true;
   document.getElementById('selectLugar').value = partido.lugar || 'LIGA SANTA RITA - Cancha 1';
   document.getElementById('inputResultado').value = partido.resultado || 'VS';
   document.getElementById('selectEstado').value = partido.estado || 'PENDIENTE';
   document.getElementById('inputVocalia').value = partido.vocalia || '';
+  
   const campeonato = partido.campeonato || 'CAMPEONATO SANTA RITA';
   document.getElementById('selectCampeonato').value = campeonato;
   // Cargar rivales según campeonato y luego seleccionar el rival
@@ -782,6 +792,7 @@ function abrirModalEditar(id, fila) {
   document.getElementById('modal').classList.add('active');
 }
 
+// ================= GUARDAR PARTIDO =================
 async function guardarPartido() {
   if (guardando) { mostrarToast('⏳ Procesando, espera...'); return; }
   const partido = {
@@ -821,6 +832,7 @@ async function guardarPartido() {
   }
 }
 
+// ================= ELIMINAR PARTIDO =================
 async function eliminarPartido(fila) {
   const partido = partidosList.find(p => p.fila === fila);
   if (partido && partido.estado === 'FINALIZADO') {
@@ -834,6 +846,7 @@ async function eliminarPartido(fila) {
   setTimeout(() => { cargarPartidos(); guardando = false; }, 1100);
 }
 
+// ================= TOAST Y MODAL =================
 function mostrarToast(msg) {
   let t = document.querySelector('.toast');
   if(t) t.remove();
@@ -847,6 +860,21 @@ function cerrarModal() {
   document.getElementById('modal').classList.remove('active');
 }
 
+// ================= CONFIGURAR EVENTO DE CAMBIO DE CAMPEONATO =================
+function configurarEventoCampeonato() {
+  const selectCampeonato = document.getElementById('selectCampeonato');
+  selectCampeonato.addEventListener('change', function() {
+    const campeonato = this.value;
+    const modalActivo = document.getElementById('modal').classList.contains('active');
+    if (modalActivo) {
+      // Si el modal está abierto, recargar rivales
+      cargarRivales(campeonato);
+      // Limpiar selección de rival
+      document.getElementById('selectRival').value = '';
+    }
+  });
+}
+
 // ================= VALIDACIÓN ADMIN =================
 if (localStorage.getItem('admin_activo') !== 'true') {
   window.location.href = './login.html';
@@ -854,9 +882,10 @@ if (localStorage.getItem('admin_activo') !== 'true') {
 
 // ================= INICIALIZACIÓN =================
 document.addEventListener('DOMContentLoaded', async () => {
-  // Cargar rivales sin filtro inicial
-  await cargarRivales();
+  // Cargar partidos al inicio
   await cargarPartidos();
+  
+  // Configurar eventos
   document.getElementById('btnAgregar').addEventListener('click', abrirModalNuevo);
   document.getElementById('btnRefrescar').addEventListener('click', () => cargarPartidos());
   document.getElementById('btnGuardar').addEventListener('click', guardarPartido);
@@ -864,6 +893,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('modal').addEventListener('click', (e) => {
     if (e.target === document.getElementById('modal')) cerrarModal();
   });
+  
+  // Evento de cambio de campeonato (para recargar rivales en tiempo real)
+  configurarEventoCampeonato();
+  
+  // Precargar rivales del campeonato por defecto (para que al abrir el modal ya estén listos)
+  const campeonatoDefault = document.getElementById('selectCampeonato').value;
+  await cargarRivales(campeonatoDefault);
 });
 </script>
 </body>
