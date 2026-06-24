@@ -27,7 +27,7 @@
     font-family: 'Inter', sans-serif;
     color: var(--text-primary);
     min-height: 100vh;
-    padding-bottom: 80px;
+    padding-bottom: 20px;
   }
 
   .glass-panel {
@@ -75,7 +75,7 @@
 
   .fab {
     position: fixed;
-    bottom: 100px;
+    bottom: 30px;
     right: 24px;
     width: 60px;
     height: 60px;
@@ -93,47 +93,6 @@
   }
   .fab:hover { transform: scale(1.1) rotate(90deg); box-shadow: 0 12px 35px rgba(233, 30, 99, 0.5); }
   .fab .material-symbols-outlined { font-size: 32px; }
-
-  .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(16px);
-    border-top: 0.5px solid rgba(233, 30, 99, 0.15);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 8px 0 env(safe-area-inset-bottom, 8px) 0;
-    z-index: 100;
-    border-radius: 20px 20px 0 0;
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.03);
-  }
-  .bottom-nav .nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 4px 12px;
-    border-radius: 16px;
-    color: #b0b0b0;
-    transition: all 0.2s;
-    cursor: pointer;
-    text-decoration: none;
-    font-size: 0.5rem;
-    gap: 2px;
-    min-width: 56px;
-    border: none;
-    background: transparent;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-  }
-  .bottom-nav .nav-item .material-symbols-outlined { font-size: 24px; transition: all 0.2s; }
-  .bottom-nav .nav-item:hover { color: var(--primary); }
-  .bottom-nav .nav-item:active { transform: scale(0.92); }
-  .bottom-nav .nav-item.active { color: var(--primary); }
-  .bottom-nav .nav-item.active .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
 
   .modal-overlay {
     display: none;
@@ -239,8 +198,6 @@
 
   @media (max-width: 480px) {
     .modal-content { padding: 20px; }
-    .bottom-nav .nav-item { min-width: 44px; padding: 2px 6px; }
-    .bottom-nav .nav-item .material-symbols-outlined { font-size: 20px; }
   }
 </style>
 </head>
@@ -266,7 +223,7 @@
   <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
     <div class="glass-panel p-4 pink-border-top">
       <p class="text-[10px] font-bold uppercase tracking-wider text-pink-400 opacity-70">Temporada</p>
-      <h3 class="text-xl font-bold text-pink-700 mt-1">24/25</h3>
+      <h3 class="text-xl font-bold text-pink-700 mt-1">2026 - 2027</h3>
     </div>
     <div class="glass-panel p-4 pink-border-top">
       <p class="text-[10px] font-bold uppercase tracking-wider text-pink-400 opacity-70">Partidos</p>
@@ -310,30 +267,6 @@
 <button class="fab" id="btnAgregar">
   <span class="material-symbols-outlined">add</span>
 </button>
-
-<!-- ===== BOTTOM NAV ===== -->
-<nav class="bottom-nav">
-  <a href="perfil.html" class="nav-item" title="Perfil">
-    <span class="material-symbols-outlined">person</span>
-    <span class="text-[9px]">Perfil</span>
-  </a>
-  <a href="alineacion.html" class="nav-item" title="Alineación">
-    <span class="material-symbols-outlined">group</span>
-    <span class="text-[9px]">Alineación</span>
-  </a>
-  <a href="h_valores.html" class="nav-item" title="Valores">
-    <span class="material-symbols-outlined">payments</span>
-    <span class="text-[9px]">Valores</span>
-  </a>
-  <a href="gestion_partidos.html" class="nav-item active" title="Partidos">
-    <span class="material-symbols-outlined">sports_soccer</span>
-    <span class="text-[9px]">Partidos</span>
-  </a>
-  <button class="nav-item" onclick="cargarPartidos()" title="Actualizar">
-    <span class="material-symbols-outlined">sync</span>
-    <span class="text-[9px]">Actualizar</span>
-  </button>
-</nav>
 
 <!-- ===== MODAL ===== -->
 <div class="modal-overlay" id="matchModal">
@@ -536,11 +469,26 @@ function renderPartidos(lista) {
     else statusBadge = `<span class="status-pending">⏳ Pendiente</span>`;
 
     let scoreHTML = '';
+    let resultadoBadge = ''; // badge adicional para victoria/derrota/empate
     if (esFinalizado && parsed.valid) {
       let homeColor = 'text-pink-700', awayColor = 'text-pink-700';
-      if (outcome === 'VICTORIA') { homeColor = 'text-green-600'; awayColor = 'text-gray-400'; }
-      else if (outcome === 'DERROTA') { homeColor = 'text-gray-400'; awayColor = 'text-red-500'; }
-      else if (outcome === 'EMPATE') { homeColor = 'text-amber-500'; awayColor = 'text-amber-500'; }
+      let badgeText = '', badgeColor = '';
+      if (outcome === 'VICTORIA') {
+        homeColor = 'text-green-600';
+        awayColor = 'text-gray-400';
+        badgeText = '🏆 VICTORIA';
+        badgeColor = 'bg-green-100 text-green-700 border-green-300';
+      } else if (outcome === 'DERROTA') {
+        homeColor = 'text-gray-400';
+        awayColor = 'text-red-500';
+        badgeText = '❌ DERROTA';
+        badgeColor = 'bg-red-100 text-red-700 border-red-300';
+      } else if (outcome === 'EMPATE') {
+        homeColor = 'text-amber-500';
+        awayColor = 'text-amber-500';
+        badgeText = '🤝 EMPATE';
+        badgeColor = 'bg-amber-100 text-amber-700 border-amber-300';
+      }
       scoreHTML = `
         <div class="flex items-baseline gap-1">
           <span class="font-bold text-2xl ${homeColor}">${parsed.home}</span>
@@ -549,6 +497,7 @@ function renderPartidos(lista) {
         </div>
         <span class="text-[9px] font-bold uppercase tracking-wider ${outcome === 'VICTORIA' ? 'text-green-600' : outcome === 'DERROTA' ? 'text-red-500' : 'text-amber-500'}">${outcome}</span>
       `;
+      resultadoBadge = `<span class="text-[9px] font-bold px-2 py-0.5 rounded-full border ${badgeColor}">${badgeText}</span>`;
     } else {
       scoreHTML = `<span class="text-gray-300 text-2xl font-light">${resultado === 'VS' ? 'VS' : resultado}</span>`;
     }
@@ -567,7 +516,8 @@ function renderPartidos(lista) {
             <span class="text-xs text-gray-400">${hora}</span>
           </div>
         </div>
-        <div class="flex gap-1">
+        <div class="flex gap-1 items-center">
+          ${resultadoBadge}
           <button class="p-1.5 rounded-lg hover:bg-pink-50 text-pink-300 hover:text-pink-600 transition-colors ${esFinalizado ? 'opacity-40 cursor-not-allowed' : ''}" ${esFinalizado ? 'disabled' : ''} onclick="abrirEditar(${partido.id}, ${partido.fila})">
             <span class="material-symbols-outlined text-sm">edit</span>
           </button>
