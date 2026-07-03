@@ -50,7 +50,7 @@
       box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
     }
 
-    /* Tarjeta de partido mejorada para móvil */
+    /* Tarjeta de partido */
     .partido-card {
       background: var(--card-bg);
       border-radius: 20px;
@@ -82,7 +82,7 @@
     .badge-proximo { background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234,179,8,0.25); }
     .badge-pendiente { background: rgba(148, 163, 184, 0.12); color: #cbd5e1; border: 1px solid rgba(148,163,184,0.2); }
 
-    /* Botones de filtro (scroll horizontal nativo) */
+    /* Botones de filtro */
     .btn-filtro {
       padding: 8px 18px;
       border-radius: 9999px;
@@ -106,7 +106,7 @@
       box-shadow: 0 4px 12px rgba(234, 179, 8, 0.25);
     }
 
-    /* Estadísticas – barra compacta */
+    /* Estadísticas */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -339,12 +339,23 @@ async function cargarPartidos() {
   }
 }
 
-// ==================== RENDERIZAR PARTIDOS (con estadísticas) ====================
+// ==================== RENDERIZAR PARTIDOS ====================
 let todosLosPartidos = [];
 let campeonatoActual = 'todos';
+let campeonatosUnicos = [];
 
 function renderizarPartidos(partidos) {
   todosLosPartidos = partidos;
+  // Extraer campeonatos únicos (limpiando espacios y mayúsculas)
+  const camps = new Set();
+  partidos.forEach(p => {
+    const nombre = (p.campeonato || '').trim();
+    if (nombre) camps.add(nombre);
+  });
+  campeonatosUnicos = Array.from(camps).sort();
+  // Si no hay campeonatos, agregar uno por defecto
+  if (campeonatosUnicos.length === 0) campeonatosUnicos.push('Sin campeonato');
+  
   aplicarFiltro();
 }
 
@@ -353,7 +364,11 @@ function aplicarFiltro() {
   let filtrados = todosLosPartidos;
 
   if (campeonatoActual !== 'todos') {
-    filtrados = filtrados.filter(p => (p.campeonato || '').toUpperCase() === campeonatoActual.toUpperCase());
+    // Comparación insensible a mayúsculas/minúsculas y espacios
+    filtrados = filtrados.filter(p => {
+      const camp = (p.campeonato || '').trim().toUpperCase();
+      return camp === campeonatoActual.toUpperCase();
+    });
   }
 
   filtrados.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
@@ -377,7 +392,6 @@ function aplicarFiltro() {
     }
   });
   const diferencia = golesFavor - golesContra;
-  const partidosFinalizados = victorias + derrotas + empates;
 
   // ===== CONSTRUIR HTML =====
   let html = `
@@ -393,9 +407,12 @@ function aplicarFiltro() {
         </button>
       </header>
 
-      <!-- FILTROS -->
+      <!-- FILTROS DINÁMICOS -->
       <div class="flex gap-2 mb-5 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-none">
-        ${crearBotonesFiltro()}
+        <button class="btn-filtro ${campeonatoActual === 'todos' ? 'activo' : ''}" onclick="cambiarFiltro('todos')">📋 Todos</button>
+        ${campeonatosUnicos.map(c => `
+          <button class="btn-filtro ${campeonatoActual === c ? 'activo' : ''}" onclick="cambiarFiltro('${c}')">🏆 ${c}</button>
+        `).join('')}
       </div>
 
       <!-- ESTADÍSTICAS -->
@@ -539,20 +556,7 @@ function aplicarFiltro() {
   document.getElementById('dynamicContent').style.display = 'block';
 }
 
-function crearBotonesFiltro() {
-  const campeonatos = ['todos', 'CAMPEONATO SANTA RITA', 'COPA SANTA RITA'];
-  const labels = {
-    'todos': '📋 Todos',
-    'CAMPEONATO SANTA RITA': '🏆 Santa Rita',
-    'COPA SANTA RITA': '🏆 Copa Santa Rita'
-  };
-  return campeonatos.map(c => `
-    <button class="btn-filtro ${c === campeonatoActual ? 'activo' : ''}" data-campeonato="${c}" onclick="cambiarFiltro('${c}')">
-      ${labels[c] || c}
-    </button>
-  `).join('');
-}
-
+// ==================== CAMBIAR FILTRO ====================
 function cambiarFiltro(campeonato) {
   campeonatoActual = campeonato;
   aplicarFiltro();
