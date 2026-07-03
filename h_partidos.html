@@ -361,6 +361,7 @@
 
 <script>
 // ==================== CONFIGURACIÓN ====================
+// ⚠️ REEMPLAZA ESTA URL POR LA DE TU SCRIPT DE GAS ⚠️
 const URL_GAS = "https://script.google.com/macros/s/AKfycbz8Kw2wNXFNaO3YOyrNykzscm_3vDMK0sXz7kYPEUUf-I1L_Ikht8U5uzHXhgWcEYnv/exec";
 
 // ==================== FUNCIONES AUXILIARES ====================
@@ -608,9 +609,9 @@ function aplicarFiltro() {
       <div class="columna-partidos">
         <div class="titulo-columna titulo-ganados">
           <span class="material-symbols-outlined text-sm">emoji_events</span>
-          Ganados (${ganados.length})
+          Ganados (${ganados.length + empates.length})
         </div>
-        ${ganados.length === 0 ? `<p class="text-xs text-slate-500 text-center py-3">Sin victorias</p>` : ''}
+        ${ganados.length === 0 && empates.length === 0 ? `<p class="text-xs text-slate-500 text-center py-3">Sin victorias ni empates</p>` : ''}
         ${ganados.map(p => {
           const fecha = formatearFecha(p.fecha);
           const rival = escapeHtml(p.rival || 'Sin rival');
