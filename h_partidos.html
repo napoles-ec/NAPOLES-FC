@@ -32,7 +32,6 @@
     
     .font-outfit { font-family: 'Outfit', sans-serif; }
 
-    /* Shimmer Animation para Skeleton */
     .skeleton-shimmer {
       background: linear-gradient(90deg, #0f172a 25%, #1e293b 50%, #0f172a 75%);
       background-size: 200% 100%;
@@ -40,7 +39,6 @@
     }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-    /* Glassmorphism Premium */
     .glass-card {
       background: var(--glass-bg);
       backdrop-filter: blur(16px);
@@ -50,7 +48,6 @@
       box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
     }
 
-    /* Tarjetas de Partidos Táctiles */
     .partido-card {
       background: var(--card-bg);
       border-radius: 18px;
@@ -63,7 +60,6 @@
       background: rgba(30, 41, 59, 0.6); 
     }
 
-    /* Bordes de Estado Inteligentes */
     .border-victoria { border-left: 4px solid #10b981; }
     .border-derrota { border-left: 4px solid #ef4444; }
     .border-empate { border-left: 4px solid #f59e0b; }
@@ -74,7 +70,6 @@
     }
     .border-pendiente { border-left: 4px solid #64748b; }
 
-    /* Badges de Estado */
     .badge-estado {
       font-size: 0.65rem;
       font-weight: 700;
@@ -87,7 +82,6 @@
     .badge-proximo { background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234,179,8,0.25); }
     .badge-pendiente { background: rgba(148, 163, 184, 0.12); color: #cbd5e1; border: 1px solid rgba(148,163,184,0.2); }
 
-    /* Botones de Filtro */
     .btn-filtro {
       padding: 8px 16px;
       border-radius: 9999px;
@@ -109,8 +103,15 @@
       border-color: var(--gold);
       box-shadow: 0 4px 12px rgba(234, 179, 8, 0.25);
     }
+    .btn-filtro .contador {
+      background: rgba(0,0,0,0.3);
+      border-radius: 999px;
+      padding: 0 8px;
+      font-size: 0.55rem;
+      margin-left: 4px;
+    }
+    .btn-filtro.activo .contador { background: rgba(0,0,0,0.2); }
 
-    /* Navegación Inferior Nativa */
     .bottom-nav {
       position: fixed;
       bottom: 0; left: 0; right: 0;
@@ -144,7 +145,6 @@
     .bottom-nav .nav-item:active { transform: scale(0.92); }
     .bottom-nav .nav-item.active { color: var(--gold); }
 
-    /* Toast Flotante */
     #toast {
       position: fixed;
       bottom: 85px; left: 50%;
@@ -218,7 +218,6 @@ const URL_GAS = "https://script.google.com/macros/s/AKfycbz8Kw2wNXFNaO3YOyrNykzs
 function mostrarToast(mensaje) {
   const toast = document.getElementById('toast');
   toast.textContent = mensaje;
-  toast.addClassName = 'show'; // Fallback / Compatibilidad anterior
   toast.classList.add('show');
   clearTimeout(toast._timer);
   toast._timer = setTimeout(() => { toast.classList.remove('show'); }, 2200);
@@ -281,6 +280,12 @@ async function cargarPartidos() {
     const data = await resp.json();
 
     if (data.success && data.data) {
+      // Depuración: imprimir los campeonatos de cada partido
+      console.log('Partidos recibidos:');
+      data.data.forEach(p => {
+        console.log(`Rival: ${p.rival}, Campeonato: "${p.campeonato}"`);
+      });
+      
       renderizarPartidos(data.data);
     } else {
       throw new Error(data.error || 'No se pudieron cargar los partidos');
@@ -313,11 +318,41 @@ function aplicarFiltro() {
   const container = document.getElementById('dynamicContent');
   let filtrados = todosLosPartidos;
 
+  // Filtro flexible: si campeonatoActual === 'todos', no filtrar.
+  // Si es "CAMPEONATO SANTA RITA", buscamos que el campo contenga "Santa Rita" (sin importar mayúsculas).
+  // Similar para "COPA SANTA RITA" -> contenga "Copa" y "Santa Rita" (opcional)
   if (campeonatoActual !== 'todos') {
-    filtrados = filtrados.filter(p => (p.campeonato || '').toUpperCase() === campeonatoActual.toUpperCase());
+    const esSantaRita = campeonatoActual === 'CAMPEONATO SANTA RITA';
+    const esCopa = campeonatoActual === 'COPA SANTA RITA';
+    
+    filtrados = filtrados.filter(p => {
+      const camp = (p.campeonato || '').toUpperCase();
+      if (esSantaRita) {
+        // Que contenga "SANTA RITA" pero no "COPA" (para evitar que los de Copa aparezcan en Santa Rita)
+        return camp.includes('SANTA RITA') && !camp.includes('COPA');
+      } else if (esCopa) {
+        return camp.includes('COPA') && camp.includes('SANTA RITA');
+      }
+      return false;
+    });
   }
 
+  // Ordenar por fecha descendente
   filtrados.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+  // Calcular contadores para cada filtro
+  const totalSantaRita = todosLosPartidos.filter(p => {
+    const camp = (p.campeonato || '').toUpperCase();
+    return camp.includes('SANTA RITA') && !camp.includes('COPA');
+  }).length;
+
+  const totalCopa = todosLosPartidos.filter(p => {
+    const camp = (p.campeonato || '').toUpperCase();
+    return camp.includes('COPA') && camp.includes('SANTA RITA');
+  }).length;
+
+  // Construir los botones con contadores
+  const botones = crearBotonesFiltro(totalSantaRita, totalCopa);
 
   if (filtrados.length === 0) {
     container.innerHTML = `
@@ -329,7 +364,7 @@ function aplicarFiltro() {
           </div>
         </header>
         <div class="flex gap-2 mb-6 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-none">
-          ${crearBotonesFiltro()}
+          ${botones}
         </div>
         <div class="glass-card p-10 text-center text-slate-500">
           <span class="material-symbols-outlined text-5xl text-yellow-500/20">sports_soccer</span>
@@ -354,7 +389,7 @@ function aplicarFiltro() {
       </header>
 
       <div class="flex gap-2 mb-5 overflow-x-auto pb-2 -mx-4 px-4">
-        ${crearBotonesFiltro()}
+        ${botones}
       </div>
 
       <div class="space-y-3.5">
@@ -451,16 +486,17 @@ function aplicarFiltro() {
   document.getElementById('dynamicContent').style.display = 'block';
 }
 
-function crearBotonesFiltro() {
-  const campeonatos = ['todos', 'CAMPEONATO SANTA RITA', 'COPA SANTA RITA'];
-  const labels = {
-    'todos': '📋 Todos',
-    'CAMPEONATO SANTA RITA': '🏆 Santa Rita',
-    'COPA SANTA RITA': '🏆 Copa Santa Rita'
-  };
+function crearBotonesFiltro(totalSantaRita, totalCopa) {
+  const totalTodos = todosLosPartidos.length;
+  const campeonatos = [
+    { id: 'todos', label: '📋 Todos', count: totalTodos },
+    { id: 'CAMPEONATO SANTA RITA', label: '🏆 Santa Rita', count: totalSantaRita },
+    { id: 'COPA SANTA RITA', label: '🏆 Copa Santa Rita', count: totalCopa }
+  ];
+  
   return campeonatos.map(c => `
-    <button class="btn-filtro ${c === campeonatoActual ? 'activo' : ''}" data-campeonato="${c}" onclick="cambiarFiltro('${c}')">
-      ${labels[c] || c}
+    <button class="btn-filtro ${c.id === campeonatoActual ? 'activo' : ''}" data-campeonato="${c.id}" onclick="cambiarFiltro('${c.id}')">
+      ${c.label} <span class="contador">${c.count}</span>
     </button>
   `).join('');
 }
