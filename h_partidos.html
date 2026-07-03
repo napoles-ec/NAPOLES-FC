@@ -32,6 +32,7 @@
     
     .font-outfit { font-family: 'Outfit', sans-serif; }
 
+    /* Skeleton */
     .skeleton-shimmer {
       background: linear-gradient(90deg, #0f172a 25%, #1e293b 50%, #0f172a 75%);
       background-size: 200% 100%;
@@ -39,6 +40,7 @@
     }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
+    /* Glass */
     .glass-card {
       background: var(--glass-bg);
       backdrop-filter: blur(16px);
@@ -48,42 +50,41 @@
       box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
     }
 
+    /* Tarjeta de partido mejorada para móvil */
     .partido-card {
       background: var(--card-bg);
-      border-radius: 18px;
-      padding: 16px;
+      border-radius: 20px;
+      padding: 16px 14px;
       border: 1px solid rgba(255, 255, 255, 0.04);
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
-    .partido-card:active { 
-      transform: scale(0.98); 
-      background: rgba(30, 41, 59, 0.6); 
-    }
+    .partido-card:active { transform: scale(0.98); background: rgba(30, 41, 59, 0.6); }
 
-    .border-victoria { border-left: 4px solid #10b981; }
-    .border-derrota { border-left: 4px solid #ef4444; }
-    .border-empate { border-left: 4px solid #f59e0b; }
-    .border-proximo { 
-      border-left: 4px solid var(--gold); 
-      background: linear-gradient(90deg, rgba(234, 179, 8, 0.03) 0%, var(--card-bg) 100%);
-      box-shadow: 0 4px 20px -5px rgba(234, 179, 8, 0.1);
-    }
-    .border-pendiente { border-left: 4px solid #64748b; }
+    .border-victoria { border-left: 5px solid #10b981; }
+    .border-derrota { border-left: 5px solid #ef4444; }
+    .border-empate { border-left: 5px solid #f59e0b; }
+    .border-proximo { border-left: 5px solid var(--gold); background: linear-gradient(90deg, rgba(234,179,8,0.04) 0%, var(--card-bg) 100%); }
+    .border-pendiente { border-left: 5px solid #64748b; }
 
+    /* Badges */
     .badge-estado {
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      padding: 3px 10px;
+      padding: 2px 10px;
       border-radius: 9999px;
     }
     .badge-finalizado { background: rgba(16, 185, 129, 0.12); color: #34d399; border: 1px solid rgba(16,185,129,0.2); }
     .badge-proximo { background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234,179,8,0.25); }
     .badge-pendiente { background: rgba(148, 163, 184, 0.12); color: #cbd5e1; border: 1px solid rgba(148,163,184,0.2); }
 
+    /* Botones de filtro (scroll horizontal nativo) */
     .btn-filtro {
-      padding: 8px 16px;
+      padding: 8px 18px;
       border-radius: 9999px;
       font-size: 0.7rem;
       font-weight: 700;
@@ -95,6 +96,7 @@
       transition: all 0.2s;
       cursor: pointer;
       white-space: nowrap;
+      flex-shrink: 0;
     }
     .btn-filtro:hover { background: rgba(255,255,255,0.05); color: #f8fafc; }
     .btn-filtro.activo {
@@ -103,15 +105,41 @@
       border-color: var(--gold);
       box-shadow: 0 4px 12px rgba(234, 179, 8, 0.25);
     }
-    .btn-filtro .contador {
-      background: rgba(0,0,0,0.3);
-      border-radius: 999px;
-      padding: 0 8px;
-      font-size: 0.55rem;
-      margin-left: 4px;
-    }
-    .btn-filtro.activo .contador { background: rgba(0,0,0,0.2); }
 
+    /* Estadísticas – barra compacta */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .stat-item {
+      background: rgba(0,0,0,0.25);
+      border-radius: 14px;
+      padding: 8px 4px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+    .stat-item .numero {
+      font-size: 1.5rem;
+      font-weight: 900;
+      font-family: 'Outfit', sans-serif;
+      line-height: 1.2;
+      color: #fff;
+    }
+    .stat-item .etiqueta {
+      font-size: 0.5rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+    .stat-item .etiqueta.gold { color: var(--gold); }
+    .stat-item .etiqueta.green { color: #34d399; }
+    .stat-item .etiqueta.red { color: #f87171; }
+    .stat-item .etiqueta.blue { color: #60a5fa; }
+
+    /* Navegación inferior */
     .bottom-nav {
       position: fixed;
       bottom: 0; left: 0; right: 0;
@@ -136,15 +164,16 @@
       border: none;
       cursor: pointer;
       font-weight: 700;
-      font-size: 0.55rem;
+      font-size: 0.5rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      gap: 3px;
+      gap: 2px;
     }
     .bottom-nav .nav-item .material-symbols-outlined { font-size: 1.4rem; }
     .bottom-nav .nav-item:active { transform: scale(0.92); }
     .bottom-nav .nav-item.active { color: var(--gold); }
 
+    /* Toast */
     #toast {
       position: fixed;
       bottom: 85px; left: 50%;
@@ -164,6 +193,16 @@
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Scroll suave */
+    .scrollbar-none::-webkit-scrollbar { display: none; }
+    .scrollbar-none { scrollbar-width: none; -ms-overflow-style: none; }
+
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+      .stat-item .numero { font-size: 1.2rem; }
+      .stat-item { padding: 6px 2px; }
+    }
   </style>
 </head>
 <body>
@@ -175,6 +214,7 @@
       <div class="skeleton-shimmer h-8 w-16 rounded-full"></div>
     </div>
     <div class="skeleton-shimmer h-10 rounded-full w-full"></div>
+    <div class="skeleton-shimmer h-24 rounded-2xl"></div>
     <div class="space-y-4">
       <div class="skeleton-shimmer h-28 rounded-2xl"></div>
       <div class="skeleton-shimmer h-28 rounded-2xl"></div>
@@ -280,12 +320,6 @@ async function cargarPartidos() {
     const data = await resp.json();
 
     if (data.success && data.data) {
-      // Depuración: imprimir los campeonatos de cada partido
-      console.log('Partidos recibidos:');
-      data.data.forEach(p => {
-        console.log(`Rival: ${p.rival}, Campeonato: "${p.campeonato}"`);
-      });
-      
       renderizarPartidos(data.data);
     } else {
       throw new Error(data.error || 'No se pudieron cargar los partidos');
@@ -305,7 +339,7 @@ async function cargarPartidos() {
   }
 }
 
-// ==================== RENDERIZAR PARTIDOS ====================
+// ==================== RENDERIZAR PARTIDOS (con estadísticas) ====================
 let todosLosPartidos = [];
 let campeonatoActual = 'todos';
 
@@ -318,66 +352,37 @@ function aplicarFiltro() {
   const container = document.getElementById('dynamicContent');
   let filtrados = todosLosPartidos;
 
-  // Filtro flexible: si campeonatoActual === 'todos', no filtrar.
-  // Si es "CAMPEONATO SANTA RITA", buscamos que el campo contenga "Santa Rita" (sin importar mayúsculas).
-  // Similar para "COPA SANTA RITA" -> contenga "Copa" y "Santa Rita" (opcional)
   if (campeonatoActual !== 'todos') {
-    const esSantaRita = campeonatoActual === 'CAMPEONATO SANTA RITA';
-    const esCopa = campeonatoActual === 'COPA SANTA RITA';
-    
-    filtrados = filtrados.filter(p => {
-      const camp = (p.campeonato || '').toUpperCase();
-      if (esSantaRita) {
-        // Que contenga "SANTA RITA" pero no "COPA" (para evitar que los de Copa aparezcan en Santa Rita)
-        return camp.includes('SANTA RITA') && !camp.includes('COPA');
-      } else if (esCopa) {
-        return camp.includes('COPA') && camp.includes('SANTA RITA');
-      }
-      return false;
-    });
+    filtrados = filtrados.filter(p => (p.campeonato || '').toUpperCase() === campeonatoActual.toUpperCase());
   }
 
-  // Ordenar por fecha descendente
   filtrados.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
-  // Calcular contadores para cada filtro
-  const totalSantaRita = todosLosPartidos.filter(p => {
-    const camp = (p.campeonato || '').toUpperCase();
-    return camp.includes('SANTA RITA') && !camp.includes('COPA');
-  }).length;
+  // ===== CALCULAR ESTADÍSTICAS =====
+  const total = filtrados.length;
+  let victorias = 0, derrotas = 0, empates = 0;
+  let golesFavor = 0, golesContra = 0;
 
-  const totalCopa = todosLosPartidos.filter(p => {
-    const camp = (p.campeonato || '').toUpperCase();
-    return camp.includes('COPA') && camp.includes('SANTA RITA');
-  }).length;
+  filtrados.forEach(p => {
+    if (p.estado === 'FINALIZADO') {
+      const parsed = parseResultado(p.resultado);
+      if (parsed.valid) {
+        golesFavor += parsed.home;
+        golesContra += parsed.away;
+        const outcome = determinarResultado(p);
+        if (outcome === 'VICTORIA') victorias++;
+        else if (outcome === 'DERROTA') derrotas++;
+        else if (outcome === 'EMPATE') empates++;
+      }
+    }
+  });
+  const diferencia = golesFavor - golesContra;
+  const partidosFinalizados = victorias + derrotas + empates;
 
-  // Construir los botones con contadores
-  const botones = crearBotonesFiltro(totalSantaRita, totalCopa);
-
-  if (filtrados.length === 0) {
-    container.innerHTML = `
-      <div class="max-w-md mx-auto p-4 pt-6">
-        <header class="flex items-center justify-between mb-5">
-          <div>
-            <h1 class="text-2xl font-outfit font-black tracking-tight flex items-center gap-2">Partidos</h1>
-            <p class="text-xs text-yellow-500/90 font-semibold tracking-wider uppercase mt-0.5">${campeonatoActual === 'todos' ? 'Todos los torneos' : campeonatoActual}</p>
-          </div>
-        </header>
-        <div class="flex gap-2 mb-6 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-none">
-          ${botones}
-        </div>
-        <div class="glass-card p-10 text-center text-slate-500">
-          <span class="material-symbols-outlined text-5xl text-yellow-500/20">sports_soccer</span>
-          <p class="mt-3 font-semibold text-sm">No hay registros para este campeonato</p>
-        </div>
-      </div>
-    `;
-    return;
-  }
-
+  // ===== CONSTRUIR HTML =====
   let html = `
     <div class="max-w-md mx-auto p-4 pt-6">
-      <header class="flex items-center justify-between mb-5">
+      <header class="flex items-center justify-between mb-4">
         <div>
           <h1 class="text-2xl font-outfit font-black tracking-tight">Partidos</h1>
           <p class="text-xs text-yellow-500/90 font-semibold tracking-wider uppercase mt-0.5">${campeonatoActual === 'todos' ? 'Todos los torneos' : campeonatoActual}</p>
@@ -388,93 +393,141 @@ function aplicarFiltro() {
         </button>
       </header>
 
-      <div class="flex gap-2 mb-5 overflow-x-auto pb-2 -mx-4 px-4">
-        ${botones}
+      <!-- FILTROS -->
+      <div class="flex gap-2 mb-5 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-none">
+        ${crearBotonesFiltro()}
       </div>
 
+      <!-- ESTADÍSTICAS -->
+      <div class="glass-card p-4 mb-5">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="material-symbols-outlined text-yellow-500 text-base">insights</span>
+          <h3 class="text-xs font-black uppercase tracking-[0.2em] text-slate-300">Estadísticas del equipo</h3>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="numero">${total}</div>
+            <div class="etiqueta">Partidos</div>
+          </div>
+          <div class="stat-item">
+            <div class="numero" style="color:#34d399;">${victorias}</div>
+            <div class="etiqueta green">Victorias</div>
+          </div>
+          <div class="stat-item">
+            <div class="numero" style="color:#f87171;">${derrotas}</div>
+            <div class="etiqueta red">Derrotas</div>
+          </div>
+          <div class="stat-item">
+            <div class="numero" style="color:#fbbf24;">${empates}</div>
+            <div class="etiqueta" style="color:#fbbf24;">Empates</div>
+          </div>
+          <div class="stat-item">
+            <div class="numero" style="color:#60a5fa;">${golesFavor}</div>
+            <div class="etiqueta blue">Goles a favor</div>
+          </div>
+          <div class="stat-item">
+            <div class="numero" style="color:#f87171;">${golesContra}</div>
+            <div class="etiqueta red">Goles en contra</div>
+          </div>
+        </div>
+        <div class="flex justify-between items-center mt-3 pt-2 border-t border-white/5">
+          <span class="text-[9px] font-bold uppercase text-slate-500 tracking-wider">Diferencia de goles</span>
+          <span class="text-lg font-black font-outfit ${diferencia >= 0 ? 'text-emerald-400' : 'text-red-400'}">${diferencia >= 0 ? '+' : ''}${diferencia}</span>
+        </div>
+      </div>
+
+      <!-- LISTA DE PARTIDOS -->
       <div class="space-y-3.5">
   `;
 
-  filtrados.forEach(p => {
-    const fecha = formatearFecha(p.fecha);
-    const hora = formatearHora(p.hora);
-    const rival = escapeHtml(p.rival || 'Sin rival');
-    const lugar = escapeHtml(p.lugar || 'LIGA SANTA RITA');
-    const estado = (p.estado || 'PENDIENTE').toUpperCase();
-    const resultado = p.resultado || 'VS';
-    const campeonato = escapeHtml(p.campeonato || 'Sin campeonato');
-
-    let badgeEstado = '';
-    let borderClase = 'border-pendiente';
-    
-    if (estado === 'FINALIZADO') {
-      badgeEstado = `<span class="badge-estado badge-finalizado">✅ Fin</span>`;
-    } else if (estado === 'PRÓXIMO') {
-      badgeEstado = `<span class="badge-estado badge-proximo">🔥 Próximo</span>`;
-      borderClase = 'border-proximo';
-    } else {
-      badgeEstado = `<span class="badge-estado badge-pendiente">⏳ Pendiente</span>`;
-    }
-
-    let resultadoHTML = '';
-    const outcome = determinarResultado(p);
-    const parsed = parseResultado(resultado);
-
-    if (estado === 'FINALIZADO' && parsed.valid) {
-      let claseTexto = '';
-      let etiquetaResultado = '';
-      
-      if (outcome === 'VICTORIA') {
-        claseTexto = 'text-emerald-400';
-        borderClase = 'border-victoria';
-        etiquetaResultado = 'VICTORIA';
-      } else if (outcome === 'DERROTA') {
-        claseTexto = 'text-red-400';
-        borderClase = 'border-derrota';
-        etiquetaResultado = 'DERROTA';
-      } else if (outcome === 'EMPATE') {
-        claseTexto = 'text-amber-400';
-        borderClase = 'border-empate';
-        etiquetaResultado = 'EMPATE';
-      }
-      
-      resultadoHTML = `
-        <div class="text-right">
-          <span class="text-2xl font-black font-outfit tracking-tight ${claseTexto}">${parsed.home} - ${parsed.away}</span>
-          <p class="text-[9px] font-extrabold tracking-wide ${claseTexto} opacity-90 mt-0.5">${etiquetaResultado}</p>
-        </div>
-      `;
-    } else {
-      resultadoHTML = `
-        <div class="bg-slate-800/60 px-3 py-1 rounded-xl border border-slate-700/50">
-          <span class="text-slate-400 text-xs font-black tracking-widest">${resultado}</span>
-        </div>
-      `;
-    }
-
+  if (filtrados.length === 0) {
     html += `
-      <div class="partido-card ${borderClase} flex items-center justify-between gap-4">
-        <div class="space-y-1.5 flex-1 min-w-0">
-          <div class="flex items-center gap-2 flex-wrap">
-            ${badgeEstado}
-            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider truncate max-w-[180px]">${campeonato}</span>
-          </div>
-          
-          <h3 class="text-base font-bold text-white truncate">vs ${rival}</h3>
-          
-          <div class="flex items-center gap-3 text-[11px] text-slate-400 font-medium">
-            <span class="flex items-center gap-0.5"><span class="material-symbols-outlined text-xs text-slate-500">schedule</span> ${hora}</span>
-            <span class="flex items-center gap-0.5 truncate"><span class="material-symbols-outlined text-xs text-slate-500">location_on</span> ${lugar}</span>
-          </div>
+        <div class="glass-card p-10 text-center text-slate-500">
+          <span class="material-symbols-outlined text-5xl text-yellow-500/20">sports_soccer</span>
+          <p class="mt-3 font-semibold text-sm">No hay registros para este campeonato</p>
         </div>
-
-        <div class="flex flex-col items-end justify-between h-full space-y-3 min-w-[70px]">
-          <span class="text-[10px] font-semibold text-slate-400/90 whitespace-nowrap">${fecha}</span>
-          ${resultadoHTML}
-        </div>
-      </div>
     `;
-  });
+  } else {
+    filtrados.forEach(p => {
+      const fecha = formatearFecha(p.fecha);
+      const hora = formatearHora(p.hora);
+      const rival = escapeHtml(p.rival || 'Sin rival');
+      const lugar = escapeHtml(p.lugar || 'LIGA SANTA RITA');
+      const estado = (p.estado || 'PENDIENTE').toUpperCase();
+      const resultado = p.resultado || 'VS';
+      const campeonato = escapeHtml(p.campeonato || 'Sin campeonato');
+
+      let badgeEstado = '';
+      let borderClase = 'border-pendiente';
+      
+      if (estado === 'FINALIZADO') {
+        badgeEstado = `<span class="badge-estado badge-finalizado">✅ Fin</span>`;
+      } else if (estado === 'PRÓXIMO') {
+        badgeEstado = `<span class="badge-estado badge-proximo">🔥 Próximo</span>`;
+        borderClase = 'border-proximo';
+      } else {
+        badgeEstado = `<span class="badge-estado badge-pendiente">⏳ Pendiente</span>`;
+      }
+
+      let resultadoHTML = '';
+      const outcome = determinarResultado(p);
+      const parsed = parseResultado(resultado);
+
+      if (estado === 'FINALIZADO' && parsed.valid) {
+        let claseTexto = '';
+        let etiquetaResultado = '';
+        
+        if (outcome === 'VICTORIA') {
+          claseTexto = 'text-emerald-400';
+          borderClase = 'border-victoria';
+          etiquetaResultado = 'VICTORIA';
+        } else if (outcome === 'DERROTA') {
+          claseTexto = 'text-red-400';
+          borderClase = 'border-derrota';
+          etiquetaResultado = 'DERROTA';
+        } else if (outcome === 'EMPATE') {
+          claseTexto = 'text-amber-400';
+          borderClase = 'border-empate';
+          etiquetaResultado = 'EMPATE';
+        }
+        
+        resultadoHTML = `
+          <div class="text-right">
+            <span class="text-2xl font-black font-outfit tracking-tight ${claseTexto}">${parsed.home} - ${parsed.away}</span>
+            <p class="text-[9px] font-extrabold tracking-wide ${claseTexto} opacity-90 mt-0.5">${etiquetaResultado}</p>
+          </div>
+        `;
+      } else {
+        resultadoHTML = `
+          <div class="bg-slate-800/60 px-3 py-1 rounded-xl border border-slate-700/50">
+            <span class="text-slate-400 text-xs font-black tracking-widest">${resultado}</span>
+          </div>
+        `;
+      }
+
+      html += `
+        <div class="partido-card ${borderClase}">
+          <div class="flex items-start justify-between gap-2">
+            <div class="space-y-1.5 flex-1 min-w-0">
+              <div class="flex items-center gap-2 flex-wrap">
+                ${badgeEstado}
+                <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider truncate max-w-[140px]">${campeonato}</span>
+              </div>
+              <h3 class="text-base font-bold text-white truncate">vs ${rival}</h3>
+              <div class="flex items-center gap-3 text-[11px] text-slate-400 font-medium">
+                <span class="flex items-center gap-0.5"><span class="material-symbols-outlined text-xs text-slate-500">schedule</span> ${hora}</span>
+                <span class="flex items-center gap-0.5 truncate"><span class="material-symbols-outlined text-xs text-slate-500">location_on</span> ${lugar}</span>
+              </div>
+            </div>
+            <div class="flex flex-col items-end justify-between h-full space-y-2 min-w-[70px]">
+              <span class="text-[10px] font-semibold text-slate-400/90 whitespace-nowrap">${fecha}</span>
+              ${resultadoHTML}
+            </div>
+          </div>
+        </div>
+      `;
+    });
+  }
 
   html += `
       </div>
@@ -486,17 +539,16 @@ function aplicarFiltro() {
   document.getElementById('dynamicContent').style.display = 'block';
 }
 
-function crearBotonesFiltro(totalSantaRita, totalCopa) {
-  const totalTodos = todosLosPartidos.length;
-  const campeonatos = [
-    { id: 'todos', label: '📋 Todos', count: totalTodos },
-    { id: 'CAMPEONATO SANTA RITA', label: '🏆 Santa Rita', count: totalSantaRita },
-    { id: 'COPA SANTA RITA', label: '🏆 Copa Santa Rita', count: totalCopa }
-  ];
-  
+function crearBotonesFiltro() {
+  const campeonatos = ['todos', 'CAMPEONATO SANTA RITA', 'COPA SANTA RITA'];
+  const labels = {
+    'todos': '📋 Todos',
+    'CAMPEONATO SANTA RITA': '🏆 Santa Rita',
+    'COPA SANTA RITA': '🏆 Copa Santa Rita'
+  };
   return campeonatos.map(c => `
-    <button class="btn-filtro ${c.id === campeonatoActual ? 'activo' : ''}" data-campeonato="${c.id}" onclick="cambiarFiltro('${c.id}')">
-      ${c.label} <span class="contador">${c.count}</span>
+    <button class="btn-filtro ${c === campeonatoActual ? 'activo' : ''}" data-campeonato="${c}" onclick="cambiarFiltro('${c}')">
+      ${labels[c] || c}
     </button>
   `).join('');
 }
