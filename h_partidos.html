@@ -440,23 +440,12 @@ function renderizarPanel(data) {
   const partidos = data.partidos || [];
   const totalPartidos = partidos.length;
   let totalGoles = 0, totalAmarillas = 0, totalRojas = 0;
-  let sumaPunt = 0, sumaComp = 0, sumaResp = 0, sumaHum = 0;
-  let countRend = 0;
 
   partidos.forEach(p => {
     totalGoles += parseInt(p.goles) || 0;
     totalAmarillas += parseInt(p.amarillas) || 0;
     totalRojas += parseInt(p.rojas) || 0;
-    if (p.puntualidad) { sumaPunt += parseFloat(p.puntualidad) || 0; countRend++; }
-    if (p.compañerismo) { sumaComp += parseFloat(p.compañerismo) || 0; }
-    if (p.respeto) { sumaResp += parseFloat(p.respeto) || 0; }
-    if (p.humildad) { sumaHum += parseFloat(p.humildad) || 0; }
   });
-  const avgPunt = countRend ? (sumaPunt / countRend) : 0;
-  const avgComp = countRend ? (sumaComp / countRend) : 0;
-  const avgResp = countRend ? (sumaResp / countRend) : 0;
-  const avgHum = countRend ? (sumaHum / countRend) : 0;
-  const promedioGeneral = countRend ? (avgPunt + avgComp + avgResp + avgHum) / 4 : 0;
 
   // Construir lista de partidos
   let partidosHTML = '';
@@ -472,6 +461,7 @@ function renderizarPanel(data) {
       const fecha = formatearFecha(p.fecha);
       const hora = formatearHora(p.hora);
       const rival = escapeHtml(p.rival || 'Sin rival');
+      const campeonato = escapeHtml(p.campeonato || 'Sin campeonato');
       const goles = p.goles || 0;
       const amarillas = p.amarillas || 0;
       const rojas = p.rojas || 0;
@@ -493,6 +483,7 @@ function renderizarPanel(data) {
             ${amarillas > 0 ? `<span class="amarillas"><span class="material-symbols-outlined" style="font-size:14px;">square</span> ${amarillas}</span>` : ''}
             ${rojas > 0 ? `<span class="rojas"><span class="material-symbols-outlined" style="font-size:14px;">square</span> ${rojas}</span>` : ''}
             ${valorVocalia > 0 ? `<span>💰 $${valorVocalia}</span>` : ''}
+            <span class="text-gold/60 text-[9px] font-bold uppercase tracking-wider">${campeonato}</span>
           </div>
           <div class="rendimiento">
             <span>Puntualidad: <span class="valor">${punt}/10</span></span>
@@ -553,42 +544,6 @@ function renderizarPanel(data) {
         <div class="stat-box">
           <div class="numero" style="color:#ef4444;">${totalRojas}</div>
           <div class="label red">Rojas</div>
-        </div>
-      </div>
-
-      <!-- RENDIMIENTO PROMEDIO -->
-      <div class="glass-card payment-focus-card p-6 mb-8">
-        <div class="flex items-center gap-3 mb-4">
-          <div class="bg-gold/10 p-2 rounded-xl border border-gold/20">
-            <span class="material-symbols-outlined text-gold">trending_up</span>
-          </div>
-          <h3 class="text-sm font-black text-white uppercase tracking-[0.1em] font-outfit">Rendimiento Promedio</h3>
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Puntualidad</p>
-            <p class="text-xl font-black text-white font-outfit">${avgPunt.toFixed(1)}/10</p>
-            <div class="progress-bar-container mt-1"><div class="progress-bar-fill" style="width:${avgPunt*10}%;"></div></div>
-          </div>
-          <div>
-            <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Compañerismo</p>
-            <p class="text-xl font-black text-white font-outfit">${avgComp.toFixed(1)}/10</p>
-            <div class="progress-bar-container mt-1"><div class="progress-bar-fill" style="width:${avgComp*10}%;"></div></div>
-          </div>
-          <div>
-            <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Respeto</p>
-            <p class="text-xl font-black text-white font-outfit">${avgResp.toFixed(1)}/10</p>
-            <div class="progress-bar-container mt-1"><div class="progress-bar-fill" style="width:${avgResp*10}%;"></div></div>
-          </div>
-          <div>
-            <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Humildad</p>
-            <p class="text-xl font-black text-white font-outfit">${avgHum.toFixed(1)}/10</p>
-            <div class="progress-bar-container mt-1"><div class="progress-bar-fill" style="width:${avgHum*10}%;"></div></div>
-          </div>
-        </div>
-        <div class="mt-4 text-center border-t border-white/5 pt-4">
-          <span class="text-[10px] text-gray-500 uppercase tracking-widest">Promedio General</span>
-          <p class="text-3xl font-black text-gold font-outfit">${promedioGeneral.toFixed(1)}/10</p>
         </div>
       </div>
 
