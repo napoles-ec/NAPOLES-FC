@@ -396,10 +396,7 @@
             .whatsapp-btn { justify-content: center; width: 100%; } 
             .no-wa { text-align: center; width: 100%; }
             .modal { padding: 20px; }
-            .stats-badge .btn-forzar, .stats-badge .btn-wa-masivo { 
-                width: 100%; 
-                justify-content: center; 
-            }
+            .stats-badge .btn-forzar, .stats-badge .btn-wa-masivo { width: 100%; justify-content: center; }
         }
     </style>
 </head>
@@ -464,54 +461,9 @@
     let currentFilter = 'all';
     let partidosCache = [];
     let jugadoresCache = [];
-    let partidoSeleccionado = null;
+    let partidoSeleccionado = null; // { fecha, rival }
 
-    // ==================== FUNCIONES AUXILIARES ====================
-    function formatearHora(hora) {
-        if (!hora) return '--:--';
-        if (hora instanceof Date) {
-            const hh = hora.getHours().toString().padStart(2, '0');
-            const mm = hora.getMinutes().toString().padStart(2, '0');
-            return `${hh}:${mm}`;
-        }
-        let h = String(hora).trim();
-        if (h.indexOf(':') !== -1) {
-            const partes = h.split(':');
-            return `${partes[0].padStart(2, '0')}:${(partes[1] || '00').padStart(2, '0')}`;
-        }
-        const num = parseFloat(h);
-        if (!isNaN(num)) {
-            const horas = Math.floor(num);
-            const minutos = Math.round((num - horas) * 60);
-            return `${horas.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}`;
-        }
-        if (h.includes('T')) {
-            const match = h.match(/(\d{2}):(\d{2})/);
-            if (match) return `${match[1]}:${match[2]}`;
-        }
-        return h.substring(0, 5) || '--:--';
-    }
-
-    function formatearFecha(fechaStr) {
-        if (!fechaStr) return '-';
-        try {
-            const d = new Date(fechaStr);
-            if (isNaN(d.getTime())) return fechaStr;
-            return d.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-        } catch(e) { return fechaStr; }
-    }
-
-    function escapeHtml(str) {
-        if (!str) return '';
-        return String(str).replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
-
-    // ==================== CARGAR DATOS ====================
+    // ==================== FUNCIONES PRINCIPALES ====================
     async function cargarDatos() {
         const container = document.getElementById("partidosContainer");
         container.innerHTML = '<div class="shimmer-card"></div><div class="shimmer-card"></div>';
@@ -528,7 +480,6 @@
         }
     }
 
-    // ==================== RENDERIZAR ====================
     function renderizar() {
         let partidos = partidosCache;
         if (currentFilter === 'active') {
@@ -549,26 +500,25 @@
             const cedulasAsistentes = new Set(asistentes.map(a => a.cedula));
             const faltantes = jugadoresCache.filter(j => !cedulasAsistentes.has(j.cedula));
             
-            const fechaFormateada = formatearFecha(p.fecha);
-            const horaFormateada = formatearHora(p.hora);
+            const fecha = new Date(p.fecha);
+            const fechaFormateada = isNaN(fecha.getTime()) ? p.fecha : fecha.toLocaleDateString('es-ES', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
             
             const esFinalizado = (p.estado === 'FINALIZADO');
             const cardClass = esFinalizado ? 'match-card finalizado' : 'match-card';
             const collapsedClass = esFinalizado ? 'collapsed' : '';
-            const iconoExpandir = esFinalizado ? 'fa-chevron-down' : 'fa-chevron-up';
             
-            const mensajeRecordatorio = (nombre) => `🔔 *¡Hola ${nombre}!* 🔔\n\nTe recordamos el partido de *Nápoles FC*:\n⚽ *Rival:* ${p.rival || 'Por definir'}\n🕒 *Hora:* ${horaFormateada}\n📍 *Lugar:* ${p.lugar || 'Por definir'}\n📅 *Fecha:* ${fechaFormateada}\n\nPor favor confirma tu asistencia cuanto antes. ¡Te esperamos para dar lo mejor! llega 15 min antes  💪⚽🔥`;
-            const mensajeFelicitacion = (nombre) => `🎉 *¡Gracias por confirmar, ${nombre}!* 🎉\n\nEstamos muy contentos de contar contigo para el partido:\n⚽ *Rival:* ${p.rival || 'Por definir'}\n🕒 *Hora:* ${horaFormateada}\n📍 *Lugar:* ${p.lugar || 'Por definir'}\n📅 *Fecha:* ${fechaFormateada}\n\nRecuerda ser puntual y traer tu mejor actitud. ¡Juntos sumamos! llega 15 min antes  🔥🏆\n\n#VamosNápoles`;
+            const mensajeRecordatorio = (nombre) => `🔔 *¡Hola ${nombre}!* 🔔\n\nTe recordamos el partido de *Nápoles FC*:\n⚽ *Rival:* ${p.rival || 'Por definir'}\n🕒 *Hora:* ${p.hora || '--:--'}\n📍 *Lugar:* ${p.lugar || 'Por definir'}\n📅 *Fecha:* ${fechaFormateada}\n\nPor favor confirma tu asistencia cuanto antes. ¡Te esperamos para dar lo mejor! llega 15 min antes  💪⚽🔥`;
+            const mensajeFelicitacion = (nombre) => `🎉 *¡Gracias por confirmar, ${nombre}!* 🎉\n\nEstamos muy contentos de contar contigo para el partido:\n⚽ *Rival:* ${p.rival || 'Por definir'}\n🕒 *Hora:* ${p.hora || '--:--'}\n📍 *Lugar:* ${p.lugar || 'Por definir'}\n📅 *Fecha:* ${fechaFormateada}\n\nRecuerda ser puntual y traer tu mejor actitud. ¡Juntos sumamos! llega 15 min antes  🔥🏆\n\n#VamosNápoles`;
             
             html += `
             <div class="${cardClass}">
                 <div class="match-header" onclick="toggleMatchContent(this)">
                     <div>
-                        <div class="match-date">${fechaFormateada} - ${horaFormateada}</div>
+                        <div class="match-date">${fechaFormateada} - ${p.hora || ''}</div>
                         <div class="match-rival">⚽ ${escapeHtml(p.rival || 'Rival')}</div>
                     </div>
                     <div class="match-location"><i class="fa-solid fa-location-dot"></i> ${escapeHtml(p.lugar || 'Sin Sede')}</div>
-                    <i class="expand-icon fa-solid ${iconoExpandir}"></i>
+                    <i class="expand-icon fa-solid ${esFinalizado ? 'fa-chevron-down' : 'fa-chevron-up'}"></i>
                 </div>
                 <div class="match-content ${collapsedClass}">
                     <div class="stats-badge">
@@ -631,34 +581,6 @@
         container.innerHTML = html;
     }
 
-    // ==================== TOGGLE COLLAPSE ====================
-    window.toggleMatchContent = function(header) {
-        const matchCard = header.closest('.match-card');
-        const content = matchCard.querySelector('.match-content');
-        const icon = header.querySelector('.expand-icon');
-        
-        if (content.classList.contains('collapsed')) {
-            content.classList.remove('collapsed');
-            icon.className = 'expand-icon fa-solid fa-chevron-up';
-        } else {
-            content.classList.add('collapsed');
-            icon.className = 'expand-icon fa-solid fa-chevron-down';
-        }
-    }
-
-    // ==================== FILTROS ====================
-    function setupFilters() {
-        const buttons = document.querySelectorAll('.filter-btn');
-        buttons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                buttons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentFilter = btn.dataset.filter;
-                renderizar();
-            });
-        });
-    }
-
     // ==================== MODAL FORZAR ASISTENCIA ====================
     function abrirModalForzar(fecha, rival) {
         const partido = partidosCache.find(p => p.fecha === fecha && p.rival === rival);
@@ -697,12 +619,14 @@
         partidoSeleccionado = null;
     }
 
+    // Seleccionar/deseleccionar todos
     document.getElementById('btnSeleccionarTodos').addEventListener('click', function() {
         const checks = document.querySelectorAll('.check-faltante');
         const allChecked = Array.from(checks).every(c => c.checked);
         checks.forEach(c => c.checked = !allChecked);
     });
 
+    // Confirmar forzar asistencia
     document.getElementById('btnConfirmarForzar').addEventListener('click', async function() {
         if (!partidoSeleccionado) return;
         const checks = document.querySelectorAll('.check-faltante:checked');
@@ -755,9 +679,8 @@
             return;
         }
 
-        const hora = formatearHora(partido.hora);
-        const fecha = formatearFecha(partido.fecha);
-        const mensaje = `🔔 *¡Recordatorio!* 🔔\n\nPartido de Nápoles FC:\n⚽ Rival: ${partido.rival}\n🕒 Hora: ${hora}\n📍 Lugar: ${partido.lugar}\n📅 Fecha: ${fecha}\n\nConfirma tu asistencia. ¡Te esperamos! 💪`;
+        const fechaFormateada = new Date(partido.fecha).toLocaleDateString('es-ES', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+        const mensaje = `🔔 *¡Recordatorio!* 🔔\n\nPartido de Nápoles FC:\n⚽ Rival: ${partido.rival}\n🕒 Hora: ${partido.hora || '--:--'}\n📍 Lugar: ${partido.lugar}\n📅 Fecha: ${fechaFormateada}\n\nConfirma tu asistencia. ¡Te esperamos! 💪`;
 
         let abiertos = 0;
         faltantes.forEach(j => {
@@ -770,6 +693,43 @@
         });
 
         alert(`📨 Se abrieron ${abiertos} conversaciones. ¡Presiona "Enviar" en cada una!`);
+    }
+
+    // ==================== FUNCIONES GLOBALES ====================
+    window.toggleMatchContent = function(header) {
+        const matchCard = header.closest('.match-card');
+        const content = matchCard.querySelector('.match-content');
+        const icon = header.querySelector('.expand-icon');
+        
+        if (content.classList.contains('collapsed')) {
+            content.classList.remove('collapsed');
+            icon.className = 'expand-icon fa-solid fa-chevron-up';
+        } else {
+            content.classList.add('collapsed');
+            icon.className = 'expand-icon fa-solid fa-chevron-down';
+        }
+    }
+
+    function setupFilters() {
+        const buttons = document.querySelectorAll('.filter-btn');
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                buttons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                renderizar();
+            });
+        });
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, m => {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
     }
 
     // ==================== INICIALIZACIÓN ====================
