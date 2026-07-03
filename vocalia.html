@@ -40,6 +40,19 @@
             background: #0f172a; color: white; padding: 8px 16px; border-radius: 20px;
             z-index: 2000; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; gap: 6px;
         }
+        .concept-filter-select {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 4px 8px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #0f172a;
+            outline: none;
+            cursor: pointer;
+            min-width: 100px;
+        }
+        .concept-filter-select:focus { border-color: #7c3aed; ring: 2px solid #7c3aed20; }
     </style>
 </head>
 <body class="bg-slate-50 font-body-md text-on-surface min-h-screen pb-16">
@@ -56,7 +69,7 @@
 
 <main class="pt-14 px-2 max-w-7xl mx-auto space-y-3">
     
-    <!-- === CARDS DE RESUMEN (INCLUYE CONTADOR SOLICITADO) === -->
+    <!-- === CARDS DE RESUMEN === -->
     <section class="grid grid-cols-3 gap-1.5">
         <div class="bg-slate-900 p-2.5 rounded-xl text-white shadow-sm flex flex-col justify-between">
             <p class="text-[7.5px] uppercase tracking-wider opacity-60 font-bold">Recaudado</p>
@@ -70,7 +83,6 @@
             <span class="text-[7px] text-red-200 block truncate mt-1">Cartera de deudas</span>
         </div>
 
-        <!-- INDICATOR CARD SOLICITADO: Muestra cuántos jugadores tienen valores pendientes -->
         <div class="bg-gradient-to-br from-purple-600 to-indigo-800 p-2.5 rounded-xl text-white shadow-sm flex flex-col justify-between border border-purple-500">
             <p class="text-[7.5px] uppercase tracking-wider opacity-90 font-black">Con Deuda</p>
             <div class="flex items-baseline gap-1 mt-0.5">
@@ -81,13 +93,18 @@
         </div>
     </section>
 
-    <!-- Buscador e Interfaz de filtros -->
-    <section class="glass-card p-2 rounded-xl flex gap-1.5 items-center">
-        <div class="relative flex-1">
+    <!-- Buscador + Filtro de Concepto -->
+    <section class="glass-card p-2 rounded-xl flex flex-wrap gap-1.5 items-center">
+        <div class="relative flex-1 min-w-[120px]">
             <span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-xs">search</span>
-            <input class="w-full pl-6 pr-2 py-1 bg-slate-100 border-none rounded-md text-[11px] font-medium focus:ring-1 focus:ring-primary/20" id="busqueda" placeholder="Filtrar jugador por nombre...">
+            <input class="w-full pl-6 pr-2 py-1 bg-slate-100 border-none rounded-md text-[11px] font-medium focus:ring-1 focus:ring-primary/20" id="busqueda" placeholder="Filtrar por nombre...">
         </div>
-        <button id="btn-pago-multiple" class="px-2.5 py-1 bg-primary text-white text-[11px] font-bold rounded-md flex items-center gap-0.5 shadow-sm">
+        
+        <select id="filtro-concepto" class="concept-filter-select flex-1 min-w-[100px]">
+            <option value="__todos">📋 Todos los conceptos</option>
+        </select>
+
+        <button id="btn-pago-multiple" class="px-2.5 py-1 bg-primary text-white text-[11px] font-bold rounded-md flex items-center gap-0.5 shadow-sm whitespace-nowrap">
             <span class="material-symbols-outlined text-xs">groups</span> Cobro Grupal
         </button>
     </section>
@@ -143,13 +160,14 @@
 </div>
 
 <script>
-    // REEMPLAZAR CON TU URL REAL DE IMPLEMENTACIÓN (DEBE TERMINAR EN /exec)
+    // ⚠️ REEMPLAZAR CON TU URL REAL DE IMPLEMENTACIÓN (DEBE TERMINAR EN /exec)
     const API_URL = "https://script.google.com/macros/s/AKfycbz62_ZoxSjv-7urjwpiAOcY8dB6GPAr7n3tAxZzK1bsNgIwJeeIiNg2vPmCTVyj3YoI/exec";
 
     let jugadoresData = [];
     let selectedPlayers = new Set();
     let modoPagoMultiple = false;
     let busquedaTexto = "";
+    let conceptoFiltro = "__todos";
 
     function formatMoney(v) { return new Intl.NumberFormat('es-EC', { style:'currency', currency:'USD' }).format(v); }
     function toast(msg, type='info') {
@@ -175,6 +193,8 @@
                 if(histData.success && histData.historial) recaudado = histData.historial.reduce((s,i)=>s+parseFloat(i.monto),0);
                 document.getElementById('total-recaudado').innerText = formatMoney(recaudado);
                 
+                // Poblar el filtro de conceptos
+                poblarFiltroConceptos();
                 renderizarJugadores();
             } else throw new Error(data.error);
         } catch(e) {
@@ -182,19 +202,48 @@
         }
     }
 
+    function poblarFiltroConceptos() {
+        const select = document.getElementById('filtro-concepto');
+        // Obtener todos los conceptos únicos de todas las deudas
+        const conceptos = new Set();
+        jugadoresData.forEach(j => {
+            j.detallesPendientes.forEach(d => conceptos.add(d.concepto));
+        });
+        // Mantener la opción "Todos"
+        select.innerHTML = '<option value="__todos">📋 Todos los conceptos</option>';
+        conceptos.forEach(c => {
+            select.innerHTML += `<option value="${c}">${c}</option>`;
+        });
+        // Restaurar selección anterior si existe
+        if (conceptoFiltro !== '__todos' && conceptos.has(conceptoFiltro)) {
+            select.value = conceptoFiltro;
+        } else {
+            select.value = '__todos';
+            conceptoFiltro = '__todos';
+        }
+    }
+
     function renderizarJugadores() {
         const container = document.getElementById('lista-jugadores');
         let lista = jugadoresData;
+
+        // Filtrar por concepto
+        if (conceptoFiltro !== '__todos') {
+            lista = lista.filter(j => 
+                j.detallesPendientes.some(d => d.concepto === conceptoFiltro)
+            );
+        }
         
+        // Filtrar por búsqueda
         if(busquedaTexto) {
-            lista = jugadoresData.filter(j => 
+            lista = lista.filter(j => 
                 (j.nombreCompleto || "").toLowerCase().includes(busquedaTexto.toLowerCase()) ||
                 (j.nombreCamiseta || "").toLowerCase().includes(busquedaTexto.toLowerCase())
             );
         }
 
         if(!lista.length) {
-            container.innerHTML = '<div class="col-span-full py-4 text-center text-xs text-slate-400">Sin deudas de cobranza pendientes.</div>';
+            container.innerHTML = '<div class="col-span-full py-4 text-center text-xs text-slate-400">Sin jugadores con deudas para el filtro seleccionado.</div>';
             return;
         }
 
@@ -202,14 +251,23 @@
         for(let j of lista) {
             const selec = selectedPlayers.has(j.cedula);
             
+            // Mostrar solo las deudas del concepto filtrado si hay filtro activo
+            let detallesMostrar = j.detallesPendientes;
+            if (conceptoFiltro !== '__todos') {
+                detallesMostrar = detallesMostrar.filter(d => d.concepto === conceptoFiltro);
+            }
+            
             let desgloseHtml = '';
-            j.detallesPendientes.forEach(d => {
+            detallesMostrar.forEach(d => {
                 desgloseHtml += `
                     <div class="deuda-item">
                         <span class="text-slate-500 font-medium truncate max-w-[70px]">${d.concepto}</span>
                         <strong class="text-red-600 font-bold">${formatMoney(d.saldoPendiente)}</strong>
                     </div>`;
             });
+
+            // Total pendiente considerando solo el concepto filtrado (para mostrar)
+            const totalFiltrado = detallesMostrar.reduce((sum, d) => sum + d.saldoPendiente, 0);
 
             html += `
                 <div class="bg-white p-2 rounded-xl shadow-xs border transition-all ${selec ? 'player-selected' : 'border-slate-200'}" onclick="toggleSelect('${j.cedula}')">
@@ -226,8 +284,8 @@
                     </div>
 
                     <div class="mt-2 pt-1 border-t border-dashed border-slate-200 flex justify-between items-center text-[9px]">
-                        <span class="text-slate-400 font-bold uppercase">Neto:</span>
-                        <span class="font-black text-purple-700 text-xs">${formatMoney(j.totalPendiente)}</span>
+                        <span class="text-slate-400 font-bold uppercase">Neto (filtrado):</span>
+                        <span class="font-black text-purple-700 text-xs">${formatMoney(totalFiltrado)}</span>
                     </div>
                     
                     <button class="w-full mt-2 py-1 bg-purple-50 hover:bg-purple-100 rounded text-[9px] font-bold text-primary flex items-center justify-center gap-0.5" onclick="event.stopPropagation(); abrirModalPagoIndividual('${j.cedula}')">
@@ -257,9 +315,16 @@
         
         const selectConcepto = document.getElementById('conceptoPago');
         selectConcepto.innerHTML = '';
-        jug.detallesPendientes.forEach(d => {
+        // Si hay filtro activo, mostrar solo ese concepto; si no, todos
+        let detalles = jug.detallesPendientes;
+        if (conceptoFiltro !== '__todos') {
+            detalles = detalles.filter(d => d.concepto === conceptoFiltro);
+        }
+        detalles.forEach(d => {
             selectConcepto.innerHTML += `<option value="${d.concepto}">${d.concepto} (${formatMoney(d.saldoPendiente)})</option>`;
         });
+        // Si solo hay una opción, seleccionarla automáticamente
+        if (selectConcepto.options.length === 1) selectConcepto.selectedIndex = 0;
         
         limpiarFormPago(); mostrarModal();
     }
@@ -297,11 +362,16 @@
             } catch(e) { toast(e.message,"error"); }
         } else {
             let listCeds = Array.from(selectedPlayers);
-            toast(`Procesando cola de cobros en paralelo...`);
+            toast(`Procesando cola de cobros...`);
             let completados = 0;
+            // En cobro grupal, usamos el concepto filtrado (si existe) o permitimos que el usuario elija en el modal?
+            // Como simplificación, usamos el concepto filtrado si está activo; si no, usamos el primer concepto de cada jugador (no ideal)
+            // Mejor: en el modal de cobro grupal añadir un selector de concepto, pero lo dejamos simple:
+            // Usamos el concepto del filtro si está activo, sino "Vocalía" por defecto
+            let concepto = conceptoFiltro !== '__todos' ? conceptoFiltro : 'Vocalía';
             for(let ced of listCeds) {
                 try {
-                    let res = await fetch(`${API_URL}?action=registrarPagoVocalia&cedula=${ced}&monto=${monto}&transaccion=${encodeURIComponent(transaccion)}`);
+                    let res = await fetch(`${API_URL}?action=registrarPagoVocalia&cedula=${ced}&monto=${monto}&concepto=${encodeURIComponent(concepto)}&transaccion=${encodeURIComponent(transaccion)}`);
                     let data = await res.json(); if(data.success) completados++;
                 } catch(e){}
             }
@@ -343,11 +413,18 @@
     function cerrarModalHistorial() { document.getElementById('modalHistorial').classList.add('hidden'); document.getElementById('modalHistorial').classList.remove('flex'); }
     function escapeHtml(s) { if(!s) return ''; return s.replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
 
+    // Event Listeners
     document.getElementById('btn-refresh').addEventListener('click', cargarDatos);
     document.getElementById('btn-ver-historial').addEventListener('click', abrirHistorial);
     document.getElementById('btn-pago-multiple').addEventListener('click', abrirModalMultiple);
     document.getElementById('btn-confirmar-pago').addEventListener('click', confirmarPago);
     document.getElementById('busqueda').addEventListener('input', (e)=>{ busquedaTexto=e.target.value; renderizarJugadores(); });
+    document.getElementById('filtro-concepto').addEventListener('change', (e) => {
+        conceptoFiltro = e.target.value;
+        // Limpiar selecciones al cambiar filtro para evitar inconsistencias
+        selectedPlayers.clear();
+        renderizarJugadores();
+    });
     
     window.cerrarModalPago = cerrarModalPago;
     window.cerrarModalHistorial = cerrarModalHistorial;
