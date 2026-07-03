@@ -3,39 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=yes">
-  <title>Nápoles F.C. · Partidos del Equipo</title>
+  <title>Nápoles F.C. · Partidos</title>
 
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
   <style>
     :root {
-      --gold: #E9C349;
-      --gold-dim: rgba(233, 195, 73, 0.15);
-      --bg-dark-start: #020617;
-      --bg-dark-end: #0f172a;
-      --glass-bg: rgba(30, 41, 59, 0.35);
-      --glass-border: rgba(233, 195, 73, 0.12);
-      --text-primary: #f8fafc;
-      --text-secondary: #94a3b8;
-      --accent-green: #10b981;
-      --accent-red: #ef4444;
+      --gold: #EAB308;
+      --gold-dim: rgba(234, 179, 8, 0.15);
+      --bg-dark: #020617;
+      --glass-bg: rgba(30, 41, 59, 0.45);
+      --glass-border: rgba(255, 255, 255, 0.06);
+      --card-bg: rgba(15, 23, 42, 0.55);
     }
 
     * { box-sizing: border-box; }
+    
     body {
-      background: linear-gradient(180deg, var(--bg-dark-start) 0%, var(--bg-dark-end) 100%);
-      color: var(--text-primary);
+      background: radial-gradient(circle at top, #0f172a 0%, var(--bg-dark) 100%);
+      color: #f8fafc;
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
-      padding: 0 0 80px 0;
+      padding-bottom: 90px;
       margin: 0;
     }
+    
     .font-outfit { font-family: 'Outfit', sans-serif; }
 
-    .skeleton-wrapper { padding: 20px; }
+    /* Shimmer Animation para Skeleton */
     .skeleton-shimmer {
       background: linear-gradient(90deg, #0f172a 25%, #1e293b 50%, #0f172a 75%);
       background-size: 200% 100%;
@@ -43,143 +40,141 @@
     }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
+    /* Glassmorphism Premium */
     .glass-card {
       background: var(--glass-bg);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: 28px;
-      border: 0.5px solid var(--glass-border);
-      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 24px;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
     }
 
+    /* Tarjetas de Partidos Táctiles */
     .partido-card {
-      background: rgba(2, 6, 23, 0.4);
-      border-radius: 20px;
+      background: var(--card-bg);
+      border-radius: 18px;
       padding: 16px;
-      border: 0.5px solid rgba(255, 255, 255, 0.05);
-      transition: all 0.2s;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .partido-card:active { transform: scale(0.99); background: rgba(30, 41, 59, 0.4); }
+    .partido-card:active { 
+      transform: scale(0.98); 
+      background: rgba(30, 41, 59, 0.6); 
+    }
 
+    /* Bordes de Estado Inteligentes */
+    .border-victoria { border-left: 4px solid #10b981; }
+    .border-derrota { border-left: 4px solid #ef4444; }
+    .border-empate { border-left: 4px solid #f59e0b; }
+    .border-proximo { 
+      border-left: 4px solid var(--gold); 
+      background: linear-gradient(90deg, rgba(234, 179, 8, 0.03) 0%, var(--card-bg) 100%);
+      box-shadow: 0 4px 20px -5px rgba(234, 179, 8, 0.1);
+    }
+    .border-pendiente { border-left: 4px solid #64748b; }
+
+    /* Badges de Estado */
     .badge-estado {
-      font-size: 0.55rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      padding: 2px 12px;
-      border-radius: 20px;
-    }
-    .badge-finalizado { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.2); }
-    .badge-proximo { background: rgba(233, 195, 73, 0.15); color: var(--gold); border: 1px solid rgba(233,195,73,0.2); }
-    .badge-pendiente { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
-
-    .resultado-victoria { color: #10b981; font-weight: 800; }
-    .resultado-derrota { color: #ef4444; font-weight: 800; }
-    .resultado-empate { color: #fbbf24; font-weight: 800; }
-
-    .btn-filtro {
-      padding: 8px 16px;
-      border-radius: 40px;
       font-size: 0.65rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: transparent;
-      color: var(--text-secondary);
+      padding: 3px 10px;
+      border-radius: 9999px;
+    }
+    .badge-finalizado { background: rgba(16, 185, 129, 0.12); color: #34d399; border: 1px solid rgba(16,185,129,0.2); }
+    .badge-proximo { background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234,179,8,0.25); }
+    .badge-pendiente { background: rgba(148, 163, 184, 0.12); color: #cbd5e1; border: 1px solid rgba(148,163,184,0.2); }
+
+    /* Botones de Filtro */
+    .btn-filtro {
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(30, 41, 59, 0.4);
+      color: #94a3b8;
       transition: all 0.2s;
       cursor: pointer;
+      white-space: nowrap;
     }
-    .btn-filtro:hover { background: rgba(255,255,255,0.04); }
+    .btn-filtro:hover { background: rgba(255,255,255,0.05); color: #f8fafc; }
     .btn-filtro.activo {
       background: var(--gold);
-      color: #000;
+      color: #020617;
       border-color: var(--gold);
-      box-shadow: 0 4px 15px rgba(233, 195, 73, 0.2);
+      box-shadow: 0 4px 12px rgba(234, 179, 8, 0.25);
     }
 
+    /* Navegación Inferior Nativa */
     .bottom-nav {
       position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(2, 6, 23, 0.92);
-      backdrop-filter: blur(16px);
-      border-top: 0.5px solid rgba(255, 255, 255, 0.04);
+      bottom: 0; left: 0; right: 0;
+      background: rgba(2, 6, 23, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
       display: flex;
       justify-content: space-around;
       align-items: center;
-      padding: 8px 0 env(safe-area-inset-bottom, 8px) 0;
+      padding: 10px 0 calc(6px + env(safe-area-inset-bottom, 0px)) 0;
       z-index: 100;
-      box-shadow: 0 -8px 30px rgba(0,0,0,0.5);
     }
     .bottom-nav .nav-item {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 4px 10px;
-      border-radius: 12px;
       color: #64748b;
       transition: all 0.2s;
-      cursor: pointer;
       text-decoration: none;
-      font-size: 0.5rem;
-      gap: 1px;
-      min-width: 44px;
-      border: none;
       background: transparent;
-      font-family: 'Inter', sans-serif;
+      border: none;
+      cursor: pointer;
       font-weight: 700;
+      font-size: 0.55rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
+      gap: 3px;
     }
-    .bottom-nav .nav-item .material-symbols-outlined { font-size: 1.3rem; transition: all 0.2s; }
-    .bottom-nav .nav-item:hover { color: #94a3b8; }
-    .bottom-nav .nav-item:active { transform: scale(0.9); }
+    .bottom-nav .nav-item .material-symbols-outlined { font-size: 1.4rem; }
+    .bottom-nav .nav-item:active { transform: scale(0.92); }
     .bottom-nav .nav-item.active { color: var(--gold); }
-    .bottom-nav .nav-item .nav-label { font-size: 0.4rem; letter-spacing: 0.1em; font-weight: 800; }
 
+    /* Toast Flotante */
     #toast {
       position: fixed;
-      bottom: 80px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(2, 6, 23, 0.95);
+      bottom: 85px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(15, 23, 42, 0.9);
       backdrop-filter: blur(12px);
-      border: 1px solid rgba(233, 195, 73, 0.25);
-      border-radius: 30px;
-      padding: 8px 20px;
-      color: var(--gold);
-      font-weight: 700;
+      border: 1px solid rgba(234, 179, 8, 0.3);
+      border-radius: 9999px;
+      padding: 10px 24px;
+      color: #fef08a;
+      font-weight: 600;
       font-size: 0.8rem;
       z-index: 2000;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-      display: none;
-      white-space: nowrap;
-      max-width: 90%;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.6);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    #toast.show { display: block; animation: toastAnim 2.5s ease forwards; }
-    @keyframes toastAnim {
-      0% { opacity: 0; transform: translateX(-50%) translateY(15px); }
-      15% { opacity: 1; transform: translateX(-50%) translateY(0); }
-      85% { opacity: 1; transform: translateX(-50%) translateY(0); }
-      100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
-    }
-
-    @media (max-width: 480px) {
-      .partido-card { padding: 12px; }
-      .btn-filtro { font-size: 0.55rem; padding: 6px 12px; }
-    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   </style>
 </head>
 <body>
 
-<!-- SKELETON -->
-<div class="skeleton-wrapper" id="skeletonLoader">
+<div class="skeleton-wrapper p-4 pt-8" id="skeletonLoader">
   <div class="max-w-md mx-auto space-y-6">
-    <div class="skeleton-shimmer h-16 rounded-2xl"></div>
-    <div class="skeleton-shimmer h-12 rounded-full"></div>
+    <div class="flex justify-between items-center">
+      <div class="skeleton-shimmer h-8 w-1/2 rounded-lg"></div>
+      <div class="skeleton-shimmer h-8 w-16 rounded-full"></div>
+    </div>
+    <div class="skeleton-shimmer h-10 rounded-full w-full"></div>
     <div class="space-y-4">
       <div class="skeleton-shimmer h-28 rounded-2xl"></div>
       <div class="skeleton-shimmer h-28 rounded-2xl"></div>
@@ -188,48 +183,45 @@
   </div>
 </div>
 
-<!-- CONTENIDO DINÁMICO -->
 <div id="dynamicContent" style="display:none;"></div>
 
-<!-- TOAST -->
 <div id="toast"></div>
 
-<!-- BARRA NAVEGACIÓN INFERIOR -->
 <div class="bottom-nav">
   <a href="perfil.html" class="nav-item" title="Perfil">
     <span class="material-symbols-outlined">account_circle</span>
-    <span class="nav-label">Perfil</span>
+    <span>Perfil</span>
   </a>
   <a href="alineacion.html" class="nav-item" title="Alineación">
     <span class="material-symbols-outlined">group</span>
-    <span class="nav-label">Alineación</span>
+    <span>Alineación</span>
   </a>
   <a href="h_valores.html" class="nav-item" title="Historial Valores">
     <span class="material-symbols-outlined">payments</span>
-    <span class="nav-label">Valores</span>
+    <span>Valores</span>
   </a>
   <a href="h_partidos.html" class="nav-item active" title="Partidos">
     <span class="material-symbols-outlined">sports_soccer</span>
-    <span class="nav-label">Partidos</span>
+    <span>Partidos</span>
   </a>
   <button class="nav-item" onclick="actualizar()" title="Actualizar">
     <span class="material-symbols-outlined">sync</span>
-    <span class="nav-label">Actualizar</span>
+    <span>Actualizar</span>
   </button>
 </div>
 
 <script>
 // ==================== CONFIGURACIÓN ====================
-// ⚠️ CAMBIA ESTA URL POR LA DE TU SCRIPT DE GAS ⚠️
 const URL_GAS = "https://script.google.com/macros/s/AKfycbz8Kw2wNXFNaO3YOyrNykzscm_3vDMK0sXz7kYPEUUf-I1L_Ikht8U5uzHXhgWcEYnv/exec";
 
 // ==================== FUNCIONES AUXILIARES ====================
 function mostrarToast(mensaje) {
   const toast = document.getElementById('toast');
   toast.textContent = mensaje;
-  toast.className = 'show';
+  toast.addClassName = 'show'; // Fallback / Compatibilidad anterior
+  toast.classList.add('show');
   clearTimeout(toast._timer);
-  toast._timer = setTimeout(() => { toast.className = ''; }, 2500);
+  toast._timer = setTimeout(() => { toast.classList.remove('show'); }, 2200);
 }
 
 function formatearFecha(fechaStr) {
@@ -258,7 +250,6 @@ function escapeHtml(str) {
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-// ==================== OBTENER RESULTADO ====================
 function parseResultado(str) {
   if (!str || str === 'VS') return { home: null, away: null, valid: false };
   const clean = String(str).trim().replace(/\s/g, '');
@@ -296,14 +287,14 @@ async function cargarPartidos() {
     }
   } catch(e) {
     console.error(e);
-    mostrarToast('❌ Error: ' + e.message);
+    mostrarToast('❌ Error al cargar datos');
     document.getElementById('skeletonLoader').style.display = 'none';
     document.getElementById('dynamicContent').style.display = 'block';
     document.getElementById('dynamicContent').innerHTML = `
-      <div class="max-w-md mx-auto p-6 text-center text-red-400">
-        <span class="material-symbols-outlined text-5xl">error</span>
-        <p class="mt-4 font-bold">${e.message}</p>
-        <button onclick="cargarPartidos()" class="mt-6 bg-gold text-black px-6 py-3 rounded-2xl font-bold text-xs uppercase tracking-widest">Reintentar</button>
+      <div class="max-w-md mx-auto p-8 text-center text-red-400">
+        <span class="material-symbols-outlined text-6xl opacity-60">error</span>
+        <p class="mt-4 font-bold text-lg">${e.message}</p>
+        <button onclick="cargarPartidos()" class="mt-6 bg-yellow-500 text-black px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition active:scale-95">Reintentar</button>
       </div>
     `;
   }
@@ -322,34 +313,27 @@ function aplicarFiltro() {
   const container = document.getElementById('dynamicContent');
   let filtrados = todosLosPartidos;
 
-  // Filtrar por campeonato
   if (campeonatoActual !== 'todos') {
     filtrados = filtrados.filter(p => (p.campeonato || '').toUpperCase() === campeonatoActual.toUpperCase());
   }
 
-  // Ordenar: primero los más recientes (por fecha)
-  filtrados.sort((a, b) => {
-    const fa = new Date(a.fecha);
-    const fb = new Date(b.fecha);
-    return fb - fa;
-  });
+  filtrados.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
   if (filtrados.length === 0) {
     container.innerHTML = `
-      <div class="max-w-md mx-auto p-6 pb-24">
-        <header class="text-center pt-6 pb-6">
-          <h1 class="text-2xl font-black text-white tracking-tight uppercase font-outfit flex items-center justify-center gap-2">
-            <span class="material-symbols-outlined text-gold" style="font-size:28px;">sports_soccer</span>
-            Partidos del Equipo
-          </h1>
-          <p class="text-[10px] text-gold font-bold uppercase tracking-[0.3em] mt-1">${campeonatoActual === 'todos' ? 'Todos los campeonatos' : campeonatoActual}</p>
+      <div class="max-w-md mx-auto p-4 pt-6">
+        <header class="flex items-center justify-between mb-5">
+          <div>
+            <h1 class="text-2xl font-outfit font-black tracking-tight flex items-center gap-2">Partidos</h1>
+            <p class="text-xs text-yellow-500/90 font-semibold tracking-wider uppercase mt-0.5">${campeonatoActual === 'todos' ? 'Todos los torneos' : campeonatoActual}</p>
+          </div>
         </header>
-        <div class="flex gap-2 mb-6 flex-wrap justify-center">
+        <div class="flex gap-2 mb-6 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-none">
           ${crearBotonesFiltro()}
         </div>
-        <div class="glass-card p-8 text-center text-gray-500">
-          <span class="material-symbols-outlined text-5xl text-gold/20">sports_soccer</span>
-          <p class="mt-4 font-bold">No hay partidos para este campeonato</p>
+        <div class="glass-card p-10 text-center text-slate-500">
+          <span class="material-symbols-outlined text-5xl text-yellow-500/20">sports_soccer</span>
+          <p class="mt-3 font-semibold text-sm">No hay registros para este campeonato</p>
         </div>
       </div>
     `;
@@ -357,26 +341,23 @@ function aplicarFiltro() {
   }
 
   let html = `
-    <div class="max-w-md mx-auto p-6 pb-24">
-      <header class="text-center pt-6 pb-6">
-        <div class="flex items-center justify-between">
-          <h1 class="text-2xl font-black text-white tracking-tight uppercase font-outfit flex items-center gap-2">
-            <span class="material-symbols-outlined text-gold" style="font-size:28px;">sports_soccer</span>
-            Partidos
-          </h1>
-          <button class="btn-action" onclick="window.location.href='perfil.html'">
-            <span class="material-symbols-outlined text-gold" style="font-size:18px;">arrow_back</span>
-            Volver
-          </button>
+    <div class="max-w-md mx-auto p-4 pt-6">
+      <header class="flex items-center justify-between mb-5">
+        <div>
+          <h1 class="text-2xl font-outfit font-black tracking-tight">Partidos</h1>
+          <p class="text-xs text-yellow-500/90 font-semibold tracking-wider uppercase mt-0.5">${campeonatoActual === 'todos' ? 'Todos los torneos' : campeonatoActual}</p>
         </div>
-        <p class="text-[10px] text-gold font-bold uppercase tracking-[0.3em] mt-1">${campeonatoActual === 'todos' ? 'Todos los campeonatos' : campeonatoActual}</p>
+        <button class="flex items-center gap-1.5 text-xs font-bold text-yellow-500 bg-yellow-500/10 border border-yellow-500/20 px-3 py-1.5 rounded-xl active:scale-95 transition" onclick="window.location.href='perfil.html'">
+          <span class="material-symbols-outlined text-sm">arrow_back</span>
+          Volver
+        </button>
       </header>
 
-      <div class="flex gap-2 mb-6 flex-wrap justify-center">
+      <div class="flex gap-2 mb-5 overflow-x-auto pb-2 -mx-4 px-4">
         ${crearBotonesFiltro()}
       </div>
 
-      <div class="space-y-4">
+      <div class="space-y-3.5">
   `;
 
   filtrados.forEach(p => {
@@ -389,61 +370,71 @@ function aplicarFiltro() {
     const campeonato = escapeHtml(p.campeonato || 'Sin campeonato');
 
     let badgeEstado = '';
-    if (estado === 'FINALIZADO') badgeEstado = `<span class="badge-estado badge-finalizado">✅ Finalizado</span>`;
-    else if (estado === 'PRÓXIMO') badgeEstado = `<span class="badge-estado badge-proximo">🔥 Próximo</span>`;
-    else badgeEstado = `<span class="badge-estado badge-pendiente">⏳ Pendiente</span>`;
+    let borderClase = 'border-pendiente';
+    
+    if (estado === 'FINALIZADO') {
+      badgeEstado = `<span class="badge-estado badge-finalizado">✅ Fin</span>`;
+    } else if (estado === 'PRÓXIMO') {
+      badgeEstado = `<span class="badge-estado badge-proximo">🔥 Próximo</span>`;
+      borderClase = 'border-proximo';
+    } else {
+      badgeEstado = `<span class="badge-estado badge-pendiente">⏳ Pendiente</span>`;
+    }
 
     let resultadoHTML = '';
-    let badgeResultado = '';
     const outcome = determinarResultado(p);
     const parsed = parseResultado(resultado);
 
     if (estado === 'FINALIZADO' && parsed.valid) {
-      let clase = '';
-      let texto = '';
+      let claseTexto = '';
+      let etiquetaResultado = '';
+      
       if (outcome === 'VICTORIA') {
-        clase = 'resultado-victoria';
-        texto = '🏆 VICTORIA';
-        badgeResultado = `<span class="text-[9px] font-bold bg-green-100/10 text-green-400 border border-green-400/20 px-2 py-0.5 rounded-full">${texto}</span>`;
+        claseTexto = 'text-emerald-400';
+        borderClase = 'border-victoria';
+        etiquetaResultado = 'VICTORIA';
       } else if (outcome === 'DERROTA') {
-        clase = 'resultado-derrota';
-        texto = '❌ DERROTA';
-        badgeResultado = `<span class="text-[9px] font-bold bg-red-100/10 text-red-400 border border-red-400/20 px-2 py-0.5 rounded-full">${texto}</span>`;
+        claseTexto = 'text-red-400';
+        borderClase = 'border-derrota';
+        etiquetaResultado = 'DERROTA';
       } else if (outcome === 'EMPATE') {
-        clase = 'resultado-empate';
-        texto = '🤝 EMPATE';
-        badgeResultado = `<span class="text-[9px] font-bold bg-amber-100/10 text-amber-400 border border-amber-400/20 px-2 py-0.5 rounded-full">${texto}</span>`;
+        claseTexto = 'text-amber-400';
+        borderClase = 'border-empate';
+        etiquetaResultado = 'EMPATE';
       }
+      
       resultadoHTML = `
-        <div class="flex items-center gap-3">
-          <span class="text-2xl font-black ${clase}">${parsed.home} - ${parsed.away}</span>
-          ${badgeResultado}
+        <div class="text-right">
+          <span class="text-2xl font-black font-outfit tracking-tight ${claseTexto}">${parsed.home} - ${parsed.away}</span>
+          <p class="text-[9px] font-extrabold tracking-wide ${claseTexto} opacity-90 mt-0.5">${etiquetaResultado}</p>
         </div>
       `;
     } else {
-      resultadoHTML = `<span class="text-gray-400 text-xl font-light">${resultado}</span>`;
+      resultadoHTML = `
+        <div class="bg-slate-800/60 px-3 py-1 rounded-xl border border-slate-700/50">
+          <span class="text-slate-400 text-xs font-black tracking-widest">${resultado}</span>
+        </div>
+      `;
     }
 
     html += `
-      <div class="partido-card">
-        <div class="flex justify-between items-start gap-2 flex-wrap">
-          <div>
-            <div class="flex items-center gap-2 flex-wrap">
-              ${badgeEstado}
-              <span class="text-[9px] text-gold/70 font-bold uppercase tracking-wider">${campeonato}</span>
-            </div>
-            <div class="flex items-center gap-3 mt-1">
-              <span class="text-sm font-bold text-white">⚽ vs ${rival}</span>
-            </div>
+      <div class="partido-card ${borderClase} flex items-center justify-between gap-4">
+        <div class="space-y-1.5 flex-1 min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            ${badgeEstado}
+            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider truncate max-w-[180px]">${campeonato}</span>
           </div>
-          <span class="text-[10px] text-gray-400"><span class="material-symbols-outlined text-[14px]">event</span> ${fecha}</span>
+          
+          <h3 class="text-base font-bold text-white truncate">vs ${rival}</h3>
+          
+          <div class="flex items-center gap-3 text-[11px] text-slate-400 font-medium">
+            <span class="flex items-center gap-0.5"><span class="material-symbols-outlined text-xs text-slate-500">schedule</span> ${hora}</span>
+            <span class="flex items-center gap-0.5 truncate"><span class="material-symbols-outlined text-xs text-slate-500">location_on</span> ${lugar}</span>
+          </div>
         </div>
 
-        <div class="flex items-center justify-between mt-2 flex-wrap gap-2">
-          <div class="flex items-center gap-3 text-xs text-gray-400">
-            <span><span class="material-symbols-outlined text-[14px]">schedule</span> ${hora}</span>
-            <span><span class="material-symbols-outlined text-[14px]">location_on</span> ${lugar}</span>
-          </div>
+        <div class="flex flex-col items-end justify-between h-full space-y-3 min-w-[70px]">
+          <span class="text-[10px] font-semibold text-slate-400/90 whitespace-nowrap">${fecha}</span>
           ${resultadoHTML}
         </div>
       </div>
@@ -483,15 +474,15 @@ function cambiarFiltro(campeonato) {
 async function actualizar() {
   const btn = document.querySelector('.bottom-nav .nav-item:last-child');
   if (btn) {
-    btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> <span class="nav-label">Cargando...</span>';
-    btn.disabled = true;
+    btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-yellow-500">sync</span><span>Cargando</span>';
+    btn.style.pointerEvents = 'none';
   }
   await cargarPartidos();
   if (btn) {
-    btn.innerHTML = '<span class="material-symbols-outlined">sync</span> <span class="nav-label">Actualizar</span>';
-    btn.disabled = false;
+    btn.innerHTML = '<span class="material-symbols-outlined">sync</span><span>Actualizar</span>';
+    btn.style.pointerEvents = 'auto';
   }
-  mostrarToast('✅ Datos actualizados');
+  mostrarToast('✅ Sincronizado correctamente');
 }
 
 // ==================== INICIALIZACIÓN ====================
