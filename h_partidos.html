@@ -17,6 +17,7 @@
       --glass-bg: rgba(30, 41, 59, 0.45);
       --glass-border: rgba(255, 255, 255, 0.06);
       --card-bg: rgba(15, 23, 42, 0.55);
+      --neon-glow: #facc15;
     }
 
     * { box-sizing: border-box; }
@@ -50,44 +51,182 @@
       box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
     }
 
+    /* ----- TARJETA PRÓXIMO PARTIDO CON NEON GIRATORIO ----- */
+    .neon-card {
+      position: relative;
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: 20px 16px;
+      border: 2px solid transparent;
+      overflow: hidden;
+    }
+    .neon-card::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 24px;
+      padding: 2px;
+      background: conic-gradient(from 0deg, #facc15, #eab308, #ca8a04, #facc15, #eab308, #ca8a04, #facc15);
+      background-size: 300% 300%;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: girarNeon 4s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes girarNeon {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 300% 50%; }
+    }
+    .neon-card .neon-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .neon-card .neon-badge {
+      background: rgba(234, 179, 8, 0.15);
+      color: #facc15;
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 2px 14px;
+      border-radius: 9999px;
+      border: 1px solid rgba(234, 179, 8, 0.3);
+    }
+    .neon-card .rival {
+      font-size: 1.3rem;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      color: #fff;
+    }
+    .neon-card .fecha-hora {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      display: flex;
+      gap: 12px;
+    }
+    .neon-card .lugar {
+      font-size: 0.65rem;
+      color: #64748b;
+    }
+
+    /* Tarjeta de partido normal (para ganados/perdidos) */
     .partido-card {
       background: var(--card-bg);
       border-radius: 16px;
-      padding: 12px 12px;
+      padding: 12px 14px;
       border: 1px solid rgba(255, 255, 255, 0.04);
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-bottom: 8px;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
     }
     .partido-card:active { transform: scale(0.98); background: rgba(30, 41, 59, 0.6); }
 
-    /* Bordes por tipo de resultado */
-    .border-victoria { border-left: 4px solid #10b981; }
-    .border-derrota { border-left: 4px solid #ef4444; }
-    .border-empate { border-left: 4px solid #f59e0b; }
-    .border-proximo { border-left: 4px solid var(--gold); background: linear-gradient(90deg, rgba(234,179,8,0.04) 0%, var(--card-bg) 100%); }
-    .border-pendiente { border-left: 4px solid #64748b; }
+    .partido-card .info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+      min-width: 0;
+    }
+    .partido-card .info .rival {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .partido-card .info .fecha {
+      font-size: 0.6rem;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .partido-card .marcador {
+      font-weight: 800;
+      font-size: 1.2rem;
+      font-family: 'Outfit', sans-serif;
+      white-space: nowrap;
+    }
+    .marcador-victoria { color: #34d399; }
+    .marcador-derrota { color: #f87171; }
+    .marcador-empate { color: #fbbf24; }
 
-    /* Badges */
-    .badge-estado {
-      font-size: 0.55rem;
+    /* Badge de empate (dentro de columna de ganados) */
+    .badge-empate {
+      background: rgba(251, 191, 36, 0.15);
+      color: #fbbf24;
+      font-size: 0.5rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 1px 8px;
+      border-radius: 9999px;
+      border: 1px solid rgba(251, 191, 36, 0.2);
+      margin-left: 4px;
+    }
+
+    /* Columnas */
+    .columna-partidos {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .columna-partidos .titulo-columna {
+      font-size: 0.65rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      padding: 2px 8px;
-      border-radius: 9999px;
+      padding-bottom: 4px;
+      border-bottom: 2px solid rgba(255,255,255,0.05);
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    .badge-finalizado { background: rgba(16, 185, 129, 0.12); color: #34d399; border: 1px solid rgba(16,185,129,0.2); }
-    .badge-proximo { background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234,179,8,0.25); }
-    .badge-pendiente { background: rgba(148, 163, 184, 0.12); color: #cbd5e1; border: 1px solid rgba(148,163,184,0.2); }
+    .titulo-ganados { color: #34d399; border-bottom-color: rgba(52, 211, 153, 0.2); }
+    .titulo-perdidos { color: #f87171; border-bottom-color: rgba(248, 113, 113, 0.2); }
 
-    /* Botones de filtro */
+    /* Stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    .stat-item {
+      background: rgba(0,0,0,0.25);
+      border-radius: 12px;
+      padding: 6px 2px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+    .stat-item .numero {
+      font-size: 1.3rem;
+      font-weight: 900;
+      font-family: 'Outfit', sans-serif;
+      line-height: 1.1;
+      color: #fff;
+    }
+    .stat-item .etiqueta {
+      font-size: 0.45rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #94a3b8;
+      margin-top: 1px;
+    }
+
+    /* Filtros */
     .btn-filtro {
-      padding: 8px 16px;
+      padding: 6px 14px;
       border-radius: 9999px;
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -106,78 +245,6 @@
       border-color: var(--gold);
       box-shadow: 0 4px 12px rgba(234, 179, 8, 0.25);
     }
-
-    /* Estadísticas */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-    }
-    .stat-item {
-      background: rgba(0,0,0,0.25);
-      border-radius: 14px;
-      padding: 8px 4px;
-      text-align: center;
-      border: 1px solid rgba(255,255,255,0.03);
-    }
-    .stat-item .numero {
-      font-size: 1.4rem;
-      font-weight: 900;
-      font-family: 'Outfit', sans-serif;
-      line-height: 1.2;
-      color: #fff;
-    }
-    .stat-item .etiqueta {
-      font-size: 0.5rem;
-      text-transform: uppercase;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      color: #94a3b8;
-      margin-top: 2px;
-    }
-    .stat-item .etiqueta.gold { color: var(--gold); }
-    .stat-item .etiqueta.green { color: #34d399; }
-    .stat-item .etiqueta.red { color: #f87171; }
-    .stat-item .etiqueta.blue { color: #60a5fa; }
-
-    /* Columnas de resultados */
-    .result-columns {
-      display: flex;
-      gap: 12px;
-      margin-top: 6px;
-    }
-    .result-column {
-      flex: 1;
-      background: rgba(0,0,0,0.15);
-      border-radius: 16px;
-      padding: 10px 8px;
-      border: 1px solid rgba(255,255,255,0.03);
-    }
-    .result-column .titulo-col {
-      font-size: 0.6rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      text-align: center;
-      padding-bottom: 6px;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      margin-bottom: 8px;
-    }
-    .result-column .titulo-col.victoria { color: #34d399; }
-    .result-column .titulo-col.derrota { color: #f87171; }
-    .result-column .titulo-col.empate { color: #fbbf24; }
-
-    .partido-mini {
-      background: rgba(0,0,0,0.2);
-      border-radius: 12px;
-      padding: 8px 10px;
-      margin-bottom: 6px;
-      border: 1px solid rgba(255,255,255,0.02);
-    }
-    .partido-mini:last-child { margin-bottom: 0; }
-    .partido-mini .rival-mini { font-weight: 700; font-size: 0.8rem; }
-    .partido-mini .fecha-mini { font-size: 0.55rem; color: #94a3b8; }
-    .partido-mini .resultado-mini { font-weight: 800; font-size: 0.9rem; }
 
     /* Navegación inferior */
     .bottom-nav {
@@ -238,10 +305,12 @@
     .scrollbar-none { scrollbar-width: none; -ms-overflow-style: none; }
 
     @media (max-width: 480px) {
-      .stats-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
-      .stat-item .numero { font-size: 1.2rem; }
-      .stat-item { padding: 6px 2px; }
-      .result-columns { flex-direction: column; gap: 8px; }
+      .stats-grid { grid-template-columns: repeat(3, 1fr); gap: 4px; }
+      .stat-item .numero { font-size: 1.1rem; }
+      .stat-item { padding: 4px 2px; }
+      .neon-card .rival { font-size: 1.1rem; }
+      .partido-card .marcador { font-size: 1rem; }
+      .columna-partidos .titulo-columna { font-size: 0.55rem; }
     }
   </style>
 </head>
@@ -254,11 +323,11 @@
       <div class="skeleton-shimmer h-8 w-16 rounded-full"></div>
     </div>
     <div class="skeleton-shimmer h-10 rounded-full w-full"></div>
-    <div class="skeleton-shimmer h-24 rounded-2xl"></div>
-    <div class="space-y-4">
-      <div class="skeleton-shimmer h-28 rounded-2xl"></div>
-      <div class="skeleton-shimmer h-28 rounded-2xl"></div>
-      <div class="skeleton-shimmer h-28 rounded-2xl"></div>
+    <div class="skeleton-shimmer h-20 rounded-2xl"></div>
+    <div class="skeleton-shimmer h-16 rounded-2xl"></div>
+    <div class="grid grid-cols-2 gap-4">
+      <div class="skeleton-shimmer h-40 rounded-2xl"></div>
+      <div class="skeleton-shimmer h-40 rounded-2xl"></div>
     </div>
   </div>
 </div>
@@ -379,14 +448,13 @@ async function cargarPartidos() {
   }
 }
 
-// ==================== RENDERIZAR PARTIDOS ====================
+// ==================== RENDERIZAR (con 1x1, ganados/perdidos) ====================
 let todosLosPartidos = [];
 let campeonatoActual = 'todos';
 let campeonatosUnicos = [];
 
 function renderizarPartidos(partidos) {
   todosLosPartidos = partidos;
-  // Extraer campeonatos únicos
   const camps = new Set();
   partidos.forEach(p => {
     const nombre = (p.campeonato || '').trim();
@@ -394,7 +462,6 @@ function renderizarPartidos(partidos) {
   });
   campeonatosUnicos = Array.from(camps).sort();
   if (campeonatosUnicos.length === 0) campeonatosUnicos.push('Sin campeonato');
-  
   aplicarFiltro();
 }
 
@@ -409,28 +476,42 @@ function aplicarFiltro() {
     });
   }
 
-  // Ordenar por fecha descendente
-  filtrados.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-
-  // ===== CLASIFICAR PARTIDOS =====
-  const proximos = filtrados.filter(p => (p.estado || '').toUpperCase() === 'PRÓXIMO');
+  // Separar: próximo (estado PRÓXIMO) y finalizados
+  const proximo = filtrados.find(p => (p.estado || '').toUpperCase() === 'PRÓXIMO');
   const finalizados = filtrados.filter(p => (p.estado || '').toUpperCase() === 'FINALIZADO');
-  
-  // Agrupar finalizados por resultado
-  const victorias = finalizados.filter(p => determinarResultado(p) === 'VICTORIA');
-  const derrotas = finalizados.filter(p => determinarResultado(p) === 'DERROTA');
-  const empates = finalizados.filter(p => determinarResultado(p) === 'EMPATE');
+
+  // Clasificar finalizados
+  const ganados = [];
+  const perdidos = [];
+  const empates = [];
+
+  finalizados.forEach(p => {
+    const res = determinarResultado(p);
+    if (res === 'VICTORIA') ganados.push(p);
+    else if (res === 'DERROTA') perdidos.push(p);
+    else if (res === 'EMPATE') empates.push(p);
+  });
+
+  // Ordenar por fecha (más reciente primero)
+  ganados.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+  perdidos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+  empates.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
   // ===== ESTADÍSTICAS =====
   const total = filtrados.length;
-  const golesFavor = finalizados.reduce((acc, p) => {
-    const parsed = parseResultado(p.resultado);
-    return acc + (parsed.valid ? parsed.home : 0);
-  }, 0);
-  const golesContra = finalizados.reduce((acc, p) => {
-    const parsed = parseResultado(p.resultado);
-    return acc + (parsed.valid ? parsed.away : 0);
-  }, 0);
+  const victorias = ganados.length;
+  const derrotas = perdidos.length;
+  const empatesCount = empates.length;
+  let golesFavor = 0, golesContra = 0;
+  filtrados.forEach(p => {
+    if (p.estado === 'FINALIZADO') {
+      const parsed = parseResultado(p.resultado);
+      if (parsed.valid) {
+        golesFavor += parsed.home;
+        golesContra += parsed.away;
+      }
+    }
+  });
   const diferencia = golesFavor - golesContra;
 
   // ===== CONSTRUIR HTML =====
@@ -447,174 +528,145 @@ function aplicarFiltro() {
         </button>
       </header>
 
-      <!-- FILTROS DINÁMICOS -->
-      <div class="flex gap-2 mb-5 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-none">
+      <!-- FILTROS -->
+      <div class="flex gap-2 mb-4 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-none">
         <button class="btn-filtro ${campeonatoActual === 'todos' ? 'activo' : ''}" onclick="cambiarFiltro('todos')">📋 Todos</button>
         ${campeonatosUnicos.map(c => `
           <button class="btn-filtro ${campeonatoActual === c ? 'activo' : ''}" onclick="cambiarFiltro('${c}')">🏆 ${c}</button>
         `).join('')}
       </div>
 
-      <!-- ESTADÍSTICAS -->
-      <div class="glass-card p-4 mb-5">
-        <div class="flex items-center gap-2 mb-3">
-          <span class="material-symbols-outlined text-yellow-500 text-base">insights</span>
-          <h3 class="text-xs font-black uppercase tracking-[0.2em] text-slate-300">Estadísticas del equipo</h3>
-        </div>
+      <!-- ESTADÍSTICAS COMPACTAS -->
+      <div class="glass-card p-3 mb-4">
         <div class="stats-grid">
           <div class="stat-item">
             <div class="numero">${total}</div>
             <div class="etiqueta">Partidos</div>
           </div>
           <div class="stat-item">
-            <div class="numero" style="color:#34d399;">${victorias.length}</div>
-            <div class="etiqueta green">Victorias</div>
+            <div class="numero" style="color:#34d399;">${victorias}</div>
+            <div class="etiqueta" style="color:#34d399;">Ganados</div>
           </div>
           <div class="stat-item">
-            <div class="numero" style="color:#f87171;">${derrotas.length}</div>
-            <div class="etiqueta red">Derrotas</div>
+            <div class="numero" style="color:#f87171;">${derrotas}</div>
+            <div class="etiqueta" style="color:#f87171;">Perdidos</div>
           </div>
           <div class="stat-item">
-            <div class="numero" style="color:#fbbf24;">${empates.length}</div>
+            <div class="numero" style="color:#fbbf24;">${empatesCount}</div>
             <div class="etiqueta" style="color:#fbbf24;">Empates</div>
           </div>
           <div class="stat-item">
             <div class="numero" style="color:#60a5fa;">${golesFavor}</div>
-            <div class="etiqueta blue">Goles a favor</div>
+            <div class="etiqueta" style="color:#60a5fa;">GF</div>
           </div>
           <div class="stat-item">
             <div class="numero" style="color:#f87171;">${golesContra}</div>
-            <div class="etiqueta red">Goles en contra</div>
+            <div class="etiqueta" style="color:#f87171;">GC</div>
           </div>
         </div>
-        <div class="flex justify-between items-center mt-3 pt-2 border-t border-white/5">
-          <span class="text-[9px] font-bold uppercase text-slate-500 tracking-wider">Diferencia de goles</span>
-          <span class="text-lg font-black font-outfit ${diferencia >= 0 ? 'text-emerald-400' : 'text-red-400'}">${diferencia >= 0 ? '+' : ''}${diferencia}</span>
+        <div class="flex justify-between items-center mt-2 pt-2 border-t border-white/5">
+          <span class="text-[8px] font-bold uppercase text-slate-500 tracking-wider">Diferencia</span>
+          <span class="text-base font-black font-outfit ${diferencia >= 0 ? 'text-emerald-400' : 'text-red-400'}">${diferencia >= 0 ? '+' : ''}${diferencia}</span>
         </div>
       </div>
+  `;
 
-      <!-- PARTIDOS PRÓXIMOS (sección única) -->
-      ${proximos.length > 0 ? `
-        <div class="mb-5">
-          <h3 class="text-xs font-black uppercase tracking-[0.2em] text-yellow-500/80 mb-3 flex items-center gap-2">
-            <span class="material-symbols-outlined text-sm">upcoming</span> Próximos encuentros
-          </h3>
-          <div class="space-y-2">
-            ${proximos.map(p => {
-              const fecha = formatearFecha(p.fecha);
-              const hora = formatearHora(p.hora);
-              const rival = escapeHtml(p.rival || 'Sin rival');
-              const lugar = escapeHtml(p.lugar || 'LIGA SANTA RITA');
-              const campeonato = escapeHtml(p.campeonato || 'Sin campeonato');
-              return `
-                <div class="partido-card border-proximo">
-                  <div class="flex items-start justify-between gap-2">
-                    <div class="space-y-1 flex-1 min-w-0">
-                      <div class="flex items-center gap-2 flex-wrap">
-                        <span class="badge-estado badge-proximo">🔥 Próximo</span>
-                        <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider truncate max-w-[140px]">${campeonato}</span>
-                      </div>
-                      <h4 class="text-sm font-bold text-white truncate">vs ${rival}</h4>
-                      <div class="flex items-center gap-3 text-[10px] text-slate-400">
-                        <span><span class="material-symbols-outlined text-xs">schedule</span> ${hora}</span>
-                        <span class="truncate"><span class="material-symbols-outlined text-xs">location_on</span> ${lugar}</span>
-                      </div>
-                    </div>
-                    <div class="text-right">
-                      <span class="text-[10px] font-semibold text-slate-400/90 whitespace-nowrap">${fecha}</span>
-                      <div class="bg-slate-800/60 px-2 py-0.5 rounded-lg border border-slate-700/50 mt-1">
-                        <span class="text-slate-400 text-xs font-black tracking-widest">VS</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              `;
-            }).join('')}
+  // ===== PRÓXIMO PARTIDO (1x1 con NEON) =====
+  if (proximo) {
+    const fecha = formatearFecha(proximo.fecha);
+    const hora = formatearHora(proximo.hora);
+    const rival = escapeHtml(proximo.rival || 'Sin rival');
+    const lugar = escapeHtml(proximo.lugar || 'LIGA SANTA RITA');
+
+    html += `
+      <div class="neon-card mb-5">
+        <div class="neon-content">
+          <span class="neon-badge">🔥 Próximo encuentro</span>
+          <span class="rival">vs ${rival}</span>
+          <div class="fecha-hora">
+            <span>${fecha}</span>
+            <span>•</span>
+            <span>${hora}</span>
           </div>
+          <span class="lugar">${lugar}</span>
         </div>
-      ` : ''}
+      </div>
+    `;
+  } else {
+    html += `
+      <div class="glass-card p-4 text-center text-slate-500 mb-5">
+        <span class="material-symbols-outlined text-3xl text-yellow-500/20">event_available</span>
+        <p class="text-sm font-semibold mt-1">No hay partidos próximos</p>
+      </div>
+    `;
+  }
 
-      <!-- PARTIDOS FINALIZADOS en columnas -->
-      ${finalizados.length > 0 ? `
-        <div>
-          <h3 class="text-xs font-black uppercase tracking-[0.2em] text-emerald-400/80 mb-3 flex items-center gap-2">
-            <span class="material-symbols-outlined text-sm">sports_score</span> Resultados finalizados
-          </h3>
-          <div class="result-columns">
-            <!-- Columna VICTORIAS -->
-            <div class="result-column">
-              <div class="titulo-col victoria flex items-center justify-center gap-1">
-                <span class="material-symbols-outlined text-sm">check_circle</span> Victorias
-              </div>
-              ${victorias.length > 0 ? victorias.map(p => {
-                const fecha = formatearFecha(p.fecha);
-                const rival = escapeHtml(p.rival || 'Sin rival');
-                const parsed = parseResultado(p.resultado);
-                return `
-                  <div class="partido-mini border-victoria" style="border-left-color:#10b981;">
-                    <div class="flex justify-between items-center">
-                      <span class="rival-mini">vs ${rival}</span>
-                      <span class="resultado-mini text-emerald-400">${parsed.home} - ${parsed.away}</span>
-                    </div>
-                    <div class="fecha-mini">${fecha}</div>
-                  </div>
-                `;
-              }).join('') : `<div class="text-slate-500 text-xs text-center py-2">Sin victorias</div>`}
-            </div>
-
-            <!-- Columna DERROTAS -->
-            <div class="result-column">
-              <div class="titulo-col derrota flex items-center justify-center gap-1">
-                <span class="material-symbols-outlined text-sm">cancel</span> Derrotas
-              </div>
-              ${derrotas.length > 0 ? derrotas.map(p => {
-                const fecha = formatearFecha(p.fecha);
-                const rival = escapeHtml(p.rival || 'Sin rival');
-                const parsed = parseResultado(p.resultado);
-                return `
-                  <div class="partido-mini border-derrota" style="border-left-color:#ef4444;">
-                    <div class="flex justify-between items-center">
-                      <span class="rival-mini">vs ${rival}</span>
-                      <span class="resultado-mini text-red-400">${parsed.home} - ${parsed.away}</span>
-                    </div>
-                    <div class="fecha-mini">${fecha}</div>
-                  </div>
-                `;
-              }).join('') : `<div class="text-slate-500 text-xs text-center py-2">Sin derrotas</div>`}
-            </div>
-          </div>
-          <!-- Empates (tercera columna debajo, si hay) -->
-          ${empates.length > 0 ? `
-            <div class="mt-3 result-column" style="flex:1;">
-              <div class="titulo-col empate flex items-center justify-center gap-1" style="color:#fbbf24;">
-                <span class="material-symbols-outlined text-sm">compare_arrows</span> Empates
-              </div>
-              ${empates.map(p => {
-                const fecha = formatearFecha(p.fecha);
-                const rival = escapeHtml(p.rival || 'Sin rival');
-                const parsed = parseResultado(p.resultado);
-                return `
-                  <div class="partido-mini border-empate" style="border-left-color:#f59e0b;">
-                    <div class="flex justify-between items-center">
-                      <span class="rival-mini">vs ${rival}</span>
-                      <span class="resultado-mini text-amber-400">${parsed.home} - ${parsed.away}</span>
-                    </div>
-                    <div class="fecha-mini">${fecha}</div>
-                  </div>
-                `;
-              }).join('')}
-            </div>
-          ` : ''}
+  // ===== DOS COLUMNAS: GANADOS / PERDIDOS =====
+  html += `
+    <div class="grid grid-cols-2 gap-4">
+      <!-- COLUMNA GANADOS -->
+      <div class="columna-partidos">
+        <div class="titulo-columna titulo-ganados">
+          <span class="material-symbols-outlined text-sm">emoji_events</span>
+          Ganados (${ganados.length})
         </div>
-      ` : ''}
+        ${ganados.length === 0 ? `<p class="text-xs text-slate-500 text-center py-3">Sin victorias</p>` : ''}
+        ${ganados.map(p => {
+          const fecha = formatearFecha(p.fecha);
+          const rival = escapeHtml(p.rival || 'Sin rival');
+          const parsed = parseResultado(p.resultado);
+          return `
+            <div class="partido-card">
+              <div class="info">
+                <span class="rival">${rival}</span>
+                <span class="fecha">${fecha}</span>
+              </div>
+              <span class="marcador marcador-victoria">${parsed.home} - ${parsed.away}</span>
+            </div>
+          `;
+        }).join('')}
+        ${empates.map(p => {
+          const fecha = formatearFecha(p.fecha);
+          const rival = escapeHtml(p.rival || 'Sin rival');
+          const parsed = parseResultado(p.resultado);
+          return `
+            <div class="partido-card">
+              <div class="info">
+                <span class="rival">${rival} <span class="badge-empate">Empate</span></span>
+                <span class="fecha">${fecha}</span>
+              </div>
+              <span class="marcador marcador-empate">${parsed.home} - ${parsed.away}</span>
+            </div>
+          `;
+        }).join('')}
+      </div>
 
-      ${filtrados.length === 0 ? `
-        <div class="glass-card p-10 text-center text-slate-500">
-          <span class="material-symbols-outlined text-5xl text-yellow-500/20">sports_soccer</span>
-          <p class="mt-3 font-semibold text-sm">No hay partidos para este filtro</p>
+      <!-- COLUMNA PERDIDOS -->
+      <div class="columna-partidos">
+        <div class="titulo-columna titulo-perdidos">
+          <span class="material-symbols-outlined text-sm">sentiment_dissatisfied</span>
+          Perdidos (${perdidos.length})
         </div>
-      ` : ''}
+        ${perdidos.length === 0 ? `<p class="text-xs text-slate-500 text-center py-3">Sin derrotas</p>` : ''}
+        ${perdidos.map(p => {
+          const fecha = formatearFecha(p.fecha);
+          const rival = escapeHtml(p.rival || 'Sin rival');
+          const parsed = parseResultado(p.resultado);
+          return `
+            <div class="partido-card">
+              <div class="info">
+                <span class="rival">${rival}</span>
+                <span class="fecha">${fecha}</span>
+              </div>
+              <span class="marcador marcador-derrota">${parsed.home} - ${parsed.away}</span>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `;
 
+  html += `
     </div>
   `;
 
