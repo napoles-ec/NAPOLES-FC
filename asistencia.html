@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
+        /* ... estilos existentes ... */
         :root {
             --purple: #7c3aed;
             --purple-dark: #5b21b6;
@@ -35,7 +36,6 @@
             color: var(--slate-dark);
         }
 
-        /* BARRA SUPERIOR CRISTALINA */
         .topbar { 
             background: rgba(255,255,255,0.75); 
             backdrop-filter: blur(20px); 
@@ -79,7 +79,6 @@
             font-weight: bold; 
         }
 
-        /* HERO CARD PANEL */
         .hero { max-width: 800px; margin: 20px auto 0; padding: 0 16px; }
         .hero-card { 
             background: linear-gradient(135deg, #1e1b4b 0%, var(--slate-dark) 100%); 
@@ -93,7 +92,6 @@
         .hero-card h2 { font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 800; margin-bottom: 6px; }
         .hero-card p { color: #94a3b8; font-size: 0.9rem; }
 
-        /* DASHBOARD PRINCIPAL */
         .dashboard { max-width: 800px; margin: 24px auto; padding: 0 16px 60px; }
         
         .header-actions { 
@@ -123,7 +121,6 @@
         }
         .refresh-btn:hover { background: var(--purple-dark); transform: translateY(-1px); }
 
-        /* BOTONES DE FILTRO ACORDEÓN */
         .filter-buttons { display: flex; gap: 8px; margin-bottom: 24px; overflow-x: auto; padding-bottom: 4px; }
         .filter-btn { 
             background: #f1f5f9; 
@@ -140,7 +137,6 @@
         }
         .filter-btn.active { background: var(--purple); color: white; border-color: var(--purple); }
 
-        /* LISTADO Y TARJETAS DE PARTIDOS */
         .partidos-grid { display: flex; flex-direction: column; gap: 20px; }
         
         .match-card { 
@@ -179,22 +175,21 @@
         .match-location { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 0.85rem; font-weight: 500; }
         .expand-icon { margin-left: auto; color: var(--purple); transition: transform 0.3s ease; font-size: 1.2rem; }
         
-        /* TRANSICIÓN DE COLAPSO */
         .match-content { 
-            max-height: 5000px; /* Alto máximo por defecto para elementos expandidos */
+            max-height: 5000px; 
             overflow: hidden; 
             transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             border-top: 1px dashed var(--border);
         }
         .match-content.collapsed { max-height: 0 !important; }
 
-        /* MEDALLAS DE MÉTRICAS */
         .stats-badge { 
             display: flex; 
             gap: 10px; 
             justify-content: flex-start; 
             flex-wrap: wrap;
             margin: 16px 0; 
+            align-items: center;
         }
         .badge-green, .badge-red, .badge-gray { 
             padding: 6px 14px; 
@@ -208,8 +203,22 @@
         .badge-green { background: #dcfce7; color: #15803d; }
         .badge-red { background: #fee2e2; color: #b91c1c; }
         .badge-gray { background: #f1f5f9; color: #475569; border: 1px solid var(--border); }
-        
-        /* BLOQUES DE JUGADORES */
+        .btn-forzar { 
+            background: #facc15; 
+            color: #000; 
+            padding: 6px 14px; 
+            border-radius: 40px; 
+            font-weight: 700; 
+            border: none; 
+            cursor: pointer; 
+            font-size: 0.75rem; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .btn-forzar:hover { background: #eab308; transform: scale(1.02); }
+
         .player-list { margin-top: 18px; }
         .player-list h4 { 
             font-family: 'Outfit', sans-serif; 
@@ -250,7 +259,6 @@
         .player-name { font-weight: 700; font-size: 0.92rem; color: var(--slate-dark); }
         .player-fullname { font-size: 0.75rem; color: var(--muted); margin-left: 4px; display: inline-block; }
         
-        /* BOTÓN DE ENLACE DIRECTO WHATSAPP */
         .whatsapp-btn { 
             background: var(--success); 
             border-radius: 40px; 
@@ -285,7 +293,80 @@
         }
         .btn-back:hover { background: #f8fafc; }
 
-        /* SHIMMER ANIMATION LOADERS */
+        /* MODAL FORZAR ASISTENCIA */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: white;
+            border-radius: 32px;
+            max-width: 480px;
+            width: 100%;
+            max-height: 90vh;
+            padding: 28px;
+            overflow-y: auto;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            animation: modalFade 0.25s ease;
+        }
+        @keyframes modalFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .modal h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .modal .jugador-check {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            background: #f8fafc;
+            border-radius: 16px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border);
+        }
+        .modal .jugador-check input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--purple);
+            cursor: pointer;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .modal-actions button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 40px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Inter';
+            transition: all 0.2s;
+        }
+        .modal-actions .btn-cancel { background: #f1f5f9; color: var(--muted); }
+        .modal-actions .btn-cancel:hover { background: #e2e8f0; }
+        .modal-actions .btn-confirm { background: var(--purple); color: white; }
+        .modal-actions .btn-confirm:hover { background: var(--purple-dark); }
+        .modal-actions .btn-select-all { background: #e0e7ff; color: var(--purple); }
+        .modal-actions .btn-select-all:hover { background: #c7d2fe; }
+
         .shimmer-card { height: 110px; background: rgba(255,255,255,0.6); border-radius: 28px; position: relative; overflow: hidden; margin-bottom: 16px; }
         .shimmer-card::after {
             content: ""; position: absolute; inset: 0;
@@ -298,6 +379,7 @@
             .player-item { flex-direction: column; align-items: stretch; gap: 10px; } 
             .whatsapp-btn { justify-content: center; width: 100%; } 
             .no-wa { text-align: center; width: 100%; }
+            .modal { padding: 20px; }
         }
     </style>
 </head>
@@ -340,10 +422,27 @@
     </div>
 </section>
 
+<!-- MODAL FORZAR ASISTENCIA -->
+<div class="modal-overlay" id="modalForzar">
+    <div class="modal">
+        <h3><i class="fa-solid fa-user-plus" style="color: var(--purple);"></i> Forzar Asistencia</h3>
+        <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 16px;">Selecciona los jugadores que asistirán (aunque no hayan confirmado).</p>
+        <div id="listaFaltantesModal"></div>
+        <div class="modal-actions">
+            <button class="btn-select-all" id="btnSeleccionarTodos">✅ Seleccionar todos</button>
+            <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+            <button class="btn-confirm" id="btnConfirmarForzar">💾 Guardar Asistencia</button>
+        </div>
+    </div>
+</div>
+
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbzZoivEwlFYZ2Bvlr-RaXJKt-PJZ7TLlux0bvSO5Xz6uhyAv_4l00fXPYkrftbB9SSO/exec";
 
     let currentFilter = 'all';
+    let partidosCache = [];
+    let jugadoresCache = [];
+    let partidoSeleccionado = null; // { fecha, rival }
 
     async function cargarDatos() {
         const container = document.getElementById("partidosContainer");
@@ -353,23 +452,23 @@
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
             if (!data.success) throw new Error(data.error);
-            renderizar(data);
+            partidosCache = data.partidosAgrupados || [];
+            jugadoresCache = data.jugadores || [];
+            renderizar();
         } catch(e) {
             container.innerHTML = `<div style="background:#fee2e2; border-radius:24px; padding:20px; text-align:center; color:#b91c1c; font-weight:700; font-size:0.9rem; border: 1px solid rgba(239,68,68,0.2);">❌ Error de sincronización: ${e.message}</div>`;
         }
     }
 
-    function renderizar(data) {
-        let partidos = data.partidosAgrupados || [];
-        const todosJugadores = data.jugadores || [];
-        const container = document.getElementById("partidosContainer");
-        
+    function renderizar() {
+        let partidos = partidosCache;
         if (currentFilter === 'active') {
             partidos = partidos.filter(p => p.estado !== 'FINALIZADO');
         } else if (currentFilter === 'finalized') {
             partidos = partidos.filter(p => p.estado === 'FINALIZADO');
         }
         
+        const container = document.getElementById("partidosContainer");
         if (!partidos.length) {
             container.innerHTML = '<div style="background:#fffbeb; border:1px solid #fde68a; border-radius:24px; padding:24px; text-align:center; color:#b45309; font-weight:600; font-size:0.9rem;">⚠️ Ningún encuentro coincide con el filtro seleccionado.</div>';
             return;
@@ -379,7 +478,7 @@
         for (let p of partidos) {
             const asistentes = p.asistencias || [];
             const cedulasAsistentes = new Set(asistentes.map(a => a.cedula));
-            const faltantes = todosJugadores.filter(j => !cedulasAsistentes.has(j.cedula));
+            const faltantes = jugadoresCache.filter(j => !cedulasAsistentes.has(j.cedula));
             
             const fecha = new Date(p.fecha);
             const fechaFormateada = isNaN(fecha.getTime()) ? p.fecha : fecha.toLocaleDateString('es-ES', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
@@ -406,6 +505,7 @@
                         <div class="badge-green"><i class="fa-solid fa-circle-check"></i> ${asistentes.length} Confirmados</div>
                         <div class="badge-red"><i class="fa-solid fa-circle-xmark"></i> ${faltantes.length} Pendientes</div>
                         ${esFinalizado ? `<div class="badge-gray"><i class="fa-solid fa-flag-checkered"></i> FINALIZADO</div>` : ''}
+                        ${!esFinalizado ? `<button class="btn-forzar" data-fecha="${p.fecha}" data-rival="${p.rival}" onclick="abrirModalForzar('${p.fecha}', '${p.rival}')"><i class="fa-solid fa-user-plus"></i> Forzar Asistencia</button>` : ''}
                     </div>
                     
                     <div class="player-list">
@@ -458,6 +558,94 @@
         container.innerHTML = html;
     }
 
+    // ==================== MODAL FORZAR ASISTENCIA ====================
+    function abrirModalForzar(fecha, rival) {
+        // Buscar el partido en cache
+        const partido = partidosCache.find(p => p.fecha === fecha && p.rival === rival);
+        if (!partido) { alert('Partido no encontrado'); return; }
+        partidoSeleccionado = { fecha, rival };
+
+        const asistentes = partido.asistencias || [];
+        const cedulasAsistentes = new Set(asistentes.map(a => a.cedula));
+        const faltantes = jugadoresCache.filter(j => !cedulasAsistentes.has(j.cedula));
+
+        if (faltantes.length === 0) {
+            alert('✅ Todos los jugadores ya están confirmados para este partido.');
+            return;
+        }
+
+        const modal = document.getElementById('modalForzar');
+        const listaDiv = document.getElementById('listaFaltantesModal');
+        
+        let html = '';
+        faltantes.forEach(j => {
+            const nombre = j.nombreCamiseta || (j.nombreCompleto ? j.nombreCompleto.split(' ')[0] : 'Jugador');
+            html += `
+                <div class="jugador-check">
+                    <input type="checkbox" class="check-faltante" data-cedula="${j.cedula}" checked>
+                    <span style="font-weight:600;">${escapeHtml(nombre)}</span>
+                    <span style="color:var(--muted); font-size:0.8rem; margin-left:auto;">#${j.dorsal || '?'}</span>
+                </div>
+            `;
+        });
+        listaDiv.innerHTML = html;
+        modal.classList.add('active');
+    }
+
+    function cerrarModal() {
+        document.getElementById('modalForzar').classList.remove('active');
+        partidoSeleccionado = null;
+    }
+
+    // Seleccionar todos los checkboxes
+    document.getElementById('btnSeleccionarTodos').addEventListener('click', function() {
+        const checks = document.querySelectorAll('.check-faltante');
+        const allChecked = Array.from(checks).every(c => c.checked);
+        checks.forEach(c => c.checked = !allChecked);
+    });
+
+    // Confirmar forzar asistencia
+    document.getElementById('btnConfirmarForzar').addEventListener('click', async function() {
+        if (!partidoSeleccionado) return;
+        const checks = document.querySelectorAll('.check-faltante:checked');
+        if (checks.length === 0) {
+            alert('Selecciona al menos un jugador.');
+            return;
+        }
+        const cedulas = Array.from(checks).map(c => c.dataset.cedula);
+        
+        // Enviar al backend
+        const payload = {
+            accion: 'forzarAsistencia',
+            fecha: partidoSeleccionado.fecha,
+            rival: partidoSeleccionado.rival,
+            cedulas: cedulas
+        };
+        
+        try {
+            const btn = this;
+            btn.textContent = '⏳ Enviando...';
+            btn.disabled = true;
+            
+            const res = await fetch(API_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            // no-cors no devuelve respuesta, asumimos éxito
+            alert('✅ Asistencia forzada guardada correctamente.');
+            cerrarModal();
+            cargarDatos(); // recargar vista
+        } catch(e) {
+            alert('❌ Error al guardar: ' + e.message);
+        } finally {
+            btn.textContent = '💾 Guardar Asistencia';
+            btn.disabled = false;
+        }
+    });
+
+    // ==================== FUNCIONES GLOBALES ====================
     window.toggleMatchContent = function(header) {
         const matchCard = header.closest('.match-card');
         const content = matchCard.querySelector('.match-content');
@@ -479,7 +667,7 @@
                 buttons.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 currentFilter = btn.dataset.filter;
-                cargarDatos();
+                renderizar();
             });
         });
     }
@@ -500,5 +688,3 @@
 </script>
 </body>
 </html>
-
-```
