@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
-        /* ... estilos existentes ... */
         :root {
             --purple: #7c3aed;
             --purple-dark: #5b21b6;
@@ -437,13 +436,16 @@
 </div>
 
 <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzZoivEwlFYZ2Bvlr-RaXJKt-PJZ7TLlux0bvSO5Xz6uhyAv_4l00fXPYkrftbB9SSO/exec";
+    // ==================== CONFIGURACIÓN ====================
+    // ⚠️ CAMBIA ESTA URL POR LA DE TU SCRIPT PUBLICADO ⚠️
+    const API_URL = "https://script.google.com/macros/s/AKfycbx65YVgFzMTjcIuXSl7qw3KI28eazy9t9j8bE9q7knd44w8LJ0I8RFZjoswZVpMmrZH/exec";
 
     let currentFilter = 'all';
     let partidosCache = [];
     let jugadoresCache = [];
     let partidoSeleccionado = null; // { fecha, rival }
 
+    // ==================== FUNCIONES PRINCIPALES ====================
     async function cargarDatos() {
         const container = document.getElementById("partidosContainer");
         container.innerHTML = '<div class="shimmer-card"></div><div class="shimmer-card"></div>';
@@ -560,7 +562,6 @@
 
     // ==================== MODAL FORZAR ASISTENCIA ====================
     function abrirModalForzar(fecha, rival) {
-        // Buscar el partido en cache
         const partido = partidosCache.find(p => p.fecha === fecha && p.rival === rival);
         if (!partido) { alert('Partido no encontrado'); return; }
         partidoSeleccionado = { fecha, rival };
@@ -597,7 +598,7 @@
         partidoSeleccionado = null;
     }
 
-    // Seleccionar todos los checkboxes
+    // Seleccionar/deseleccionar todos
     document.getElementById('btnSeleccionarTodos').addEventListener('click', function() {
         const checks = document.querySelectorAll('.check-faltante');
         const allChecked = Array.from(checks).every(c => c.checked);
@@ -614,7 +615,6 @@
         }
         const cedulas = Array.from(checks).map(c => c.dataset.cedula);
         
-        // Enviar al backend
         const payload = {
             accion: 'forzarAsistencia',
             fecha: partidoSeleccionado.fecha,
@@ -627,16 +627,15 @@
             btn.textContent = '⏳ Enviando...';
             btn.disabled = true;
             
-            const res = await fetch(API_URL, {
+            await fetch(API_URL, {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
-            // no-cors no devuelve respuesta, asumimos éxito
             alert('✅ Asistencia forzada guardada correctamente.');
             cerrarModal();
-            cargarDatos(); // recargar vista
+            cargarDatos();
         } catch(e) {
             alert('❌ Error al guardar: ' + e.message);
         } finally {
@@ -682,6 +681,7 @@
         });
     }
 
+    // ==================== INICIALIZACIÓN ====================
     if (localStorage.getItem('admin_activo') !== 'true') window.location.href = 'login.html';
     cargarDatos().then(() => setupFilters());
     document.getElementById("btnRefresh").addEventListener("click", cargarDatos);
