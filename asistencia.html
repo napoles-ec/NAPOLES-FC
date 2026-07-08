@@ -461,7 +461,7 @@
     let currentFilter = 'all';
     let partidosCache = [];
     let jugadoresCache = [];
-    let partidoSeleccionado = null; // { fecha, rival }
+    let partidoSeleccionado = null; // { fecha, rival, hora, lugar }
 
     // ==================== FUNCIONES PRINCIPALES ====================
     async function cargarDatos() {
@@ -526,7 +526,7 @@
                         <div class="badge-red"><i class="fa-solid fa-circle-xmark"></i> ${faltantes.length} Pendientes</div>
                         ${esFinalizado ? `<div class="badge-gray"><i class="fa-solid fa-flag-checkered"></i> FINALIZADO</div>` : ''}
                         ${!esFinalizado ? `
-                            <button class="btn-forzar" onclick="abrirModalForzar('${p.fecha}', '${p.rival}')"><i class="fa-solid fa-user-plus"></i> Forzar</button>
+                            <button class="btn-forzar" onclick="abrirModalForzar('${p.fecha}', '${p.rival}', '${p.hora || ''}', '${p.lugar || ''}')"><i class="fa-solid fa-user-plus"></i> Forzar</button>
                             <button class="btn-wa-masivo" onclick="abrirTodosWhatsApp('${p.fecha}', '${p.rival}')"><i class="fa-brands fa-whatsapp"></i> Enviar a faltantes</button>
                         ` : ''}
                     </div>
@@ -582,10 +582,10 @@
     }
 
     // ==================== MODAL FORZAR ASISTENCIA ====================
-    function abrirModalForzar(fecha, rival) {
+    function abrirModalForzar(fecha, rival, hora, lugar) {
         const partido = partidosCache.find(p => p.fecha === fecha && p.rival === rival);
         if (!partido) { alert('Partido no encontrado'); return; }
-        partidoSeleccionado = { fecha, rival };
+        partidoSeleccionado = { fecha, rival, hora, lugar };
 
         const asistentes = partido.asistencias || [];
         const cedulasAsistentes = new Set(asistentes.map(a => a.cedula));
@@ -640,6 +640,8 @@
             accion: 'forzarAsistencia',
             fecha: partidoSeleccionado.fecha,
             rival: partidoSeleccionado.rival,
+            hora: partidoSeleccionado.hora,
+            lugar: partidoSeleccionado.lugar,
             cedulas: cedulas
         };
         
