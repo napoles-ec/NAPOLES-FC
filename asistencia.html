@@ -309,7 +309,6 @@
         }
         .btn-back:hover { background: #f8fafc; }
 
-        /* MODAL FORZAR ASISTENCIA */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -439,7 +438,6 @@
     </div>
 </section>
 
-<!-- MODAL FORZAR ASISTENCIA -->
 <div class="modal-overlay" id="modalForzar">
     <div class="modal">
         <h3><i class="fa-solid fa-user-plus" style="color: var(--purple);"></i> Forzar Asistencia</h3>
@@ -456,12 +454,12 @@
 <script>
     // ==================== CONFIGURACIÓN ====================
     // ⚠️ CAMBIA ESTA URL POR LA DE TU SCRIPT PUBLICADO ⚠️
-    const API_URL = "https://script.google.com/macros/s/AKfycbx65YVgFzMTjcIuXSl7qw3KI28eazy9t9j8bE9q7knd44w8LJ0I8RFZjoswZVpMmrZH/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycby2f3dlz39lZ-OKEyd69MxJAv-R7EAEjeSzmZMrNMZe0ykegtnxTa_VETvGXfvEaQzd/exec";
 
     let currentFilter = 'all';
     let partidosCache = [];
     let jugadoresCache = [];
-    let partidoSeleccionado = null; // { fecha, rival, hora, lugar }
+    let partidoSeleccionado = null;
 
     // ==================== FUNCIONES PRINCIPALES ====================
     async function cargarDatos() {
@@ -526,7 +524,7 @@
                         <div class="badge-red"><i class="fa-solid fa-circle-xmark"></i> ${faltantes.length} Pendientes</div>
                         ${esFinalizado ? `<div class="badge-gray"><i class="fa-solid fa-flag-checkered"></i> FINALIZADO</div>` : ''}
                         ${!esFinalizado ? `
-                            <button class="btn-forzar" onclick="abrirModalForzar('${p.fecha}', '${p.rival}', '${p.hora || ''}', '${p.lugar || ''}')"><i class="fa-solid fa-user-plus"></i> Forzar</button>
+                            <button class="btn-forzar" onclick="abrirModalForzar('${p.fecha}', '${p.rival}')"><i class="fa-solid fa-user-plus"></i> Forzar</button>
                             <button class="btn-wa-masivo" onclick="abrirTodosWhatsApp('${p.fecha}', '${p.rival}')"><i class="fa-brands fa-whatsapp"></i> Enviar a faltantes</button>
                         ` : ''}
                     </div>
@@ -582,10 +580,10 @@
     }
 
     // ==================== MODAL FORZAR ASISTENCIA ====================
-    function abrirModalForzar(fecha, rival, hora, lugar) {
+    function abrirModalForzar(fecha, rival) {
         const partido = partidosCache.find(p => p.fecha === fecha && p.rival === rival);
         if (!partido) { alert('Partido no encontrado'); return; }
-        partidoSeleccionado = { fecha, rival, hora, lugar };
+        partidoSeleccionado = { fecha, rival };
 
         const asistentes = partido.asistencias || [];
         const cedulasAsistentes = new Set(asistentes.map(a => a.cedula));
@@ -619,14 +617,12 @@
         partidoSeleccionado = null;
     }
 
-    // Seleccionar/deseleccionar todos
     document.getElementById('btnSeleccionarTodos').addEventListener('click', function() {
         const checks = document.querySelectorAll('.check-faltante');
         const allChecked = Array.from(checks).every(c => c.checked);
         checks.forEach(c => c.checked = !allChecked);
     });
 
-    // Confirmar forzar asistencia
     document.getElementById('btnConfirmarForzar').addEventListener('click', async function() {
         if (!partidoSeleccionado) return;
         const checks = document.querySelectorAll('.check-faltante:checked');
@@ -640,8 +636,6 @@
             accion: 'forzarAsistencia',
             fecha: partidoSeleccionado.fecha,
             rival: partidoSeleccionado.rival,
-            hora: partidoSeleccionado.hora,
-            lugar: partidoSeleccionado.lugar,
             cedulas: cedulas
         };
         
