@@ -1,737 +1,745 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Nápoles FC - Asistencia con WhatsApp</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Nápoles FC - Asistencia con WhatsApp</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <style>
+    /* (estilos iguales a los que ya tienes, no los repito por brevedad) */
+    /* Pero los incluyo en el código final */
+    :root {
+      --purple: #7c3aed;
+      --purple-dark: #5b21b6;
+      --purple-light: #c084fc;
+      --slate-dark: #0f172a;
+      --muted: #64748b;
+      --success: #25D366;
+      --success-dark: #128C7E;
+      --danger: #ef4444;
+      --border: rgba(226, 232, 240, 0.7);
+    }
+
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body { 
+      font-family: 'Inter', sans-serif; 
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 40%, #f1f5f9 100%); 
+      min-height: 100vh; 
+      color: var(--slate-dark);
+    }
+
+    .topbar { 
+      background: rgba(255,255,255,0.75); 
+      backdrop-filter: blur(20px); 
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border); 
+      padding: 16px 24px; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      position: sticky; 
+      top: 0; 
+      z-index: 100; 
+    }
+
+    .admin-info h1 { 
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem; 
+      font-weight: 900; 
+      background: linear-gradient(135deg, var(--purple), var(--purple-light)); 
+      -webkit-background-clip: text; 
+      background-clip: text; 
+      color: transparent; 
+    }
+
+    .admin-info p {
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .avatar { 
+      width: 42px; 
+      height: 42px; 
+      background: rgba(255, 255, 255, 0.8); 
+      border: 1px solid var(--border);
+      border-radius: 14px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      color: var(--purple); 
+      font-weight: bold; 
+    }
+
+    .hero { max-width: 800px; margin: 20px auto 0; padding: 0 16px; }
+    .hero-card { 
+      background: linear-gradient(135deg, #1e1b4b 0%, var(--slate-dark) 100%); 
+      border-radius: 28px; 
+      padding: 24px; 
+      color: white; 
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .hero-card h2 { font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 800; margin-bottom: 6px; }
+    .hero-card p { color: #94a3b8; font-size: 0.9rem; }
+
+    .dashboard { max-width: 800px; margin: 24px auto; padding: 0 16px 60px; }
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    .header-actions { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      flex-wrap: wrap; 
+      gap: 12px;
+      margin-bottom: 20px; 
+    }
+    .header-actions h2 { font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 800; }
+
+    .refresh-btn { 
+      background: var(--purple); 
+      border: none; 
+      padding: 10px 20px; 
+      border-radius: 50px; 
+      color: white; 
+      font-weight: 600; 
+      display: flex; 
+      align-items: center; 
+      gap: 8px; 
+      cursor: pointer; 
+      transition: all 0.2s; 
+      font-family: 'Inter'; 
+      font-size: 0.85rem;
+    }
+    .refresh-btn:hover { background: var(--purple-dark); transform: translateY(-1px); }
+
+    .filter-buttons { display: flex; gap: 8px; margin-bottom: 24px; overflow-x: auto; padding-bottom: 4px; }
+    .filter-btn { 
+      background: #f1f5f9; 
+      border: 1px solid var(--border); 
+      padding: 8px 18px; 
+      border-radius: 40px; 
+      font-weight: 600; 
+      cursor: pointer; 
+      font-family: 'Inter'; 
+      color: var(--muted); 
+      transition: all 0.2s;
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+    .filter-btn.active { background: var(--purple); color: white; border-color: var(--purple); }
+
+    .partidos-grid { display: flex; flex-direction: column; gap: 20px; }
     
-    <style>
-        :root {
-            --purple: #7c3aed;
-            --purple-dark: #5b21b6;
-            --purple-light: #c084fc;
-            --slate-dark: #0f172a;
-            --muted: #64748b;
-            --success: #25D366;
-            --success-dark: #128C7E;
-            --danger: #ef4444;
-            --border: rgba(226, 232, 240, 0.7);
-        }
+    .match-card { 
+      background: rgba(255,255,255,0.7); 
+      backdrop-filter: blur(20px); 
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 28px; 
+      padding: 22px; 
+      box-shadow: 0 4px 30px rgba(0,0,0,0.01); 
+      border: 1px solid rgba(255, 255, 255, 0.8); 
+      transition: background 0.3s; 
+    }
+    .match-card.finalizado { background: rgba(241, 245, 249, 0.6); }
+    
+    .match-header { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
+      flex-wrap: wrap; 
+      gap: 12px; 
+      padding-bottom: 14px; 
+      cursor: pointer; 
+    }
+    .match-date { 
+      background: #f3e8ff; 
+      color: var(--purple-dark);
+      padding: 4px 14px; 
+      border-radius: 40px; 
+      font-weight: 700; 
+      font-size: 0.75rem; 
+      display: inline-block;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+    .match-rival { font-family: 'Outfit', sans-serif; font-size: 1.35rem; font-weight: 900; color: var(--slate-dark); }
+    .match-location { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 0.85rem; font-weight: 500; }
+    .expand-icon { margin-left: auto; color: var(--purple); transition: transform 0.3s ease; font-size: 1.2rem; }
+    
+    .match-content { 
+      max-height: 5000px; 
+      overflow: hidden; 
+      transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      border-top: 1px dashed var(--border);
+    }
+    .match-content.collapsed { max-height: 0 !important; }
 
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent;
-        }
+    .stats-badge { 
+      display: flex; 
+      gap: 10px; 
+      justify-content: flex-start; 
+      flex-wrap: wrap;
+      margin: 16px 0; 
+      align-items: center;
+    }
+    .badge-green, .badge-red, .badge-gray { 
+      padding: 6px 14px; 
+      border-radius: 40px; 
+      font-weight: 700; 
+      font-size: 0.78rem; 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 6px; 
+    }
+    .badge-green { background: #dcfce7; color: #15803d; }
+    .badge-red { background: #fee2e2; color: #b91c1c; }
+    .badge-gray { background: #f1f5f9; color: #475569; border: 1px solid var(--border); }
+    
+    .btn-forzar { 
+      background: #facc15; 
+      color: #000; 
+      padding: 6px 14px; 
+      border-radius: 40px; 
+      font-weight: 700; 
+      border: none; 
+      cursor: pointer; 
+      font-size: 0.75rem; 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-forzar:hover { background: #eab308; transform: scale(1.02); }
 
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 40%, #f1f5f9 100%); 
-            min-height: 100vh; 
-            color: var(--slate-dark);
-        }
+    .btn-wa-masivo {
+      background: #25D366;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 40px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      font-size: 0.75rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-wa-masivo:hover { background: #128C7E; transform: scale(1.02); }
 
-        .topbar { 
-            background: rgba(255,255,255,0.75); 
-            backdrop-filter: blur(20px); 
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border); 
-            padding: 16px 24px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            position: sticky; 
-            top: 0; 
-            z-index: 100; 
-        }
+    .player-list { margin-top: 18px; }
+    .player-list h4 { 
+      font-family: 'Outfit', sans-serif; 
+      font-size: 1rem; 
+      font-weight: 800; 
+      margin-bottom: 12px; 
+      color: var(--slate-dark); 
+      display: flex; 
+      align-items: center; 
+      gap: 8px; 
+    }
+    
+    .player-item { 
+      background: rgba(255, 255, 255, 0.7); 
+      border-radius: 18px; 
+      padding: 12px 16px; 
+      margin-bottom: 8px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      gap: 12px; 
+      border: 1px solid rgba(226, 232, 240, 0.5);
+    }
+    .player-info { display: flex; align-items: center; gap: 12px; }
+    .dorsal { 
+      background: var(--purple); 
+      color: white; 
+      border-radius: 10px; 
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem; 
+      font-weight: 800; 
+    }
+    .dorsal.missing { background: #94a3b8; }
+    .player-name { font-weight: 700; font-size: 0.92rem; color: var(--slate-dark); }
+    .player-fullname { font-size: 0.75rem; color: var(--muted); margin-left: 4px; display: inline-block; }
+    
+    .whatsapp-btn { 
+      background: var(--success); 
+      border-radius: 40px; 
+      padding: 8px 16px; 
+      color: white; 
+      text-decoration: none; 
+      font-weight: 700; 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 6px; 
+      font-size: 0.78rem; 
+      transition: all 0.2s; 
+      box-shadow: 0 4px 12px rgba(37,211,102,0.2);
+    }
+    .whatsapp-btn:hover { background: var(--success-dark); transform: translateY(-1px); }
+    .no-wa { background: #e2e8f0; color: #94a3b8; border-radius: 40px; padding: 8px 16px; font-size: 0.75rem; font-weight: 600; }
 
-        .admin-info h1 { 
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.25rem; 
-            font-weight: 900; 
-            background: linear-gradient(135deg, var(--purple), var(--purple-light)); 
-            -webkit-background-clip: text; 
-            background-clip: text; 
-            color: transparent; 
-        }
+    .btn-back { 
+      background: transparent; 
+      border: 1px solid var(--border); 
+      padding: 12px 28px; 
+      border-radius: 50px; 
+      color: var(--slate-dark); 
+      font-weight: 600; 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 8px; 
+      cursor: pointer; 
+      font-family: 'Inter';
+      transition: all 0.2s;
+      margin-top: 30px;
+    }
+    .btn-back:hover { background: #f8fafc; }
 
-        .admin-info p {
-            font-size: 0.75rem;
-            color: var(--muted);
-            font-weight: 600;
-        }
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: white;
+      border-radius: 32px;
+      max-width: 480px;
+      width: 100%;
+      max-height: 90vh;
+      padding: 28px;
+      overflow-y: auto;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+      animation: modalFade 0.25s ease;
+    }
+    @keyframes modalFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .modal h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .modal .jugador-check {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      background: #f8fafc;
+      border-radius: 16px;
+      margin-bottom: 8px;
+      border: 1px solid var(--border);
+    }
+    .modal .jugador-check input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--purple);
+      cursor: pointer;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .modal-actions button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 40px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Inter';
+      transition: all 0.2s;
+    }
+    .modal-actions .btn-cancel { background: #f1f5f9; color: var(--muted); }
+    .modal-actions .btn-cancel:hover { background: #e2e8f0; }
+    .modal-actions .btn-confirm { background: var(--purple); color: white; }
+    .modal-actions .btn-confirm:hover { background: var(--purple-dark); }
+    .modal-actions .btn-select-all { background: #e0e7ff; color: var(--purple); }
+    .modal-actions .btn-select-all:hover { background: #c7d2fe; }
 
-        .avatar { 
-            width: 42px; 
-            height: 42px; 
-            background: rgba(255, 255, 255, 0.8); 
-            border: 1px solid var(--border);
-            border-radius: 14px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            color: var(--purple); 
-            font-weight: bold; 
-        }
+    .shimmer-card { height: 110px; background: rgba(255,255,255,0.6); border-radius: 28px; position: relative; overflow: hidden; margin-bottom: 16px; }
+    .shimmer-card::after {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+      transform: translateX(-100%); animation: loadingShimmer 1.5s infinite;
+    }
+    @keyframes loadingShimmer { 100% { transform: translateX(100%); } }
 
-        .hero { max-width: 800px; margin: 20px auto 0; padding: 0 16px; }
-        .hero-card { 
-            background: linear-gradient(135deg, #1e1b4b 0%, var(--slate-dark) 100%); 
-            border-radius: 28px; 
-            padding: 24px; 
-            color: white; 
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .hero-card h2 { font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 800; margin-bottom: 6px; }
-        .hero-card p { color: #94a3b8; font-size: 0.9rem; }
-
-        .dashboard { max-width: 800px; margin: 24px auto; padding: 0 16px 60px; }
-        
-        .header-actions { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            flex-wrap: wrap; 
-            gap: 12px;
-            margin-bottom: 20px; 
-        }
-        .header-actions h2 { font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 800; }
-
-        .refresh-btn { 
-            background: var(--purple); 
-            border: none; 
-            padding: 10px 20px; 
-            border-radius: 50px; 
-            color: white; 
-            font-weight: 600; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            cursor: pointer; 
-            transition: all 0.2s; 
-            font-family: 'Inter'; 
-            font-size: 0.85rem;
-        }
-        .refresh-btn:hover { background: var(--purple-dark); transform: translateY(-1px); }
-
-        .filter-buttons { display: flex; gap: 8px; margin-bottom: 24px; overflow-x: auto; padding-bottom: 4px; }
-        .filter-btn { 
-            background: #f1f5f9; 
-            border: 1px solid var(--border); 
-            padding: 8px 18px; 
-            border-radius: 40px; 
-            font-weight: 600; 
-            cursor: pointer; 
-            font-family: 'Inter'; 
-            color: var(--muted); 
-            transition: all 0.2s;
-            font-size: 0.82rem;
-            white-space: nowrap;
-        }
-        .filter-btn.active { background: var(--purple); color: white; border-color: var(--purple); }
-
-        .partidos-grid { display: flex; flex-direction: column; gap: 20px; }
-        
-        .match-card { 
-            background: rgba(255,255,255,0.7); 
-            backdrop-filter: blur(20px); 
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 28px; 
-            padding: 22px; 
-            box-shadow: 0 4px 30px rgba(0,0,0,0.01); 
-            border: 1px solid rgba(255, 255, 255, 0.8); 
-            transition: background 0.3s; 
-        }
-        .match-card.finalizado { background: rgba(241, 245, 249, 0.6); }
-        
-        .match-header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            flex-wrap: wrap; 
-            gap: 12px; 
-            padding-bottom: 14px; 
-            cursor: pointer; 
-        }
-        .match-date { 
-            background: #f3e8ff; 
-            color: var(--purple-dark);
-            padding: 4px 14px; 
-            border-radius: 40px; 
-            font-weight: 700; 
-            font-size: 0.75rem; 
-            display: inline-block;
-            margin-bottom: 4px;
-            text-transform: uppercase;
-        }
-        .match-rival { font-family: 'Outfit', sans-serif; font-size: 1.35rem; font-weight: 900; color: var(--slate-dark); }
-        .match-location { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 0.85rem; font-weight: 500; }
-        .expand-icon { margin-left: auto; color: var(--purple); transition: transform 0.3s ease; font-size: 1.2rem; }
-        
-        .match-content { 
-            max-height: 5000px; 
-            overflow: hidden; 
-            transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-            border-top: 1px dashed var(--border);
-        }
-        .match-content.collapsed { max-height: 0 !important; }
-
-        .stats-badge { 
-            display: flex; 
-            gap: 10px; 
-            justify-content: flex-start; 
-            flex-wrap: wrap;
-            margin: 16px 0; 
-            align-items: center;
-        }
-        .badge-green, .badge-red, .badge-gray { 
-            padding: 6px 14px; 
-            border-radius: 40px; 
-            font-weight: 700; 
-            font-size: 0.78rem; 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 6px; 
-        }
-        .badge-green { background: #dcfce7; color: #15803d; }
-        .badge-red { background: #fee2e2; color: #b91c1c; }
-        .badge-gray { background: #f1f5f9; color: #475569; border: 1px solid var(--border); }
-        
-        .btn-forzar { 
-            background: #facc15; 
-            color: #000; 
-            padding: 6px 14px; 
-            border-radius: 40px; 
-            font-weight: 700; 
-            border: none; 
-            cursor: pointer; 
-            font-size: 0.75rem; 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 6px;
-            transition: all 0.2s;
-        }
-        .btn-forzar:hover { background: #eab308; transform: scale(1.02); }
-
-        .btn-wa-masivo {
-            background: #25D366;
-            color: white;
-            padding: 6px 14px;
-            border-radius: 40px;
-            font-weight: 700;
-            border: none;
-            cursor: pointer;
-            font-size: 0.75rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
-        }
-        .btn-wa-masivo:hover { background: #128C7E; transform: scale(1.02); }
-
-        .player-list { margin-top: 18px; }
-        .player-list h4 { 
-            font-family: 'Outfit', sans-serif; 
-            font-size: 1rem; 
-            font-weight: 800; 
-            margin-bottom: 12px; 
-            color: var(--slate-dark); 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-        }
-        
-        .player-item { 
-            background: rgba(255, 255, 255, 0.7); 
-            border-radius: 18px; 
-            padding: 12px 16px; 
-            margin-bottom: 8px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            gap: 12px; 
-            border: 1px solid rgba(226, 232, 240, 0.5);
-        }
-        .player-info { display: flex; align-items: center; gap: 12px; }
-        .dorsal { 
-            background: var(--purple); 
-            color: white; 
-            border-radius: 10px; 
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem; 
-            font-weight: 800; 
-        }
-        .dorsal.missing { background: #94a3b8; }
-        .player-name { font-weight: 700; font-size: 0.92rem; color: var(--slate-dark); }
-        .player-fullname { font-size: 0.75rem; color: var(--muted); margin-left: 4px; display: inline-block; }
-        
-        .whatsapp-btn { 
-            background: var(--success); 
-            border-radius: 40px; 
-            padding: 8px 16px; 
-            color: white; 
-            text-decoration: none; 
-            font-weight: 700; 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 6px; 
-            font-size: 0.78rem; 
-            transition: all 0.2s; 
-            box-shadow: 0 4px 12px rgba(37,211,102,0.2);
-        }
-        .whatsapp-btn:hover { background: var(--success-dark); transform: translateY(-1px); }
-        .no-wa { background: #e2e8f0; color: #94a3b8; border-radius: 40px; padding: 8px 16px; font-size: 0.75rem; font-weight: 600; }
-
-        .btn-back { 
-            background: transparent; 
-            border: 1px solid var(--border); 
-            padding: 12px 28px; 
-            border-radius: 50px; 
-            color: var(--slate-dark); 
-            font-weight: 600; 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 8px; 
-            cursor: pointer; 
-            font-family: 'Inter';
-            transition: all 0.2s;
-            margin-top: 30px;
-        }
-        .btn-back:hover { background: #f8fafc; }
-
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.4);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            z-index: 200;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .modal-overlay.active { display: flex; }
-        .modal {
-            background: white;
-            border-radius: 32px;
-            max-width: 480px;
-            width: 100%;
-            max-height: 90vh;
-            padding: 28px;
-            overflow-y: auto;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
-            animation: modalFade 0.25s ease;
-        }
-        @keyframes modalFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .modal h3 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.4rem;
-            font-weight: 800;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .modal .jugador-check {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 12px;
-            background: #f8fafc;
-            border-radius: 16px;
-            margin-bottom: 8px;
-            border: 1px solid var(--border);
-        }
-        .modal .jugador-check input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            accent-color: var(--purple);
-            cursor: pointer;
-        }
-        .modal-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        .modal-actions button {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 40px;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: 'Inter';
-            transition: all 0.2s;
-        }
-        .modal-actions .btn-cancel { background: #f1f5f9; color: var(--muted); }
-        .modal-actions .btn-cancel:hover { background: #e2e8f0; }
-        .modal-actions .btn-confirm { background: var(--purple); color: white; }
-        .modal-actions .btn-confirm:hover { background: var(--purple-dark); }
-        .modal-actions .btn-select-all { background: #e0e7ff; color: var(--purple); }
-        .modal-actions .btn-select-all:hover { background: #c7d2fe; }
-
-        .shimmer-card { height: 110px; background: rgba(255,255,255,0.6); border-radius: 28px; position: relative; overflow: hidden; margin-bottom: 16px; }
-        .shimmer-card::after {
-            content: ""; position: absolute; inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-            transform: translateX(-100%); animation: loadingShimmer 1.5s infinite;
-        }
-        @keyframes loadingShimmer { 100% { transform: translateX(100%); } }
-
-        @media (max-width: 580px) { 
-            .player-item { flex-direction: column; align-items: stretch; gap: 10px; } 
-            .whatsapp-btn { justify-content: center; width: 100%; } 
-            .no-wa { text-align: center; width: 100%; }
-            .modal { padding: 20px; }
-            .stats-badge .btn-forzar, .stats-badge .btn-wa-masivo { width: 100%; justify-content: center; }
-        }
-    </style>
+    @media (max-width: 580px) { 
+      .player-item { flex-direction: column; align-items: stretch; gap: 10px; } 
+      .whatsapp-btn { justify-content: center; width: 100%; } 
+      .no-wa { text-align: center; width: 100%; }
+      .modal { padding: 20px; }
+      .stats-badge .btn-forzar, .stats-badge .btn-wa-masivo { width: 100%; justify-content: center; }
+    }
+  </style>
 </head>
 <body>
 
 <div class="topbar">
-    <div class="admin-info">
-        <h1>📋 Asistencia + WhatsApp</h1>
-        <p>Nápoles FC · Gestión Operativa</p>
-    </div>
-    <div class="avatar"><i class="fa-solid fa-user-check"></i></div>
+  <div class="admin-info">
+    <h1>📋 Asistencia + WhatsApp</h1>
+    <p>Nápoles FC · Gestión Operativa</p>
+  </div>
+  <div class="avatar"><i class="fa-solid fa-user-check"></i></div>
 </div>
 
 <section class="hero">
-    <div class="hero-card">
-        <h2>🎯 Control de Convocados</h2>
-        <p>Monitorea confirmaciones en tiempo real y gestiona notificaciones personalizadas.</p>
-    </div>
+  <div class="hero-card">
+    <h2>🎯 Control de Convocados</h2>
+    <p>Monitorea confirmaciones en tiempo real y gestiona notificaciones personalizadas.</p>
+  </div>
 </section>
 
 <section class="dashboard">
-    <div class="header-actions">
-        <h2>📅 Partidos de la Temporada</h2>
-        <button class="refresh-btn" id="btnRefresh"><i class="fa-solid fa-rotate"></i> Actualizar</button>
-    </div>
-    
-    <div class="filter-buttons">
-        <button class="filter-btn active" data-filter="all">Todos</button>
-        <button class="filter-btn" data-filter="active">Activos</button>
-        <button class="filter-btn" data-filter="finalized">Finalizados</button>
-    </div>
+  <div class="header-actions">
+    <h2>📅 Partidos de la Temporada</h2>
+    <button class="refresh-btn" id="btnRefresh"><i class="fa-solid fa-rotate"></i> Actualizar</button>
+  </div>
+  
+  <div class="filter-buttons">
+    <button class="filter-btn active" data-filter="all">Todos</button>
+    <button class="filter-btn" data-filter="active">Activos</button>
+    <button class="filter-btn" data-filter="finalized">Finalizados</button>
+  </div>
 
-    <div id="partidosContainer" class="partidos-grid">
-        <div class="shimmer-card"></div>
-        <div class="shimmer-card"></div>
-    </div>
+  <div id="partidosContainer" class="partidos-grid">
+    <div class="shimmer-card"></div>
+    <div class="shimmer-card"></div>
+  </div>
 
-    <div style="text-align: center;">
-        <button class="btn-back" onclick="window.location.href='index.html'"><i class="fa-solid fa-house"></i> Menú de Inicio</button>
-    </div>
+  <div style="text-align: center;">
+    <button class="btn-back" onclick="window.location.href='index.html'"><i class="fa-solid fa-house"></i> Menú de Inicio</button>
+  </div>
 </section>
 
 <div class="modal-overlay" id="modalForzar">
-    <div class="modal">
-        <h3><i class="fa-solid fa-user-plus" style="color: var(--purple);"></i> Forzar Asistencia</h3>
-        <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 16px;">Selecciona los jugadores que asistirán (aunque no hayan confirmado).</p>
-        <div id="listaFaltantesModal"></div>
-        <div class="modal-actions">
-            <button class="btn-select-all" id="btnSeleccionarTodos">✅ Seleccionar todos</button>
-            <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
-            <button class="btn-confirm" id="btnConfirmarForzar">💾 Guardar Asistencia</button>
-        </div>
+  <div class="modal">
+    <h3><i class="fa-solid fa-user-plus" style="color: var(--purple);"></i> Forzar Asistencia</h3>
+    <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 16px;">Selecciona los jugadores que asistirán (aunque no hayan confirmado).</p>
+    <div id="listaFaltantesModal"></div>
+    <div class="modal-actions">
+      <button class="btn-select-all" id="btnSeleccionarTodos">✅ Seleccionar todos</button>
+      <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn-confirm" id="btnConfirmarForzar">💾 Guardar Asistencia</button>
     </div>
+  </div>
 </div>
 
 <script>
-    // ==================== CONFIGURACIÓN ====================
-    // ⚠️ CAMBIA ESTA URL POR LA DE TU SCRIPT PUBLICADO ⚠️
-    const API_URL = "https://script.google.com/macros/s/AKfycby2f3dlz39lZ-OKEyd69MxJAv-R7EAEjeSzmZMrNMZe0ykegtnxTa_VETvGXfvEaQzd/exec";
+  // ==================== CONFIGURACIÓN ====================
+  const API_URL = "https://script.google.com/macros/s/AKfycby2f3dlz39lZ-OKEyd69MxJAv-R7EAEjeSzmZMrNMZe0ykegtnxTa_VETvGXfvEaQzd/exec";
 
-    let currentFilter = 'all';
-    let partidosCache = [];
-    let jugadoresCache = [];
-    let partidoSeleccionado = null;
+  let currentFilter = 'all';
+  let partidosCache = [];
+  let jugadoresCache = [];
+  let partidoSeleccionado = null;
 
-    // ==================== FUNCIONES PRINCIPALES ====================
-    async function cargarDatos() {
-        const container = document.getElementById("partidosContainer");
-        container.innerHTML = '<div class="shimmer-card"></div><div class="shimmer-card"></div>';
-        try {
-            const res = await fetch(API_URL);
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const data = await res.json();
-            if (!data.success) throw new Error(data.error);
-            partidosCache = data.partidosAgrupados || [];
-            jugadoresCache = data.jugadores || [];
-            renderizar();
-        } catch(e) {
-            container.innerHTML = `<div style="background:#fee2e2; border-radius:24px; padding:20px; text-align:center; color:#b91c1c; font-weight:700; font-size:0.9rem; border: 1px solid rgba(239,68,68,0.2);">❌ Error de sincronización: ${e.message}</div>`;
-        }
+  // ==================== FUNCIONES PRINCIPALES ====================
+  async function cargarDatos() {
+    const container = document.getElementById("partidosContainer");
+    container.innerHTML = '<div class="shimmer-card"></div><div class="shimmer-card"></div>';
+    try {
+      const res = await fetch(API_URL);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error);
+      partidosCache = data.partidosAgrupados || [];
+      jugadoresCache = data.jugadores || [];
+      renderizar();
+    } catch(e) {
+      container.innerHTML = `<div style="background:#fee2e2; border-radius:24px; padding:20px; text-align:center; color:#b91c1c; font-weight:700; font-size:0.9rem; border: 1px solid rgba(239,68,68,0.2);">❌ Error de sincronización: ${e.message}</div>`;
     }
+  }
 
-    function renderizar() {
-        let partidos = partidosCache;
-        if (currentFilter === 'active') {
-            partidos = partidos.filter(p => p.estado !== 'FINALIZADO');
-        } else if (currentFilter === 'finalized') {
-            partidos = partidos.filter(p => p.estado === 'FINALIZADO');
-        }
-        
-        const container = document.getElementById("partidosContainer");
-        if (!partidos.length) {
-            container.innerHTML = '<div style="background:#fffbeb; border:1px solid #fde68a; border-radius:24px; padding:24px; text-align:center; color:#b45309; font-weight:600; font-size:0.9rem;">⚠️ Ningún encuentro coincide con el filtro seleccionado.</div>';
-            return;
-        }
-        
-        let html = "";
-        for (let p of partidos) {
-            const asistentes = p.asistencias || [];
-            const cedulasAsistentes = new Set(asistentes.map(a => a.cedula));
-            const faltantes = jugadoresCache.filter(j => !cedulasAsistentes.has(j.cedula));
-            
-            const fecha = new Date(p.fecha);
-            const fechaFormateada = isNaN(fecha.getTime()) ? p.fecha : fecha.toLocaleDateString('es-ES', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-            
-            const esFinalizado = (p.estado === 'FINALIZADO');
-            const cardClass = esFinalizado ? 'match-card finalizado' : 'match-card';
-            const collapsedClass = esFinalizado ? 'collapsed' : '';
-            
-            const mensajeRecordatorio = (nombre) => `🔔 *¡Hola ${nombre}!* 🔔\n\nTe recordamos el partido de *Nápoles FC*:\n⚽ *Rival:* ${p.rival || 'Por definir'}\n🕒 *Hora:* ${p.hora || '--:--'}\n📍 *Lugar:* ${p.lugar || 'Por definir'}\n📅 *Fecha:* ${fechaFormateada}\n\nPor favor confirma tu asistencia cuanto antes. ¡Te esperamos para dar lo mejor! llega 15 min antes  💪⚽🔥`;
-            const mensajeFelicitacion = (nombre) => `🎉 *¡Gracias por confirmar, ${nombre}!* 🎉\n\nEstamos muy contentos de contar contigo para el partido:\n⚽ *Rival:* ${p.rival || 'Por definir'}\n🕒 *Hora:* ${p.hora || '--:--'}\n📍 *Lugar:* ${p.lugar || 'Por definir'}\n📅 *Fecha:* ${fechaFormateada}\n\nRecuerda ser puntual y traer tu mejor actitud. ¡Juntos sumamos! llega 15 min antes  🔥🏆\n\n#VamosNápoles`;
-            
-            html += `
-            <div class="${cardClass}">
-                <div class="match-header" onclick="toggleMatchContent(this)">
+  function renderizar() {
+    let partidos = partidosCache;
+    if (currentFilter === 'active') {
+      partidos = partidos.filter(p => p.estado !== 'FINALIZADO');
+    } else if (currentFilter === 'finalized') {
+      partidos = partidos.filter(p => p.estado === 'FINALIZADO');
+    }
+    
+    const container = document.getElementById("partidosContainer");
+    if (!partidos.length) {
+      container.innerHTML = '<div style="background:#fffbeb; border:1px solid #fde68a; border-radius:24px; padding:24px; text-align:center; color:#b45309; font-weight:600; font-size:0.9rem;">⚠️ Ningún encuentro coincide con el filtro seleccionado.</div>';
+      return;
+    }
+    
+    let html = "";
+    for (let p of partidos) {
+      const asistentes = p.asistencias || [];
+      const cedulasAsistentes = new Set(asistentes.map(a => a.cedula));
+      const faltantes = jugadoresCache.filter(j => !cedulasAsistentes.has(j.cedula));
+      
+      // Mostrar fecha, hora y lugar del primer asistente (o del partido)
+      const primerAsistente = asistentes[0] || {};
+      const fecha = new Date(p.fecha);
+      const fechaFormateada = isNaN(fecha.getTime()) ? p.fecha : fecha.toLocaleDateString('es-ES', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+      const horaMostrar = p.hora || primerAsistente.hora || '--:--';
+      const lugarMostrar = p.lugar || primerAsistente.lugar || 'Sin Sede';
+      
+      const esFinalizado = (p.estado === 'FINALIZADO');
+      const cardClass = esFinalizado ? 'match-card finalizado' : 'match-card';
+      const collapsedClass = esFinalizado ? 'collapsed' : '';
+      
+      const mensajeRecordatorio = (nombre) => `🔔 *¡Hola ${nombre}!* 🔔\n\nTe recordamos el partido de *Nápoles FC*:\n⚽ *Rival:* ${p.rival || 'Por definir'}\n🕒 *Hora:* ${horaMostrar}\n📍 *Lugar:* ${lugarMostrar}\n📅 *Fecha:* ${fechaFormateada}\n\nPor favor confirma tu asistencia cuanto antes. ¡Te esperamos para dar lo mejor! llega 15 min antes  💪⚽🔥`;
+      const mensajeFelicitacion = (nombre) => `🎉 *¡Gracias por confirmar, ${nombre}!* 🎉\n\nEstamos muy contentos de contar contigo para el partido:\n⚽ *Rival:* ${p.rival || 'Por definir'}\n🕒 *Hora:* ${horaMostrar}\n📍 *Lugar:* ${lugarMostrar}\n📅 *Fecha:* ${fechaFormateada}\n\nRecuerda ser puntual y traer tu mejor actitud. ¡Juntos sumamos! llega 15 min antes  🔥🏆\n\n#VamosNápoles`;
+      
+      html += `
+      <div class="${cardClass}">
+        <div class="match-header" onclick="toggleMatchContent(this)">
+          <div>
+            <div class="match-date">${fechaFormateada} - ${horaMostrar}</div>
+            <div class="match-rival">⚽ ${escapeHtml(p.rival || 'Rival')}</div>
+          </div>
+          <div class="match-location"><i class="fa-solid fa-location-dot"></i> ${escapeHtml(lugarMostrar)}</div>
+          <i class="expand-icon fa-solid ${esFinalizado ? 'fa-chevron-down' : 'fa-chevron-up'}"></i>
+        </div>
+        <div class="match-content ${collapsedClass}">
+          <div class="stats-badge">
+            <div class="badge-green"><i class="fa-solid fa-circle-check"></i> ${asistentes.length} Confirmados</div>
+            <div class="badge-red"><i class="fa-solid fa-circle-xmark"></i> ${faltantes.length} Pendientes</div>
+            ${esFinalizado ? `<div class="badge-gray"><i class="fa-solid fa-flag-checkered"></i> FINALIZADO</div>` : ''}
+            ${!esFinalizado ? `
+              <button class="btn-forzar" onclick="abrirModalForzar('${p.fecha}', '${p.rival}')"><i class="fa-solid fa-user-plus"></i> Forzar</button>
+              <button class="btn-wa-masivo" onclick="abrirTodosWhatsApp('${p.fecha}', '${p.rival}')"><i class="fa-brands fa-whatsapp"></i> Enviar a faltantes</button>
+            ` : ''}
+          </div>
+          
+          <div class="player-list">
+            <h4><i class="fa-solid fa-user-check" style="color: #16a34a;"></i> Asistentes Confirmados (${asistentes.length})</h4>
+            ${asistentes.length === 0 ? '<div style="background:#f8fafc; border-radius:16px; padding:12px; text-align:center; color:var(--muted); font-size:0.85rem;">Ningún jugador registrado aún.</div>' : ''}
+            ${asistentes.map(a => {
+              const nombreLlamada = a.nombreCamiseta || (a.nombreCompleto ? a.nombreCompleto.split(' ')[0] : 'Jugador');
+              const limpioTel = a.telefono ? String(a.telefono).replace(/\D/g, '') : '';
+              const waLink = limpioTel ? `https://wa.me/${limpioTel}?text=${encodeURIComponent(mensajeFelicitacion(nombreLlamada))}` : null;
+              return `
+                <div class="player-item">
+                  <div class="player-info">
+                    <span class="dorsal">${a.dorsal || '?'}</span>
                     <div>
-                        <div class="match-date">${fechaFormateada} - ${p.hora || ''}</div>
-                        <div class="match-rival">⚽ ${escapeHtml(p.rival || 'Rival')}</div>
+                      <span class="player-name">${escapeHtml(a.nombreCamiseta || nombreLlamada)}</span>
+                      <span class="player-fullname">(${escapeHtml(a.nombreCompleto || 'Sin nombre')})</span>
                     </div>
-                    <div class="match-location"><i class="fa-solid fa-location-dot"></i> ${escapeHtml(p.lugar || 'Sin Sede')}</div>
-                    <i class="expand-icon fa-solid ${esFinalizado ? 'fa-chevron-down' : 'fa-chevron-up'}"></i>
+                    ${a.golesPartido > 0 ? `<span style="background:#fef3c7; color:#d97706; border-radius:20px; padding:2px 10px; font-weight:800; font-size:0.75rem;">⚽ ${a.golesPartido}</span>` : ''}
+                  </div>
+                  ${waLink ? `<a href="${waLink}" target="_blank" class="whatsapp-btn"><i class="fa-brands fa-whatsapp"></i> Chat de Compromiso</a>` : `<span class="no-wa">No Teléfono</span>`}
                 </div>
-                <div class="match-content ${collapsedClass}">
-                    <div class="stats-badge">
-                        <div class="badge-green"><i class="fa-solid fa-circle-check"></i> ${asistentes.length} Confirmados</div>
-                        <div class="badge-red"><i class="fa-solid fa-circle-xmark"></i> ${faltantes.length} Pendientes</div>
-                        ${esFinalizado ? `<div class="badge-gray"><i class="fa-solid fa-flag-checkered"></i> FINALIZADO</div>` : ''}
-                        ${!esFinalizado ? `
-                            <button class="btn-forzar" onclick="abrirModalForzar('${p.fecha}', '${p.rival}')"><i class="fa-solid fa-user-plus"></i> Forzar</button>
-                            <button class="btn-wa-masivo" onclick="abrirTodosWhatsApp('${p.fecha}', '${p.rival}')"><i class="fa-brands fa-whatsapp"></i> Enviar a faltantes</button>
-                        ` : ''}
-                    </div>
-                    
-                    <div class="player-list">
-                        <h4><i class="fa-solid fa-user-check" style="color: #16a34a;"></i> Asistentes Confirmados (${asistentes.length})</h4>
-                        ${asistentes.length === 0 ? '<div style="background:#f8fafc; border-radius:16px; padding:12px; text-align:center; color:var(--muted); font-size:0.85rem;">Ningún jugador registrado aún.</div>' : ''}
-                        ${asistentes.map(a => {
-                            const nombreLlamada = a.nombreCamiseta || (a.nombreCompleto ? a.nombreCompleto.split(' ')[0] : 'Jugador');
-                            const limpioTel = a.telefono ? String(a.telefono).replace(/\D/g, '') : '';
-                            const waLink = limpioTel ? `https://wa.me/${limpioTel}?text=${encodeURIComponent(mensajeFelicitacion(nombreLlamada))}` : null;
-                            return `
-                                <div class="player-item">
-                                    <div class="player-info">
-                                        <span class="dorsal">${a.dorsal || '?'}</span>
-                                        <div>
-                                            <span class="player-name">${escapeHtml(a.nombreCamiseta || nombreLlamada)}</span>
-                                            <span class="player-fullname">(${escapeHtml(a.nombreCompleto || 'Sin nombre')})</span>
-                                        </div>
-                                        ${a.golesPartido > 0 ? `<span style="background:#fef3c7; color:#d97706; border-radius:20px; padding:2px 10px; font-weight:800; font-size:0.75rem;">⚽ ${a.golesPartido}</span>` : ''}
-                                    </div>
-                                    ${waLink ? `<a href="${waLink}" target="_blank" class="whatsapp-btn"><i class="fa-brands fa-whatsapp"></i> Chat de Compromiso</a>` : `<span class="no-wa">No Teléfono</span>`}
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
+              `;
+            }).join('')}
+          </div>
 
-                    <div class="player-list" style="margin-top:24px;">
-                        <h4><i class="fa-solid fa-user-slash" style="color: var(--danger);"></i> Convocar Faltantes (${faltantes.length})</h4>
-                        ${faltantes.length === 0 ? '<div style="background:#dcfce7; color:#15803d; border-radius:16px; padding:12px; text-align:center; font-size:0.85rem; font-weight:600;">🎉 Asistencia perfecta confirmada.</div>' : ''}
-                        ${faltantes.map(f => {
-                            const nombreLlamada = f.nombreCamiseta || (f.nombreCompleto ? f.nombreCompleto.split(' ')[0] : 'Jugador');
-                            const limpioTel = f.telefono ? String(f.telefono).replace(/\D/g, '') : '';
-                            const waLink = limpioTel ? `https://wa.me/${limpioTel}?text=${encodeURIComponent(mensajeRecordatorio(nombreLlamada))}` : null;
-                            return `
-                                <div class="player-item">
-                                    <div class="player-info">
-                                        <span class="dorsal missing">${f.dorsal || '?'}</span>
-                                        <div>
-                                            <span class="player-name">${escapeHtml(f.nombreCamiseta || nombreLlamada)}</span>
-                                            <span class="player-fullname">(${escapeHtml(f.nombreCompleto || 'Sin nombre')})</span>
-                                        </div>
-                                    </div>
-                                    ${waLink ? `<a href="${waLink}" target="_blank" class="whatsapp-btn" style="background:var(--purple); box-shadow: 0 4px 12px rgba(124,58,237,0.2);"><i class="fa-brands fa-whatsapp"></i> Enviar Alerta</a>` : `<span class="no-wa">No Teléfono</span>`}
-                                </div>
-                            `;
-                        }).join('')}
+          <div class="player-list" style="margin-top:24px;">
+            <h4><i class="fa-solid fa-user-slash" style="color: var(--danger);"></i> Convocar Faltantes (${faltantes.length})</h4>
+            ${faltantes.length === 0 ? '<div style="background:#dcfce7; color:#15803d; border-radius:16px; padding:12px; text-align:center; font-size:0.85rem; font-weight:600;">🎉 Asistencia perfecta confirmada.</div>' : ''}
+            ${faltantes.map(f => {
+              const nombreLlamada = f.nombreCamiseta || (f.nombreCompleto ? f.nombreCompleto.split(' ')[0] : 'Jugador');
+              const limpioTel = f.telefono ? String(f.telefono).replace(/\D/g, '') : '';
+              const waLink = limpioTel ? `https://wa.me/${limpioTel}?text=${encodeURIComponent(mensajeRecordatorio(nombreLlamada))}` : null;
+              return `
+                <div class="player-item">
+                  <div class="player-info">
+                    <span class="dorsal missing">${f.dorsal || '?'}</span>
+                    <div>
+                      <span class="player-name">${escapeHtml(f.nombreCamiseta || nombreLlamada)}</span>
+                      <span class="player-fullname">(${escapeHtml(f.nombreCompleto || 'Sin nombre')})</span>
                     </div>
+                  </div>
+                  ${waLink ? `<a href="${waLink}" target="_blank" class="whatsapp-btn" style="background:var(--purple); box-shadow: 0 4px 12px rgba(124,58,237,0.2);"><i class="fa-brands fa-whatsapp"></i> Enviar Alerta</a>` : `<span class="no-wa">No Teléfono</span>`}
                 </div>
-            </div>`;
-        }
-        container.innerHTML = html;
+              `;
+            }).join('')}
+          </div>
+        </div>
+      </div>`;
+    }
+    container.innerHTML = html;
+  }
+
+  // ==================== MODAL FORZAR ASISTENCIA ====================
+  function abrirModalForzar(fecha, rival) {
+    const partido = partidosCache.find(p => p.fecha === fecha && p.rival === rival);
+    if (!partido) { alert('Partido no encontrado'); return; }
+    partidoSeleccionado = { fecha, rival };
+
+    const asistentes = partido.asistencias || [];
+    const cedulasAsistentes = new Set(asistentes.map(a => a.cedula));
+    const faltantes = jugadoresCache.filter(j => !cedulasAsistentes.has(j.cedula));
+
+    if (faltantes.length === 0) {
+      alert('✅ Todos los jugadores ya están confirmados para este partido.');
+      return;
     }
 
-    // ==================== MODAL FORZAR ASISTENCIA ====================
-    function abrirModalForzar(fecha, rival) {
-        const partido = partidosCache.find(p => p.fecha === fecha && p.rival === rival);
-        if (!partido) { alert('Partido no encontrado'); return; }
-        partidoSeleccionado = { fecha, rival };
+    const modal = document.getElementById('modalForzar');
+    const listaDiv = document.getElementById('listaFaltantesModal');
+    
+    let html = '';
+    faltantes.forEach(j => {
+      const nombre = j.nombreCamiseta || (j.nombreCompleto ? j.nombreCompleto.split(' ')[0] : 'Jugador');
+      html += `
+        <div class="jugador-check">
+          <input type="checkbox" class="check-faltante" data-cedula="${j.cedula}" checked>
+          <span style="font-weight:600;">${escapeHtml(nombre)}</span>
+          <span style="color:var(--muted); font-size:0.8rem; margin-left:auto;">#${j.dorsal || '?'}</span>
+        </div>
+      `;
+    });
+    listaDiv.innerHTML = html;
+    modal.classList.add('active');
+  }
 
-        const asistentes = partido.asistencias || [];
-        const cedulasAsistentes = new Set(asistentes.map(a => a.cedula));
-        const faltantes = jugadoresCache.filter(j => !cedulasAsistentes.has(j.cedula));
+  function cerrarModal() {
+    document.getElementById('modalForzar').classList.remove('active');
+    partidoSeleccionado = null;
+  }
 
-        if (faltantes.length === 0) {
-            alert('✅ Todos los jugadores ya están confirmados para este partido.');
-            return;
-        }
+  document.getElementById('btnSeleccionarTodos').addEventListener('click', function() {
+    const checks = document.querySelectorAll('.check-faltante');
+    const allChecked = Array.from(checks).every(c => c.checked);
+    checks.forEach(c => c.checked = !allChecked);
+  });
 
-        const modal = document.getElementById('modalForzar');
-        const listaDiv = document.getElementById('listaFaltantesModal');
-        
-        let html = '';
-        faltantes.forEach(j => {
-            const nombre = j.nombreCamiseta || (j.nombreCompleto ? j.nombreCompleto.split(' ')[0] : 'Jugador');
-            html += `
-                <div class="jugador-check">
-                    <input type="checkbox" class="check-faltante" data-cedula="${j.cedula}" checked>
-                    <span style="font-weight:600;">${escapeHtml(nombre)}</span>
-                    <span style="color:var(--muted); font-size:0.8rem; margin-left:auto;">#${j.dorsal || '?'}</span>
-                </div>
-            `;
-        });
-        listaDiv.innerHTML = html;
-        modal.classList.add('active');
+  document.getElementById('btnConfirmarForzar').addEventListener('click', async function() {
+    if (!partidoSeleccionado) return;
+    const checks = document.querySelectorAll('.check-faltante:checked');
+    if (checks.length === 0) {
+      alert('Selecciona al menos un jugador.');
+      return;
+    }
+    const cedulas = Array.from(checks).map(c => c.dataset.cedula);
+    
+    const payload = {
+      accion: 'forzarAsistencia',
+      fecha: partidoSeleccionado.fecha,
+      rival: partidoSeleccionado.rival,
+      cedulas: cedulas
+    };
+    
+    try {
+      const btn = this;
+      btn.textContent = '⏳ Enviando...';
+      btn.disabled = true;
+      
+      await fetch(API_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      alert('✅ Asistencia forzada guardada correctamente.');
+      cerrarModal();
+      cargarDatos();
+    } catch(e) {
+      alert('❌ Error al guardar: ' + e.message);
+    } finally {
+      btn.textContent = '💾 Guardar Asistencia';
+      btn.disabled = false;
+    }
+  });
+
+  // ==================== ENVIAR WHATSAPP MASIVO (MANUAL) ====================
+  window.abrirTodosWhatsApp = function(fecha, rival) {
+    const partido = partidosCache.find(p => p.fecha === fecha && p.rival === rival);
+    if (!partido) return;
+
+    const asistentes = partido.asistencias || [];
+    const cedulasAsistentes = new Set(asistentes.map(a => a.cedula));
+    const faltantes = jugadoresCache.filter(j => !cedulasAsistentes.has(j.cedula));
+
+    if (faltantes.length === 0) {
+      alert('✅ No hay faltantes para este partido.');
+      return;
     }
 
-    function cerrarModal() {
-        document.getElementById('modalForzar').classList.remove('active');
-        partidoSeleccionado = null;
-    }
+    const primerAsistente = asistentes[0] || {};
+    const fechaFormateada = new Date(partido.fecha).toLocaleDateString('es-ES', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    const hora = partido.hora || primerAsistente.hora || '--:--';
+    const lugar = partido.lugar || primerAsistente.lugar || 'Sin Sede';
+    const mensaje = `🔔 *¡Recordatorio!* 🔔\n\nPartido de Nápoles FC:\n⚽ Rival: ${partido.rival}\n🕒 Hora: ${hora}\n📍 Lugar: ${lugar}\n📅 Fecha: ${fechaFormateada}\n\nConfirma tu asistencia. ¡Te esperamos! 💪`;
 
-    document.getElementById('btnSeleccionarTodos').addEventListener('click', function() {
-        const checks = document.querySelectorAll('.check-faltante');
-        const allChecked = Array.from(checks).every(c => c.checked);
-        checks.forEach(c => c.checked = !allChecked);
+    let abiertos = 0;
+    faltantes.forEach(j => {
+      const tel = j.telefono ? String(j.telefono).replace(/\D/g, '') : '';
+      if (tel) {
+        const url = `https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`;
+        window.open(url, '_blank');
+        abiertos++;
+      }
     });
 
-    document.getElementById('btnConfirmarForzar').addEventListener('click', async function() {
-        if (!partidoSeleccionado) return;
-        const checks = document.querySelectorAll('.check-faltante:checked');
-        if (checks.length === 0) {
-            alert('Selecciona al menos un jugador.');
-            return;
-        }
-        const cedulas = Array.from(checks).map(c => c.dataset.cedula);
-        
-        const payload = {
-            accion: 'forzarAsistencia',
-            fecha: partidoSeleccionado.fecha,
-            rival: partidoSeleccionado.rival,
-            cedulas: cedulas
-        };
-        
-        try {
-            const btn = this;
-            btn.textContent = '⏳ Enviando...';
-            btn.disabled = true;
-            
-            await fetch(API_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            alert('✅ Asistencia forzada guardada correctamente.');
-            cerrarModal();
-            cargarDatos();
-        } catch(e) {
-            alert('❌ Error al guardar: ' + e.message);
-        } finally {
-            btn.textContent = '💾 Guardar Asistencia';
-            btn.disabled = false;
-        }
+    alert(`📨 Se abrieron ${abiertos} conversaciones. ¡Presiona "Enviar" en cada una!`);
+  }
+
+  // ==================== FUNCIONES GLOBALES ====================
+  window.toggleMatchContent = function(header) {
+    const matchCard = header.closest('.match-card');
+    const content = matchCard.querySelector('.match-content');
+    const icon = header.querySelector('.expand-icon');
+    
+    if (content.classList.contains('collapsed')) {
+      content.classList.remove('collapsed');
+      icon.className = 'expand-icon fa-solid fa-chevron-up';
+    } else {
+      content.classList.add('collapsed');
+      icon.className = 'expand-icon fa-solid fa-chevron-down';
+    }
+  }
+
+  function setupFilters() {
+    const buttons = document.querySelectorAll('.filter-btn');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderizar();
+      });
     });
+  }
 
-    // ==================== ENVIAR WHATSAPP MASIVO (MANUAL) ====================
-    window.abrirTodosWhatsApp = function(fecha, rival) {
-        const partido = partidosCache.find(p => p.fecha === fecha && p.rival === rival);
-        if (!partido) return;
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, m => {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
 
-        const asistentes = partido.asistencias || [];
-        const cedulasAsistentes = new Set(asistentes.map(a => a.cedula));
-        const faltantes = jugadoresCache.filter(j => !cedulasAsistentes.has(j.cedula));
-
-        if (faltantes.length === 0) {
-            alert('✅ No hay faltantes para este partido.');
-            return;
-        }
-
-        const fechaFormateada = new Date(partido.fecha).toLocaleDateString('es-ES', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-        const mensaje = `🔔 *¡Recordatorio!* 🔔\n\nPartido de Nápoles FC:\n⚽ Rival: ${partido.rival}\n🕒 Hora: ${partido.hora || '--:--'}\n📍 Lugar: ${partido.lugar}\n📅 Fecha: ${fechaFormateada}\n\nConfirma tu asistencia. ¡Te esperamos! 💪`;
-
-        let abiertos = 0;
-        faltantes.forEach(j => {
-            const tel = j.telefono ? String(j.telefono).replace(/\D/g, '') : '';
-            if (tel) {
-                const url = `https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`;
-                window.open(url, '_blank');
-                abiertos++;
-            }
-        });
-
-        alert(`📨 Se abrieron ${abiertos} conversaciones. ¡Presiona "Enviar" en cada una!`);
-    }
-
-    // ==================== FUNCIONES GLOBALES ====================
-    window.toggleMatchContent = function(header) {
-        const matchCard = header.closest('.match-card');
-        const content = matchCard.querySelector('.match-content');
-        const icon = header.querySelector('.expand-icon');
-        
-        if (content.classList.contains('collapsed')) {
-            content.classList.remove('collapsed');
-            icon.className = 'expand-icon fa-solid fa-chevron-up';
-        } else {
-            content.classList.add('collapsed');
-            icon.className = 'expand-icon fa-solid fa-chevron-down';
-        }
-    }
-
-    function setupFilters() {
-        const buttons = document.querySelectorAll('.filter-btn');
-        buttons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                buttons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentFilter = btn.dataset.filter;
-                renderizar();
-            });
-        });
-    }
-
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, m => {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
-
-    // ==================== INICIALIZACIÓN ====================
-    if (localStorage.getItem('admin_activo') !== 'true') window.location.href = 'login.html';
-    cargarDatos().then(() => setupFilters());
-    document.getElementById("btnRefresh").addEventListener("click", cargarDatos);
+  // ==================== INICIALIZACIÓN ====================
+  if (localStorage.getItem('admin_activo') !== 'true') window.location.href = 'login.html';
+  cargarDatos().then(() => setupFilters());
+  document.getElementById("btnRefresh").addEventListener("click", cargarDatos);
 </script>
 </body>
 </html>
