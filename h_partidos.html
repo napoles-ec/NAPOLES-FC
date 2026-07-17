@@ -42,7 +42,6 @@
     .font-mono { font-family: 'JetBrains Mono', monospace; }
     .tabular { font-variant-numeric: tabular-nums; }
 
-    /* Skeleton */
     .skeleton-shimmer {
       background: linear-gradient(90deg, #0f172a 25%, #1e293b 50%, #0f172a 75%);
       background-size: 200% 100%;
@@ -50,7 +49,6 @@
     }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-    /* Glass */
     .glass-card {
       background: var(--glass-bg);
       backdrop-filter: blur(16px);
@@ -71,7 +69,6 @@
       gap: 6px;
     }
 
-    /* ----- TARJETA PRÓXIMO PARTIDO CON NEON GIRATORIO ----- */
     .neon-card {
       position: relative;
       background:
@@ -138,7 +135,6 @@
       color: #64748b;
     }
 
-    /* Tarjeta de partido normal (para ganados/perdidos) */
     .partido-card {
       background: var(--card-bg);
       border-radius: 16px;
@@ -188,7 +184,6 @@
     .marcador-derrota { color: var(--loss); }
     .marcador-empate { color: var(--draw); }
 
-    /* Badge de empate (dentro de columna de ganados) */
     .badge-empate {
       background: rgba(251, 191, 36, 0.15);
       color: #fbbf24;
@@ -201,7 +196,6 @@
       margin-left: 4px;
     }
 
-    /* Columnas */
     .columna-partidos {
       display: flex;
       flex-direction: column;
@@ -221,7 +215,6 @@
     .titulo-ganados { color: var(--win); border-bottom-color: rgba(52, 211, 153, 0.2); }
     .titulo-perdidos { color: var(--loss); border-bottom-color: rgba(248, 113, 113, 0.2); }
 
-    /* Stats */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -250,7 +243,6 @@
       margin-top: 1px;
     }
 
-    /* ----- EVOLUCIÓN / ESTADÍSTICAS ----- */
     .evo-card { padding: 16px; }
     .forma-row { display: flex; gap: 6px; align-items: center; }
     .forma-chip {
@@ -288,7 +280,6 @@
       letter-spacing: 0.02em;
     }
 
-    /* Filtros */
     .btn-filtro {
       padding: 6px 14px;
       border-radius: 9999px;
@@ -312,7 +303,6 @@
       box-shadow: 0 4px 12px rgba(234, 179, 8, 0.25);
     }
 
-    /* Navegación inferior */
     .bottom-nav {
       position: fixed;
       bottom: 0; left: 0; right: 0;
@@ -346,7 +336,6 @@
     .bottom-nav .nav-item:active { transform: scale(0.92); }
     .bottom-nav .nav-item.active { color: var(--gold); }
 
-    /* Toast */
     #toast {
       position: fixed;
       bottom: 85px; left: 50%;
@@ -536,7 +525,7 @@ async function cargarPartidos() {
   }
 }
 
-// ==================== RENDERIZAR (con 1x1, ganados/perdidos) ====================
+// ==================== RENDERIZAR ====================
 let todosLosPartidos = [];
 let campeonatoActual = 'todos';
 let campeonatosUnicos = [];
@@ -553,7 +542,7 @@ function renderizarPartidos(partidos) {
   aplicarFiltro();
 }
 
-// ==================== GRÁFICO DE EVOLUCIÓN (SVG, datos reales) ====================
+// ==================== GRÁFICO DE EVOLUCIÓN (puntos por partido, no acumulado) ====================
 function construirEvolucionHtml(finalizadosCronologico) {
   if (finalizadosCronologico.length === 0) {
     return `
@@ -576,13 +565,11 @@ function construirEvolucionHtml(finalizadosCronologico) {
   const victoriasRecientes = ultimos.filter(i => i.resultado === 'VICTORIA').length;
   const puntosRecientes = ultimos.reduce((acc, i) => acc + (i.resultado === 'VICTORIA' ? 3 : i.resultado === 'EMPATE' ? 1 : 0), 0);
 
-  // ---- Serie acumulada de puntos ----
-  let acumPuntos = 0;
+  // ---- Serie de puntos por partido (3,1,0) ----
   const serie = finalizadosCronologico.map(item => {
-    acumPuntos += item.resultado === 'VICTORIA' ? 3 : item.resultado === 'EMPATE' ? 1 : 0;
-    return acumPuntos;
+    return item.resultado === 'VICTORIA' ? 3 : item.resultado === 'EMPATE' ? 1 : 0;
   });
-  const maxPts = Math.max(...serie, 1);
+  const maxPts = 3.2;  // fijamos un poco por encima de 3 para margen
   const n = serie.length;
 
   const W = 300, H = 92, PAD = 6;
@@ -595,7 +582,7 @@ function construirEvolucionHtml(finalizadosCronologico) {
   const dots = serie.map((v, i) => {
     const item = finalizadosCronologico[i];
     const color = item.resultado === 'VICTORIA' ? 'var(--win)' : item.resultado === 'DERROTA' ? 'var(--loss)' : 'var(--draw)';
-    return `<circle class="evo-pt" cx="${coordX(i)}" cy="${coordY(v)}" r="${i === n - 1 ? 4 : 2.5}" fill="${color}" stroke="#020617" stroke-width="1.5"><title>${escapeHtml(item.rival || '')} · ${formatearFechaCorta(item.fecha)}</title></circle>`;
+    return `<circle class="evo-pt" cx="${coordX(i)}" cy="${coordY(v)}" r="${i === n - 1 ? 4 : 2.5}" fill="${color}" stroke="#020617" stroke-width="1.5"><title>${escapeHtml(item.rival || '')} · ${formatearFechaCorta(item.fecha)} · ${v} pts</title></circle>`;
   }).join('');
 
   return `
@@ -622,10 +609,10 @@ function construirEvolucionHtml(finalizadosCronologico) {
       </div>
 
       <div class="evo-legend">
-        <span><span class="dot" style="background:var(--win);"></span>Victoria</span>
-        <span><span class="dot" style="background:var(--draw);"></span>Empate</span>
-        <span><span class="dot" style="background:var(--loss);"></span>Derrota</span>
-        <span class="ml-auto font-mono">pts. acumulados</span>
+        <span><span class="dot" style="background:var(--win);"></span>Victoria (3)</span>
+        <span><span class="dot" style="background:var(--draw);"></span>Empate (1)</span>
+        <span><span class="dot" style="background:var(--loss);"></span>Derrota (0)</span>
+        <span class="ml-auto font-mono">pts. por partido</span>
       </div>
     </div>
   `;
@@ -773,7 +760,7 @@ function aplicarFiltro() {
     `;
   }
 
-  // ===== EVOLUCIÓN / ESTADÍSTICAS REALES =====
+  // ===== EVOLUCIÓN (puntos por partido) =====
   html += construirEvolucionHtml(finalizadosCronologico);
 
   // ===== DOS COLUMNAS: GANADOS / PERDIDOS =====
