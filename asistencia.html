@@ -4,13 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Nápoles FC - Asistencia con WhatsApp</title>
-  
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  
+
   <style>
-    /* (estilos iguales a los que ya tienes, no los repito por brevedad) */
-    /* Pero los incluyo en el código final */
     :root {
       --purple: #7c3aed;
       --purple-dark: #5b21b6;
@@ -23,42 +21,42 @@
       --border: rgba(226, 232, 240, 0.7);
     }
 
-    * { 
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
     }
 
-    body { 
-      font-family: 'Inter', sans-serif; 
-      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 40%, #f1f5f9 100%); 
-      min-height: 100vh; 
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 40%, #f1f5f9 100%);
+      min-height: 100vh;
       color: var(--slate-dark);
     }
 
-    .topbar { 
-      background: rgba(255,255,255,0.75); 
-      backdrop-filter: blur(20px); 
+    .topbar {
+      background: rgba(255,255,255,0.75);
+      backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border); 
-      padding: 16px 24px; 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      position: sticky; 
-      top: 0; 
-      z-index: 100; 
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
 
-    .admin-info h1 { 
+    .admin-info h1 {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.25rem; 
-      font-weight: 900; 
-      background: linear-gradient(135deg, var(--purple), var(--purple-light)); 
-      -webkit-background-clip: text; 
-      background-clip: text; 
-      color: transparent; 
+      font-size: 1.25rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--purple), var(--purple-light));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
 
     .admin-info p {
@@ -67,25 +65,25 @@
       font-weight: 600;
     }
 
-    .avatar { 
-      width: 42px; 
-      height: 42px; 
-      background: rgba(255, 255, 255, 0.8); 
+    .avatar {
+      width: 42px;
+      height: 42px;
+      background: rgba(255, 255, 255, 0.8);
       border: 1px solid var(--border);
-      border-radius: 14px; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      color: var(--purple); 
-      font-weight: bold; 
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--purple);
+      font-weight: bold;
     }
 
     .hero { max-width: 800px; margin: 20px auto 0; padding: 0 16px; }
-    .hero-card { 
-      background: linear-gradient(135deg, #1e1b4b 0%, var(--slate-dark) 100%); 
-      border-radius: 28px; 
-      padding: 24px; 
-      color: white; 
+    .hero-card {
+      background: linear-gradient(135deg, #1e1b4b 0%, var(--slate-dark) 100%);
+      border-radius: 28px;
+      padding: 24px;
+      color: white;
       position: relative;
       overflow: hidden;
       border: 1px solid rgba(255,255,255,0.1);
@@ -94,44 +92,44 @@
     .hero-card p { color: #94a3b8; font-size: 0.9rem; }
 
     .dashboard { max-width: 800px; margin: 24px auto; padding: 0 16px 60px; }
-    
-    .header-actions { 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      flex-wrap: wrap; 
+
+    .header-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
       gap: 12px;
-      margin-bottom: 20px; 
+      margin-bottom: 20px;
     }
     .header-actions h2 { font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 800; }
 
-    .refresh-btn { 
-      background: var(--purple); 
-      border: none; 
-      padding: 10px 20px; 
-      border-radius: 50px; 
-      color: white; 
-      font-weight: 600; 
-      display: flex; 
-      align-items: center; 
-      gap: 8px; 
-      cursor: pointer; 
-      transition: all 0.2s; 
-      font-family: 'Inter'; 
+    .refresh-btn {
+      background: var(--purple);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 50px;
+      color: white;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Inter';
       font-size: 0.85rem;
     }
     .refresh-btn:hover { background: var(--purple-dark); transform: translateY(-1px); }
 
     .filter-buttons { display: flex; gap: 8px; margin-bottom: 24px; overflow-x: auto; padding-bottom: 4px; }
-    .filter-btn { 
-      background: #f1f5f9; 
-      border: 1px solid var(--border); 
-      padding: 8px 18px; 
-      border-radius: 40px; 
-      font-weight: 600; 
-      cursor: pointer; 
-      font-family: 'Inter'; 
-      color: var(--muted); 
+    .filter-btn {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      padding: 8px 18px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter';
+      color: var(--muted);
       transition: all 0.2s;
       font-size: 0.82rem;
       white-space: nowrap;
@@ -139,35 +137,35 @@
     .filter-btn.active { background: var(--purple); color: white; border-color: var(--purple); }
 
     .partidos-grid { display: flex; flex-direction: column; gap: 20px; }
-    
-    .match-card { 
-      background: rgba(255,255,255,0.7); 
-      backdrop-filter: blur(20px); 
+
+    .match-card {
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-radius: 28px; 
-      padding: 22px; 
-      box-shadow: 0 4px 30px rgba(0,0,0,0.01); 
-      border: 1px solid rgba(255, 255, 255, 0.8); 
-      transition: background 0.3s; 
+      border-radius: 28px;
+      padding: 22px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.01);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      transition: background 0.3s;
     }
     .match-card.finalizado { background: rgba(241, 245, 249, 0.6); }
-    
-    .match-header { 
-      display: flex; 
-      justify-content: space-between; 
+
+    .match-header {
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap; 
-      gap: 12px; 
-      padding-bottom: 14px; 
-      cursor: pointer; 
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 14px;
+      cursor: pointer;
     }
-    .match-date { 
-      background: #f3e8ff; 
+    .match-date {
+      background: #f3e8ff;
       color: var(--purple-dark);
-      padding: 4px 14px; 
-      border-radius: 40px; 
-      font-weight: 700; 
-      font-size: 0.75rem; 
+      padding: 4px 14px;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 0.75rem;
       display: inline-block;
       margin-bottom: 4px;
       text-transform: uppercase;
@@ -175,47 +173,47 @@
     .match-rival { font-family: 'Outfit', sans-serif; font-size: 1.35rem; font-weight: 900; color: var(--slate-dark); }
     .match-location { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 0.85rem; font-weight: 500; }
     .expand-icon { margin-left: auto; color: var(--purple); transition: transform 0.3s ease; font-size: 1.2rem; }
-    
-    .match-content { 
-      max-height: 5000px; 
-      overflow: hidden; 
+
+    .match-content {
+      max-height: 5000px;
+      overflow: hidden;
       transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
       border-top: 1px dashed var(--border);
     }
     .match-content.collapsed { max-height: 0 !important; }
 
-    .stats-badge { 
-      display: flex; 
-      gap: 10px; 
-      justify-content: flex-start; 
+    .stats-badge {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-start;
       flex-wrap: wrap;
-      margin: 16px 0; 
+      margin: 16px 0;
       align-items: center;
     }
-    .badge-green, .badge-red, .badge-gray { 
-      padding: 6px 14px; 
-      border-radius: 40px; 
-      font-weight: 700; 
-      font-size: 0.78rem; 
-      display: inline-flex; 
-      align-items: center; 
-      gap: 6px; 
+    .badge-green, .badge-red, .badge-gray {
+      padding: 6px 14px;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 0.78rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
     .badge-green { background: #dcfce7; color: #15803d; }
     .badge-red { background: #fee2e2; color: #b91c1c; }
     .badge-gray { background: #f1f5f9; color: #475569; border: 1px solid var(--border); }
-    
-    .btn-forzar { 
-      background: #facc15; 
-      color: #000; 
-      padding: 6px 14px; 
-      border-radius: 40px; 
-      font-weight: 700; 
-      border: none; 
-      cursor: pointer; 
-      font-size: 0.75rem; 
-      display: inline-flex; 
-      align-items: center; 
+
+    .btn-forzar {
+      background: #facc15;
+      color: #000;
+      padding: 6px 14px;
+      border-radius: 40px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      font-size: 0.75rem;
+      display: inline-flex;
+      align-items: center;
       gap: 6px;
       transition: all 0.2s;
     }
@@ -238,73 +236,73 @@
     .btn-wa-masivo:hover { background: #128C7E; transform: scale(1.02); }
 
     .player-list { margin-top: 18px; }
-    .player-list h4 { 
-      font-family: 'Outfit', sans-serif; 
-      font-size: 1rem; 
-      font-weight: 800; 
-      margin-bottom: 12px; 
-      color: var(--slate-dark); 
-      display: flex; 
-      align-items: center; 
-      gap: 8px; 
+    .player-list h4 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: var(--slate-dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    
-    .player-item { 
-      background: rgba(255, 255, 255, 0.7); 
-      border-radius: 18px; 
-      padding: 12px 16px; 
-      margin-bottom: 8px; 
-      display: flex; 
-      align-items: center; 
-      justify-content: space-between; 
-      gap: 12px; 
+
+    .player-item {
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 18px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
       border: 1px solid rgba(226, 232, 240, 0.5);
     }
     .player-info { display: flex; align-items: center; gap: 12px; }
-    .dorsal { 
-      background: var(--purple); 
-      color: white; 
-      border-radius: 10px; 
+    .dorsal {
+      background: var(--purple);
+      color: white;
+      border-radius: 10px;
       width: 28px;
       height: 28px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.75rem; 
-      font-weight: 800; 
+      font-size: 0.75rem;
+      font-weight: 800;
     }
     .dorsal.missing { background: #94a3b8; }
     .player-name { font-weight: 700; font-size: 0.92rem; color: var(--slate-dark); }
     .player-fullname { font-size: 0.75rem; color: var(--muted); margin-left: 4px; display: inline-block; }
-    
-    .whatsapp-btn { 
-      background: var(--success); 
-      border-radius: 40px; 
-      padding: 8px 16px; 
-      color: white; 
-      text-decoration: none; 
-      font-weight: 700; 
-      display: inline-flex; 
-      align-items: center; 
-      gap: 6px; 
-      font-size: 0.78rem; 
-      transition: all 0.2s; 
+
+    .whatsapp-btn {
+      background: var(--success);
+      border-radius: 40px;
+      padding: 8px 16px;
+      color: white;
+      text-decoration: none;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      transition: all 0.2s;
       box-shadow: 0 4px 12px rgba(37,211,102,0.2);
     }
     .whatsapp-btn:hover { background: var(--success-dark); transform: translateY(-1px); }
     .no-wa { background: #e2e8f0; color: #94a3b8; border-radius: 40px; padding: 8px 16px; font-size: 0.75rem; font-weight: 600; }
 
-    .btn-back { 
-      background: transparent; 
-      border: 1px solid var(--border); 
-      padding: 12px 28px; 
-      border-radius: 50px; 
-      color: var(--slate-dark); 
-      font-weight: 600; 
-      display: inline-flex; 
-      align-items: center; 
-      gap: 8px; 
-      cursor: pointer; 
+    .btn-back {
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 12px 28px;
+      border-radius: 50px;
+      color: var(--slate-dark);
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
       font-family: 'Inter';
       transition: all 0.2s;
       margin-top: 30px;
@@ -392,9 +390,9 @@
     }
     @keyframes loadingShimmer { 100% { transform: translateX(100%); } }
 
-    @media (max-width: 580px) { 
-      .player-item { flex-direction: column; align-items: stretch; gap: 10px; } 
-      .whatsapp-btn { justify-content: center; width: 100%; } 
+    @media (max-width: 580px) {
+      .player-item { flex-direction: column; align-items: stretch; gap: 10px; }
+      .whatsapp-btn { justify-content: center; width: 100%; }
       .no-wa { text-align: center; width: 100%; }
       .modal { padding: 20px; }
       .stats-badge .btn-forzar, .stats-badge .btn-wa-masivo { width: 100%; justify-content: center; }
@@ -423,7 +421,7 @@
     <h2>📅 Partidos de la Temporada</h2>
     <button class="refresh-btn" id="btnRefresh"><i class="fa-solid fa-rotate"></i> Actualizar</button>
   </div>
-  
+
   <div class="filter-buttons">
     <button class="filter-btn active" data-filter="all">Todos</button>
     <button class="filter-btn" data-filter="active">Activos</button>
@@ -462,6 +460,32 @@
   let jugadoresCache = [];
   let partidoSeleccionado = null;
 
+  // ==================== HELPERS DE NORMALIZACIÓN ====================
+  // CLAVE DEL FIX: si la fecha que viaja al backend no está en un formato
+  // 100% consistente (ej. "2026-07-20" vs "2026-07-20T05:00:00.000Z" vs un
+  // objeto Date serializado distinto), el Apps Script no encuentra el
+  // partido existente al comparar y termina CREANDO uno nuevo.
+  // Aquí normalizamos a "YYYY-MM-DD" siempre antes de enviar o comparar.
+  function normalizarFecha(valor) {
+    if (!valor) return '';
+    const d = new Date(valor);
+    if (isNaN(d.getTime())) return String(valor).trim();
+    // Usamos los componentes UTC para no desfasar el día por zona horaria
+    const yyyy = d.getUTCFullYear();
+    const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+    const dd = String(d.getUTCDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  function normalizarRival(valor) {
+    return (valor || '').toString().trim().toLowerCase();
+  }
+
+  function mismoPartido(p, fecha, rival) {
+    return normalizarFecha(p.fecha) === normalizarFecha(fecha) &&
+           normalizarRival(p.rival) === normalizarRival(rival);
+  }
+
   // ==================== FUNCIONES PRINCIPALES ====================
   async function cargarDatos() {
     const container = document.getElementById("partidosContainer");
@@ -486,35 +510,36 @@
     } else if (currentFilter === 'finalized') {
       partidos = partidos.filter(p => p.estado === 'FINALIZADO');
     }
-    
+
     const container = document.getElementById("partidosContainer");
     if (!partidos.length) {
       container.innerHTML = '<div style="background:#fffbeb; border:1px solid #fde68a; border-radius:24px; padding:24px; text-align:center; color:#b45309; font-weight:600; font-size:0.9rem;">⚠️ Ningún encuentro coincide con el filtro seleccionado.</div>';
       return;
     }
-    
+
     let html = "";
     for (let p of partidos) {
       const asistentes = p.asistencias || [];
       const cedulasAsistentes = new Set(asistentes.map(a => a.cedula));
       const faltantes = jugadoresCache.filter(j => !cedulasAsistentes.has(j.cedula));
-      
-      // Mostrar fecha, hora y lugar del primer asistente (o del partido)
+
       const primerAsistente = asistentes[0] || {};
       const fecha = new Date(p.fecha);
       const fechaFormateada = isNaN(fecha.getTime()) ? p.fecha : fecha.toLocaleDateString('es-ES', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
       const horaMostrar = p.hora || primerAsistente.hora || '--:--';
       const lugarMostrar = p.lugar || primerAsistente.lugar || 'Sin Sede';
-      
+
       const esFinalizado = (p.estado === 'FINALIZADO');
       const cardClass = esFinalizado ? 'match-card finalizado' : 'match-card';
       const collapsedClass = esFinalizado ? 'collapsed' : '';
-      
+
       const mensajeRecordatorio = (nombre) => `🔔 *¡Hola ${nombre}!* 🔔\n\nTe recordamos el partido de *Nápoles FC*:\n⚽ *Rival:* ${p.rival || 'Por definir'}\n🕒 *Hora:* ${horaMostrar}\n📍 *Lugar:* ${lugarMostrar}\n📅 *Fecha:* ${fechaFormateada}\n\nPor favor confirma tu asistencia cuanto antes. ¡Te esperamos para dar lo mejor! llega 15 min antes  💪⚽🔥`;
       const mensajeFelicitacion = (nombre) => `🎉 *¡Gracias por confirmar, ${nombre}!* 🎉\n\nEstamos muy contentos de contar contigo para el partido:\n⚽ *Rival:* ${p.rival || 'Por definir'}\n🕒 *Hora:* ${horaMostrar}\n📍 *Lugar:* ${lugarMostrar}\n📅 *Fecha:* ${fechaFormateada}\n\nRecuerda ser puntual y traer tu mejor actitud. ¡Juntos sumamos! llega 15 min antes  🔥🏆\n\n#VamosNápoles`;
-      
+
+      // Usamos data-attributes en vez de interpolar directo en el onclick,
+      // así evitamos romper el HTML si el rival trae comillas o acentos raros.
       html += `
-      <div class="${cardClass}">
+      <div class="${cardClass}" data-fecha="${escapeHtml(p.fecha)}" data-rival="${escapeHtml(p.rival)}">
         <div class="match-header" onclick="toggleMatchContent(this)">
           <div>
             <div class="match-date">${fechaFormateada} - ${horaMostrar}</div>
@@ -529,11 +554,11 @@
             <div class="badge-red"><i class="fa-solid fa-circle-xmark"></i> ${faltantes.length} Pendientes</div>
             ${esFinalizado ? `<div class="badge-gray"><i class="fa-solid fa-flag-checkered"></i> FINALIZADO</div>` : ''}
             ${!esFinalizado ? `
-              <button class="btn-forzar" onclick="abrirModalForzar('${p.fecha}', '${p.rival}')"><i class="fa-solid fa-user-plus"></i> Forzar</button>
-              <button class="btn-wa-masivo" onclick="abrirTodosWhatsApp('${p.fecha}', '${p.rival}')"><i class="fa-brands fa-whatsapp"></i> Enviar a faltantes</button>
+              <button class="btn-forzar" onclick="abrirModalForzarDesde(this)"><i class="fa-solid fa-user-plus"></i> Forzar</button>
+              <button class="btn-wa-masivo" onclick="abrirTodosWhatsAppDesde(this)"><i class="fa-brands fa-whatsapp"></i> Enviar a faltantes</button>
             ` : ''}
           </div>
-          
+
           <div class="player-list">
             <h4><i class="fa-solid fa-user-check" style="color: #16a34a;"></i> Asistentes Confirmados (${asistentes.length})</h4>
             ${asistentes.length === 0 ? '<div style="background:#f8fafc; border-radius:16px; padding:12px; text-align:center; color:var(--muted); font-size:0.85rem;">Ningún jugador registrado aún.</div>' : ''}
@@ -585,10 +610,19 @@
   }
 
   // ==================== MODAL FORZAR ASISTENCIA ====================
+  function abrirModalForzarDesde(boton) {
+    const card = boton.closest('.match-card');
+    abrirModalForzar(card.dataset.fecha, card.dataset.rival);
+  }
+
   function abrirModalForzar(fecha, rival) {
-    const partido = partidosCache.find(p => p.fecha === fecha && p.rival === rival);
+    const partido = partidosCache.find(p => mismoPartido(p, fecha, rival));
     if (!partido) { alert('Partido no encontrado'); return; }
-    partidoSeleccionado = { fecha, rival };
+    // Guardamos SIEMPRE la fecha/rival normalizados, tal cual vinieron
+    // del backend en partidosCache (no los que llegan del data-attribute),
+    // así el payload que se envía coincide exactamente con lo que el
+    // Apps Script tiene guardado para ese partido.
+    partidoSeleccionado = { fecha: partido.fecha, rival: partido.rival };
 
     const asistentes = partido.asistencias || [];
     const cedulasAsistentes = new Set(asistentes.map(a => a.cedula));
@@ -601,7 +635,7 @@
 
     const modal = document.getElementById('modalForzar');
     const listaDiv = document.getElementById('listaFaltantesModal');
-    
+
     let html = '';
     faltantes.forEach(j => {
       const nombre = j.nombreCamiseta || (j.nombreCompleto ? j.nombreCompleto.split(' ')[0] : 'Jugador');
@@ -636,25 +670,38 @@
       return;
     }
     const cedulas = Array.from(checks).map(c => c.dataset.cedula);
-    
+
     const payload = {
       accion: 'forzarAsistencia',
-      fecha: partidoSeleccionado.fecha,
+      // Enviamos la fecha ya normalizada a YYYY-MM-DD y el rival tal cual,
+      // para que el Apps Script solo tenga que normalizar de su lado
+      // usando la MISMA función (ver nota al final del archivo).
+      fecha: normalizarFecha(partidoSeleccionado.fecha),
       rival: partidoSeleccionado.rival,
       cedulas: cedulas
     };
-    
+
+    const btn = this;
+    btn.textContent = '⏳ Enviando...';
+    btn.disabled = true;
+
     try {
-      const btn = this;
-      btn.textContent = '⏳ Enviando...';
-      btn.disabled = true;
-      
-      await fetch(API_URL, {
+      // FIX 1: sin "no-cors" -> ahora SÍ podemos leer la respuesta real.
+      // FIX 2: "text/plain" en vez de "application/json" -> evita el
+      // preflight OPTIONS que Apps Script no responde bien, y que hacía
+      // que la petición real a veces nunca llegara al doPost().
+      const res = await fetch(API_URL, {
         method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       });
+
+      const data = await res.json();
+
+      if (!data.success) {
+        throw new Error(data.error || 'El servidor rechazó la solicitud');
+      }
+
       alert('✅ Asistencia forzada guardada correctamente.');
       cerrarModal();
       cargarDatos();
@@ -667,8 +714,13 @@
   });
 
   // ==================== ENVIAR WHATSAPP MASIVO (MANUAL) ====================
+  function abrirTodosWhatsAppDesde(boton) {
+    const card = boton.closest('.match-card');
+    abrirTodosWhatsApp(card.dataset.fecha, card.dataset.rival);
+  }
+
   window.abrirTodosWhatsApp = function(fecha, rival) {
-    const partido = partidosCache.find(p => p.fecha === fecha && p.rival === rival);
+    const partido = partidosCache.find(p => mismoPartido(p, fecha, rival));
     if (!partido) return;
 
     const asistentes = partido.asistencias || [];
@@ -704,7 +756,7 @@
     const matchCard = header.closest('.match-card');
     const content = matchCard.querySelector('.match-content');
     const icon = header.querySelector('.expand-icon');
-    
+
     if (content.classList.contains('collapsed')) {
       content.classList.remove('collapsed');
       icon.className = 'expand-icon fa-solid fa-chevron-up';
@@ -728,10 +780,11 @@
 
   function escapeHtml(str) {
     if (!str) return '';
-    return str.replace(/[&<>]/g, m => {
+    return str.replace(/[&<>"]/g, m => {
       if (m === '&') return '&amp;';
       if (m === '<') return '&lt;';
       if (m === '>') return '&gt;';
+      if (m === '"') return '&quot;';
       return m;
     });
   }
