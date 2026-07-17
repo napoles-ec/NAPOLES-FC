@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Panel Admin - Nápoles F.C. Elegance</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    <title>Panel de Gata — Nápoles F.C.</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=Roboto+Mono:wght@600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -13,204 +13,355 @@
                 extend: {
                     colors: {
                         "napoles-blue": "#0094d6",
+                        "napoles-navy": "#062b45",
                         "rose-gold": "#e0a899",
-                        "soft-bg": "#fcfbfe"
+                        "soft-bg": "#fbfaf7"
                     },
-                    fontFamily: { "headline": ["Outfit"], "body": ["Inter"] }
+                    fontFamily: {
+                        headline: ["Outfit", "sans-serif"],
+                        body: ["Inter", "sans-serif"],
+                        mono: ["Roboto Mono", "monospace"]
+                    }
                 }
             }
         }
     </script>
     <style>
-        * { -webkit-tap-highlight-color: transparent; }
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 50%, #f1f4f9 100%);
-            color: #1f2937;
-            min-height: 100vh;
+        :root{
+            --napoles-blue:#0094d6;
+            --napoles-navy:#062b45;
+            --rose-gold:#e0a899;
+            --success:#15803d;
+            --danger:#b91c1c;
+            --warning:#b45309;
         }
-        
-        /* Fondos Ambientales Suaves */
-        .ambient-glow {
-            position: fixed; inset: 0; overflow: hidden; z-index: -1; pointer-events: none;
+        *{ -webkit-tap-highlight-color: transparent; }
+        html{ scroll-behavior:smooth; }
+        body{
+            font-family:'Inter', sans-serif;
+            background:
+                radial-gradient(1200px 500px at -10% -10%, rgba(224,168,153,0.16), transparent 60%),
+                radial-gradient(1000px 600px at 110% 0%, rgba(0,148,214,0.10), transparent 55%),
+                linear-gradient(180deg, #ffffff 0%, #f7f9fc 45%, #f1f4f9 100%);
+            color:#16232e;
+            min-height:100vh;
         }
-        .glow-sphere { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.35; }
-        .glow-1 { width: 350px; height: 350px; background: #e0a899; top: -5%; left: -15%; }
-        .glow-2 { width: 450px; height: 450px; background: #e0f2fe; bottom: -5%; right: -15%; }
 
-        /* Cristal Blanco Lujoso */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.65);
+        /* ---------- Cristal ---------- */
+        .glass-card{
+            background: rgba(255,255,255,0.66);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.7);
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.04);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid rgba(255,255,255,0.75);
+            box-shadow: 0 8px 32px rgba(6,43,69,0.05);
+            transition: transform .25s cubic-bezier(.16,1,.3,1), box-shadow .25s, border-color .25s, background .25s;
         }
-        .glass-card:hover {
-            transform: translateY(-2px);
-            border-color: rgba(0, 148, 214, 0.2);
-            background: rgba(255, 255, 255, 0.85);
-            box-shadow: 0 12px 40px rgba(0, 148, 214, 0.08);
+        .glass-card:hover{
+            transform: translateY(-3px);
+            border-color: rgba(0,148,214,0.24);
+            background: rgba(255,255,255,0.9);
+            box-shadow: 0 16px 40px rgba(0,148,214,0.10);
         }
-        .glass-card:active { transform: scale(0.98); }
+        .glass-card:active{ transform: scale(0.98); }
+        .glass-card:focus-visible{
+            outline: 2px solid var(--napoles-blue);
+            outline-offset: 3px;
+        }
 
-        .icon-box {
-            width: 48px; height: 48px; border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
+        .icon-box{
+            width:46px; height:46px; border-radius:13px;
+            display:flex; align-items:center; justify-content:center;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.03);
         }
-        
-        .players .icon-box { background: #e0f2fe; color: #0369a1; }
-        .matches .icon-box { background: #dcfce7; color: #15803d; }
-        .rivals .icon-box { background: #fee2e2; color: #b91c1c; }
-        .finance .icon-box { background: #fef3c7; color: #b45309; }
-        .uniforms .icon-box { background: #f3e8ff; color: #6b21a8; }
-        .stats .icon-box { background: #fce7f3; color: #be185d; }
-        .news .icon-box { background: #ecfeff; color: #047487; }
-        .attendance .icon-box { background: #fff7ed; color: #c2410c; }
-        .vocalia .icon-box { background: #fff1f2; color: #9f1239; }
-        .settings .icon-box { background: #f1f5f9; color: #475569; }
+        .players .icon-box{ background:#e0f2fe; color:#0369a1; }
+        .matches .icon-box{ background:#dcfce7; color:#15803d; }
+        .rivals  .icon-box{ background:#fee2e2; color:#b91c1c; }
+        .finance .icon-box{ background:#fef3c7; color:#b45309; }
+        .uniforms .icon-box{ background:#f3e8ff; color:#6b21a8; }
+        .stats   .icon-box{ background:#fce7f3; color:#be185d; }
+        .news    .icon-box{ background:#ecfeff; color:#047487; }
+        .attendance .icon-box{ background:#fff7ed; color:#c2410c; }
+        .vocalia .icon-box{ background:#fff1f2; color:#9f1239; }
+        .settings .icon-box{ background:#f1f5f9; color:#475569; }
+
+        /* ---------- Skeleton shimmer para badges ---------- */
+        .badge-skel{
+            display:inline-block; width:22px; height:14px; border-radius:6px;
+            background: linear-gradient(90deg, #e5edf3 25%, #f2f6f9 37%, #e5edf3 63%);
+            background-size: 400% 100%;
+            animation: shimmer 1.4s ease infinite;
+        }
+        @keyframes shimmer{ 0%{background-position:100% 0} 100%{background-position:0 0} }
+
+        /* ---------- Boleto del próximo partido (elemento firma) ---------- */
+        .match-ticket{
+            position:relative;
+            background:
+                radial-gradient(circle at 100% 50%, transparent 9px, var(--napoles-navy) 9.5px) right / 20px 100% no-repeat,
+                radial-gradient(circle at 0% 50%, transparent 9px, var(--napoles-navy) 9.5px) left / 20px 100% no-repeat,
+                linear-gradient(135deg, #073a5c 0%, #0d4a72 45%, #0094d6 100%);
+            border-radius: 22px;
+            overflow: visible;
+        }
+        .ticket-perf{
+            position:absolute; top:0; bottom:0; left:78%;
+            width:0; border-left: 2px dashed rgba(255,255,255,0.35);
+        }
+        .ticket-notch{
+            position:absolute; width:22px; height:22px; border-radius:50%;
+            background: #f1f4f9;
+        }
+        @media (max-width: 500px){
+            .ticket-perf, .ticket-notch{ display:none; }
+        }
+
+        .stat-chip{
+            font-variant-numeric: tabular-nums;
+            font-family:'Roboto Mono', monospace;
+        }
+
+        .pulse-dot{
+            width:7px; height:7px; border-radius:50%; background:#22c55e;
+            box-shadow: 0 0 0 rgba(34,197,94,0.5);
+            animation: pulse-ring 2s infinite;
+        }
+        @keyframes pulse-ring{
+            0%{ box-shadow: 0 0 0 0 rgba(34,197,94,0.5); }
+            70%{ box-shadow: 0 0 0 7px rgba(34,197,94,0); }
+            100%{ box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+        }
+
+        .refresh-btn{ transition: transform .5s cubic-bezier(.16,1,.3,1); }
+        .refresh-btn.spinning{ animation: spin 0.9s linear infinite; }
+        @keyframes spin{ to{ transform: rotate(360deg); } }
+
+        .toast{
+            transition: opacity .3s ease, transform .3s ease;
+        }
+
+        .stagger > *{
+            opacity:0; transform: translateY(10px);
+            animation: rise .5s cubic-bezier(.16,1,.3,1) forwards;
+        }
+        .stagger > *:nth-child(1){ animation-delay:.02s }
+        .stagger > *:nth-child(2){ animation-delay:.06s }
+        .stagger > *:nth-child(3){ animation-delay:.10s }
+        .stagger > *:nth-child(4){ animation-delay:.14s }
+        .stagger > *:nth-child(5){ animation-delay:.18s }
+        .stagger > *:nth-child(6){ animation-delay:.22s }
+        .stagger > *:nth-child(7){ animation-delay:.26s }
+        .stagger > *:nth-child(8){ animation-delay:.30s }
+        .stagger > *:nth-child(9){ animation-delay:.34s }
+        .stagger > *:nth-child(10){ animation-delay:.38s }
+        @keyframes rise{ to{ opacity:1; transform:none; } }
+
+        @media (prefers-reduced-motion: reduce){
+            *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+            html{ scroll-behavior:auto; }
+        }
     </style>
 </head>
 <body class="font-body antialiased">
 
-<div class="ambient-glow">
-    <div class="glow-sphere glow-1"></div>
-    <div class="glow-sphere glow-2"></div>
-</div>
-
-<header class="sticky top-0 z-50 bg-white/60 backdrop-blur-xl border-b border-gray-100 px-5 py-4 flex items-center justify-between">
+<header class="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-gray-100 px-5 py-4 flex items-center justify-between">
     <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-napoles-blue to-blue-600 flex items-center justify-center shadow-md border border-white">
-            <span class="material-symbols-outlined text-white text-[20px] font-bold">shield</span>
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-napoles-blue to-napoles-navy flex items-center justify-center shadow-md border border-white">
+            <span class="material-symbols-outlined text-white text-[20px]">shield</span>
         </div>
         <div>
             <h1 class="font-headline text-base font-bold text-gray-900 tracking-wide leading-tight">Panel de Gata</h1>
             <p class="text-[10px] font-bold text-rose-gold uppercase tracking-widest mt-0.5">Nápoles F.C. Admin</p>
         </div>
     </div>
-    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#fbcfe8] via-[#f472b6] to-[#e0a899] flex items-center justify-center font-headline font-bold text-white text-sm border border-white">
-        G
+    <div class="flex items-center gap-2">
+        <button id="refresh-btn" onclick="cargarContadoresReales(true)" aria-label="Actualizar datos"
+            class="refresh-btn w-9 h-9 rounded-xl border border-gray-200 bg-white/70 flex items-center justify-center text-gray-500 hover:text-napoles-blue hover:border-napoles-blue/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-napoles-blue">
+            <span class="material-symbols-outlined text-[19px]">refresh</span>
+        </button>
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#fbcfe8] via-[#f472b6] to-[#e0a899] flex items-center justify-center font-headline font-bold text-white text-sm border border-white">
+            G
+        </div>
     </div>
 </header>
 
+<!-- Banner de error / modo sin conexión -->
+<div id="error-banner" class="hidden max-w-md mx-auto mt-3 px-4">
+    <div class="toast flex items-start gap-3 bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-2xl px-4 py-3">
+        <span class="material-symbols-outlined text-[18px] mt-0.5">wifi_off</span>
+        <div class="flex-1">
+            <p class="font-semibold">No se pudo conectar con la base de datos</p>
+            <p class="mt-0.5 text-amber-700/90">Mostrando el último resumen guardado. <button onclick="cargarContadoresReales(true)" class="underline font-semibold">Reintentar</button></p>
+        </div>
+    </div>
+</div>
+
 <main class="max-w-md mx-auto px-4 pt-6 pb-12">
-    
-    <section class="mb-6 relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0094d6] via-[#007bb3] to-[#0f4c81] p-6 shadow-xl shadow-blue-900/10">
-        <div class="absolute -right-8 -top-8 w-28 h-28 rounded-full bg-white/5 pointer-events-none"></div>
-        <div class="absolute -right-2 -top-2 w-16 h-16 rounded-full bg-white/5 pointer-events-none"></div>
-        
-        <h2 class="font-headline text-xl font-extrabold text-white tracking-wide flex items-center gap-2">
-            Hola Gata <span class="text-xl animate-bounce">👋</span>
+
+    <!-- Bienvenida -->
+    <section class="mb-5">
+        <h2 class="font-headline text-xl font-extrabold text-gray-900 tracking-wide flex items-center gap-2">
+            Hola Gata <span class="text-xl" aria-hidden="true">👋</span>
         </h2>
-        <p class="text-xs text-blue-50/90 leading-relaxed mt-1.5 max-w-[95%]">
-            Gestiona tu club desde tu celular con datos reales sincronizados desde tu Google Sheets.
+        <p class="text-xs text-gray-500 leading-relaxed mt-1">
+            Gestiona tu club desde tu celular con datos sincronizados desde tu Google Sheets.
         </p>
     </section>
 
-    <section class="grid grid-cols-2 gap-4">
-        
-        <div class="glass-card card players p-4 rounded-2xl flex flex-col justify-between min-h-[160px] cursor-pointer" onclick="window.location.href='jugadores.html'">
+    <!-- Boleto: próximo partido (elemento firma) -->
+    <section class="match-ticket mb-4 p-5 shadow-xl shadow-blue-900/15 text-white" aria-label="Próximo partido">
+        <div class="ticket-perf"></div>
+        <div class="ticket-notch -top-[11px] left-[78%] -translate-x-1/2"></div>
+        <div class="ticket-notch -bottom-[11px] left-[78%] -translate-x-1/2"></div>
+
+        <div class="flex items-start justify-between">
+            <div class="flex items-center gap-2">
+                <span class="pulse-dot"></span>
+                <span class="text-[10px] font-bold uppercase tracking-[0.18em] text-blue-100/90">Próximo partido</span>
+            </div>
+            <span id="ticket-badge" class="text-[10px] font-bold uppercase tracking-wider bg-white/15 border border-white/25 rounded-full px-2 py-0.5">Cargando…</span>
+        </div>
+
+        <div class="mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+            <div class="text-left">
+                <p class="font-headline font-bold text-sm leading-tight">NÁPOLES</p>
+                <p class="text-[10px] text-blue-100/80 uppercase tracking-wide">Local</p>
+            </div>
+            <div class="font-headline text-lg font-extrabold text-blue-100/90">VS</div>
+            <div class="text-right">
+                <p id="ticket-rival" class="font-headline font-bold text-sm leading-tight truncate">—</p>
+                <p class="text-[10px] text-blue-100/80 uppercase tracking-wide">Rival</p>
+            </div>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-dashed border-white/25 flex items-center justify-between text-[11px] text-blue-50/90">
+            <span id="ticket-fecha" class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-[15px]">calendar_month</span> —
+            </span>
+            <span id="ticket-lugar" class="flex items-center gap-1 truncate max-w-[55%]">
+                <span class="material-symbols-outlined text-[15px]">location_on</span> —
+            </span>
+        </div>
+    </section>
+
+    <!-- Marcador rápido -->
+    <section class="grid grid-cols-3 gap-2.5 mb-6">
+        <div class="glass-card rounded-2xl px-2 py-3 text-center">
+            <p id="stat-jugadores" class="stat-chip text-lg font-bold text-napoles-blue">–</p>
+            <p class="text-[9.5px] font-semibold text-gray-500 uppercase tracking-wide mt-0.5">Jugadores activos</p>
+        </div>
+        <div class="glass-card rounded-2xl px-2 py-3 text-center">
+            <p id="stat-deuda" class="stat-chip text-lg font-bold text-rose-700">–</p>
+            <p class="text-[9.5px] font-semibold text-gray-500 uppercase tracking-wide mt-0.5">Vocalía pendiente</p>
+        </div>
+        <div class="glass-card rounded-2xl px-2 py-3 text-center">
+            <p id="stat-rivales" class="stat-chip text-lg font-bold text-gray-800">–</p>
+            <p class="text-[9.5px] font-semibold text-gray-500 uppercase tracking-wide mt-0.5">Clubes rivales</p>
+        </div>
+    </section>
+
+    <!-- Módulos -->
+    <section class="grid grid-cols-2 gap-4 stagger">
+
+        <a href="jugadores.html" class="glass-card card players p-4 rounded-2xl flex flex-col justify-between min-h-[160px]">
             <div class="flex justify-between items-start">
                 <div class="icon-box"><span class="material-symbols-outlined text-[24px]">groups</span></div>
-                <span id="badge-jugadores" class="bg-blue-50 text-blue-600 text-[11px] font-bold px-2 py-0.5 rounded-full border border-blue-100">...</span>
+                <span id="badge-jugadores"><span class="badge-skel"></span></span>
             </div>
             <div class="mt-4">
                 <h3 class="font-headline font-bold text-sm text-gray-800 tracking-wide">Jugadores</h3>
                 <p class="text-[11px] text-gray-500 leading-normal mt-0.5">Aprobar altas, datos y registros de fichas.</p>
             </div>
-        </div>
+        </a>
 
-        <div class="glass-card card matches p-4 rounded-2xl flex flex-col justify-between min-h-[160px] cursor-pointer" onclick="window.location.href='partidos.html'">
+        <a href="partidos.html" class="glass-card card matches p-4 rounded-2xl flex flex-col justify-between min-h-[160px]">
             <div class="flex justify-between items-start">
                 <div class="icon-box"><span class="material-symbols-outlined text-[24px]">sports_soccer</span></div>
-                <span id="badge-partidos" class="bg-green-50 text-green-600 text-[11px] font-bold px-2 py-0.5 rounded-full border border-green-100">...</span>
+                <span id="badge-partidos"><span class="badge-skel"></span></span>
             </div>
             <div class="mt-4">
                 <h3 class="font-headline font-bold text-sm text-gray-800 tracking-wide">Partidos</h3>
                 <p class="text-[11px] text-gray-500 leading-normal mt-0.5">Programa partidos, canchas y horarios oficiales.</p>
             </div>
-        </div>
+        </a>
 
-        <div class="glass-card card rivals p-4 rounded-2xl flex flex-col justify-between min-h-[160px] cursor-pointer" onclick="window.location.href='rivales.html'">
+        <a href="rivales.html" class="glass-card card rivals p-4 rounded-2xl flex flex-col justify-between min-h-[160px]">
             <div class="flex justify-between items-start">
                 <div class="icon-box"><span class="material-symbols-outlined text-[24px]">shield</span></div>
-                <span id="badge-rivales" class="bg-red-50 text-red-600 text-[11px] font-bold px-2 py-0.5 rounded-full border border-red-100">...</span>
+                <span id="badge-rivales"><span class="badge-skel"></span></span>
             </div>
             <div class="mt-4">
                 <h3 class="font-headline font-bold text-sm text-gray-800 tracking-wide">Rivales</h3>
                 <p class="text-[11px] text-gray-500 leading-normal mt-0.5">Administra clubes contrincantes e historial.</p>
             </div>
-        </div>
+        </a>
 
-        <div class="glass-card card finance p-4 rounded-2xl flex flex-col justify-between min-h-[160px] cursor-pointer" onclick="window.location.href='finanzas.html'">
+        <a href="finanzas.html" class="glass-card card finance p-4 rounded-2xl flex flex-col justify-between min-h-[160px]">
             <div class="flex justify-between items-start">
                 <div class="icon-box"><span class="material-symbols-outlined text-[24px]">payments</span></div>
-                <span id="badge-finanzas" class="bg-amber-50 text-amber-700 text-[11px] font-bold px-2 py-0.5 rounded-full border border-amber-100">$</span>
+                <span class="text-xs" aria-hidden="true">💵</span>
             </div>
             <div class="mt-4">
                 <h3 class="font-headline font-bold text-sm text-gray-800 tracking-wide">Finanzas</h3>
                 <p class="text-[11px] text-gray-500 leading-normal mt-0.5">Revisa estados de cuenta, pagos e inscripciones.</p>
             </div>
-        </div>
+        </a>
 
-        <div class="glass-card card uniforms p-4 rounded-2xl flex flex-col justify-between min-h-[160px] cursor-pointer" onclick="window.location.href='uniformes.html'">
+        <a href="uniformes.html" class="glass-card card uniforms p-4 rounded-2xl flex flex-col justify-between min-h-[160px]">
             <div class="flex justify-between items-start">
                 <div class="icon-box"><span class="material-symbols-outlined text-[24px]">inventory_2</span></div>
-                <span class="text-xs">👕</span>
+                <span class="text-xs" aria-hidden="true">👕</span>
             </div>
             <div class="mt-4">
                 <h3 class="font-headline font-bold text-sm text-gray-800 tracking-wide">Uniformes</h3>
                 <p class="text-[11px] text-gray-500 leading-normal mt-0.5">Control de stock, asignación de tallas y entregas.</p>
             </div>
-        </div>
+        </a>
 
-        <div class="glass-card card stats p-4 rounded-2xl flex flex-col justify-between min-h-[160px] cursor-pointer" onclick="window.location.href='estadisticas.html'">
+        <a href="estadisticas.html" class="glass-card card stats p-4 rounded-2xl flex flex-col justify-between min-h-[160px]">
             <div class="flex justify-between items-start">
                 <div class="icon-box"><span class="material-symbols-outlined text-[24px]">query_stats</span></div>
-                <span class="text-xs">🏆</span>
+                <span class="text-xs" aria-hidden="true">🏆</span>
             </div>
             <div class="mt-4">
                 <h3 class="font-headline font-bold text-sm text-gray-800 tracking-wide">Estadísticas</h3>
                 <p class="text-[11px] text-gray-500 leading-normal mt-0.5">Rendimiento, goleadores y asistencias del club.</p>
             </div>
-        </div>
+        </a>
 
-        <div class="glass-card card news p-4 rounded-2xl flex flex-col justify-between min-h-[160px] cursor-pointer" onclick="window.location.href='notificaciones.html'">
+        <a href="notificaciones.html" class="glass-card card news p-4 rounded-2xl flex flex-col justify-between min-h-[160px]">
             <div class="flex justify-between items-start">
                 <div class="icon-box"><span class="material-symbols-outlined text-[24px]">notifications</span></div>
-                <span id="badge-notificaciones" class="bg-cyan-50 text-cyan-600 text-[11px] font-bold px-2 py-0.5 rounded-full border border-cyan-100">...</span>
+                <span id="badge-notificaciones"><span class="badge-skel"></span></span>
             </div>
             <div class="mt-4">
                 <h3 class="font-headline font-bold text-sm text-gray-800 tracking-wide">Notificaciones</h3>
                 <p class="text-[11px] text-gray-500 leading-normal mt-0.5">Envío de comunicados, alertas y avisos urgentes.</p>
             </div>
-        </div>
+        </a>
 
-        <div class="glass-card card attendance p-4 rounded-2xl flex flex-col justify-between min-h-[160px] cursor-pointer" onclick="window.location.href='asistencia.html'">
+        <a href="asistencia.html" class="glass-card card attendance p-4 rounded-2xl flex flex-col justify-between min-h-[160px]">
             <div class="flex justify-between items-start">
                 <div class="icon-box"><span class="material-symbols-outlined text-[24px]">event_seat</span></div>
-                <span class="text-xs">📋</span>
+                <span class="text-xs" aria-hidden="true">📋</span>
             </div>
             <div class="mt-4">
                 <h3 class="font-headline font-bold text-sm text-gray-800 tracking-wide">Asistencias</h3>
                 <p class="text-[11px] text-gray-500 leading-normal mt-0.5">Confirmación de convocados por encuentro.</p>
             </div>
-        </div>
+        </a>
 
-        <div class="glass-card card vocalia p-4 rounded-2xl flex flex-col justify-between min-h-[160px] cursor-pointer" onclick="window.location.href='vocalia.html'">
+        <a href="vocalia.html" class="glass-card card vocalia p-4 rounded-2xl flex flex-col justify-between min-h-[160px]">
             <div class="flex justify-between items-start">
                 <div class="icon-box"><span class="material-symbols-outlined text-[24px]">gavel</span></div>
-                <span id="badge-vocalia" class="bg-rose-50 text-rose-700 text-[11px] font-bold px-2 py-0.5 rounded-full border border-rose-100">...</span>
+                <span id="badge-vocalia"><span class="badge-skel"></span></span>
             </div>
             <div class="mt-4">
                 <h3 class="font-headline font-bold text-sm text-gray-800 tracking-wide">Vocalía</h3>
                 <p class="text-[11px] text-gray-500 leading-normal mt-0.5">Gestión de cuotas, deudas y compromisos del club.</p>
             </div>
-        </div>
+        </a>
 
-        <div class="glass-card card settings p-4 rounded-2xl flex flex-col justify-between min-h-[160px] cursor-pointer" onclick="window.location.href='configuracion.html'">
+        <a href="configuracion.html" class="glass-card card settings p-4 rounded-2xl flex flex-col justify-between min-h-[160px]">
             <div class="flex justify-between items-start">
                 <div class="icon-box"><span class="material-symbols-outlined text-[24px]">settings</span></div>
                 <span class="bg-gray-100 text-gray-600 text-[11px] font-bold px-2 py-0.5 rounded-full border border-gray-200">2</span>
@@ -219,42 +370,130 @@
                 <h3 class="font-headline font-bold text-sm text-gray-800 tracking-wide">Configuración</h3>
                 <p class="text-[11px] text-gray-500 leading-normal mt-0.5">Ajustes generales del sistema y permisos globales.</p>
             </div>
-        </div>
+        </a>
 
     </section>
+
+    <p id="last-sync" class="text-center text-[10px] text-gray-400 mt-6"></p>
 </main>
 
 <script>
     // ⚠️ COLOCA TU URL DE GOOGLE APPS SCRIPT AQUÍ
     const API_URL = "https://script.google.com/macros/s/AKfycby6iJXllkXrxhkp2_mlourA82Q_uTxZeiV7SgspizoKitF0GgGfpPdSm5pRPryY6I2-/exec";
 
-    // Función que llama al backend para poner los números reales de tus hojas de cálculo
-    async function cargarContadoresReales() {
+    // Último resumen conocido (respaldo local, para que el panel nunca se quede en blanco)
+    const STORAGE_KEY = 'napoles_ultimo_resumen';
+    let cargando = false;
+
+    function formatearMoneda(valor){
+        const n = Number(valor) || 0;
+        return '$' + n.toLocaleString('es-EC', { minimumFractionDigits: n % 1 === 0 ? 0 : 2, maximumFractionDigits: 2 });
+    }
+
+    function pintarBadge(id, valor, opciones = {}){
+        const el = document.getElementById(id);
+        if (!el) return;
+        const { destacarSiPositivo = false } = opciones;
+        el.innerHTML = '';
+        const pill = document.createElement('span');
+        pill.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full border ' +
+            (destacarSiPositivo && Number(valor) > 0
+                ? 'bg-rose-50 text-rose-600 border-rose-100'
+                : 'bg-gray-50 text-gray-500 border-gray-100');
+        pill.innerText = (valor === null || valor === undefined) ? '—' : valor;
+        el.appendChild(pill);
+    }
+
+    function pintarResumen(res, { offline = false } = {}){
+        if (!res) return;
+
+        pintarBadge('badge-jugadores', res.jugadores);
+        pintarBadge('badge-partidos', res.partidos);
+        pintarBadge('badge-rivales', res.rivales);
+        pintarBadge('badge-vocalia', res.deudores, { destacarSiPositivo: true });
+        pintarBadge('badge-notificaciones', res.notificaciones);
+
+        document.getElementById('stat-jugadores').innerText = res.jugadores ?? '–';
+        document.getElementById('stat-deuda').innerText = formatearMoneda(res.deudaTotal);
+        document.getElementById('stat-rivales').innerText = res.rivales ?? '–';
+
+        // Próximo partido: solo se muestra si el backend lo entrega (campo opcional proximoPartido)
+        const ticketBadge = document.getElementById('ticket-badge');
+        if (res.proximoPartido && res.proximoPartido.rival){
+            const p = res.proximoPartido;
+            document.getElementById('ticket-rival').innerText = p.rival;
+            document.getElementById('ticket-fecha').innerHTML =
+                '<span class="material-symbols-outlined text-[15px]">calendar_month</span> ' + (p.fecha || '—') + (p.hora ? ' · ' + p.hora : '');
+            document.getElementById('ticket-lugar').innerHTML =
+                '<span class="material-symbols-outlined text-[15px]">location_on</span> ' + (p.lugar || 'Por confirmar');
+            ticketBadge.innerText = p.estado || 'Programado';
+        } else {
+            document.getElementById('ticket-rival').innerText = 'Por definir';
+            document.getElementById('ticket-fecha').innerHTML =
+                '<span class="material-symbols-outlined text-[15px]">calendar_month</span> Ver calendario';
+            document.getElementById('ticket-lugar').innerHTML =
+                '<span class="material-symbols-outlined text-[15px]">location_on</span> —';
+            ticketBadge.innerText = 'Sin datos';
+        }
+
+        const syncEl = document.getElementById('last-sync');
+        const hora = new Date().toLocaleTimeString('es-EC', { hour: '2-digit', minute: '2-digit' });
+        syncEl.innerText = offline
+            ? 'Último resumen guardado · ' + hora
+            : 'Actualizado hace un instante · ' + hora;
+    }
+
+    function mostrarError(mostrar){
+        document.getElementById('error-banner').classList.toggle('hidden', !mostrar);
+    }
+
+    async function cargarContadoresReales(manual = false){
+        if (cargando) return;
+        cargando = true;
+
+        const btn = document.getElementById('refresh-btn');
+        btn.classList.add('spinning');
+        if (manual) mostrarError(false);
+
         try {
-            // Pedimos un resumen rápido al .gs
-            const response = await fetch(`${API_URL}?action=getResumenContadores&v=${Date.now()}`);
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 10000);
+
+            const response = await fetch(`${API_URL}?action=getResumenContadores&v=${Date.now()}`, { signal: controller.signal });
+            clearTimeout(timeout);
+
+            if (!response.ok) throw new Error('Respuesta no válida del servidor: ' + response.status);
             const res = await response.json();
-            
-            if (res.success) {
-                // Seteamos los números en vivo en los badges correctos
-                document.getElementById('badge-jugadores').innerText = res.jugadores;
-                document.getElementById('badge-partidos').innerText = res.partidos;
-                document.getElementById('badge-rivales').innerText = res.rivales;
-                document.getElementById('badge-vocalia').innerText = res.deudores;
-                document.getElementById('badge-notificaciones').innerText = res.notificaciones;
-            }
+            if (!res.success) throw new Error(res.message || 'El backend respondió sin éxito');
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(res));
+            pintarResumen(res, { offline: false });
+            mostrarError(false);
+
         } catch (error) {
-            console.error("Error al conectar con la base de datos:", error);
+            console.error('Error al conectar con la base de datos:', error);
+            mostrarError(true);
+
+            // Si falla la red, usamos el último resumen guardado para no dejar el panel vacío
+            const guardado = localStorage.getItem(STORAGE_KEY);
+            if (guardado) {
+                pintarResumen(JSON.parse(guardado), { offline: true });
+            } else {
+                ['badge-jugadores','badge-partidos','badge-rivales','badge-vocalia','badge-notificaciones'].forEach(id => pintarBadge(id, '—'));
+                document.getElementById('last-sync').innerText = 'Sin conexión y sin datos guardados';
+            }
+        } finally {
+            btn.classList.remove('spinning');
+            cargando = false;
         }
     }
 
-    // Seguridad de Login
+    // Seguridad de acceso
     if (localStorage.getItem('admin_activo') !== 'true') {
         window.location.href = './login.html';
     }
-    
-    // Ejecutar al cargar la pantalla
-    window.addEventListener('DOMContentLoaded', cargarContadoresReales);
+
+    window.addEventListener('DOMContentLoaded', () => cargarContadoresReales(false));
     document.body.style.overscrollBehaviorY = 'auto';
 </script>
 </body>
